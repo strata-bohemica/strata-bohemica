@@ -31,4 +31,4 @@ and regenerates `data/assets.json`. `tools/import_settings.py` then sets the imp
 Every craft carries a card with an evidence class (E observed, R reconstruction, F fiction), what is unknown and its sources.
 The day rhythm and the layout of the work place are F. No house plan survives at Březnice; the layout is reconstruction.
 
-Licence: not yet chosen. Until a licence is added, all rights are reserved.
+Licence: code MIT (`../LICENSE`), models, textures and animations CC BY 4.0 (`../LICENSE-ASSETS.md`).
