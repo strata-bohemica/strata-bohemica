@@ -1,0 +1,1407 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "COOK-002",
+  "revision": "r001",
+  "brief": "COOK-002 r001 cooking and serving motions (art/briefs/economy-batch8/COOK-002.md + README.md, proposal not a frozen pack; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent (procedural Blender/Python generators written for this job); character body/rig/skin/palette copied unchanged from the accepted PERSON-001 r002 return",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/reopen/contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (bundled with Blender 5.2.3; GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer on Apple M1 Pro)",
+    "Python 3.9 + numpy (independent GLB parser) + Pillow (sheet composition)",
+    "ffmpeg (MP4/GIF)",
+    "git (read-only rev-parse/show)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source: crouch posture, grips, stick sizes, bowl height and the station layout are R design values.",
+  "models": [
+    {
+      "file": "models/person_cooking.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette byte-identical, with six new in-place clips (cook_enter, stir_crouch, tend_fire, serve_ladle, cook_exit, serve_receive), three hand attachment nodes and seven placement nodes",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "vertices_exported": 1443,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "double_sided": {
+        "body": false,
+        "garment": false
+      },
+      "alpha_mode": {
+        "body": "OPAQUE",
+        "garment": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 570812,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        null,
+        null
+      ],
+      "godot_imported_triangles": 2052,
+      "anchors": {
+        "bowl_hold": {
+          "parent": "hand.L",
+          "translation": [
+            -0.10211,
+            0.08508,
+            0.05039
+          ],
+          "rotation_xyzw": [
+            -0.75863,
+            -0.09351,
+            0.54466,
+            0.34509
+          ],
+          "world_rest_translation": [
+            0.18813,
+            0.73847,
+            -0.06736
+          ]
+        },
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "world_rest_translation": [
+            -0.0089,
+            0.94836,
+            0.02789
+          ]
+        },
+        "hearth_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.82
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.82
+          ]
+        },
+        "kindling_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.59,
+            0.0,
+            0.2
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.59,
+            0.0,
+            0.2
+          ]
+        },
+        "ladle_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.06154,
+            0.08684,
+            0.19928
+          ],
+          "rotation_xyzw": [
+            0.08716,
+            -0.0,
+            0.99619,
+            0.0
+          ],
+          "world_rest_translation": [
+            -0.25324,
+            0.74817,
+            -0.20694
+          ]
+        },
+        "ladle_rest": {
+          "parent": "PERSON_rig",
+          "translation": [
+            -0.01929,
+            0.34735,
+            0.74262
+          ],
+          "rotation_xyzw": [
+            0.45609,
+            0.10824,
+            -0.056,
+            0.88155
+          ],
+          "world_rest_translation": [
+            -0.01929,
+            0.34735,
+            0.74262
+          ]
+        },
+        "pot_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.0,
+            0.0143,
+            0.82
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.49242,
+            0.0,
+            0.87036
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0143,
+            0.82
+          ]
+        },
+        "receiver_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            -0.81,
+            0.0,
+            0.4
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.5,
+            0.0,
+            0.86603
+          ],
+          "world_rest_translation": [
+            -0.81,
+            0.0,
+            0.4
+          ]
+        },
+        "serve_bowl_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            -0.5,
+            0.7,
+            0.58
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.5,
+            0.0,
+            0.86603
+          ],
+          "world_rest_translation": [
+            -0.5,
+            0.7,
+            0.58
+          ]
+        },
+        "stick_drop_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.29688,
+            0.18337,
+            0.50433
+          ],
+          "rotation_xyzw": [
+            -0.15351,
+            -0.39325,
+            0.80125,
+            0.42402
+          ],
+          "world_rest_translation": [
+            0.29688,
+            0.18337,
+            0.50433
+          ]
+        },
+        "stick_hold": {
+          "parent": "hand.L",
+          "translation": [
+            -0.07785,
+            0.068,
+            0.10812
+          ],
+          "rotation_xyzw": [
+            0.06163,
+            -0.06163,
+            -0.70442,
+            0.70442
+          ],
+          "world_rest_translation": [
+            0.21857,
+            0.76118,
+            -0.12
+          ]
+        }
+      },
+      "anchor_notes": {
+        "carry_anchor": "unchanged from r002 (child of hand.R)",
+        "ladle_hold": "NEW, child of bone hand.R: MEAL-001 ladle.glb ROOT goes here with an identity transform (ladle `grip` anchor in the palm, cup on the little-finger side); stirring_stick.glb fits the same node",
+        "stick_hold": "NEW, child of bone hand.L: fire_stick.glb ROOT goes here (stick `grip` anchor in the fist, fire end on the little-finger side); shown only in the tend_fire window",
+        "bowl_hold": "NEW, child of bone hand.L: POTTERY-003 bowl.glb ROOT (+ MEAL-001 bowl_fill_stew.glb) for the second actor's serve_receive",
+        "hearth_place": "NEW, child of PERSON_rig: KILN-001 hearth_base / hearth_open_top / fire root (fire_center x,z), yaw 90 so its firewood_spot lies behind the fire",
+        "pot_place": "NEW, child of PERSON_rig: POT-001 root on the fire (base y 0.0143 = MEAL-001 measured seat on hearth_open_top), yaw 59; pot fill shares it",
+        "ladle_rest": "NEW, child of PERSON_rig: MEAL-001 ladle ROOT when not held = MEAL-001's measured rest placement in POT-001 (handle on the lip); equals the held ladle pose at stir_crouch t=0",
+        "kindling_place": "NEW, child of PERSON_rig: kindling pile frame at the cook's left; three fire_stick roots at cook_common.KINDLING_STICKS offsets (the top one is picked)",
+        "stick_drop_place": "NEW, child of PERSON_rig: fire_stick ROOT where the fed stick is released (tip between the stones under the pot)",
+        "receiver_place": "NEW, child of PERSON_rig: second actor's root (person_cooking.glb playing serve_receive)",
+        "serve_bowl_place": "NEW, child of PERSON_rig: bowl base centre at the pour (base y 0.70 m) = receiver bowl_hold at serve_receive 0.6-1.36 s"
+      },
+      "animations": [
+        {
+          "name": "cook_enter",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            46
+          ],
+          "first_last_pose": "first = PERSON r002 idle t=0 (0.0 deg / 0.0 m from the fixture idle first key); last = crouch base pose B = stir_crouch t=0",
+          "behaviour": "R: the hips go down and back onto the balls of the feet (toe joints stay where the r002 idle pose plants them), the trunk leans in, the open right hand comes down onto the resting ladle's grip and closes at 1.60 s; the left forearm settles on the left knee",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 145.16448,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.44,
+              -0.03
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "stir_crouch",
+          "duration_s": 2.4,
+          "fps": 30,
+          "keys_per_track": 73,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "godot_keys_per_track_optimizer_off": [
+            73,
+            73
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            71
+          ],
+          "first_last_pose": "first = last (periodic) = base pose B: low crouch on the balls of the feet, knees forward and apart, trunk leaning 44 deg, right hand on the ladle resting in the pot (MEAL-001 rest pose), left forearm on the left knee",
+          "behaviour": "R: two stirring circles per loop; the ladle translates on a 0.04 m circle that passes through its rest point (the scoop stays 0.077-0.085 m under the stew surface) and tips up to 5 deg more upright away from the lip; light trunk sway",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.44,
+              -0.03
+            ],
+            [
+              0.0,
+              0.44,
+              -0.018
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "tend_fire",
+          "duration_s": 3.2,
+          "fps": 30,
+          "keys_per_track": 97,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "godot_keys_per_track_optimizer_off": [
+            97,
+            97
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            87
+          ],
+          "first_last_pose": "first = last = base pose B",
+          "behaviour": "R: the right hand keeps the ladle at rest; the trunk leans and turns left, the left hand takes the top fire_stick from the kindling at kindling_place (visible on stick_hold 0.96-2.18 s), lifts it, pushes its tip between the stones under the pot (stick_drop_place) and lets go, then returns to the knee",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.4,
+              -0.03
+            ],
+            [
+              0.06,
+              0.44,
+              -0.03
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "serve_ladle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            56
+          ],
+          "first_last_pose": "first = last = base pose B",
+          "behaviour": "R: ladle lifted straight up out of the neck, carried over the bowl held by the second actor at 0.70 m, tipped 48 deg over its front lip (0.85-1.25 s), carried back and lowered into its rest pose; trunk rises and turns right",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 1e-05,
+          "pelvis_local_translation_range_m": [
+            [
+              -0.015,
+              0.44,
+              -0.03
+            ],
+            [
+              0.0,
+              0.475,
+              -0.03
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "cook_exit",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            46
+          ],
+          "first_last_pose": "first = base pose B; last = PERSON r002 idle t=0 (cook_enter played backwards)",
+          "behaviour": "R: cook_enter in reverse time; the hand opens off the ladle at 0.40 s and the ladle stays on ladle_rest",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 145.16448,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.44,
+              -0.03
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "serve_receive",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            36
+          ],
+          "first_last_pose": "first = last: standing (r002 idle feet) and bowing slightly over bent knees, both hands on the POTTERY-003 bowl drawn in at 0.79 m",
+          "behaviour": "R: for the second actor (same GLB): bowl raised/extended to serve_bowl_place by 0.6 s, held still 0.60-1.36 s while the cook pours, drawn back by 1.9 s; bowl on bowl_hold (hand.L)",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.824,
+              -0.045
+            ],
+            [
+              0.0,
+              0.857,
+              -0.0203
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        }
+      ],
+      "double_sided_exceptions": [],
+      "extensions_used": [],
+      "bind_pose_bounds_note": "export_bounds_m is the bind (A-) pose from the POSITION accessor",
+      "prop_visibility_windows_s": {
+        "ladle": "ladle_hold while held: cook_enter t >= 1.60, stir_crouch, tend_fire, serve_ladle, cook_exit t <= 0.40; otherwise ladle_rest",
+        "fire_stick_on_stick_hold": "tend_fire 0.9600 <= t < 2.1760 s; kindling stays as dressing (the pile is not depleted in this preview)",
+        "bowl_fill_stew_in_bowl": "serve_ladle / serve_receive t >= 1.10 s"
+      },
+      "kindling_sticks_in_kindling_place_frame_xyz_yaw": [
+        [
+          -0.0175,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0175,
+          0.0,
+          0.02,
+          3.0
+        ],
+        [
+          0.0,
+          0.0222,
+          -0.015,
+          -2.0
+        ]
+      ],
+      "hold_node_vs_ideal_prop_pose": {
+        "cook_enter": {
+          "ladle_hold": {
+            "held_keys": 13,
+            "node_vs_ideal_prop_max_pos_m": 3.9e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "stir_crouch": {
+          "ladle_hold": {
+            "held_keys": 73,
+            "node_vs_ideal_prop_max_pos_m": 5.14e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "tend_fire": {
+          "ladle_hold": {
+            "held_keys": 97,
+            "node_vs_ideal_prop_max_pos_m": 5.2e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          },
+          "stick_hold": {
+            "held_keys": 37,
+            "node_vs_ideal_prop_max_pos_m": 3.87e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "serve_ladle": {
+          "ladle_hold": {
+            "held_keys": 61,
+            "node_vs_ideal_prop_max_pos_m": 4.6e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "cook_exit": {
+          "ladle_hold": {
+            "held_keys": 13,
+            "node_vs_ideal_prop_max_pos_m": 3.9e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "serve_receive": {
+          "bowl_hold": {
+            "held_keys": 61,
+            "node_vs_ideal_prop_max_pos_m": 2.46e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        }
+      }
+    },
+    {
+      "file": "models/fire_stick.glb",
+      "role": "OPTIONAL: 0.46 m kindling stick (6-sided, slightly crooked, tapering 18 %), bark with cut ends; root = floor point under the stick centre (+Z = fire end); lies on the floor at root identity",
+      "triangles": 68,
+      "triangle_budget": 80,
+      "budget_ok": true,
+      "vertices_exported": 132,
+      "materials": 1,
+      "material_names": [
+        "cook002_wood"
+      ],
+      "double_sided": {
+        "cook002_wood": false
+      },
+      "alpha_mode": {
+        "cook002_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "cook002_atlas",
+          "width": 64,
+          "height": 64,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 6908,
+      "export_bounds_m": {
+        "width": 0.0311,
+        "height": 0.0248,
+        "depth": 0.46,
+        "min": [
+          -0.0117,
+          0.0,
+          -0.23
+        ],
+        "max": [
+          0.0194,
+          0.0248,
+          0.23
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        {
+          "welded_vertices": 36,
+          "edges": 102,
+          "open_edges": 0,
+          "non_manifold_edges": 0,
+          "inconsistent_edges": 0,
+          "signed_volume_m3": 0.0001665
+        }
+      ],
+      "godot_imported_triangles": 68,
+      "anchors": {
+        "base_center": {
+          "parent": "FIRE_STICK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "grip": {
+          "parent": "FIRE_STICK",
+          "translation": [
+            0.0,
+            0.01189,
+            -0.12
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.01189,
+            -0.12
+          ]
+        },
+        "tip": {
+          "parent": "FIRE_STICK",
+          "translation": [
+            0.0,
+            0.01018,
+            0.23
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.01018,
+            0.23
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin under the stick centre",
+        "grip": "left-hand grip (person_cooking stick_hold convention)",
+        "tip": "fire end centre"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/stirring_stick.glb",
+      "role": "OPTIONAL: peeled stirring stick with a flattened, charred end; root frame = MEAL-001 ladle root frame, so it can replace ladle.glb on ladle_hold with an identity transform (grip at the ladle grip anchor, stirring end where the ladle cup ends)",
+      "triangles": 68,
+      "triangle_budget": 80,
+      "budget_ok": true,
+      "vertices_exported": 124,
+      "materials": 1,
+      "material_names": [
+        "cook002_wood"
+      ],
+      "double_sided": {
+        "cook002_wood": false
+      },
+      "alpha_mode": {
+        "cook002_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "cook002_atlas",
+          "width": 64,
+          "height": 64,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 6656,
+      "export_bounds_m": {
+        "width": 0.0286,
+        "height": 0.0306,
+        "depth": 0.365,
+        "min": [
+          -0.0143,
+          -0.0001,
+          -0.335
+        ],
+        "max": [
+          0.0143,
+          0.0305,
+          0.03
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        {
+          "welded_vertices": 36,
+          "edges": 102,
+          "open_edges": 0,
+          "non_manifold_edges": 0,
+          "inconsistent_edges": 0,
+          "signed_volume_m3": 0.0001036
+        }
+      ],
+      "godot_imported_triangles": 68,
+      "anchors": {
+        "grip": {
+          "parent": "STIRRING_STICK",
+          "translation": [
+            0.0,
+            0.01484,
+            -0.20694
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.01484,
+            -0.20694
+          ]
+        },
+        "tip": {
+          "parent": "STIRRING_STICK",
+          "translation": [
+            0.0,
+            0.02313,
+            0.03
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.02313,
+            0.03
+          ]
+        }
+      },
+      "anchor_notes": {
+        "grip": "same position as MEAL-001 ladle `grip` (0, 0.01484, -0.20694)",
+        "tip": "stirring end centre"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": [],
+      "note_floor": "root frame is the ladle frame, not a floor frame: lowest point y = -0.0001 m at root identity"
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "cook002_wood"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "cook002_atlas",
+      "width": 64,
+      "height": 64,
+      "embedded_in": [
+        "fire_stick.glb",
+        "stirring_stick.glb"
+      ],
+      "note": "one procedural 64 px palette (bark, dark bark, peeled wood, end grain, char); each prop GLB embeds its own identical copy"
+    }
+  ],
+  "inherited_materials_textures": {
+    "person_cooking.glb": {
+      "materials": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256
+        }
+      ],
+      "note": "unchanged PERSON-001 r002"
+    }
+  },
+  "double_sided_alpha_inventory": {
+    "fire_stick.glb": {
+      "cook002_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "stirring_stick.glb": {
+      "cook002_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "person_cooking.glb": {
+      "body": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "garment": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    }
+  },
+  "double_sided_exceptions": [],
+  "gltf_extensions_used": [],
+  "budget_summary": {
+    "per_model_limit_triangles": {
+      "fire_stick.glb": 80,
+      "stirring_stick.glb": 80
+    },
+    "props_triangles": {
+      "fire_stick.glb": 68,
+      "stirring_stick.glb": 68
+    },
+    "person_cooking_triangles": 2052,
+    "cooking_demo_instantiated": {
+      "triangles": 7002,
+      "parts": {
+        "person_cooking (cook)": 2052,
+        "person_cooking (second actor)": 2052,
+        "KILN hearth_base": 526,
+        "KILN hearth_open_top": 270,
+        "KILN fire_embers": 102,
+        "POT-001": 924,
+        "MEAL pot_fill_pulse_stew": 132,
+        "MEAL ladle": 116,
+        "POTTERY-003 bowl": 436,
+        "MEAL bowl_fill_stew": 120,
+        "fire_stick x4 (3 kindling + 1 held)": 272
+      },
+      "visible_meshes": 14,
+      "materials": 9,
+      "materials_list": [
+        "KILN_earth",
+        "KILN_glow",
+        "MEAL_matte",
+        "MEAL_moist",
+        "POTTERY003_fineware",
+        "POT_001_clay",
+        "body",
+        "cook002_wood",
+        "garment"
+      ],
+      "textures": [
+        "KILN-001 fire_embers 512x512",
+        "KILN-001 hearth_base 512x512",
+        "KILN-001 hearth_open_top 512x512",
+        "MEAL-001 bowl_fill_stew 256x256",
+        "MEAL-001 ladle 256x256",
+        "MEAL-001 pot_fill_pulse_stew 256x256",
+        "POT-001 512x512",
+        "POTTERY-003 bowl 256x256",
+        "cook002_atlas 64x64",
+        "person_palette 256x256"
+      ],
+      "note": "firewood_stack (208) and context (HOUSE, VEG, standing PERSON r002) are not part of the cooking state"
+    },
+    "kit_materials": 1,
+    "kit_atlas": "1 x 64^2"
+  },
+  "motion": {
+    "rig": "PERSON-001 r002, 23 bones; vertex streams, indices, inverse binds, joint rest TRS, palette and carry_anchor byte-identical (checks/glb_inspect.json fixture_comparison)",
+    "fixture_comparison_all_identical": true,
+    "seams_vs_r002_idle": {
+      "cook_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      },
+      "cook_exit_last": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      }
+    },
+    "clip_seams": {
+      "cook_enter_last__stir_crouch_first": {
+        "max_rotation_deg": 3e-05,
+        "max_translation_or_scale_m": 2e-07
+      },
+      "stir_crouch_last__stir_crouch_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "tend_fire_last__tend_fire_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "stir_crouch_first__tend_fire_first": {
+        "max_rotation_deg": 3e-05,
+        "max_translation_or_scale_m": 1e-07
+      },
+      "stir_crouch_first__serve_ladle_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "serve_ladle_last__stir_crouch_first": {
+        "max_rotation_deg": 1e-05,
+        "max_translation_or_scale_m": 2e-07
+      },
+      "stir_crouch_first__cook_exit_first": {
+        "max_rotation_deg": 3e-05,
+        "max_translation_or_scale_m": 2e-07
+      },
+      "cook_exit_last__cook_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "serve_receive_last__serve_receive_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      }
+    },
+    "fps_keys": 30,
+    "import_settings_godot": "person_cooking.glb: animations stir_crouch and tend_fire settings/loop_mode=1 (LINEAR); cook_enter, serve_ladle, cook_exit, serve_receive 0; nodes/PATH:AnimationPlayer optimizer/enabled=false (recommended: with Godot's default optimizer some tracks keep 1 key, checks/godot_check_default_optimizer.json). See checks/godot_person_cooking.glb.import.txt.",
+    "state_machine_R": "idle -> cook_enter -> {stir_crouch | tend_fire | serve_ladle} (all three start and end on the same base pose, so the game may switch at any loop end) -> cook_exit -> idle",
+    "crouch_design_R": {
+      "pelvis_joint_height_m": 0.44,
+      "pelvis_joint_gltf_z": -0.03,
+      "heel_pitch_deg": 38.0,
+      "trunk_lean_deg": 44.0,
+      "nod_deg": 14.0,
+      "base_ik_error_m": 0.0
+    },
+    "contact_measured_m": {
+      "method": "Blender re-import of the exported GLBs (person_cooking twice, KILN-001, POT-001, MEAL-001 copies, POTTERY-003 bowl, fire_stick), deformed meshes at every 30 fps key of every clip; BVH signed distances (negative = inside), ladle points include 5 interior points per edge; hearth base also as a height field",
+      "cook_non_foot_lowest_vertex_y": 0.02619,
+      "cook_foot_lowest_vertex_y": [
+        0.0,
+        0.0
+      ],
+      "cook_below_hearth_base_surface_max": 0.0,
+      "toe_joint_drift_m": {
+        "cook_enter": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "stir_crouch": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "tend_fire": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "serve_ladle": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "cook_exit": {
+          "L": 0.0,
+          "R": 0.0
+        }
+      },
+      "cook_to_pot_min": 0.00234,
+      "cook_head_to_pot_min": 0.18783,
+      "cook_to_stone_ring_min": 0.04088,
+      "cook_to_hearth_base_min": 0.02698,
+      "cook_to_embers_min": 0.21613,
+      "cook_to_firewood_stack_min": 0.3,
+      "ladle_to_pot_min": 0.0,
+      "ladle_pot_overlapping_triangle_pairs_max": 0,
+      "ladle_to_cook_excl_hands_min": -0.00017,
+      "right_hand_grip_contact_min": [
+        -0.00207,
+        -0.00114
+      ],
+      "tend_fire_stick": {
+        "stick_min_sd_to_ring_m": [
+          0.00955,
+          0.27828
+        ],
+        "stick_min_sd_to_base_m": [
+          0.03046,
+          0.17936
+        ],
+        "stick_min_sd_to_pot_m": [
+          0.04329,
+          0.3
+        ],
+        "stick_min_sd_to_embers_m": [
+          0.01395,
+          0.3
+        ],
+        "stick_min_sd_to_left_hand_m": [
+          0.01688,
+          0.02236
+        ],
+        "left_hand_min_sd_to_stick_m": [
+          -0.00066,
+          -0.00066
+        ],
+        "stick_min_sd_to_cook_excl_left_hand_m": [
+          0.04942,
+          0.07137
+        ]
+      },
+      "tend_fire_hand_to_picked_pile_stick_min": [
+        -0.00066,
+        0.2195
+      ],
+      "serve": {
+        "cook_min_sd_to_receiver_m": [
+          0.08065,
+          0.3
+        ],
+        "receiver_min_sd_to_cook_m": [
+          0.06771,
+          0.3
+        ],
+        "ladle_min_sd_to_receiver_m": [
+          0.08075,
+          0.3
+        ],
+        "ladle_min_sd_to_bowl_m": [
+          0.00602,
+          0.3
+        ],
+        "cook_min_sd_to_bowl_m": [
+          0.06045,
+          0.28083
+        ],
+        "bowl_min_sd_to_cook_m": [
+          0.06045,
+          0.27985
+        ],
+        "receiver_foot_min_y_m": [
+          0.0,
+          0.0
+        ],
+        "receiver_below_hearth_base_surface_max_m": [
+          0.0,
+          0.0
+        ],
+        "ladle_lowest_point_above_bowl_rim_m": [
+          -0.54305,
+          0.08268
+        ]
+      },
+      "serve_pour_window": {
+        "t_s": [
+          0.85,
+          1.25
+        ],
+        "keys": 12,
+        "ladle_scoop_over_bowl_horizontal_offset_m": [
+          0.0,
+          0.0
+        ],
+        "ladle_lowest_point_above_bowl_rim_m": [
+          0.02411,
+          0.03469
+        ],
+        "bowl_base_y_m": [
+          0.7,
+          0.7
+        ]
+      },
+      "kindling_pile_static": {
+        "k0_min_y_m": 0.0,
+        "k0_min_sd_to_hearth_base_m": 0.09989,
+        "k0_vertices_min_sd_to_k1_m": 0.00399,
+        "k0_vertices_min_sd_to_k2_m": 0.00591,
+        "k1_min_y_m": 0.0,
+        "k1_min_sd_to_hearth_base_m": 0.12977,
+        "k1_vertices_min_sd_to_k0_m": -0.00022,
+        "k1_vertices_min_sd_to_k2_m": -0.00165,
+        "k2_min_y_m": 0.0222,
+        "k2_min_sd_to_hearth_base_m": 0.11868,
+        "k2_vertices_min_sd_to_k0_m": 0.00531,
+        "k2_vertices_min_sd_to_k1_m": -0.0002
+      },
+      "bowl_base_height_in_serve_receive_m": [
+        0.7,
+        0.79
+      ],
+      "notes": "grip contacts of 1-2 mm (fingers touching the ladle handle / fire_stick) are intended; the ladle cup sits inside the MEAL-001 stew fill by design (the fill is a surface lens, not a solid)"
+    },
+    "ladle_tip_to_pot_interior_16_samples_stir_crouch": [
+      {
+        "t_s": 0.0,
+        "tip_signed_distance_to_pot_surface_m": 0.11851,
+        "tip_radial_from_pot_axis_m": 0.03598,
+        "tip_depth_below_stew_surface_m": 0.0774,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.0
+      },
+      {
+        "t_s": 0.15,
+        "tip_signed_distance_to_pot_surface_m": 0.11746,
+        "tip_radial_from_pot_axis_m": 0.03734,
+        "tip_depth_below_stew_surface_m": 0.07859,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.00758
+      },
+      {
+        "t_s": 0.3,
+        "tip_signed_distance_to_pot_surface_m": 0.11728,
+        "tip_radial_from_pot_axis_m": 0.04009,
+        "tip_depth_below_stew_surface_m": 0.08142,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.02998
+      },
+      {
+        "t_s": 0.45,
+        "tip_signed_distance_to_pot_surface_m": 0.11865,
+        "tip_radial_from_pot_axis_m": 0.04109,
+        "tip_depth_below_stew_surface_m": 0.08422,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.05726
+      },
+      {
+        "t_s": 0.6,
+        "tip_signed_distance_to_pot_surface_m": 0.11854,
+        "tip_radial_from_pot_axis_m": 0.04128,
+        "tip_depth_below_stew_surface_m": 0.08537,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.07177
+      },
+      {
+        "t_s": 0.75,
+        "tip_signed_distance_to_pot_surface_m": 0.1174,
+        "tip_radial_from_pot_axis_m": 0.04109,
+        "tip_depth_below_stew_surface_m": 0.0842,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.05775
+      },
+      {
+        "t_s": 0.9,
+        "tip_signed_distance_to_pot_surface_m": 0.11736,
+        "tip_radial_from_pot_axis_m": 0.04009,
+        "tip_depth_below_stew_surface_m": 0.08142,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.03
+      },
+      {
+        "t_s": 1.05,
+        "tip_signed_distance_to_pot_surface_m": 0.11848,
+        "tip_radial_from_pot_axis_m": 0.03736,
+        "tip_depth_below_stew_surface_m": 0.0786,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.00886
+      },
+      {
+        "t_s": 1.2,
+        "tip_signed_distance_to_pot_surface_m": 0.11851,
+        "tip_radial_from_pot_axis_m": 0.03598,
+        "tip_depth_below_stew_surface_m": 0.0774,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.0
+      },
+      {
+        "t_s": 1.35,
+        "tip_signed_distance_to_pot_surface_m": 0.11746,
+        "tip_radial_from_pot_axis_m": 0.03734,
+        "tip_depth_below_stew_surface_m": 0.07859,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.00758
+      },
+      {
+        "t_s": 1.5,
+        "tip_signed_distance_to_pot_surface_m": 0.11728,
+        "tip_radial_from_pot_axis_m": 0.04009,
+        "tip_depth_below_stew_surface_m": 0.08142,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.02998
+      },
+      {
+        "t_s": 1.65,
+        "tip_signed_distance_to_pot_surface_m": 0.11865,
+        "tip_radial_from_pot_axis_m": 0.04109,
+        "tip_depth_below_stew_surface_m": 0.08422,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.05726
+      },
+      {
+        "t_s": 1.8,
+        "tip_signed_distance_to_pot_surface_m": 0.11854,
+        "tip_radial_from_pot_axis_m": 0.04128,
+        "tip_depth_below_stew_surface_m": 0.08537,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.07177
+      },
+      {
+        "t_s": 1.95,
+        "tip_signed_distance_to_pot_surface_m": 0.1174,
+        "tip_radial_from_pot_axis_m": 0.04109,
+        "tip_depth_below_stew_surface_m": 0.0842,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.05775
+      },
+      {
+        "t_s": 2.1,
+        "tip_signed_distance_to_pot_surface_m": 0.11736,
+        "tip_radial_from_pot_axis_m": 0.04009,
+        "tip_depth_below_stew_surface_m": 0.08142,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.03
+      },
+      {
+        "t_s": 2.25,
+        "tip_signed_distance_to_pot_surface_m": 0.11848,
+        "tip_radial_from_pot_axis_m": 0.03736,
+        "tip_depth_below_stew_surface_m": 0.0786,
+        "whole_ladle_min_signed_distance_to_pot_m": 0.00886
+      }
+    ],
+    "godot_vs_blender_pose": {
+      "compared_keys": 353,
+      "max_position_difference_m": {
+        "hand.L": 1e-05,
+        "hand.R": 1e-05,
+        "toe.L": 0.0,
+        "toe.R": 0.0,
+        "ladle_tip_held": 1.4e-05
+      },
+      "ladle_tip_16_samples_max_difference_m": 1e-05,
+      "note": "Godot probe = Skeleton3D global bone pose origin; Blender = pose-bone head in world space; ladle tip = farthest +Z vertex of the MEAL-001 ladle; all from models/person_cooking.glb"
+    }
+  },
+  "reference_ids": [
+    "subsistence.md section 2.5 'Grinding and food preparation' (E: boiled-meat proteins / cooking in vessels, K22 p. 10 citing Pavelka 2021; food-antibody results SP23 section 3.5) and F5 'Meal types: porridge, flour food, pulse stew' (R recipes; dependencies BV-029 cooking, BV-033 fuel, POTTERY-003 bowls, KILN-001 hearth) on branch docs/economy-research",
+    "crafts-exchange.md line 60 (E, cooking in vessels; cite only)",
+    "content/research/next-batch/settlement-features.md KILN-001 (hearth superstructure R; 'PERSON (crouch/tend clip ...)' listed as a dependency)",
+    "Read-only geometry references: KILN-001 r001 (open hearth, embers, firewood_spot), POT-001 fixture, MEAL-001 r001 (ladle, stew fills, measured ladle rest placement and pot-on-hearth seat; branch art/meal-001-r001), POTTERY-003 r001 bowl, PERSON-001 r002"
+  ],
+  "fixture_hashes": {
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_base.glb": "2e12bf68e61480642433a85b1d4c949f23b7207032adbb00fcef2cbcef631de2",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_open_top.glb": "c13b6fe99d3921707dc4856dbad489f5118e84c7ace8690d7911324455467420",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/fire_embers.glb": "c9dfda43f5390b5fb305fcf36ad167fa0cf2062000eeb3b21267fdb37b9a5a82",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/fire_lit.glb": "b84b389c7d9892fceeb69e89aeb3f1da228a062d42df79fb46e65a36053058bc",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/firewood_stack.glb": "125cc0121e0cf5214de30af9ee2fb79da3260258db553605e1a4aec3b58c09f5",
+    "art/returns/bronze-bohemia-v3/POTTERY-003/r001/models/bowl.glb": "fada4401af0a20396e2626919aab97de66842077871c3b57edd8b939088ababa",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_summer.glb": "bd98965a24b689840bdaff8a83746999a5dd726a66e6e7c76b49d41d9c753290",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/hazel_leafed.glb": "03f7640274b5a18eb0990036183d488946ff158f4e15cb0661bec31756585045",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/grass_wet.glb": "e107739f32f9e1b2bbcb1cea57277f133666d9462e46af73ff5cee64730c992f",
+    "art/briefs/economy-batch8/COOK-002.md": "b4812833efb09bbbb3201f244a76168fb289a42b65e83a7d47ead90c8ca276b3",
+    "art/briefs/economy-batch8/README.md": "7e848b0a64b926b10516daabfa2ec32b1ea5417eb678e3551313e67f5eace596",
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+  },
+  "branch_documents_git_blobs": {
+    "content/research/economy/subsistence.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "1f65f34ee542d12db7fbc2a8952b459f0ca08f46"
+    },
+    "content/research/economy/crafts-exchange.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "0d53fc56a40a8804d6de53cab6c17d1bdd8327c5"
+    },
+    "content/research/economy/README.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "3b196525045fe6dd1fbe7627379035106d792734"
+    },
+    "art/briefs/economy-batch4/README.md": {
+      "git_branch": "docs/economy-batch4-briefs",
+      "branch_commit": "3ea9c4d0d2c0a9941545f5173fc64fa1a5ce5d53",
+      "git_blob": "44a2942bc8333b4c343bb9d14ec279057f91c19f"
+    },
+    "art/returns/economy-batch5/MEAL-001/r001/asset.json": {
+      "git_branch": "art/meal-001-r001",
+      "branch_commit": "081b95885641127fc16bfec71248bd74174ba8ad",
+      "git_blob": "fd47f000c197d7b60d10bc0c1bbcf6afcf668961"
+    },
+    "art/returns/economy-batch5/MEAL-001/r001/checks/fit_check.json": {
+      "git_branch": "art/meal-001-r001",
+      "branch_commit": "081b95885641127fc16bfec71248bd74174ba8ad",
+      "git_blob": "db55a6a342e7b0757bd360c39de26942272de17b"
+    }
+  },
+  "reference_copies_in_source": {
+    "source/fixture_PERSON-001_r002/source/person_001.blend": {
+      "sha256": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend",
+      "identical_to_source": true
+    },
+    "source/fixture_PERSON-001_r002/source/gen_person.py": {
+      "sha256": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py",
+      "identical_to_source": true
+    },
+    "source/fixture_PERSON-001_r002/source/person_palette.png": {
+      "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png",
+      "identical_to_source": true
+    },
+    "source/ref_MEAL-001/ladle.glb": {
+      "sha256": "72c29782534b1beef99eeb681345b9bf47281d335e1db464a227300537f437cd",
+      "source": "art/meal-001-r001:art/returns/economy-batch5/MEAL-001/r001/models/ladle.glb",
+      "identical_to_source": true
+    },
+    "source/ref_MEAL-001/pot_fill_pulse_stew.glb": {
+      "sha256": "422044e2dc33f11daff1ff98f2178acf371421612c27704d50509cff331c53a9",
+      "source": "art/meal-001-r001:art/returns/economy-batch5/MEAL-001/r001/models/pot_fill_pulse_stew.glb",
+      "identical_to_source": true
+    },
+    "source/ref_MEAL-001/bowl_fill_stew.glb": {
+      "sha256": "7ec8ae5421bb6838204dbbf8497fe66e79107fdcc35f6bfbf566e60bc6d0546b",
+      "source": "art/meal-001-r001:art/returns/economy-batch5/MEAL-001/r001/models/bowl_fill_stew.glb",
+      "identical_to_source": true
+    }
+  },
+  "parts_and_uncertainties": [
+    "E (cite only): cooking in vessels (boiled-meat proteins on artefacts/soils, K22 p. 10); pulse/cereal/legume use from grinding-slab residues (SP23). Nothing here establishes posture, tools or serving practice",
+    "R: crouching on the balls of the feet at an open hearth; pot standing in the embers; stirring with a wooden ladle; feeding sticks one at a time; ladling into a bowl held by another person",
+    "R: kindling size (0.46 m x 27 mm), stirring-stick form, pile layout; the KILN-001 open top is used with fire_embers (fire_lit flames would pass through a pot standing on the fire)",
+    "R: bowl held at 0.70 m (brief) by a standing second actor who bows over slightly bent knees; receiver distance from the cook (0.90 m root to root) is a design value",
+    "F: who cooks/serves, portions, timing; the game's simulation clock drives the clips",
+    "Limit: no stew in the ladle cup and no pouring stream (the bowl fill appears at 1.10 s)",
+    "Limit: the kindling pile is not depleted and the fed stick is hidden on release (game-side visibility toggles)"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (body, rig, skin, palette, pose solver)",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002 (private project material)",
+      "licence": "project-internal; no public sublicence",
+      "modification": "r002 actions removed in a copy; six new clips keyed; three hand nodes and seven placement nodes added; mesh/skin/palette/carry_anchor unchanged"
+    },
+    {
+      "resource": "MEAL-001 r001 ladle.glb, pot_fill_pulse_stew.glb, bowl_fill_stew.glb + its measured ladle rest placement and pot seat",
+      "source": "branch art/meal-001-r001, art/returns/economy-batch5/MEAL-001/r001 (private project material)",
+      "licence": "project-internal",
+      "modification": "none; byte-identical reference copies in source/ref_MEAL-001/ (not returned as models)"
+    },
+    {
+      "resource": "KILN-001 r001, POT-001, POTTERY-003 r001 bowl, HOUSE-001, VEG-001",
+      "source": "art/returns/..., art/handoffs/bronze-bohemia-opus-v2/fixtures (private project material)",
+      "licence": "project-internal",
+      "modification": "none; read-only copies in check/preview scenes only"
+    }
+  ],
+  "deviations": [
+    "The brief's 'bowl held by a second actor at 0.7 m' is implemented as the bowl base at 0.70 m above the floor (receiver_place 0.90 m from the cook's root); a second actor clip serve_receive is ADDED to person_cooking.glb so the bowl holder is animated with the same rig",
+    "serve_receive starts/ends on a bowl-holding pose, not on the r002 idle pose (the game blends in/out of it, e.g. from SHARE-001 handover_receive)",
+    "stir_crouch, tend_fire and serve_ladle start and end on a shared crouch base pose (not on r002 idle); cook_enter / cook_exit connect it to r002 idle",
+    "Hand nodes ladle_hold (hand.R), stick_hold and bowl_hold (hand.L) are added (as the shared rules require for hand attachments); placement nodes on the rig root define the cooking station",
+    "POT-001 stands on the fire with fire_embers (MEAL-001's measured seat); KILN fire_lit is not used under the pot",
+    "Only the six new clips are exported (as WORK-001 person_grinding / SHEAR-001 person_pluck); the r002 idle/walk/carry_walk/work/rest clips stay in PERSON-001"
+  ]
+}

@@ -2,11 +2,12 @@ extends RefCounted
 ## One homestead's day as a pure function of time: state_at(t) -> actor state.
 ## Positions are in the homestead frame (the house's local frame: +Z is the door side).
 ##
-## ActorState: {phase, skin, clip, clip_time, pos: Vector3, yaw: float (radians), stone: "rest"|"hand"|"none"}
+## ActorState: {phase, skin, clip, clip_time, pos: Vector3, yaw: float (radians), props: {prop_id: {mode, node}}}
 ## skins: "walker" (idle/walk), "worker" (the craft's own rig), "sleeper" (lie down / sleep / get up).
 
 const DayClock = preload("res://museum/core/day_clock.gd")
 const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
+const CraftProps = preload("res://museum/core/craft_props.gd")
 
 var clock
 var period: Dictionary
@@ -17,6 +18,7 @@ var work_yaw: float
 var bed_pos: Vector3
 var bed_yaw: float
 var walk_speed: float = 1.3
+var day_offset_s: float = 0.0   # this homestead lives a little earlier or later than the others (F)
 var durations: Dictionary       # per skin: {"walker": {clip: len}, "worker": {...}, "sleeper": {...}}
 
 func _init(p_period: Dictionary, p_craft: Dictionary, p_homestead: Dictionary, p_anchors: Dictionary, p_durations: Dictionary) -> void:
@@ -24,6 +26,7 @@ func _init(p_period: Dictionary, p_craft: Dictionary, p_homestead: Dictionary, p
 	craft = p_craft
 	durations = p_durations
 	clock = DayClock.new(float(period.day_length_s))
+	day_offset_s = float(p_homestead.get("day_offset", 0.0)) * float(period.day_length_s)
 	work_pos = _v(p_homestead.workplace.pos)
 	work_yaw = deg_to_rad(float(p_homestead.workplace.yaw_deg))
 	bed_pos = _v(p_homestead.bed.pos)
@@ -58,7 +61,12 @@ func _along(route: Array[Vector3], dist: float) -> Dictionary:
 		left -= seg
 	return {"pos": route[route.size() - 1], "yaw": 0.0}
 
-func state_at(t: float) -> Dictionary:
+func state_at(t_clock: float) -> Dictionary:
+	var state := _state_at(t_clock + day_offset_s)
+	state["props"] = CraftProps.state(craft, state.clip, state.clip_time, state.skin == "worker")
+	return state
+
+func _state_at(t: float) -> Dictionary:
 	var seg := segment_at(t)
 	var f: float = clock.fraction(t)
 	var seg_len: float = (float(seg["to"]) - float(seg["from"])) * clock.day_length
@@ -77,24 +85,23 @@ func state_at(t: float) -> Dictionary:
 			return _walk_state(phase, back, local, seg_len, true)
 		"work":
 			var pose: Dictionary = CraftTimeline.pose_at(craft, local, seg_len, durations.worker)
-			return {"phase": phase, "skin": "worker", "clip": pose.clip, "clip_time": pose.clip_time, "pos": work_pos, "yaw": work_yaw,
-				"stone": "hand" if pose.stage == "loop" else "rest"}
+			return {"phase": phase, "skin": "worker", "clip": pose.clip, "clip_time": pose.clip_time, "pos": work_pos, "yaw": work_yaw}
 		"meal":
-			return {"phase": phase, "skin": "walker", "clip": "rest", "clip_time": fposmod(local, float(durations.walker.get("rest", 2.0))), "pos": work_pos, "yaw": work_yaw, "stone": "rest"}
+			return {"phase": phase, "skin": "walker", "clip": "rest", "clip_time": fposmod(local, float(durations.walker.get("rest", 2.0))), "pos": work_pos, "yaw": work_yaw}
 		"settle":
 			var len: float = float(durations.sleeper.get("lie_down", 2.0))
-			return {"phase": phase, "skin": "sleeper", "clip": "lie_down", "clip_time": minf(local, len - 0.001), "pos": bed_pos, "yaw": bed_yaw, "stone": "rest"}
-	return {"phase": phase, "skin": "walker", "clip": "idle", "clip_time": 0.0, "pos": work_pos, "yaw": work_yaw, "stone": "rest"}
+			return {"phase": phase, "skin": "sleeper", "clip": "lie_down", "clip_time": minf(local, len - 0.001), "pos": bed_pos, "yaw": bed_yaw}
+	return {"phase": phase, "skin": "walker", "clip": "idle", "clip_time": 0.0, "pos": work_pos, "yaw": work_yaw}
 
 func _sleep_state(phase: String, local: float) -> Dictionary:
 	var len: float = float(durations.sleeper.get("sleep_lie", 4.0))
-	return {"phase": phase, "skin": "sleeper", "clip": "sleep_lie", "clip_time": fposmod(local, len), "pos": bed_pos, "yaw": bed_yaw, "stone": "rest"}
+	return {"phase": phase, "skin": "sleeper", "clip": "sleep_lie", "clip_time": fposmod(local, len), "pos": bed_pos, "yaw": bed_yaw}
 
 func _wake_state(phase: String, local: float) -> Dictionary:
 	var len: float = float(durations.sleeper.get("get_up", 2.0))
 	if local < len:
-		return {"phase": phase, "skin": "sleeper", "clip": "get_up", "clip_time": minf(local, len - 0.001), "pos": bed_pos, "yaw": bed_yaw, "stone": "rest"}
-	return {"phase": phase, "skin": "walker", "clip": "idle", "clip_time": fposmod(local - len, float(durations.walker.get("idle", 2.0))), "pos": bed_pos, "yaw": bed_yaw, "stone": "rest"}
+		return {"phase": phase, "skin": "sleeper", "clip": "get_up", "clip_time": minf(local, len - 0.001), "pos": bed_pos, "yaw": bed_yaw}
+	return {"phase": phase, "skin": "walker", "clip": "idle", "clip_time": fposmod(local - len, float(durations.walker.get("idle", 2.0))), "pos": bed_pos, "yaw": bed_yaw}
 
 func _walk_state(phase: String, route: Array[Vector3], local: float, seg_len: float, arriving_home: bool) -> Dictionary:
 	var total := _route_length(route)
@@ -104,5 +111,5 @@ func _walk_state(phase: String, route: Array[Vector3], local: float, seg_len: fl
 	if local >= walk_time:   # arrived: stand at the end of the route until the segment ends
 		var end_clip := "idle"
 		return {"phase": phase, "skin": "walker", "clip": end_clip, "clip_time": fposmod(local - walk_time, float(durations.walker.get("idle", 2.0))),
-			"pos": route[route.size() - 1], "yaw": work_yaw if not arriving_home else bed_yaw, "stone": "rest"}
-	return {"phase": phase, "skin": "walker", "clip": "walk", "clip_time": fposmod(u, float(durations.walker.get("walk", 1.0))), "pos": at.pos, "yaw": at.yaw, "stone": "rest"}
+			"pos": route[route.size() - 1], "yaw": work_yaw if not arriving_home else bed_yaw}
+	return {"phase": phase, "skin": "walker", "clip": "walk", "clip_time": fposmod(u, float(durations.walker.get("walk", 1.0))), "pos": at.pos, "yaw": at.yaw}

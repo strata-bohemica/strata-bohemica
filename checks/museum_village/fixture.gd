@@ -1,19 +1,18 @@
 extends RefCounted
-## Builds the M1 schedule from the shipped data, the same way the main scene does.
-const Schema = preload("res://museum/core/schema.gd")
-const Schedule = preload("res://museum/core/schedule.gd")
-const Catalogue = preload("res://museum/assets/catalogue.gd")
+## The same world the main scene builds: period, village, terrain, and one schedule per occupied homestead.
+const Loader = preload("res://museum/app/village_loader.gd")
 
 static func load_all() -> Dictionary:
-	var period: Dictionary = Schema.load_json("res://museum/data/periods/bronze_late.json")
-	var homestead: Dictionary = Schema.load_json("res://museum/data/homesteads/hs-01.json")
-	var craft: Dictionary = Schema.load_json("res://museum/data/crafts/%s.json" % homestead.craft)
-	var anchors := {
-		"door_inside": Catalogue.anchor(homestead.house.model, "door_inside").pos,
-		"entry": Catalogue.anchor(homestead.house.model, "entry").pos}
-	var durations := {
-		"walker": Catalogue.clip_lengths(homestead.walker),
-		"worker": Catalogue.clip_lengths(craft.skin),
-		"sleeper": Catalogue.clip_lengths(homestead.sleeper)}
-	return {"period": period, "homestead": homestead, "craft": craft, "anchors": anchors, "durations": durations,
-		"schedule": Schedule.new(period, craft, homestead, anchors, durations)}
+	return Loader.load_all()
+
+## House-frame point -> world point for a village house record.
+static func house_to_world(house: Dictionary, terrain, local: Vector3) -> Vector3:
+	var basis := Basis(Vector3.UP, deg_to_rad(float(house.yaw_deg)))
+	var origin := Vector3(house.pos[0], terrain.height_at(house.pos[0], house.pos[1]), house.pos[1])
+	return origin + basis * local
+
+static func house_record(village: Dictionary, id: int) -> Dictionary:
+	for h in village.houses:
+		if int(h.id) == id:
+			return h
+	return {}

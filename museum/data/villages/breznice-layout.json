@@ -1,0 +1,220 @@
+{
+ "seed": 11,
+ "disc_radius_m": 70.0,
+ "houses": [
+  {
+   "id": 1,
+   "cluster": "A",
+   "craft": "plough",
+   "label": "Oráč",
+   "x": 42.3,
+   "y": 13.4,
+   "z": 10.75,
+   "yaw_deg": -8.3,
+   "door": "E",
+   "yard": [
+    50.9,
+    12.1
+   ],
+   "slope_deg": 3.3
+  },
+  {
+   "id": 2,
+   "cluster": "A",
+   "craft": "spin",
+   "label": "Předoucí",
+   "x": 25.8,
+   "y": 24.0,
+   "z": 11.48,
+   "yaw_deg": 2.2,
+   "door": "W",
+   "yard": [
+    17.1,
+    23.7
+   ],
+   "slope_deg": 4.2
+  },
+  {
+   "id": 3,
+   "cluster": "A",
+   "craft": "grind",
+   "label": "Mlynářka",
+   "x": 12.7,
+   "y": 15.1,
+   "z": 10.84,
+   "yaw_deg": 8.8,
+   "door": "W",
+   "yard": [
+    4.1,
+    13.7
+   ],
+   "slope_deg": 5.2
+  },
+  {
+   "id": 4,
+   "cluster": "B",
+   "craft": "hide",
+   "label": "Koželuh",
+   "x": -36.0,
+   "y": -20.3,
+   "z": 4.14,
+   "yaw_deg": -5.7,
+   "door": "W",
+   "yard": [
+    -44.7,
+    -19.4
+   ],
+   "slope_deg": 5.7
+  },
+  {
+   "id": 5,
+   "cluster": "B",
+   "craft": "weave",
+   "label": "Tkadlena",
+   "x": -20.9,
+   "y": -19.7,
+   "z": 3.77,
+   "yaw_deg": 2.3,
+   "door": "E",
+   "yard": [
+    -12.2,
+    -19.4
+   ],
+   "slope_deg": 6.4
+  },
+  {
+   "id": 6,
+   "cluster": "B",
+   "craft": "wood",
+   "label": "Tesař",
+   "x": -26.9,
+   "y": -35.1,
+   "z": 5.1,
+   "yaw_deg": -4.7,
+   "door": "E",
+   "yard": [
+    -18.2,
+    -35.8
+   ],
+   "slope_deg": 5.8
+  },
+  {
+   "id": 7,
+   "cluster": "C",
+   "craft": "cook",
+   "label": "Kuchařka",
+   "x": 9.2,
+   "y": -15.6,
+   "z": 7.22,
+   "yaw_deg": 2.9,
+   "door": "W",
+   "yard": [
+    0.5,
+    -16.1
+   ],
+   "slope_deg": 2.3
+  },
+  {
+   "id": 8,
+   "cluster": "C",
+   "craft": "milk",
+   "label": "Pastýřka",
+   "x": 30.6,
+   "y": -33.3,
+   "z": 7.69,
+   "yaw_deg": -3.6,
+   "door": "E",
+   "yard": [
+    39.3,
+    -33.8
+   ],
+   "slope_deg": 6.3
+  },
+  {
+   "id": 9,
+   "cluster": "C",
+   "craft": "parch",
+   "label": "Pražič prosa",
+   "x": 29.8,
+   "y": -15.3,
+   "z": 6.64,
+   "yaw_deg": -8.0,
+   "door": "E",
+   "yard": [
+    38.4,
+    -16.5
+   ],
+   "slope_deg": 3.0
+  },
+  {
+   "id": 10,
+   "cluster": "D",
+   "craft": "thresh",
+   "label": "Mlatec",
+   "x": -8.8,
+   "y": 46.3,
+   "z": 8.05,
+   "yaw_deg": -14.0,
+   "door": "E",
+   "yard": [
+    -0.4,
+    44.2
+   ],
+   "slope_deg": 5.7
+  },
+  {
+   "id": 11,
+   "cluster": "D",
+   "craft": "pot",
+   "label": "Hrnčířka",
+   "x": -24.9,
+   "y": 46.4,
+   "z": 6.45,
+   "yaw_deg": -1.7,
+   "door": "W",
+   "yard": [
+    -33.6,
+    46.7
+   ],
+   "slope_deg": 6.3
+  },
+  {
+   "id": 12,
+   "cluster": "D",
+   "craft": "clay",
+   "label": "Omítač",
+   "x": -19.4,
+   "y": 23.3,
+   "z": 7.81,
+   "yaw_deg": 7.9,
+   "door": "W",
+   "yard": [
+    -28.0,
+    22.1
+   ],
+   "slope_deg": 4.5
+  }
+ ],
+ "fields": [
+  {
+   "x": 58.0,
+   "y": -4.0
+  },
+  {
+   "x": 13.0,
+   "y": 56.0
+  },
+  {
+   "x": 9.0,
+   "y": -49.0
+  }
+ ],
+ "clay_pit": [
+  -34.8,
+  23.3
+ ],
+ "water_access": [
+  -52.8,
+  -25.0
+ ]
+}

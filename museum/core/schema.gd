@@ -35,16 +35,49 @@ static func validate_period(d: Dictionary) -> PackedStringArray:
 
 static func validate_craft(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
-	_need(d, ["id", "schema", "skin", "block", "card"], "craft", errors)
+	_need(d, ["id", "schema", "skin", "block", "props", "card"], "craft", errors)
 	if not errors.is_empty():
 		return errors
-	_need(d.block, ["enter", "loop", "exit"], "craft '%s' block" % d.id, errors)
-	_need(d.card, ["status", "sources", "unknown"], "craft '%s' card" % d.id, errors)
+	var where := "craft '%s'" % d.id
+	if int(d.schema) != 2:
+		errors.append("%s: unsupported schema %s" % [where, d.schema])
+	_need(d.block, ["cycle"], where + " block", errors)
+	if d.block.has("cycle") and (not (d.block.cycle is Array) or d.block.cycle.is_empty()):
+		errors.append(where + ": block.cycle must be a non-empty list of [clip, seconds|null]")
+	var ids := {}
+	for p in d.props:
+		_need(p, ["id", "asset"], where + " prop", errors)
+		if p.has("id"):
+			if ids.has(p.id):
+				errors.append("%s: duplicate prop id '%s'" % [where, p.id])
+			ids[p.id] = true
+		if p.has("held"):
+			for rule in p.held:
+				_need(rule, ["node", "clip"], "%s prop '%s' held rule" % [where, p.get("id", "?")], errors)
+	_need(d.card, ["status", "sources", "unknown", "evidence", "reconstruction"], where + " card", errors)
 	if d.card.has("status") and not (str(d.card.status) in ["E", "R", "F"]):
-		errors.append("craft '%s': card.status must be E, R or F" % d.id)
+		errors.append("%s: card.status must be E, R or F" % where)
 	return errors
 
 static func validate_homestead(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
 	_need(d, ["id", "schema", "craft", "house", "workplace", "bed", "walker", "sleeper"], "homestead", errors)
+	if errors.is_empty() and int(d.schema) != 2:
+		errors.append("homestead '%s': unsupported schema %s" % [d.id, d.schema])
+	return errors
+
+static func validate_village(d: Dictionary) -> PackedStringArray:
+	var errors := PackedStringArray()
+	_need(d, ["id", "schema", "disc_radius_m", "houses", "paths", "fields", "stream"], "village", errors)
+	if not errors.is_empty():
+		return errors
+	for h in d.houses:
+		_need(h, ["id", "pos", "yaw_deg", "door"], "village house", errors)
+	return errors
+
+static func validate_terrain(d: Dictionary) -> PackedStringArray:
+	var errors := PackedStringArray()
+	_need(d, ["schema", "size", "step_m", "x0", "z0", "heights_cm"], "terrain", errors)
+	if errors.is_empty() and d.heights_cm.size() != int(d.size) * int(d.size):
+		errors.append("terrain: %d heights for a %d x %d grid" % [d.heights_cm.size(), d.size, d.size])
 	return errors

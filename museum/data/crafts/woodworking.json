@@ -1,0 +1,74 @@
+{
+  "id": "woodworking",
+  "schema": 2,
+  "name": {
+    "cs": "Opracování dřeva",
+    "en": "Woodworking"
+  },
+  "skin": "BRONZE-001/person_chopping",
+  "block": {
+    "enter": "chop_enter",
+    "cycle": [
+      [
+        "chop",
+        null
+      ]
+    ],
+    "exit": "chop_exit"
+  },
+  "props": [
+    {
+      "id": "block",
+      "asset": "BRONZE-001/chopping_block",
+      "place": {
+        "station": "worker_origin"
+      }
+    },
+    {
+      "id": "axe",
+      "asset": "BRONZE-001/axe_winged_hafted",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "axe_hold",
+          "clip": "chop_enter"
+        },
+        {
+          "node": "axe_hold",
+          "clip": "chop"
+        },
+        {
+          "node": "axe_hold",
+          "clip": "chop_exit"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Ve dřevěném uhlí z Březnice převládá dub (stavba, otop), jedle pochází hlavně z kůlových jam. Domy se předpokládají jako sloupové s proplétanou stěnou a mazanicí (převzato z jiných regionů).",
+          "en": "Oak dominates the charcoal from Březnice (building, fuel); fir comes mostly from post pits. Houses are assumed to be post-built with wattle and daub (taken from other regions)."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Sekání bronzovou sekerou na špalku je rekonstrukce. Bronzové nástroje jsou doložené regionálně, ne na této lokalitě.",
+      "en": "Chopping with a bronze axe on a block is reconstructed. Bronze tools are attested regionally, not at this site."
+    },
+    "unknown": [
+      "tool kit used on site",
+      "felling versus trimming techniques",
+      "who did the woodwork"
+    ],
+    "sources": [
+      "Šálková et al. 2022, Scientific Reports 12:20323, pp. 6 and 10",
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, p. 8",
+      "BRONZE-001 PROVENANCE.md",
+      "content/research/economy/crafts-exchange.md, section 2.4"
+    ]
+  }
+}

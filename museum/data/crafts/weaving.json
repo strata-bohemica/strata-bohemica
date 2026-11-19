@@ -1,0 +1,108 @@
+{
+  "id": "weaving",
+  "schema": 2,
+  "name": {
+    "cs": "Tkaní",
+    "en": "Weaving"
+  },
+  "skin": "WEAVE-001/person_weaving",
+  "block": {
+    "enter": "weave_enter",
+    "cycle": [
+      [
+        "weave_pass",
+        null
+      ],
+      [
+        "weave_beat",
+        null
+      ],
+      [
+        "weave_shed_change",
+        null
+      ],
+      [
+        "weave_pass",
+        null
+      ],
+      [
+        "weave_beat",
+        null
+      ],
+      [
+        "weave_shed_change",
+        null
+      ]
+    ],
+    "exit": "weave_exit"
+  },
+  "props": [
+    {
+      "id": "loom",
+      "asset": "LOOM-001/loom_weaving_base_up",
+      "place": {
+        "station": "weaver_origin"
+      }
+    },
+    {
+      "id": "bobbin",
+      "asset": "WEAVE-001/weft_bobbin",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "bobbin_hold_L",
+          "clip": "weave_pass",
+          "to": 1.5
+        },
+        {
+          "node": "bobbin_hold_R",
+          "clip": "weave_pass",
+          "from": 1.5,
+          "to": 2.7
+        },
+        {
+          "node": "bobbin_hold_L",
+          "clip": "weave_pass",
+          "from": 2.7
+        }
+      ]
+    },
+    {
+      "id": "beater",
+      "asset": "WEAVE-001/sword_beater",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "beater_hold",
+          "clip": "weave_beat"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici jsou hliněná závaží (převážně jehlancovitá, vypálená). Jejich použití jako závaží stavu je ale sporné: mohly být podstavci pod rožně.",
+          "en": "Fired clay weights (mostly pyramidal) were found at Březnice. Their use as loom weights is contested: they may have been supports under spits."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Typ stavu (závaží zavěšená na osnově), poloha závaží nahoře, pohyb člunku a tepání jsou rekonstrukce.",
+      "en": "The loom type (warp-weighted), the weights hung base-up, the shuttle passes and the beating are reconstructed."
+    },
+    "unknown": [
+      "whether a loom was used at all",
+      "fibre (flax not found, wool unverified locally)",
+      "who wove"
+    ],
+    "sources": [
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308",
+      "LOOM-001 PROVENANCE.md",
+      "WEAVE-001 PROVENANCE.md"
+    ]
+  }
+}
