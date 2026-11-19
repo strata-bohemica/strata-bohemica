@@ -51,10 +51,17 @@
     "status": "R",
     "evidence": [
       {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici je orba nepřímo doložena: 17 % druhů rostlin pochází z polních stanovišť (33 polních, 29 úhorových). Samotné rádlo, jho ani tažný skot tu doloženy nejsou.",
+          "en": "Ploughing is indirectly attested at Březnice: 17% of the plant species come from field habitats (33 field, 29 fallow). No ard, yoke or draught cattle has been found there."
+        }
+      },
+      {
         "class": "R",
         "text": {
-          "cs": "Tažná zvířata jsou v českých zemích doložena od konce eneolitu a pravé pluhy od začátku doby bronzové. Na Březnici samotné není doložen ani pluh, ani jho, ani tažný skot.",
-          "en": "Draught animals are attested in the Czech lands from the end of the Eneolithic and real ploughs from the start of the Bronze Age. Neither an ard, a yoke nor draught cattle is attested at Březnice itself."
+          "cs": "Dvě dřevěná rádla typu Walle z Opavy (Slezsko, kultura lužických popelnicových polí, radiokarbon 1289–925 př. n. l.) jsou podle autorů prvním nálezem rádla v ČR. Z Čech rádlo doložené není. Experiment s replikou dával brázdy hluboké 8–12 cm s rozestupem 18–35 cm.",
+          "en": "Two wooden Walle-type ards from Opava (Silesia, Lusatian Urnfield culture, radiocarbon 1289–925 BCE) are, per the authors, the first ard find in the Czech Republic. No ard is attested in Bohemia. An experiment with a replica gave furrows 8–12 cm deep, 18–35 cm apart."
         }
       }
     ],
@@ -78,6 +85,8 @@
     ],
     "sources": [
       "research/economy/subsistence.md, activity table (tillage)",
+      "Kováčik, Pavelka, Hořínková 2022, Archeologické rozhledy 74(2): 155–179",
+      "Šálková et al. 2022, Scientific Reports 12: 20323, doi:10.1038/s41598-022-24753-x",
       "ARD-001 PROVENANCE.md"
     ]
   }
