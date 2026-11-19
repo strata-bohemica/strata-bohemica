@@ -1,0 +1,84 @@
+{
+  "id": "ploughing",
+  "schema": 2,
+  "name": {
+    "cs": "Orba",
+    "en": "Ploughing"
+  },
+  "skin": "ARD-001/person_ploughing",
+  "block": {},
+  "travel": {
+    "length": 14.0,
+    "speed": 0.6,
+    "walk": "plough_walk",
+    "enter": "plough_enter",
+    "exit": "plough_exit",
+    "turn_hold_s": 1.2
+  },
+  "props": [
+    {
+      "id": "ard",
+      "asset": "ARD-001/ard",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "stilt_hold",
+          "clip": "plough_enter"
+        },
+        {
+          "node": "stilt_hold",
+          "clip": "plough_walk"
+        },
+        {
+          "node": "stilt_hold",
+          "clip": "plough_exit"
+        }
+      ]
+    },
+    {
+      "id": "yoke",
+      "asset": "ARD-001/yoke_pair",
+      "place": {
+        "hitch": {
+          "on": "prop:ard",
+          "node": "yoke_hitch",
+          "own": "beam_hitch"
+        }
+      }
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "R",
+        "text": {
+          "cs": "Tažná zvířata jsou v českých zemích doložena od konce eneolitu a pravé pluhy od začátku doby bronzové. Na Březnici samotné není doložen ani pluh, ani jho, ani tažný skot.",
+          "en": "Draught animals are attested in the Czech lands from the end of the Eneolithic and real ploughs from the start of the Bronze Age. Neither an ard, a yoke nor draught cattle is attested at Březnice itself."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Celá souprava (rádlo s oji, jho přes kohouty, pár skotu, rychlost 0,6 m/s, otáčka na konci brázdy) je regionální rekonstrukce bez místního dokladu.",
+      "en": "The whole set (a crook ard with a beam, a withers yoke, a pair of cattle, 0.6 m/s, the turn at the end of the furrow) is a regional reconstruction without local evidence."
+    },
+    "unknown": [
+      {
+        "cs": "druh rádla a jha (jho na rohy je také možné)",
+        "en": "ard and yoke type (a horn yoke is also possible)"
+      },
+      {
+        "cs": "uspořádání polí a směr orby",
+        "en": "field layout and ploughing direction"
+      },
+      {
+        "cs": "kdo oral a kdy v roce",
+        "en": "who ploughed and when in the year"
+      }
+    ],
+    "sources": [
+      "content/research/economy/subsistence.md, activity table (tillage)",
+      "ARD-001 PROVENANCE.md"
+    ]
+  }
+}

@@ -41,9 +41,12 @@ static func validate_craft(d: Dictionary) -> PackedStringArray:
 	var where := "craft '%s'" % d.id
 	if int(d.schema) != 2:
 		errors.append("%s: unsupported schema %s" % [where, d.schema])
-	_need(d.block, ["cycle"], where + " block", errors)
-	if d.block.has("cycle") and (not (d.block.cycle is Array) or d.block.cycle.is_empty()):
-		errors.append(where + ": block.cycle must be a non-empty list of [clip, seconds|null]")
+	if d.has("travel"):
+		_need(d.travel, ["length", "speed", "walk", "enter", "exit", "turn_hold_s"], where + " travel", errors)
+	else:
+		_need(d.block, ["cycle"], where + " block", errors)
+		if d.block.has("cycle") and (not (d.block.cycle is Array) or d.block.cycle.is_empty()):
+			errors.append(where + ": block.cycle must be a non-empty list of [clip, seconds|null]")
 	var ids := {}
 	for p in d.props:
 		_need(p, ["id", "asset"], where + " prop", errors)
@@ -71,6 +74,8 @@ static func validate_homestead(d: Dictionary) -> PackedStringArray:
 			errors.append("pending homestead '%s': the reason needs cs and en" % d.get("id", "?"))
 		return errors
 	_need(d, ["id", "schema", "craft", "house", "workplace", "bed", "walker", "sleeper"], "homestead", errors)
+	if d.get("site", false) == true and d.has("workplace") == false:
+		errors.append("homestead '%s': a site homestead still lists a workplace placeholder" % d.get("id", "?"))
 	if errors.is_empty() and int(d.schema) != 2:
 		errors.append("homestead '%s': unsupported schema %s" % [d.id, d.schema])
 	return errors
@@ -79,8 +84,13 @@ static func validate_homestead(d: Dictionary) -> PackedStringArray:
 static func validate_animals(animals: Array, day_length_s: float, where: String) -> PackedStringArray:
 	var errors := PackedStringArray()
 	for a in animals:
-		_need(a, ["asset", "cycle"], where + " animal", errors)
+		_need(a, ["asset"], where + " animal", errors)
+		if a.has("follow"):                   # moves with the work (the oxen of a plough): no cycle of its own
+			if not a.has("on"):
+				errors.append("%s: a following animal needs on" % where)
+			continue
 		if not a.has("cycle") or a.cycle.is_empty():
+			errors.append("%s: an animal needs a cycle" % where)
 			continue
 		var total := 0.0
 		for e in a.cycle:

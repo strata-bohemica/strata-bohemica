@@ -184,6 +184,28 @@ def try_place(kind, min_gap, house_gap, count, rim_bias):
 try_place('oak_summer', 13.0, 13.0, 14, 0.55)
 try_place('hazel_leafed', 4.5, 10.0, 34, 0.5)
 
+W = lambda x, y: [round(float(x), 2), round(float(-y), 2)]
+
+# ---- field sites: a worker who moves (the plough) works in a field, reached by the path network ---------------------------
+SITE_LENGTH = 14.0
+sites = {}
+for h in houses:
+    if h['craft'] != 'plough':
+        continue
+    jj = math.radians(h['yaw_deg']); sd = 1 if h['door'] == 'E' else -1
+    yard = (h['x'] + sd * math.cos(jj) * YARD_LOCAL_Z, h['y'] + sd * math.sin(jj) * YARD_LOCAL_Z)
+    centres = [(sum(px for px, _ in poly) / len(poly), sum(py for _, py in poly) / len(poly)) for poly in fields]
+    cx, cy = min(centres, key=lambda c: math.hypot(c[0] - yard[0], c[1] - yard[1]))
+    # plough across the slope, along the contour
+    g = np.array([at(gx, cx, cy), at(gy, cx, cy)])
+    d = np.array([-g[1], g[0]])
+    d = d / (np.linalg.norm(d) or 1.0)
+    start = (cx - d[0] * SITE_LENGTH / 2, cy - d[1] * SITE_LENGTH / 2)
+    commute = route(node(*yard), node(*start))
+    paths.append(commute)                      # the way to the field is a visible path too
+    sites[str(h['id'])] = dict(start=W(*start), dir=[round(float(d[0]), 4), round(float(-d[1]), 4)], length=SITE_LENGTH,
+                               commute=[W(x, y) for x, y in commute[::2]] + [W(*start)])
+
 # ---- export (world coordinates: x east, z south = -y) -----------------------------------------------
 W = lambda x, y: [round(float(x), 2), round(float(-y), 2)]
 out_houses = []
@@ -195,7 +217,7 @@ for h in houses:
 village = dict(id='breznice', schema=1, disc_radius_m=DISC, note='Layout and terrain are F/R: no house plan or terrain model of Březnice exists. World coordinates, x east, z south.',
     houses=out_houses, paths=[[W(x, y) for x, y in p] for p in paths], fields=[[W(x, y) for x, y in poly] for poly in fields],
     stream=dict(points=[W(float(stream_x(y)), y) for y in range(-80, 81, 4)], width_m=4.0),
-    clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']),
+    clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']), sites=sites,
     trees=[dict(kind=t['kind'], pos=W(t['x'], t['y']), yaw_deg=round(t['yaw'], 1), scale=round(t['scale'], 2)) for t in trees])
 json.dump(village, open(os.path.join(DATA, 'breznice.json'), 'w'), separators=(',', ':'))
 heights_cm = np.round(H * 100).astype(int)

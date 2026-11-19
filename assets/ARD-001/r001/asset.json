@@ -1,0 +1,929 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "ARD-001",
+  "revision": "r001",
+  "brief": "art/briefs/economy-batch6/ARD-001.md (economy batch 6, proposal, not a frozen pack) + README.md; shared rules art/briefs/economy-batch4/README.md; executed under art/handoffs/bronze-bohemia-opus-v2 COMMON.md / RETURN.md",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generators written for this job; ploughman clips on the unchanged PERSON-001 r002 solver)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import, contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import, bundled with Blender 5.2.3)",
+    "Godot Engine 4.5.1-stable (official) (headless import probe; GPU captures with gl_compatibility / opengl3)",
+    "Python 3.9.6 + NumPy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheets)",
+    "ffmpeg 9.0.2 (MP4/GIF)",
+    "macOS 26.7.1, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "ard: share soil-entry point; yoke_pair: floor point midway between the two cattle origins (team frame); furrow_strip: base centre; person_ploughing: floor between the feet (r002)",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "evidence_class": "R (whole job)",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No ard, yoke or tillage trace is attested at Brezice; every size is an R game-fit choice sized to the project's PERSON (1.70 m) and ANIMAL-001 cattle.",
+  "models": [
+    {
+      "file": "models/ard.glb",
+      "role": "generic crook ard in working attitude (R): crook body = share + sole + stilt, separate beam, T-handle, wedge, rawhide lashings, hitch peg; origin = share soil-entry point, +Z = draught direction",
+      "triangles": 616,
+      "triangle_budget_R": 1000,
+      "budget_ok": true,
+      "vertices_exported": 735,
+      "materials": 1,
+      "material_names": [
+        "ARD_kit"
+      ],
+      "textures": [
+        {
+          "name": "ard_kit_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "ea8449b581df7fba4d1344cfad0037f06c957bbdf180c721744108f793e000f8",
+          "role": "base colour only (sRGB)"
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 75556,
+      "glb_sha256": "64fa243b1ae6b21eae7a4f6dafc7330b7930559ba0b85daae2c7df4c89f31773",
+      "export_bounds_m": {
+        "width": 0.342842,
+        "height": 1.140818,
+        "depth": 2.063668,
+        "min": [
+          -0.171421,
+          -0.071753,
+          -0.622026
+        ],
+        "max": [
+          0.171421,
+          1.069065,
+          1.441643
+        ]
+      },
+      "root_transform": "identity (scene root node has no TRS)",
+      "anchors": {
+        "grip": {
+          "parent": "ARD",
+          "translation": [
+            0.0,
+            0.93,
+            -0.6
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.93,
+            -0.6
+          ],
+          "note": "T-handle centre (both hands); the person's stilt_hold equals this node at plough_walk t=0"
+        },
+        "yoke_hitch": {
+          "parent": "ARD",
+          "translation": [
+            0.0,
+            1.03,
+            1.4
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            1.03,
+            1.4
+          ],
+          "note": "beam-end peg; place the ard so that yoke_hitch == yoke_pair beam_hitch"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "godot_import": {
+        "triangles": 616,
+        "cull_modes": [
+          0
+        ],
+        "cull_back_all": true,
+        "transparency": [
+          0
+        ]
+      },
+      "ard_length_m": 2.063668,
+      "share_depth_below_soil_m": -0.0718
+    },
+    {
+      "file": "models/yoke_pair.glb",
+      "role": "neck (withers) yoke for two ANIMAL-001 cattle (R): bowed beam with two neck seats, two pin pairs, throat thongs, centre rope ring for the ard beam; origin = floor point midway between the cattle origins",
+      "triangles": 986,
+      "triangle_budget_R": 1200,
+      "budget_ok": true,
+      "vertices_exported": 957,
+      "materials": 1,
+      "material_names": [
+        "ARD_kit"
+      ],
+      "textures": [
+        {
+          "name": "ard_kit_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "ea8449b581df7fba4d1344cfad0037f06c957bbdf180c721744108f793e000f8",
+          "role": "base colour only (sRGB)"
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 84908,
+      "glb_sha256": "d1d66e5301798b0a34a150e6e6962f9db64a143e92a8529edf1d50878c64f05f",
+      "export_bounds_m": {
+        "width": 1.620939,
+        "height": 0.671352,
+        "depth": 0.231511,
+        "min": [
+          -0.81047,
+          0.5695,
+          0.420489
+        ],
+        "max": [
+          0.81047,
+          1.240852,
+          0.652
+        ]
+      },
+      "root_transform": "identity (scene root node has no TRS)",
+      "anchors": {
+        "beam_hitch": {
+          "parent": "YOKE_PAIR",
+          "translation": [
+            0.0,
+            1.03,
+            0.52
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            1.03,
+            0.52
+          ],
+          "note": "where the ard's yoke_hitch goes (rope ring under the yoke centre)"
+        },
+        "cattle_l": {
+          "parent": "YOKE_PAIR",
+          "translation": [
+            0.5,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.5,
+            0.0,
+            0.0
+          ],
+          "note": "ANIMAL-001 cattle root (floor between hooves) of the left animal (+X)"
+        },
+        "cattle_r": {
+          "parent": "YOKE_PAIR",
+          "translation": [
+            -0.5,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            -0.5,
+            0.0,
+            0.0
+          ],
+          "note": "ANIMAL-001 cattle root of the right animal (-X)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "godot_import": {
+        "triangles": 986,
+        "cull_modes": [
+          0
+        ],
+        "cull_back_all": true,
+        "transparency": [
+          0
+        ]
+      },
+      "sized_to": {
+        "fixture": "ANIMAL-001 r001 models/cattle.glb",
+        "seat_underside_y_m": 1.1043,
+        "seat_z_m": 0.58,
+        "cattle_spacing_m": 1.0,
+        "pins_at_cattle_x_plus_minus_m": 0.185,
+        "seat_y_required_min_max_m": {
+          "walk": [
+            1.0482,
+            1.0698
+          ],
+          "idle": [
+            1.0846,
+            1.1023
+          ]
+        },
+        "yoked_clips": [
+          "walk",
+          "idle"
+        ]
+      },
+      "yoke_bob_adapter_R": {
+        "use": "optional game-side: yoke.y += seat_offset(clip, cattle clip time), linear interpolation; offsets <= 0, 0 = authored seat; tables for the cattle walk and idle clips",
+        "tables": {
+          "walk": {
+            "duration_s": 1.0,
+            "keys": 31,
+            "seat_offset_m": [
+              -0.03389,
+              -0.03637,
+              -0.03798,
+              -0.04115,
+              -0.04625,
+              -0.05046,
+              -0.05308,
+              -0.0537,
+              -0.05227,
+              -0.04907,
+              -0.04506,
+              -0.0425,
+              -0.03954,
+              -0.03516,
+              -0.03261,
+              -0.03426,
+              -0.03592,
+              -0.0378,
+              -0.04119,
+              -0.04645,
+              -0.05078,
+              -0.05346,
+              -0.05407,
+              -0.05257,
+              -0.04923,
+              -0.04502,
+              -0.04221,
+              -0.03975,
+              -0.03542,
+              -0.03255,
+              -0.03389
+            ]
+          },
+          "idle": {
+            "duration_s": 2.0,
+            "keys": 61,
+            "seat_offset_m": [
+              -0.00765,
+              -0.0063,
+              -0.0049,
+              -0.00363,
+              -0.00254,
+              -0.0017,
+              -0.00116,
+              -0.00095,
+              -0.0005,
+              -0.0003,
+              -0.0005,
+              -0.00108,
+              -0.00201,
+              -0.00324,
+              -0.00472,
+              -0.00637,
+              -0.00813,
+              -0.00993,
+              -0.01169,
+              -0.01334,
+              -0.01483,
+              -0.01609,
+              -0.01707,
+              -0.01774,
+              -0.01735,
+              -0.01651,
+              -0.0153,
+              -0.01375,
+              -0.01191,
+              -0.00985,
+              -0.00765,
+              -0.00638,
+              -0.00508,
+              -0.00389,
+              -0.00289,
+              -0.00214,
+              -0.00164,
+              -0.0007,
+              -0.00015,
+              0.0,
+              -0.00025,
+              -0.00087,
+              -0.00184,
+              -0.00309,
+              -0.00458,
+              -0.00623,
+              -0.00798,
+              -0.00976,
+              -0.01149,
+              -0.0131,
+              -0.01454,
+              -0.01574,
+              -0.01666,
+              -0.01726,
+              -0.01753,
+              -0.017,
+              -0.0157,
+              -0.01405,
+              -0.01212,
+              -0.00995,
+              -0.00765
+            ]
+          }
+        }
+      }
+    },
+    {
+      "file": "models/furrow_strip.glb",
+      "role": "ploughed strip decal 1 x 4 m (R): four ard furrows of 0.25 m along +Z, ridge tops <= 0.058 m, skirt to y -0.03 (FIELD-001 slab convention); single-sided top + skirt, no bottom",
+      "triangles": 640,
+      "triangle_budget_R": 800,
+      "budget_ok": true,
+      "vertices_exported": 433,
+      "materials": 1,
+      "material_names": [
+        "ARD_kit"
+      ],
+      "textures": [
+        {
+          "name": "ard_kit_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "ea8449b581df7fba4d1344cfad0037f06c957bbdf180c721744108f793e000f8",
+          "role": "base colour only (sRGB)"
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 65860,
+      "glb_sha256": "d8300e2f9a35f5243304c51990a99344942b1ae2038bbedae8ed7a13e0fd9605",
+      "export_bounds_m": {
+        "width": 1.0,
+        "height": 0.087641,
+        "depth": 4.0,
+        "min": [
+          -0.5,
+          -0.03,
+          -2.0
+        ],
+        "max": [
+          0.5,
+          0.057641,
+          2.0
+        ]
+      },
+      "root_transform": "identity (scene root node has no TRS)",
+      "anchors": {
+        "base_center": {
+          "parent": "FURROW_STRIP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "note": "origin, base centre on the floor"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "godot_import": {
+        "triangles": 640,
+        "cull_modes": [
+          0
+        ],
+        "cull_back_all": true,
+        "transparency": [
+          0
+        ]
+      }
+    },
+    {
+      "file": "models/person_ploughing.glb",
+      "role": "PERSON-001 r002 (mesh/skin/bind pose/palette/materials byte-identical) + in-place clips plough_enter, plough_walk (loop), plough_exit; stilt_hold under hand.R",
+      "triangles": 2052,
+      "triangle_budget_R": 2052,
+      "budget_ok": true,
+      "vertices_exported": 1443,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+          "role": "base colour only (sRGB)"
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 257560,
+      "glb_sha256": "d6069163be8ccf783b80da705960b920017d85fa4fe8099bc7506b4d71246b6d",
+      "export_bounds_m": {
+        "width": 0.60454,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.30227,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.30227,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity (scene root node has no TRS)",
+      "anchors": {
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.223504,
+            -0.152738,
+            -0.067734
+          ],
+          "rotation_xyzw": [
+            0.046635,
+            0.084315,
+            -0.055281,
+            0.993811
+          ],
+          "rest_world_position": [
+            -0.008899,
+            0.948357,
+            0.027894
+          ],
+          "note": "unchanged r002 node (not used by these clips)"
+        },
+        "stilt_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.035176,
+            0.07164,
+            -0.112368
+          ],
+          "rotation_xyzw": [
+            -0.512637,
+            0.400526,
+            0.655745,
+            0.38312
+          ],
+          "rest_world_position": [
+            -0.222879,
+            0.758249,
+            0.104553
+          ],
+          "note": "child of bone hand.R; at plough_walk t=0 its pose equals the ard grip (position + ard axes); the grip is fixed in root space at (0, 0.93, 0.50)"
+        }
+      },
+      "animations": [
+        {
+          "name": "plough_enter",
+          "duration_s": 1.2,
+          "fps": 30,
+          "keys_per_channel": 37,
+          "channels": 69,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "in_place": true,
+          "pelvis_translation_local_range": {
+            "min": [
+              -0.022,
+              0.83991,
+              0.0
+            ],
+            "max": [
+              0.02,
+              0.884,
+              0.02
+            ]
+          },
+          "first_last_key_max_rotation_diff_deg": 81.394915,
+          "godot_after_2.5_lengths": {
+            "current": "",
+            "foot_L_dev_at_whole_lengths_m": 0.24631,
+            "is_playing": false,
+            "position_s": 1.20000004768372
+          },
+          "first_pose": "= PERSON r002 idle t=0 (0.054935 deg float noise)",
+          "last_pose": "= plough_walk t=0 (0.05115 deg)",
+          "behaviour": "left foot steps back, right foot steps forward, trunk leans, hands come down onto the handle from above"
+        },
+        {
+          "name": "plough_exit",
+          "duration_s": 1.2,
+          "fps": 30,
+          "keys_per_channel": 37,
+          "channels": 69,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "in_place": true,
+          "pelvis_translation_local_range": {
+            "min": [
+              -0.022,
+              0.83991,
+              0.0
+            ],
+            "max": [
+              0.02,
+              0.884,
+              0.02
+            ]
+          },
+          "first_last_key_max_rotation_diff_deg": 81.394915,
+          "godot_after_2.5_lengths": {
+            "current": "",
+            "foot_L_dev_at_whole_lengths_m": 0.24631,
+            "is_playing": false,
+            "position_s": 1.20000004768372
+          },
+          "first_pose": "= plough_walk t=0 (0.05115 deg)",
+          "last_pose": "= PERSON r002 idle t=0 (0.054935 deg float noise)",
+          "behaviour": "plough_enter played in reverse time"
+        },
+        {
+          "name": "plough_walk",
+          "duration_s": 1.6,
+          "fps": 30,
+          "keys_per_channel": 49,
+          "channels": 69,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "in_place": true,
+          "pelvis_translation_local_range": {
+            "min": [
+              -0.014,
+              0.838055,
+              0.02
+            ],
+            "max": [
+              0.014,
+              0.857945,
+              0.02
+            ]
+          },
+          "first_last_key_max_rotation_diff_deg": 0.051164,
+          "godot_after_2.5_lengths": {
+            "current": "plough_walk",
+            "foot_L_dev_at_whole_lengths_m": 0.0,
+            "is_playing": true,
+            "position_s": 0.799999952316287
+          },
+          "ground_speed_m_per_s": 0.6,
+          "stride_m_per_loop": 0.96,
+          "steps_per_loop": 2,
+          "first_pose": "right heel strike, left foot behind (heel rising), both hands on the T-handle",
+          "last_pose": "= first pose (seamless loop)",
+          "stilt_hold_drift_godot_m": 0.0,
+          "behaviour": "slow treadmill walk leaning forward, both hands on the T-handle; hands fixed in root space while the body bobs/sways"
+        }
+      ],
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "godot_import": {
+        "triangles": 2052,
+        "cull_modes": [
+          0
+        ],
+        "cull_back_all": true,
+        "transparency": [
+          0
+        ]
+      },
+      "parity_with_PERSON_r002": {
+        "mesh_buffers_identical": true,
+        "primitive_count_equal": true,
+        "inverse_bind_matrices_identical": true,
+        "skin_joint_names_identical": true,
+        "bone_bind_TRS_and_hierarchy_identical": true,
+        "palette_image_bytes_identical": true,
+        "materials_json_identical": true,
+        "samplers_identical": true,
+        "carry_anchor_TRS_identical": true,
+        "scene_root_nodes_identical": true,
+        "r002_clips": [
+          "carry_walk",
+          "idle",
+          "rest",
+          "walk",
+          "work"
+        ],
+        "returned_clips": [
+          "plough_enter",
+          "plough_exit",
+          "plough_walk"
+        ],
+        "r002_sha256": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706"
+      },
+      "skeleton": {
+        "joints": 23,
+        "max_weights_per_vertex": 3,
+        "note": "unchanged PERSON-001 r002 rig"
+      }
+    }
+  ],
+  "kit_unique_materials": 3,
+  "kit_unique_materials_note": "ARD_kit (shared by ard, yoke_pair, furrow_strip) + PERSON r002 body/garment (unchanged)",
+  "kit_unique_textures": [
+    {
+      "name": "ard_kit_atlas",
+      "width": 256,
+      "height": 256,
+      "sha256": "ea8449b581df7fba4d1344cfad0037f06c957bbdf180c721744108f793e000f8"
+    },
+    {
+      "name": "person_palette",
+      "width": 256,
+      "height": 256,
+      "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe"
+    }
+  ],
+  "team_layout": {
+    "frame": "yoke_pair origin",
+    "cattle_l": [
+      0.5,
+      0.0,
+      0.0
+    ],
+    "cattle_r": [
+      -0.5,
+      0.0,
+      0.0
+    ],
+    "ard_origin": [
+      0.0,
+      0.0,
+      -0.88
+    ],
+    "person_origin": [
+      0.0,
+      0.0,
+      -1.98
+    ],
+    "rule": "cattle at cattle_l/cattle_r; ard = beam_hitch * inverse(yoke_hitch); person = ard grip * inverse(stilt_hold at plough_walk t=0) (= grip - (0, 0.93, 0.50))",
+    "speed_m_per_s": 0.6,
+    "cattle_walk_speed_scale": 0.75,
+    "godot_stilt_hold_vs_ard_grip_max_m": 1e-06,
+    "godot_hitch_alignment_m": 0.0
+  },
+  "contacts_measured": {
+    "share_at_soil": {
+      "lowest_ard_vertex_y_m": -0.0718,
+      "below_soil_z_range_team_m": [
+        -1.043,
+        -0.633
+      ]
+    },
+    "hands_on_stilt": {
+      "min_signed_distance_m": {
+        "L": -0.0009,
+        "R": -0.0009
+      },
+      "by_part": {
+        "palm": -0.0009,
+        "fingers": 0.0002
+      },
+      "samples_within_5mm": {
+        "L": 192,
+        "R": 192
+      }
+    },
+    "person_vs_ard_other_vertices_min_m": 0.0534,
+    "plough_enter_person_vs_ard_min_m": -0.0009,
+    "person_shoe_min_y_m": -0.00013,
+    "yoke_on_necks": {
+      "walk_with_bob_adapter": {
+        "clip": "walk",
+        "samples": 120,
+        "bob_adapter": true,
+        "min_signed_distance_yoke_part_to_cattle_m": {
+          "centre_rope": 0.2157,
+          "pins": 0.0161,
+          "throat_thongs": 0.0034,
+          "yoke_beam": 0.0015
+        },
+        "seat_underside_gap_to_neck_min_max_m": {
+          "cattle_l": [
+            0.0015,
+            0.0078
+          ],
+          "cattle_r": [
+            0.0015,
+            0.0078
+          ]
+        },
+        "min_signed_distance_cattle_vertex_to_yoke_m": 0.015,
+        "min_signed_distance_ard_to_cattle_m": 0.179,
+        "min_signed_distance_ard_to_yoke_m": 0.0107,
+        "largest_per_sample_ard_to_yoke_gap_m": 0.0107,
+        "ard_yoke_hitch_to_yoke_beam_hitch_m": [
+          0.0325,
+          0.0541
+        ]
+      },
+      "walk_static_yoke": {
+        "clip": "walk",
+        "samples": 120,
+        "bob_adapter": false,
+        "min_signed_distance_yoke_part_to_cattle_m": {
+          "centre_rope": 0.2228,
+          "pins": 0.0177,
+          "throat_thongs": 0.0098,
+          "yoke_beam": 0.0342
+        },
+        "seat_underside_gap_to_neck_min_max_m": {
+          "cattle_l": [
+            0.0342,
+            0.0594
+          ],
+          "cattle_r": [
+            0.0342,
+            0.0594
+          ]
+        },
+        "min_signed_distance_cattle_vertex_to_yoke_m": 0.0238,
+        "min_signed_distance_ard_to_cattle_m": 0.179,
+        "min_signed_distance_ard_to_yoke_m": 0.0108,
+        "largest_per_sample_ard_to_yoke_gap_m": 0.0108,
+        "ard_yoke_hitch_to_yoke_beam_hitch_m": [
+          0.0,
+          0.0
+        ]
+      },
+      "idle_with_bob_adapter": {
+        "clip": "idle",
+        "samples": 240,
+        "bob_adapter": true,
+        "min_signed_distance_yoke_part_to_cattle_m": {
+          "centre_rope": 0.2338,
+          "pins": 0.0288,
+          "throat_thongs": 0.0485,
+          "yoke_beam": 0.0019
+        },
+        "seat_underside_gap_to_neck_min_max_m": {
+          "cattle_l": [
+            0.0019,
+            0.0062
+          ],
+          "cattle_r": [
+            0.0019,
+            0.0062
+          ]
+        },
+        "min_signed_distance_cattle_vertex_to_yoke_m": 0.0181,
+        "min_signed_distance_ard_to_cattle_m": 0.1864,
+        "min_signed_distance_ard_to_yoke_m": 0.0107,
+        "largest_per_sample_ard_to_yoke_gap_m": 0.0108,
+        "ard_yoke_hitch_to_yoke_beam_hitch_m": [
+          0.0,
+          0.0177
+        ]
+      },
+      "idle_static_yoke": {
+        "clip": "idle",
+        "samples": 240,
+        "bob_adapter": false,
+        "min_signed_distance_yoke_part_to_cattle_m": {
+          "centre_rope": 0.2341,
+          "pins": 0.0279,
+          "throat_thongs": 0.0447,
+          "yoke_beam": 0.0032
+        },
+        "seat_underside_gap_to_neck_min_max_m": {
+          "cattle_l": [
+            0.0032,
+            0.0196
+          ],
+          "cattle_r": [
+            0.0032,
+            0.0196
+          ]
+        },
+        "min_signed_distance_cattle_vertex_to_yoke_m": 0.0195,
+        "min_signed_distance_ard_to_cattle_m": 0.1864,
+        "min_signed_distance_ard_to_yoke_m": 0.0108,
+        "largest_per_sample_ard_to_yoke_gap_m": 0.0108,
+        "ard_yoke_hitch_to_yoke_beam_hitch_m": [
+          0.0,
+          0.0
+        ]
+      }
+    },
+    "loop_seam_gpu_pixels": {
+      "method": "Godot GPU frames of person_ploughing driven by AnimationPlayer.advance(1/30) with the imported loop_mode; caption strip (top 40 px) excluded",
+      "walk_frame0_vs_one_loop_later_changed_pixels": 3,
+      "walk_frame0_vs_two_loops_later_changed_pixels": 3,
+      "control_walk_frame0_vs_half_loop_changed_pixels": 48128,
+      "enter_last_vs_walk_first_changed_pixels": 0,
+      "walk_last_vs_exit_first_changed_pixels": 5,
+      "exit_last_vs_enter_first_changed_pixels": 0
+    }
+  },
+  "reference_ids": [
+    "KY16 p. 227 (regional synthesis: animal traction, plough finds, wooden yokes in Europe) via content/research/economy/subsistence.md \u00a72.3 (branch docs/economy-research)",
+    "H15 pp. 31-33 (Czech experiment: scratch plough on existing arable) via the same section",
+    "S22 p. 3 (citing Pavelka et al.: ploughing of deforested pasture) via the same section"
+  ],
+  "fixture_hashes": {
+    "PERSON-001 r002 model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "PERSON-001 r002 source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "PERSON-001 r002 source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "PERSON-001 r002 source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "ANIMAL-001 r001 models/cattle.glb": "f4e8ea48ec44c823f0cc7130f4cbea6737814505df61ba0adb3b72feca63f67c",
+    "FIELD-001 r001 models/barley_bare.glb": "aa3d50b75543ed92eab05405189f5754cee3259ae4b17d254b4cab8b8833deec",
+    "HOUSE-001 fixture model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "POT-001 fixture model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0"
+  },
+  "parts_and_uncertainties": [
+    "No ard, yoke, furrow or cattle traction is attested at Brezice; the whole kit is R regional reconstruction.",
+    "Ard type (crook ard with separate beam, T-handle), share depth (7 cm), length (2.06 m), lashings and hitch peg are R design choices.",
+    "Neck/withers yoke with pins and throat thongs is one of several possible yoke types (horn yokes also exist regionally); chosen for fit to the ANIMAL-001 rig, not evidence.",
+    "Ploughman's posture, grip, step length (0.48 m) and speed (0.6 m/s) are R; cattle play the ANIMAL-001 walk at 0.75x so their planted hooves match 0.6 m/s.",
+    "Furrow spacing (0.25 m), ridge height and soil colours are R; the decal says nothing about tillage depth or field layout.",
+    "The yoke bob adapter is an optional R game-side rule; without it the yoke never enters a neck but floats above the necks at walk troughs (see contacts_measured).",
+    "Yoked cattle should only play the ANIMAL-001 walk and idle clips; graze/lie_down/lie_idle/stand_up are not compatible with a yoke and were not tested."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "fixtures_used_not_incorporated": [
+    "ANIMAL-001 r001 cattle.glb (read-only; demos/contact only)",
+    "FIELD-001 r001 barley_bare.glb (demo plot)",
+    "HOUSE-001 / POT-001 r001 fixtures (village context)",
+    "PERSON-001 r002 model.glb (standing scale figure)"
+  ],
+  "deviations": [
+    "person_ploughing.glb ships only the three new clips (as WORK-001 did for person_grinding); the r002 clips stay in PERSON-001 r002.",
+    "Extra anchors beyond the brief: beam_hitch (yoke_pair), base_center (furrow_strip), stilt_hold (person_ploughing).",
+    "Triangle budgets are R choices (none given in the brief).",
+    "The demo moves the team root at 0.6 m/s and plays the cattle walk at speed_scale 0.75; this playback rule is a demo/game adapter, not part of the GLBs.",
+    "The moving demo ploughs over FIELD-001 bare tiles; furrow_strip instances lie in the already ploughed columns (a 4 m decal cannot grow behind the share without a shader or tiling rule)."
+  ]
+}

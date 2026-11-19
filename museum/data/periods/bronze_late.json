@@ -5,14 +5,14 @@
   "day_length_s": 360,
   "note": "Day rhythm is F (fiction): no source gives a daily schedule. Fractions run from midnight (0) through noon (0.5); sunrise is 0.25 and sunset 0.75 (core/day_clock.gd), so people wake before dawn, work in daylight and are home by dusk. Segments tile the day; the two sleep segments are one night across midnight.",
   "segments": [
-    {"id": "sleep",     "from": 0.00, "to": 0.20},
-    {"id": "wake",      "from": 0.20, "to": 0.23},
-    {"id": "walk_out",  "from": 0.23, "to": 0.27},
-    {"id": "work",      "from": 0.27, "to": 0.50},
-    {"id": "meal",      "from": 0.50, "to": 0.58},
-    {"id": "work",      "from": 0.58, "to": 0.73},
-    {"id": "walk_home", "from": 0.73, "to": 0.77},
-    {"id": "settle",    "from": 0.77, "to": 0.80},
-    {"id": "sleep",     "from": 0.80, "to": 1.00}
+    {"id": "sleep",     "from": 0.000, "to": 0.185},
+    {"id": "wake",      "from": 0.185, "to": 0.215},
+    {"id": "walk_out",  "from": 0.215, "to": 0.290},
+    {"id": "work",      "from": 0.290, "to": 0.500},
+    {"id": "meal",      "from": 0.500, "to": 0.580},
+    {"id": "work",      "from": 0.580, "to": 0.710},
+    {"id": "walk_home", "from": 0.710, "to": 0.785},
+    {"id": "settle",    "from": 0.785, "to": 0.815},
+    {"id": "sleep",     "from": 0.815, "to": 1.000}
   ]
 }

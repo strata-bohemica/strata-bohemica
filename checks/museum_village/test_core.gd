@@ -8,6 +8,7 @@ const Catalogue = preload("res://museum/assets/catalogue.gd")
 const CraftProps = preload("res://museum/core/craft_props.gd")
 const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
 const Animals = preload("res://museum/core/animals.gd")
+const Travel = preload("res://museum/core/travel.gd")
 
 func _init() -> void:
 	var t := T.new()
@@ -15,10 +16,13 @@ func _init() -> void:
 	var period: Dictionary = all.period
 	var day: float = float(period.day_length_s)
 	t.eq(all.errors.size(), 0, "all shipped data validates (%s)" % [all.errors])
-	t.ok(all.occupied.size() >= 10, "at least ten occupied homesteads (%d)" % all.occupied.size())
+	t.ok(all.occupied.size() >= 11, "at least eleven occupied homesteads (%d)" % all.occupied.size())
 
 	# validators must actually reject bad data (positive controls)
-	var some = all.occupied[all.occupied.keys()[0]]
+	var some: Dictionary = {}
+	for k in all.occupied:
+		if all.occupied[k].craft.id == "grinding":
+			some = all.occupied[k]
 	var broken: Dictionary = period.duplicate(true)
 	broken.segments[3]["from"] = 0.2
 	t.ok(Schema.validate_period(broken).size() > 0, "a gap in the day is rejected")
@@ -40,7 +44,7 @@ func _init() -> void:
 		var tag := "hs-%02d (%s)" % [house_id, craft.id]
 		crafts_seen[craft.id] = true
 		_check_homestead(t, s, craft, info.durations, period, day, tag)
-	t.ok(crafts_seen.size() >= 10, "ten different crafts run at once (%s)" % [crafts_seen.keys()])
+	t.ok(crafts_seen.size() >= 11, "eleven different crafts run at once (%s)" % [crafts_seen.keys()])
 
 	# craft prop rules on known cases (what the data promises)
 	var cooking: Dictionary = _craft(all, "cooking")
@@ -73,6 +77,8 @@ func _init() -> void:
 	for house_id in all.occupied:
 		var home: Dictionary = all.occupied[house_id].homestead
 		for a in home.get("animals", []):
+			if a.has("follow"):
+				continue                    # follows the work; it has no cycle of its own
 			animal_count += 1
 			var lens: Dictionary = Catalogue.clip_lengths(a.asset)
 			var cyc: float = Animals.cycle_length(a)
@@ -90,6 +96,8 @@ func _init() -> void:
 	t.ok(animal_count >= 3, "dog, pig and cow are present (%d animals)" % animal_count)
 	var bad_cycle := {"asset": "DOG-001/dog", "pos": [0, 0, 0], "cycle": [["idle", 7.0, "loop"]]}
 	t.ok(Schema.validate_animals([bad_cycle], 360.0, "x").size() > 0, "an animal cycle that does not divide the day is rejected")
+
+	_check_travel_pure(t)
 
 	# craft timeline: enter, cycle, exit
 	var grinding: Dictionary = _craft(all, "grinding")
@@ -133,15 +141,18 @@ func _check_homestead(t, s, craft: Dictionary, durations: Dictionary, period: Di
 	# the day has the shape we promise (fractions chosen clear of the homestead offsets)
 	t.eq(s.state_at(0.02 * day).phase, "sleep", "%s: asleep after midnight" % tag)
 	t.eq(s.state_at(0.02 * day).skin, "sleeper", "%s: sleeper skin at night" % tag)
-	t.eq(s.state_at(0.215 * day).phase, "wake", "%s: waking before dawn" % tag)
+	t.eq(s.state_at(0.20 * day).phase, "wake", "%s: waking before dawn" % tag)
 	t.eq(s.state_at(0.30 * day).phase, "work", "%s: working in the morning" % tag)
 	t.eq(s.state_at(0.54 * day).phase, "meal", "%s: meal around noon" % tag)
 	t.eq(s.state_at(0.65 * day).phase, "work", "%s: working in the afternoon" % tag)
 	t.eq(s.state_at(0.95 * day).phase, "sleep", "%s: asleep late in the evening" % tag)
 
 	var block_clips: Array = [craft.block.get("enter", ""), craft.block.get("exit", "")]
-	for e in craft.block.cycle:
-		block_clips.append(e[0])
+	if craft.has("travel"):
+		block_clips = [craft.travel.walk, craft.travel.enter, craft.travel.exit]
+	else:
+		for e in craft.block.cycle:
+			block_clips.append(e[0])
 	var lengths := {"walker": durations.walker, "worker": durations.worker, "sleeper": durations.sleeper}
 	var rules := {}
 	for prop in craft.props:
@@ -163,7 +174,8 @@ func _check_homestead(t, s, craft: Dictionary, durations: Dictionary, period: Di
 			worked_in_dark = maxf(worked_in_dark, 0.2 - s.clock.daylight(time + s.day_offset_s))
 		if st.phase == "work":
 			t.ok(st.skin == "worker" and st.clip in block_clips, "%s: work phase uses the craft clips at %.2f" % [tag, time])
-			t.ok(st.pos.is_equal_approx(s.work_pos), "%s: worker stands at the work place at %.2f" % [tag, time])
+			if not craft.has("travel"):
+				t.ok(st.pos.is_equal_approx(s.work_pos), "%s: worker stands at the work place at %.2f" % [tag, time])
 		if st.skin == "sleeper":
 			t.ok(st.pos.is_equal_approx(s.bed_pos), "%s: sleeper stays on the bed at %.2f" % [tag, time])
 		if st.phase == "sleep":
@@ -186,14 +198,14 @@ func _check_homestead(t, s, craft: Dictionary, durations: Dictionary, period: Di
 				t.ok(ps.mode in ["rest", "hidden"], "%s: %s rests or is hidden when not held at %.2f" % [tag, id, time])
 			else:
 				t.eq(ps.mode, "static", "%s: %s is scenery at %.2f" % [tag, id, time])
-		if not prev.is_empty() and st.skin != "sleeper" and prev.skin != "sleeper" and st.skin == prev.skin:
+		if not prev.is_empty():       # a person never jumps: not between skins, not between phases, not at the meal
 			max_jump = maxf(max_jump, st.pos.distance_to(prev.pos))
 		prev = st
 		time += step
 	for id in rules:
 		t.ok(held_seen.has(id), "%s: %s is held at some point in the day" % [tag, id])
 	t.ok(worked_in_dark <= 0.0, "%s: nobody works or eats in the dark (by %.3f)" % [tag, worked_in_dark])
-	t.ok(max_jump <= s.walk_speed * step + 0.02, "%s: no teleporting within one skin (max step %.3f m)" % [tag, max_jump])
+	t.ok(max_jump <= s.walk_speed * step + 0.02, "%s: nobody teleports, whatever the skin or phase (max step %.3f m)" % [tag, max_jump])
 
 	var out_seg: Dictionary = {}
 	for seg in period.segments:
@@ -203,3 +215,84 @@ func _check_homestead(t, s, craft: Dictionary, durations: Dictionary, period: Di
 	var last: Dictionary = s.state_at(float(out_seg["to"]) * day - off - 0.01)
 	t.ok(first.pos.distance_to(s.bed_pos) < 0.2, "%s: walk_out starts at the bed" % tag)
 	t.ok(last.pos.distance_to(s.work_pos) < 0.05, "%s: walk_out ends at the work place" % tag)
+
+	if craft.has("travel"):
+		_check_travelling(t, s, craft, tag, day)
+
+## The plough team stays on its line, walks at the stated speed, turns round and walks the commute to the field.
+func _check_travelling(t, s, craft: Dictionary, tag: String, day: float) -> void:
+	var spec: Dictionary = craft.travel
+	var length: float = float(spec.length)
+	var line_off_max := 0.0
+	var s_min := INF
+	var s_max := -INF
+	var yaws := {}
+	var speed_err := 0.0
+	var walked := 0
+	var prev: Dictionary = {}
+	var time := 0.0
+	while time < day:
+		var st: Dictionary = s.state_at(time)
+		if st.phase == "work":
+			var rel: Vector3 = st.pos - s.line_start
+			rel.y = 0.0
+			var along: float = rel.dot(s.line_dir)
+			var across: float = (rel - s.line_dir * along).length()
+			line_off_max = maxf(line_off_max, across)
+			s_min = minf(s_min, along)
+			s_max = maxf(s_max, along)
+			yaws[snappedf(fposmod(st.yaw - s.line_yaw, TAU), 0.5)] = true
+			if not prev.is_empty() and prev.phase == "work" and st.travel.moving and prev.travel.moving:
+				var flat: Vector3 = st.pos - prev.pos
+				flat.y = 0.0
+				speed_err = maxf(speed_err, absf(flat.length() / 0.25 - float(spec.speed)))
+				walked += 1
+		prev = st
+		time += 0.25
+	t.ok(line_off_max < 0.02, "%s: the team stays on its line (off by %.3f m)" % [tag, line_off_max])
+	t.ok(s_min > -0.05 and s_max < length + 0.05, "%s: the team stays between the ends of the line (%.2f..%.2f of %.0f m)" % [tag, s_min, s_max, length])
+	t.ok(s_max - s_min > length * 0.8, "%s: the team really covers the line" % tag)
+	t.ok(yaws.size() >= 3, "%s: the team turns round (%d distinct headings)" % [tag, yaws.size()])
+	t.ok(walked > 100 and speed_err < 0.05, "%s: the team walks at %.1f m/s (error %.3f over %d steps)" % [tag, float(spec.speed), speed_err, walked])
+	t.ok(s.route_in.size() > 4, "%s: the way to the field has waypoints (%d)" % [tag, s.route_in.size()])
+	var commute := 0.0
+	for i in range(3, s.route_in.size() - 1):
+		commute += s.route_in[i].distance_to(s.route_in[i + 1])
+	t.ok(commute > 8.0, "%s: the field is a real walk away (%.1f m of commute)" % [tag, commute])
+	# the person stands still through the meal and picks up where they left off
+	var meal_start := 0.0
+	for seg in s.period.segments:
+		if seg.id == "meal":
+			meal_start = float(seg["from"]) * day - s.day_offset_s
+	var before: Dictionary = s.state_at(meal_start - 0.05)
+	var at_meal: Dictionary = s.state_at(meal_start + 5.0)
+	t.ok(before.pos.distance_to(at_meal.pos) < 0.1, "%s: the meal is eaten where the work stopped (%.2f m)" % [tag, before.pos.distance_to(at_meal.pos)])
+	var after_meal: Dictionary = s.state_at(meal_start + 0.08 * day + 0.05)
+	t.ok(at_meal.pos.distance_to(after_meal.pos) < 0.3, "%s: work resumes from the same spot (%.2f m)" % [tag, at_meal.pos.distance_to(after_meal.pos)])
+
+## The pure back-and-forth: shape of one leg, continuity, period.
+func _check_travel_pure(t) -> void:
+	var spec := {"length": 10.0, "speed": 0.5, "walk": "w", "enter": "en", "exit": "ex", "turn_hold_s": 2.0}
+	var d := {"w": 1.0, "en": 1.0, "ex": 1.0}
+	var cycle: float = Travel.cycle_length(spec, d)
+	t.ok(absf(cycle - 2.0 * (20.0 + 4.0)) < 1e-9, "a cycle is two legs of 20 s walking and 4 s turning")
+	t.eq(Travel.eval(spec, 0.0, d).s, 0.0, "the first leg starts at the start of the line")
+	t.eq(Travel.eval(spec, 10.0, d).s, 5.0, "half way after 10 s at 0.5 m/s")
+	t.eq(Travel.eval(spec, 20.5, d).stage, "exit", "at the end of the leg the exit clip starts the turn")
+	t.eq(Travel.eval(spec, 21.5, d).stage, "turn", "then the heading swings round")
+	t.eq(Travel.eval(spec, 23.5, d).stage, "enter", "and the enter clip finishes the turn")
+	t.ok(absf(Travel.eval(spec, 22.0, d).phi - PI / 2.0) < 1e-6, "the heading is exactly half way round half way through the hold")
+	t.ok(absf(Travel.eval(spec, 24.0 + 10.0, d).s - 5.0) < 1e-9 and Travel.eval(spec, 34.0, d).phi == PI, "the second leg walks back, facing the other way")
+	t.ok(absf(Travel.eval(spec, 7.0, d).s - Travel.eval(spec, 7.0 + cycle, d).s) < 1e-9 and absf(Travel.eval(spec, 7.0, d).s - Travel.eval(spec, 7.0 + 5.0 * cycle, d).s) < 1e-9, "the movement repeats every cycle")
+	var tau := 0.0
+	var worst_s := 0.0
+	var worst_phi := 0.0
+	var prev: Dictionary = Travel.eval(spec, 0.0, d)
+	while tau < cycle * 2.0:
+		tau += 0.05
+		var e: Dictionary = Travel.eval(spec, tau, d)
+		worst_s = maxf(worst_s, absf(e.s - prev.s))
+		worst_phi = maxf(worst_phi, absf(e.phi - prev.phi))
+		prev = e
+	t.ok(worst_s <= 0.5 * 0.05 + 1e-6, "the position never jumps (max step %.4f m)" % worst_s)
+	t.ok(worst_phi < 0.2, "the heading never jumps (max step %.3f rad)" % worst_phi)

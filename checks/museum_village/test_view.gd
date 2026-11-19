@@ -77,6 +77,45 @@ func _initialize() -> void:
 	t.ok(max_grip < 1e-3, "a held prop's grip coincides with the hand node (max %.5f m)" % max_grip)
 	t.ok(checked_nodes.size() >= 6, "every held prop of every craft was seen in a hand (%d)" % checked_nodes.size())
 
+	# the plough team: the yoke sits on the ard's beam, the oxen on the yoke, and everything moves with the ploughman
+	var plough_seen := 0
+	for id in view.homesteads:
+		if view.homesteads[id].data.craft != "ploughing":
+			continue
+		var pv = view.homesteads[id].view
+		var ps = view.homesteads[id].schedule
+		var worst_hitch := 0.0
+		var worst_ox := 0.0
+		var worst_skin := 0.0
+		var walked_clips := {}
+		var travelled := 0.0
+		var prev_world := Vector3.INF
+		var pt := 0.0
+		while pt < day:
+			var st: Dictionary = ps.state_at(pt)
+			if st.phase == "work":
+				pv.apply(st, 0.0, false, pt)
+				var ard: Node3D = pv.props.ard.nodes[0]
+				var yoke: Node3D = pv.props.yoke.nodes[0]
+				worst_hitch = maxf(worst_hitch, (yoke.find_child("beam_hitch", true, false) as Node3D).global_position.distance_to((ard.find_child("yoke_hitch", true, false) as Node3D).global_position))
+				for a in pv.animals:
+					var seat: Node3D = yoke.find_child(str(a.def.node), true, false)
+					worst_ox = maxf(worst_ox, a.root.global_position.distance_to(seat.global_position))
+					walked_clips[a.driver.player.current_animation] = true
+				var expect: Vector3 = (pv.global_transform * st.pos)
+				worst_skin = maxf(worst_skin, pv.skins.worker.root.global_position.distance_to(expect))
+				if prev_world != Vector3.INF:
+					travelled += pv.skins.worker.root.global_position.distance_to(prev_world)
+				prev_world = pv.skins.worker.root.global_position
+				plough_seen += 1
+			pt += 1.9
+		t.ok(worst_hitch < 1e-3, "the yoke's hitch sits on the ard's hitch (max %.5f m)" % worst_hitch)
+		t.ok(worst_ox < 1e-3, "the oxen stand on the yoke's seats (max %.5f m)" % worst_ox)
+		t.ok(worst_skin < 1e-3, "the ploughman is drawn where the schedule puts them (max %.5f m)" % worst_skin)
+		t.ok(walked_clips.has("walk") and walked_clips.has("idle"), "the oxen walk while the team moves and stand while it turns (%s)" % [walked_clips.keys()])
+		t.ok(travelled > 40.0, "the team really moves across the field (%.0f m over the day samples)" % travelled)
+	t.ok(plough_seen > 50, "the plough team was checked many times (%d)" % plough_seen)
+
 	# trees and animals
 	t.eq(view.trees.size(), all.village.trees.size(), "every tree is instanced")
 	var animals_seen := 0
@@ -84,7 +123,8 @@ func _initialize() -> void:
 		var hv = view.homesteads[id].view
 		for a in hv.animals:
 			animals_seen += 1
-			t.ok(a.driver.has_clip(Animals.pose_at(a.def, 1.0, a.lengths).clip), "animal has its clip")
+			if not a.def.has("follow"):
+				t.ok(a.driver.has_clip(Animals.pose_at(a.def, 1.0, a.lengths).clip), "animal has its clip")
 	t.ok(animals_seen >= 3, "animals are in the scene (%d)" % animals_seen)
 	for id in view.homesteads:
 		var hv = view.homesteads[id].view
