@@ -8,10 +8,10 @@
 **Strata Bohemica** is a digital open-air museum of Bohemian prehistory. It is a Godot 4.5 simulation in which you watch a village and its inhabitants through the seasons, without steering them. Reconstructions are labelled with how well their sources support them.
 
 <p align="center">
-  <img src="docs/brand/diorama/diorama.png" alt="A longhouse, a storage pit, a hearth, grain fields and animals on a base of soil layers" width="100%">
+  <img src="docs/brand/diorama/diorama.gif" alt="Animated diorama: a woman weaves at a warp-weighted loom, another tends the hearth, a dog sniffs the ground and a pig forages beside a longhouse, grain fields and a storage pit, on a base of soil layers" width="100%">
 </p>
 
-<p align="center"><sub>Render of the project's own models. All reconstructions are provisional.</sub></p>
+<p align="center"><sub>Render of the project's own models, 14 s loop. All reconstructions are provisional.</sub></p>
 
 <img src="docs/brand/readme/divider.svg" alt="" width="100%">
 
