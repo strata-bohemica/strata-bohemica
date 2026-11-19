@@ -1,0 +1,33 @@
+{
+  "id": "hs-10",
+  "schema": 2,
+  "craft": "threshing",
+  "name": {
+    "cs": "Mlatec",
+    "en": "The thresher"
+  },
+  "house": {
+    "model": "HOUSE-002/house_002"
+  },
+  "workplace": {
+    "pos": [
+      0.0,
+      0.0,
+      6.0
+    ],
+    "yaw_deg": 90.0
+  },
+  "bed": {
+    "model": "SLEEP-001/bed_straw",
+    "pos": [
+      3.0,
+      0.0,
+      -1.5
+    ],
+    "yaw_deg": 90.0
+  },
+  "walker": "PERSON-001/model",
+  "sleeper": "SLEEP-001/person_sleep",
+  "day_offset": 0.001,
+  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F/R. day_offset shifts this household's day (F)."
+}

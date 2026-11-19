@@ -1,0 +1,89 @@
+{
+  "id": "hide",
+  "schema": 2,
+  "name": {
+    "cs": "Zpracování kůže",
+    "en": "Hide scraping"
+  },
+  "skin": "HIDE-001/person_hide",
+  "block": {
+    "enter": "scrape_enter",
+    "cycle": [
+      [
+        "scrape_hide",
+        null
+      ]
+    ],
+    "exit": "scrape_exit"
+  },
+  "props": [
+    {
+      "id": "frame",
+      "asset": "HIDE-001/hide_frame",
+      "place": {
+        "station": "worker_place"
+      }
+    },
+    {
+      "id": "rack",
+      "asset": "HIDE-001/hide_drying_rack",
+      "place": {
+        "on": "skin",
+        "node": "rack_place"
+      }
+    },
+    {
+      "id": "bundle",
+      "asset": "HIDE-001/leather_bundle",
+      "place": {
+        "on": "skin",
+        "node": "bundle_place"
+      }
+    },
+    {
+      "id": "scraper",
+      "asset": "HIDE-001/scraper_bone",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "scraper_hold",
+          "clip": "scrape_enter"
+        },
+        {
+          "node": "scraper_hold",
+          "clip": "scrape_hide"
+        },
+        {
+          "node": "scraper_hold",
+          "clip": "scrape_exit"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "R",
+        "text": {
+          "cs": "Kůže se nedochovává a na Březnici se nedochovaly ani kosti (kyselá půda). Doloženo tu není nic.",
+          "en": "Leather does not survive and no bones survive at Březnice (acid soil). Nothing is attested here."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Škrabání kůže na rámu kostěným škrabadlem a jeho sušení jsou rekonstrukce. Kůže jsou vedlejší produkt porážky zvířat.",
+      "en": "Scraping a hide on a frame with a bone scraper, and drying it, are reconstructed. Hides are a by-product of slaughter."
+    },
+    "unknown": [
+      "tool type (bone scraper not attested locally)",
+      "tanning method",
+      "who processed hides"
+    ],
+    "sources": [
+      "content/research/economy/subsistence.md, process table",
+      "content/research/economy/crafts-exchange.md, section 2.5",
+      "HIDE-001 PROVENANCE.md"
+    ]
+  }
+}

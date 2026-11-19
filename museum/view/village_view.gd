@@ -11,6 +11,7 @@ var village: Dictionary
 var terrain_view
 var homesteads: Dictionary = {}      # house id -> {"view": HomesteadView, "schedule": Schedule, "data": Dictionary}
 var empty_houses: Array[Node3D] = []
+var trees: Array[Node3D] = []
 
 ## occupied: house id -> {"homestead": Dictionary, "craft": Dictionary, "schedule": Schedule}
 func build(p_village: Dictionary, p_terrain, occupied: Dictionary) -> void:
@@ -19,6 +20,13 @@ func build(p_village: Dictionary, p_terrain, occupied: Dictionary) -> void:
 	terrain_view = TerrainView.new()
 	add_child(terrain_view)
 	terrain_view.build(terrain, village)
+	for tr in village.trees:
+		var tree := Catalogue.instantiate("VEG-001/%s" % tr.kind)
+		tree.position = Vector3(tr.pos[0], terrain.height_at(tr.pos[0], tr.pos[1]), tr.pos[1])
+		tree.rotation.y = deg_to_rad(float(tr.yaw_deg))
+		tree.scale = Vector3.ONE * float(tr.scale)
+		add_child(tree)
+		trees.append(tree)
 	for h in village.houses:
 		var root := Node3D.new()
 		root.position = Vector3(h.pos[0], terrain.height_at(h.pos[0], h.pos[1]), h.pos[1])

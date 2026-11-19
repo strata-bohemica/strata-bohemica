@@ -1,17 +1,17 @@
 # Museum (Godot 4.5.1, GL Compatibility)
 
-A digital open-air museum of Bohemian prehistory. M2: a village on uneven ground with four homesteads (grinding, cooking, weaving, woodworking) working from dawn to night.
+A digital open-air museum of Bohemian prehistory. M3: a village on uneven ground with ten homesteads (grinding, cooking, weaving, woodworking, spinning, parching, threshing, hide scraping, milking, daub treading), animals, trees and hearth smoke, working from dawn to night. The plough and the potter's house stand empty until their research and models are settled.
 Everything the scene does is a pure function of time; the view only applies it.
 
 ```
-core/    day clock, craft timeline, craft props, schedule, terrain, schema   (no nodes, testable headless)
+core/    day clock, craft timeline, craft props, animals, schedule, terrain, schema   (no nodes, testable headless)
 data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
 view/    thin Godot adapters: pose driver, homestead view, terrain view, village view
 app/     the main scene and the loader that assembles the village
 ```
 
-Adding a craft or a homestead means adding JSON, not code. Models are referred to by asset ID, never by path.
+Adding a craft or a homestead means adding JSON, not code. Animals are data too: a cycle of clips whose length divides the day. Models are referred to by asset ID, never by path.
 
 ## Run
 
@@ -32,7 +32,7 @@ node during named clips, or resting where it is put down (`core/craft_props.gd`)
 
 `tools/sync_assets.py FACTORY_RETURNS_DIR` copies the assets listed in `data/asset_manifest.json` into `assets/`
 and regenerates `data/assets.json`. `tools/import_settings.py` then sets the import options the models need
-(`gltf/naming_version=2`, animation optimizer off); the generated `.import` files are committed.
+(`gltf/naming_version=2`, textures kept inside the scene, animation optimizer off); the generated `.import` files are committed, the PNGs Godot would extract are not.
 
 ## Evidence
 

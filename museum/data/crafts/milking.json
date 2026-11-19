@@ -1,0 +1,62 @@
+{
+  "id": "milking",
+  "schema": 2,
+  "name": {
+    "cs": "Dojení",
+    "en": "Milking"
+  },
+  "skin": "MILK-001/person_herding",
+  "block": {
+    "enter": "milk_enter",
+    "cycle": [
+      [
+        "milk",
+        null
+      ]
+    ],
+    "exit": "milk_exit"
+  },
+  "props": [
+    {
+      "id": "stool",
+      "asset": "MILK-001/milking_stool",
+      "place": {
+        "station": "worker_origin"
+      }
+    },
+    {
+      "id": "pail",
+      "asset": "MILK-001/milk_pail",
+      "place": {
+        "on": "prop:stool",
+        "node": "pail_place"
+      }
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "R",
+        "text": {
+          "cs": "Na Březnici se nedochovaly žádné zvířecí kosti (kyselá půda). Regionálně chov skotu, prasat a ovcí převažoval, skot nejčastěji.",
+          "en": "No animal bones survive at Březnice (acid soil). Regionally, cattle, pig and sheep husbandry dominated, with cattle most often leading."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Dojení, stolička, nádoba a poloha dojičky jsou rekonstrukce. Model krávy nemá vemeno, ruce míří na spodek břicha.",
+      "en": "The milking, stool, pail and the milker's position are reconstructed. The cattle model has no udder; the hands aim at the belly underside."
+    },
+    "unknown": [
+      "whether milk was used (lipid analysis not available here)",
+      "breed and size",
+      "who milked and when"
+    ],
+    "sources": [
+      "Kyselý 2016, Živa 2016/5:225–229 (cite only)",
+      "content/research/next-batch/settlement-features.md, ANIMAL-001",
+      "MILK-001 PROVENANCE.md"
+    ]
+  }
+}

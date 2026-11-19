@@ -48,6 +48,8 @@ func _init() -> void:
 				var place: Dictionary = prop.place
 				if place.has("station"):
 					t.ok(node.find_child(str(place.station), true, false) != null, "%s: %s has station node %s" % [tag, prop.id, place.station])
+				elif place.has("at"):
+					t.ok(place["at"] is Array and place["at"].size() == 4, "%s: %s 'at' is [x, y, z, yaw]" % [tag, prop.id])
 				else:
 					var host: Node = skin_scene if place.on == "skin" else scenes.get(_asset_of(craft, str(place.on).trim_prefix("prop:")), null)
 					t.ok(prop_ids.has(str(place.on).trim_prefix("prop:")) or place.on == "skin", "%s: %s is placed on something defined earlier" % [tag, prop.id])
@@ -61,6 +63,17 @@ func _init() -> void:
 					var host2: Node = skin_scene if prop.rest.on == "skin" else scenes.get(_asset_of(craft, str(prop.rest.on).trim_prefix("prop:")), null)
 					t.ok(host2 != null and host2.find_child(str(prop.rest.node), true, false) != null, "%s: %s rest node %s exists" % [tag, prop.id, prop.rest.node])
 			prop_ids[prop.id] = true
+		for a in homestead.get("animals", []):
+			t.ok(Catalogue.has_model(a.asset) and ResourceLoader.exists(Catalogue.path(a.asset)), "%s: animal %s imports" % [tag, a.asset])
+			for e in a.cycle:
+				t.ok(Catalogue.clip_lengths(a.asset).has(e[0]), "%s: %s has clip %s" % [tag, a.asset, e[0]])
+			var import_a := FileAccess.get_file_as_string(Catalogue.path(a.asset) + ".import")
+			t.ok(import_a.contains("optimizer/enabled\": false"), "%s: %s imports with the animation optimizer off" % [tag, a.asset])
+			if a.has("on"):
+				var host_ref: String = skin_ref_of(craft, str(a.on).trim_prefix("prop:"))
+				var anode: Node = (load(Catalogue.path(host_ref)) as PackedScene).instantiate()
+				t.ok(anode.find_child(str(a.node), true, false) != null, "%s: animal anchor %s exists on %s" % [tag, a.node, host_ref])
+				anode.free()
 		for l in craft.get("lights", []):
 			t.ok(prop_ids.has(str(l.on).trim_prefix("prop:")), "%s: light sits on a defined prop" % tag)
 
@@ -80,9 +93,17 @@ func _init() -> void:
 			t.ok(ev.text.has("cs") and ev.text.has("en"), "%s: evidence entry has both languages" % tag)
 		t.ok(homestead.name.has("cs") and homestead.name.has("en"), "%s: homestead has names" % tag)
 
+	# trees and every kind the village uses
+	for kind in {"oak_summer": true, "hazel_leafed": true}:
+		t.ok(Catalogue.has_model("VEG-001/%s" % kind), "catalogue knows tree %s" % kind)
+	for tr in all.village.trees:
+		t.ok(Catalogue.has_model("VEG-001/%s" % tr.kind), "tree kind %s is known" % tr.kind)
 	for ref in scenes:
 		scenes[ref].free()
 	quit(t.finish("data"))
+
+func skin_ref_of(craft: Dictionary, prop_id: String) -> String:
+	return _asset_of(craft, prop_id)
 
 func _asset_of(craft: Dictionary, prop_id: String) -> String:
 	for p in craft.props:

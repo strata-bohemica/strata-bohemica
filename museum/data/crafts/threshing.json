@@ -1,0 +1,109 @@
+{
+  "id": "threshing",
+  "schema": 2,
+  "name": {
+    "cs": "Mlácení obilí",
+    "en": "Threshing grain"
+  },
+  "skin": "THRESH-001/person_threshing",
+  "block": {
+    "enter": "thresh_enter",
+    "cycle": [
+      [
+        "thresh",
+        null
+      ]
+    ],
+    "exit": "thresh_exit"
+  },
+  "props": [
+    {
+      "id": "floor",
+      "asset": "THRESH-001/threshing_floor_strewn",
+      "place": {
+        "station": "worker_origin"
+      }
+    },
+    {
+      "id": "sheaf",
+      "asset": "THRESH-001/sheaf_bundle",
+      "place": {
+        "on": "prop:floor",
+        "node": "sheaf_drop"
+      }
+    },
+    {
+      "id": "grain",
+      "asset": "THRESH-001/grain_heap_small",
+      "place": {
+        "on": "prop:floor",
+        "node": "heap_grain"
+      }
+    },
+    {
+      "id": "chaff",
+      "asset": "THRESH-001/chaff_heap_small",
+      "place": {
+        "on": "prop:floor",
+        "node": "heap_chaff"
+      }
+    },
+    {
+      "id": "tray",
+      "asset": "THRESH-001/winnowing_tray",
+      "place": {
+        "on": "prop:floor",
+        "node": "tray_rest"
+      }
+    },
+    {
+      "id": "stick",
+      "asset": "THRESH-001/beating_stick",
+      "grip": "grip",
+      "rest": {
+        "on": "prop:floor",
+        "node": "stick_rest"
+      },
+      "held": [
+        {
+          "node": "stick_hold",
+          "clip": "thresh_enter"
+        },
+        {
+          "node": "stick_hold",
+          "clip": "thresh"
+        },
+        {
+          "node": "stick_hold",
+          "clip": "thresh_exit"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Zbytky zpracování obilí (plevy, pluchy) jsou doložené, například v hliněných závažích. Samotné mlácení doloženo není.",
+          "en": "Crop-processing waste (chaff, glumes) is attested, for example inside clay weights. Threshing itself is not attested."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Mlácení tyčí na udusané tenně a následné vějení jsou rekonstrukce. Vějení v tomto kole není, protože klip nemá přechod.",
+      "en": "Beating with a stick on a trodden floor and winnowing are reconstructed. Winnowing is not shown here because its clip has no transition."
+    },
+    "unknown": [
+      "method",
+      "floor type",
+      "who threshed"
+    ],
+    "sources": [
+      "Chvojka et al. 2019, Archeologické rozhledy 71:267–308, p. 295",
+      "content/research/economy/crafts-exchange.md",
+      "THRESH-001 PROVENANCE.md"
+    ]
+  }
+}

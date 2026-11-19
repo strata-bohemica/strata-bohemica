@@ -4,8 +4,10 @@ extends SceneTree
 const T = preload("res://checks/museum_village/t.gd")
 const Fixture = preload("res://checks/museum_village/fixture.gd")
 const Schema = preload("res://museum/core/schema.gd")
+const Catalogue = preload("res://museum/assets/catalogue.gd")
 const CraftProps = preload("res://museum/core/craft_props.gd")
 const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
+const Animals = preload("res://museum/core/animals.gd")
 
 func _init() -> void:
 	var t := T.new()
@@ -13,7 +15,7 @@ func _init() -> void:
 	var period: Dictionary = all.period
 	var day: float = float(period.day_length_s)
 	t.eq(all.errors.size(), 0, "all shipped data validates (%s)" % [all.errors])
-	t.ok(all.occupied.size() >= 4, "at least four occupied homesteads")
+	t.ok(all.occupied.size() >= 10, "at least ten occupied homesteads (%d)" % all.occupied.size())
 
 	# validators must actually reject bad data (positive controls)
 	var some = all.occupied[all.occupied.keys()[0]]
@@ -38,7 +40,7 @@ func _init() -> void:
 		var tag := "hs-%02d (%s)" % [house_id, craft.id]
 		crafts_seen[craft.id] = true
 		_check_homestead(t, s, craft, info.durations, period, day, tag)
-	t.ok(crafts_seen.size() >= 4, "four different crafts run at once (%s)" % [crafts_seen.keys()])
+	t.ok(crafts_seen.size() >= 10, "ten different crafts run at once (%s)" % [crafts_seen.keys()])
 
 	# craft prop rules on known cases (what the data promises)
 	var cooking: Dictionary = _craft(all, "cooking")
@@ -55,6 +57,39 @@ func _init() -> void:
 	t.eq(CraftProps.state(weaving, "weave_beat", 1.0, true).beater.mode, "held", "beater is held during the beat")
 	t.eq(CraftProps.state(weaving, "weave_pass", 1.0, true).beater.mode, "hidden", "beater is away during the pass")
 	t.eq(CraftProps.state(weaving, "weave_beat", 1.0, true).loom.mode, "static", "loom is scenery")
+
+	var parching: Dictionary = _craft(all, "parching")
+	t.eq(CraftProps.state(parching, "parch_enter", 0.5, true).stick.mode, "rest", "the stir stick lies on the floor until the hand closes")
+	t.eq(CraftProps.state(parching, "parch_enter", 1.2, true).stick.mode, "held", "the hand closes on the stick at 1.0 s")
+	t.eq(CraftProps.state(parching, "parch_exit", 0.5, true).stick.mode, "held", "the stick is still held early in parch_exit")
+	t.eq(CraftProps.state(parching, "parch_exit", 1.5, true).stick.mode, "rest", "the stick is laid down at 1.0 s of parch_exit")
+	var spinning: Dictionary = _craft(all, "spinning")
+	t.eq(CraftProps.state(spinning, "spin_stand", 0.3, true).distaff.node, "distaff_hold", "the distaff is in the left hand")
+	t.eq(CraftProps.state(spinning, "spin_stand", 0.3, true).spindle.node, "spindle_hold", "the spindle is in the right hand")
+	t.eq(CraftProps.state(spinning, "spin_stand", 0.3, false).spindle.mode, "hidden", "the spindle is put away when nobody spins")
+
+	# animals: a pure function of time whose cycle divides the day
+	var animal_count := 0
+	for house_id in all.occupied:
+		var home: Dictionary = all.occupied[house_id].homestead
+		for a in home.get("animals", []):
+			animal_count += 1
+			var lens: Dictionary = Catalogue.clip_lengths(a.asset)
+			var cyc: float = Animals.cycle_length(a)
+			t.ok(absf(day / cyc - roundf(day / cyc)) < 1e-9, "%s: animal cycle %.1f s divides the day" % [a.asset, cyc])
+			var at := 0.037
+			var bad_animal := 0
+			while at < day:
+				var p1: Dictionary = Animals.pose_at(a, at, lens)
+				var p2: Dictionary = Animals.pose_at(a, at + day, lens)
+				var l: float = float(lens[p1.clip])
+				if not (lens.has(p1.clip) and p1.clip == p2.clip and (absf(p1.clip_time - p2.clip_time) < 1e-6 or absf(absf(p1.clip_time - p2.clip_time) - l) < 1e-6) and p1.clip_time >= 0.0 and p1.clip_time < l + 1e-6):
+					bad_animal += 1
+				at += 1.9
+			t.eq(bad_animal, 0, "%s: animal pose is periodic and inside its clip" % a.asset)
+	t.ok(animal_count >= 3, "dog, pig and cow are present (%d animals)" % animal_count)
+	var bad_cycle := {"asset": "DOG-001/dog", "pos": [0, 0, 0], "cycle": [["idle", 7.0, "loop"]]}
+	t.ok(Schema.validate_animals([bad_cycle], 360.0, "x").size() > 0, "an animal cycle that does not divide the day is rejected")
 
 	# craft timeline: enter, cycle, exit
 	var grinding: Dictionary = _craft(all, "grinding")

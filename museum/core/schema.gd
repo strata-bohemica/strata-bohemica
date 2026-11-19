@@ -66,11 +66,33 @@ static func validate_homestead(d: Dictionary) -> PackedStringArray:
 		errors.append("homestead '%s': unsupported schema %s" % [d.id, d.schema])
 	return errors
 
+## Every animal cycle must divide the day, or the scene would not repeat exactly.
+static func validate_animals(animals: Array, day_length_s: float, where: String) -> PackedStringArray:
+	var errors := PackedStringArray()
+	for a in animals:
+		_need(a, ["asset", "cycle"], where + " animal", errors)
+		if not a.has("cycle") or a.cycle.is_empty():
+			continue
+		var total := 0.0
+		for e in a.cycle:
+			if not (e is Array) or e.size() != 3 or not (str(e[2]) in ["loop", "once"]):
+				errors.append("%s: animal cycle entries are [clip, seconds, \"loop\"|\"once\"]" % where)
+				continue
+			total += float(e[1])
+		var n := day_length_s / total
+		if absf(n - roundf(n)) > 1e-6:
+			errors.append("%s: animal cycle of %s s does not divide the %s s day" % [where, total, day_length_s])
+		if not (a.has("pos") or a.has("on")):
+			errors.append("%s: an animal needs pos or on" % where)
+	return errors
+
 static func validate_village(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
-	_need(d, ["id", "schema", "disc_radius_m", "houses", "paths", "fields", "stream"], "village", errors)
+	_need(d, ["id", "schema", "disc_radius_m", "houses", "paths", "fields", "stream", "trees"], "village", errors)
 	if not errors.is_empty():
 		return errors
+	for tr in d.trees:
+		_need(tr, ["kind", "pos", "yaw_deg", "scale"], "village tree", errors)
 	for h in d.houses:
 		_need(h, ["id", "pos", "yaw_deg", "door"], "village house", errors)
 	return errors

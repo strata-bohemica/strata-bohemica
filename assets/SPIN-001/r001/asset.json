@@ -1,0 +1,707 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "SPIN-001",
+  "revision": "r001",
+  "brief": "SPIN-001 r001 drop spindle, fibre and spinning motion (art/briefs/economy-batch5/SPIN-001.md + README.md; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md, RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generators written for this job); character body/rig/skin/palette copied unchanged from PERSON-001 r002",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/contact/reopen checks)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer over OpenGL on Apple M1 Pro)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheet composition)",
+    "ffmpeg 9.0.2 (MP4/GIF)",
+    "macOS 26.7.1, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "models": [
+    {
+      "file": "models/distaff_with_fibre.glb",
+      "role": "0.83 m distaff stick with a lumpy bundle of undyed combed wool on the top and a loose drafted tuft; origin = lower stick tip",
+      "triangles": 174,
+      "triangle_budget": 250,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SPIN_kit"
+      ],
+      "textures": [
+        {
+          "name": "spin_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.1551,
+        "height": 0.858,
+        "depth": 0.1626,
+        "min": [
+          -0.0771,
+          0.0,
+          -0.0819
+        ],
+        "max": [
+          0.0779,
+          0.858,
+          0.0807
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "distaff_with_fibre",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor/lower-tip point of the prop (origin)"
+        },
+        "fibre_center": {
+          "parent": "distaff_with_fibre",
+          "local_translation": [
+            0.0,
+            0.69,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "centre of the wool bundle on the distaff (drafting reference)"
+        },
+        "grip": {
+          "parent": "distaff_with_fibre",
+          "local_translation": [
+            0.0,
+            0.22,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "attachment point: spindle = top of the yarn leader (the pinch); distaff = where the left fist closes round the stick. Prop root = hold * inverse(grip)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "sha256": "308f7951b7d6b0e79dee379992baf7724afaed5f2226f7e1e7067495383f0a4c"
+    },
+    {
+      "file": "models/fibre_basket.glb",
+      "role": "small wicker basket (0.30 m) heaped with raw undyed wool; base centre at the origin",
+      "triangles": 240,
+      "triangle_budget": 250,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SPIN_kit"
+      ],
+      "textures": [
+        {
+          "name": "spin_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 2,
+      "export_bounds_m": {
+        "width": 0.2876,
+        "height": 0.21,
+        "depth": 0.3,
+        "min": [
+          -0.1427,
+          0.0,
+          -0.15
+        ],
+        "max": [
+          0.1449,
+          0.21,
+          0.15
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "fibre_basket",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor/lower-tip point of the prop (origin)"
+        },
+        "pick_point": {
+          "parent": "fibre_basket",
+          "local_translation": [
+            0.0,
+            0.21,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "top of the wool heap in the basket"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "sha256": "d087fd41b972e5df6020f27747de77c7efce18263c44d6daccb12b2a060c1e02"
+    },
+    {
+      "file": "models/person_spinning.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette unchanged + in-place clips spin_enter, spin_stand, spin_exit, spin_walk + distaff_hold (hand.L) and animated spindle_hold (hand.R)",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "distaff_hold": {
+          "parent": "hand.L",
+          "local_translation": [
+            -0.02167,
+            0.09,
+            -0.00382
+          ],
+          "local_rotation_xyzw": [
+            -0.70224,
+            -0.20347,
+            0.08279,
+            0.6772
+          ],
+          "note": "NEW, static child of bone hand.L: attach distaff_with_fibre so that its grip coincides with this node (stick passes through the left fist)"
+        },
+        "carry_anchor": {
+          "parent": "hand.R",
+          "local_translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "local_rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "note": "unchanged PERSON-001 r002 node under hand.R (not used by these clips)"
+        },
+        "spindle_hold": {
+          "parent": "hand.R",
+          "local_translation": [
+            0.04111,
+            0.12718,
+            -0.00725
+          ],
+          "local_rotation_xyzw": [
+            -0.56341,
+            0.19225,
+            0.65901,
+            0.45969
+          ],
+          "note": "NEW, child of bone hand.R, ANIMATED in every clip (translation+rotation tracks): stays at the right thumb/index pinch, keeps the hung spindle plumb (quasi-static pendulum lean <= 9 deg) and spins it about its axis in spin_stand/spin_walk. Attach spindle_whorl so that its grip coincides with this node",
+          "local_trs_note": "node rest TRS = its spin_stand t=0 value; animated per frame in every clip"
+        }
+      },
+      "animations": [
+        {
+          "name": "spin_enter",
+          "duration_s": 1.0,
+          "keys_per_channel": [
+            31
+          ],
+          "fps": 30,
+          "intended_loop": "one-shot (LOOP_NONE): r002 idle t=0 -> spin_stand t=0",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_vs_last_key_max_rotation_deg": 113.96829,
+          "loop_wrap_step_deg": null,
+          "max_per_key_rotation_step_deg": 6.4688,
+          "max_per_key_rotation_step_deg_bones_only": 6.4688,
+          "loop_wrap_step_deg_bones_only": 0.0,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "spindle_hold": 0.015
+          },
+          "pelvis_local_translation_range": [
+            [
+              0.0,
+              0.884,
+              0.0
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "spin_exit",
+          "duration_s": 1.0,
+          "keys_per_channel": [
+            31
+          ],
+          "fps": 30,
+          "intended_loop": "one-shot (LOOP_NONE): spin_stand t=0 -> r002 idle t=0",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_vs_last_key_max_rotation_deg": 113.96829,
+          "loop_wrap_step_deg": null,
+          "max_per_key_rotation_step_deg": 6.4688,
+          "max_per_key_rotation_step_deg_bones_only": 6.4688,
+          "loop_wrap_step_deg_bones_only": 0.0,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "spindle_hold": 0.015
+          },
+          "pelvis_local_translation_range": [
+            [
+              0.0,
+              0.884,
+              0.0
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "spin_stand",
+          "duration_s": 2.0,
+          "keys_per_channel": [
+            61
+          ],
+          "fps": 30,
+          "intended_loop": "loop (LOOP_LINEAR)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_vs_last_key_max_rotation_deg": 4e-05,
+          "loop_wrap_step_deg": 26.764,
+          "max_per_key_rotation_step_deg": 39.9399,
+          "max_per_key_rotation_step_deg_bones_only": 20.1452,
+          "loop_wrap_step_deg_bones_only": 11.9487,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "pelvis": 0.00199,
+            "spindle_hold": 0.0112
+          },
+          "pelvis_local_translation_range": [
+            [
+              0.0,
+              0.882,
+              0.0
+            ],
+            [
+              0.0,
+              0.886,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "spin_walk",
+          "duration_s": 1.0,
+          "keys_per_channel": [
+            31
+          ],
+          "fps": 30,
+          "intended_loop": "loop (LOOP_LINEAR), move the character at 0.8 m/s",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_vs_last_key_max_rotation_deg": 2e-05,
+          "loop_wrap_step_deg": 30.0031,
+          "max_per_key_rotation_step_deg": 49.5121,
+          "max_per_key_rotation_step_deg_bones_only": 21.2361,
+          "loop_wrap_step_deg_bones_only": 14.5398,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "pelvis": 0.02352,
+            "spindle_hold": 0.0112
+          },
+          "pelvis_local_translation_range": [
+            [
+              -0.0159,
+              0.8533,
+              0.0
+            ],
+            [
+              0.0159,
+              0.879,
+              0.0
+            ]
+          ]
+        }
+      ],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "sha256": "023e5bd3e54e76f07f10199f638cc726fb08d28a22ea6b0a30ac1787a3b960e8",
+      "export_bounds_note": "bind-pose skinned geometry (identical to PERSON r002); animated poses and held props differ",
+      "fixture_identity_vs_PERSON_r002": {
+        "vertex_streams_and_indices_byte_identical": true,
+        "inverse_bind_matrices_byte_identical": true,
+        "joint_names_and_parents_equal": true,
+        "joint_rest_trs_max_abs_diff": 0.0,
+        "palette_image_byte_identical": true,
+        "materials_identical": true,
+        "carry_anchor_unchanged": true,
+        "spin_enter_first_vs_r002_idle_t0_deg": 0.0,
+        "spin_exit_last_vs_r002_idle_t0_deg": 0.0,
+        "spin_walk_t0_pelvis_legs_vs_r002_walk_t0_deg": 6.67744,
+        "spin_walk_note": "spin_walk legs/pelvis use the r002 gait functions at a 0.8 m cycle (brief: 0.8 m/s); r002 walk is 1.0 m/s, so leg angles differ from r002 walk by design",
+        "note": "PERSON r002 palette texture/materials are inherited; they are not part of the kit's own material/atlas budget"
+      }
+    },
+    {
+      "file": "models/spindle_whorl.glb",
+      "role": "low-whorl drop spindle: biconical fired-clay whorl (~42 mm, cf. MC11 general form) on a 0.25 m wooden shaft with a cop of spun yarn and a 0.10 m yarn leader to the pinch; origin = lower shaft tip, modelled hanging (+Y up)",
+      "triangles": 220,
+      "triangle_budget": 250,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SPIN_kit"
+      ],
+      "textures": [
+        {
+          "name": "spin_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.0399,
+        "height": 0.35,
+        "depth": 0.042,
+        "min": [
+          -0.02,
+          0.0,
+          -0.021
+        ],
+        "max": [
+          0.02,
+          0.35,
+          0.021
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "spindle_whorl",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor/lower-tip point of the prop (origin)"
+        },
+        "grip": {
+          "parent": "spindle_whorl",
+          "local_translation": [
+            0.0,
+            0.35,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "attachment point: spindle = top of the yarn leader (the pinch); distaff = where the left fist closes round the stick. Prop root = hold * inverse(grip)"
+        },
+        "shaft_top": {
+          "parent": "spindle_whorl",
+          "local_translation": [
+            0.0,
+            0.25,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "top of the spindle shaft where the leader is tied"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "sha256": "552111c2ecd0f4791c91417d76dacfa0aba2c564477632b04699d2e82784de64"
+    },
+    {
+      "file": "models/yarn_balls.glb",
+      "role": "two wound balls (natural cream and natural brown undyed wool) and one twisted skein lying on the floor; base centre at the origin",
+      "triangles": 248,
+      "triangle_budget": 250,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SPIN_kit"
+      ],
+      "textures": [
+        {
+          "name": "spin_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.2199,
+        "height": 0.076,
+        "depth": 0.1655,
+        "min": [
+          -0.111,
+          0.0,
+          -0.0756
+        ],
+        "max": [
+          0.1089,
+          0.076,
+          0.0899
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "yarn_balls",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor/lower-tip point of the prop (origin)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "sha256": "6ffc87a68c93552b0a96c6c6613b191e07fef860f7b715ef27dbefaca7be5ea3"
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "SPIN_kit"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "spin_atlas",
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "kit_budget_note": "Own kit: 1 material (SPIN_kit) + 1 atlas 512x512 shared by all 4 prop GLBs (brief: <= 2 materials, <= 512^2 atlas, <= 250 tris each). person_spinning adds only the inherited, unchanged PERSON r002 materials body + garment and their 256x256 palette.",
+  "states": {
+    "note": "no mutually exclusive states in this kit",
+    "single_spinner_triangles": {
+      "person_spinning + spindle_whorl + distaff_with_fibre": 2446
+    },
+    "all_models_once_triangles": 2934
+  },
+  "demo_scene": {
+    "file": "previews/godot_village_ortho16_grid.png (+ ortho25, close_ortho8_spinners, close_ortho2_lineup)",
+    "content": "2 x person_spinning (spin_stand with fibre_basket + yarn_balls beside; spin_walk) each with spindle_whorl + distaff_with_fibre on the holds, standing PERSON r002, HOUSE, POT, VEG-001 oak_autumn, 2 x ANIMAL-001 sheep, every prop GLB once in a line-up",
+    "instantiated_returned_triangles": 6262,
+    "instantiated_triangles_note": "sum of measured per-GLB triangles over the returned-model instances in the village scene (fixtures excluded)"
+  },
+  "contact_summary": {
+    "spin_enter": {
+      "spindle_vs_body_min_signed_m": 0.0192,
+      "body_excl_right_hand_vs_spindle_min_signed_m": 0.0152,
+      "distaff_vs_body_min_signed_m": 0.0516,
+      "body_excl_left_hand_vs_distaff_min_signed_m": 0.0342,
+      "spindle_tilt_max_deg": 8.956,
+      "spindle_min_z_m": 0.3399,
+      "body_min_z_min_m": 0.0,
+      "no_penetration": true
+    },
+    "spin_stand": {
+      "spindle_vs_body_min_signed_m": 0.0458,
+      "body_excl_right_hand_vs_spindle_min_signed_m": 0.0458,
+      "distaff_vs_body_min_signed_m": 0.0429,
+      "body_excl_left_hand_vs_distaff_min_signed_m": 0.0453,
+      "spindle_tilt_max_deg": 7.594,
+      "spindle_min_z_m": 0.7529,
+      "body_min_z_min_m": -0.0,
+      "no_penetration": true
+    },
+    "spin_exit": {
+      "spindle_vs_body_min_signed_m": 0.0192,
+      "body_excl_right_hand_vs_spindle_min_signed_m": 0.0152,
+      "distaff_vs_body_min_signed_m": 0.0516,
+      "body_excl_left_hand_vs_distaff_min_signed_m": 0.0342,
+      "spindle_tilt_max_deg": 8.956,
+      "spindle_min_z_m": 0.3399,
+      "body_min_z_min_m": -0.0,
+      "no_penetration": true
+    },
+    "spin_walk": {
+      "spindle_vs_body_min_signed_m": 0.0376,
+      "body_excl_right_hand_vs_spindle_min_signed_m": 0.0482,
+      "distaff_vs_body_min_signed_m": 0.0235,
+      "body_excl_left_hand_vs_distaff_min_signed_m": 0.0395,
+      "spindle_tilt_max_deg": 7.449,
+      "spindle_min_z_m": 0.7091,
+      "body_min_z_min_m": -0.0004,
+      "no_penetration": true
+    }
+  },
+  "godot_import_settings": {
+    "person_spinning.glb": "_subresources: animations spin_stand/spin_walk settings/loop_mode=1 (LOOP_LINEAR), spin_enter/spin_exit settings/loop_mode=0 (LOOP_NONE); nodes PATH:AnimationPlayer optimizer/enabled=false (see checks/godot_person_spinning.glb.import.txt)",
+    "props": "Godot defaults"
+  },
+  "reference_ids": [
+    "MC11 (content/research/next-batch/references/MC11-spindle-whorls-prague.jpg; Zde, CC BY-SA 4.0; City of Prague Museum whorls 'Neolithic to Bronze Age'): general biconical/drum whorl form only, viewed, not incorporated",
+    "content/research/next-batch/material-culture.md §SPIN-001 (whorls not verified at Březnice)",
+    "KY16 Kyselý 2016, Živa 2016/5 p. 227 via content/research/economy/subsistence.md (sheep/wool regionally; spinnable wool in Europe from the 3rd millennium BCE)",
+    "content/research/economy/crafts-exchange.md §2.3 (flax not in the Březnice crop list, E-negative), §F7 (spinning while walking between tasks, R)"
+  ],
+  "fixture_hashes": {
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_autumn.glb": "f51ad37a5d79c9ceee2c8a52db4e17cae4d9b090936e6510bec03a49d3bb1822",
+    "returns/bronze-bohemia-v3/ANIMAL-001/r001/models/sheep.glb": "beefdac8b2a2f427f62e6254ff4a56ffa0f07893a460fc240b136d52a96611b0",
+    "briefs/economy-batch5/SPIN-001.md": "f9ec148ef11595ee4363f344270411824a9ae7a10ac89c8be837ee03f309dad6",
+    "briefs/economy-batch5/README.md": "fff3ca2311a39052437dc8805835ad05af2fe74b307785939204c6645c466c70"
+  },
+  "parts_and_uncertainties": [
+    "E (general, not local): ceramic spindle whorls are generic across Bohemian prehistory (MC11); no Březnice whorl verified.",
+    "E (regional): wool from sheep (KY16 p. 227); flax absent from the Březnice crop list (E-negative) -> fibre is shown as undyed wool, type R.",
+    "R: whorl size (~42 mm), biconical form and low position on the shaft; shaft length/diameter; cop shape; yarn leader.",
+    "R: distaff length, forked/plain top, fibre bundle shape; held in the left fist, lower end towards the left hip (the 'under left arm' of the brief is interpreted as held in the crook of the left forearm).",
+    "R: basket form, wool colours (cream and natural brown), ball/skein forms.",
+    "R: spinning posture, drafting cycle, wrist flick, spindle spin rate (4 turns per 2 s standing, 2 per 1 s walking: slowed for 30 fps readability, real spindles turn faster), plumb-line lean.",
+    "F: who spins, where and when (demo placement)."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (accepted return): person_001.blend, gen_person.py, person_palette.png, model.glb",
+      "use": "body/rig/skin/palette copied unchanged; pose solver executed unchanged",
+      "licence": "private project material, no public sublicence"
+    },
+    {
+      "resource": "HOUSE-001, POT-001 fixtures; VEG-001 r001 oak_autumn; ANIMAL-001 r001 sheep",
+      "use": "preview context only (not shipped in models/)",
+      "licence": "private project material"
+    },
+    {
+      "resource": "GATHER-001 r001 source (same project)",
+      "use": "pipeline scripts adapted (inspect/reimport/reopen/Godot/compose); trunk helper functions and wicker texture logic reused",
+      "licence": "private project material"
+    }
+  ],
+  "deviations": [
+    "Two extra one-shot clips spin_enter/spin_exit (1 s each) start/end exactly on the r002 idle t=0 pose; the brief's loops spin_stand (2 s) and spin_walk (1 s) loop on the spinning pose / a walking phase, as in WORK-001 (grind_enter/grind/grind_exit) and GATHER-001 (basket_walk).",
+    "spindle_hold is an animated node (translation + rotation keys in every clip) rather than a static anchor, so the attached spindle hangs plumb, follows the pinch and spins; Godot imports these as position/rotation tracks on Skeleton3D/hand_R/spindle_hold.",
+    "The drafted fibre strand between the distaff bundle and the right pinch is not modelled (it would need a stretching mesh; invisible at village scale).",
+    "In spin_enter t=0 / spin_exit end (= r002 idle) the distaff is carried horizontally in the relaxed left hand and the spindle hangs beside the right leg; game code may instead hide the props outside the spin clips.",
+    "Inspection uses this job's own tools (source/inspect_glb.py etc.), not tools/inspect_asset.py, which does not know batch-5 IDs."
+  ]
+}

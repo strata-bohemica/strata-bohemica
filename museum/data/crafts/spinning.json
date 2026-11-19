@@ -1,0 +1,97 @@
+{
+  "id": "spinning",
+  "schema": 2,
+  "name": {
+    "cs": "Předení",
+    "en": "Spinning"
+  },
+  "skin": "SPIN-001/person_spinning",
+  "block": {
+    "enter": "spin_enter",
+    "cycle": [
+      [
+        "spin_stand",
+        null
+      ]
+    ],
+    "exit": "spin_exit"
+  },
+  "props": [
+    {
+      "id": "basket",
+      "asset": "SPIN-001/fibre_basket",
+      "place": {
+        "at": [
+          1.0,
+          0.0,
+          0.4,
+          0.0
+        ]
+      }
+    },
+    {
+      "id": "distaff",
+      "asset": "SPIN-001/distaff_with_fibre",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "distaff_hold",
+          "clip": "spin_enter"
+        },
+        {
+          "node": "distaff_hold",
+          "clip": "spin_stand"
+        },
+        {
+          "node": "distaff_hold",
+          "clip": "spin_exit"
+        }
+      ]
+    },
+    {
+      "id": "spindle",
+      "asset": "SPIN-001/spindle_whorl",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "spindle_hold",
+          "clip": "spin_enter"
+        },
+        {
+          "node": "spindle_hold",
+          "clip": "spin_stand"
+        },
+        {
+          "node": "spindle_hold",
+          "clip": "spin_exit"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "R",
+        "text": {
+          "cs": "Textilní výroba je doložena nepřímo (hliněná závaží, jejichž použití je ale sporné). Předení tvořilo v analogiích většinu času věnovaného látce.",
+          "en": "Textile production is attested indirectly (clay weights, whose use is contested). In analogies, spinning took most of the time spent on cloth."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Postoj, tah vlákna, švih zápěstím a otáčení vřetena jsou rekonstrukce. Vřeteno se u animace točí pomaleji než skutečné, kvůli čitelnosti.",
+      "en": "The stance, drafting, wrist flick and spindle turn are reconstructed. The spindle is slowed in the animation for readability."
+    },
+    "unknown": [
+      "fibre (flax not found, wool unverified locally)",
+      "spindle whorls found at Březnice (not verified)",
+      "who spun"
+    ],
+    "sources": [
+      "Sabatini, Earle & Cardarelli 2018, Proc. Prehist. Soc. 84:359–385, p. 364 (analogy)",
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308",
+      "SPIN-001 PROVENANCE.md"
+    ]
+  }
+}

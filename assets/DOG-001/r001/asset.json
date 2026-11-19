@@ -1,0 +1,561 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "DOG-001",
+  "revision": "r001",
+  "brief": "art/briefs/economy-batch8/DOG-001.md (economy batch 8 overnight backlog, proposal, not a frozen pack) + art/briefs/economy-batch8/README.md + shared rules art/briefs/economy-batch4/README.md (PR #30); executed under art/handoffs/bronze-bohemia-opus-v2 COMMON.md / RETURN.md with kit spec 2.0; rig conventions from ANIMAL-001 r001",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generator written for this job)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, Workbench stills, re-import/contact check)",
+    "Khronos glTF Blender I/O (GLB export/import, version recorded in the GLB asset.generator)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures with the Compatibility renderer, gl_compatibility)",
+    "Python 3 + numpy (independent GLB parser and skinning) + Pillow (sheets)",
+    "ffmpeg (MP4/GIF)",
+    "macOS, Apple Silicon GPU (adapter recorded in checks/godot_shot_log_stills.json)"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "floor point between the four paws (0,0,0); scene root node identity",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source: no animal bones survive at Brezice and no dog remains were consulted; size is an R 'medium generic dog' design value.",
+  "models": [
+    {
+      "file": "models/dog.glb",
+      "role": "medium-sized generic domestic dog (R), rigged, ten in-place clips (eight required + sit_idle, sit_up); origin on the floor between the paws, +Z front",
+      "triangles": 960,
+      "triangle_budget": 1000,
+      "budget_ok": true,
+      "vertices_exported": 709,
+      "materials": 1,
+      "material_budget": 1,
+      "material_names": [
+        "DOG_coat"
+      ],
+      "textures": [
+        {
+          "name": "dog_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "e4e1d868a1e05c8151d7af53b4d3ca3177e200bce98e55740993d28b54f1945c",
+          "role": "base colour only (sRGB), 4 coat columns"
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 1001684,
+      "glb_sha256": "e3a969ad8039d0c2f3c5c8d39859d24bc1fd68437a655d876f5c46933aa8eaaf",
+      "export_bounds_m": {
+        "width": 0.2515,
+        "height": 0.7136,
+        "depth": 1.1061,
+        "min": [
+          -0.1257,
+          0.0,
+          -0.5072
+        ],
+        "max": [
+          0.1257,
+          0.7136,
+          0.5988
+        ]
+      },
+      "export_bounds_note": "rest/bind pose from the POSITION accessor (height = ear tips); animated envelopes per clip are in checks/glb_inspect.json (animated_bounds_m)",
+      "design_dimensions_R": {
+        "withers_height_m": 0.515,
+        "ear_tip_height_m": 0.7136,
+        "nose_to_tail_tip_m": 1.1061,
+        "note": "medium-sized generic dog; no breed, no measured source"
+      },
+      "skeleton": {
+        "joints": 24,
+        "bone_budget": 24,
+        "deforming_bones": 23,
+        "max_weights_per_vertex": 2,
+        "weights_budget": 4,
+        "bones": [
+          "root",
+          "pelvis",
+          "leg_HL_1",
+          "leg_HL_2",
+          "leg_HL_3",
+          "leg_HL_4",
+          "leg_HR_1",
+          "leg_HR_2",
+          "leg_HR_3",
+          "leg_HR_4",
+          "spine1",
+          "spine2",
+          "leg_FL_1",
+          "leg_FL_2",
+          "leg_FL_3",
+          "leg_FL_4",
+          "leg_FR_1",
+          "leg_FR_2",
+          "leg_FR_3",
+          "leg_FR_4",
+          "neck",
+          "head",
+          "tail1",
+          "tail2"
+        ],
+        "naming": "ANIMAL-001 quadruped scheme: root (non-deforming, never animated), pelvis, spine1, spine2, neck, head, tail1, tail2, leg_{FL,FR,HL,HR}_{1,2,3} (upper / middle / lower = pastern or metatarsus) plus leg_*_4 = paw (new for the dog, keeps a planted paw flat); F/H = front/hind, L/R = dog's left (+X) / right (-X); no jaw or ear bones"
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "dog_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "head_lead": {
+          "parent": "neck",
+          "translation": [
+            -0.0,
+            0.16758,
+            -0.03889
+          ],
+          "rotation_xyzw": [
+            -0.38268,
+            -0.0,
+            0.0,
+            0.92388
+          ],
+          "rest_world_position": [
+            0.0,
+            0.596,
+            0.361
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "exported node on the root (identity, floor point between the paws)",
+        "head_lead": "exported node on bone 'neck' at the top of the neck (collar / lead attachment point, same name as the ANIMAL-001 lead anchor); Godot imports it as Skeleton3D/neck (BoneAttachment3D)/head_lead; world rotation is identity at rest"
+      },
+      "animations": [
+        {
+          "name": "idle",
+          "required_by_brief": true,
+          "duration_s": 2.0,
+          "fps": 60,
+          "keys_per_channel": 121,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "neutral stand",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "paw_min_y_m": {
+            "FL": -0.0,
+            "FR": -0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.49943,
+          "min_paws_within_2mm_of_floor": 4,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "standing on four planted paws; breathing, look-around head turn, relaxed tail wag (3 wags per loop)"
+        },
+        {
+          "name": "walk",
+          "required_by_brief": true,
+          "duration_s": 0.5,
+          "fps": 60,
+          "keys_per_channel": 31,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.00063,
+          "paw_min_y_m": {
+            "FL": -0.00063,
+            "FR": -0.00063,
+            "HL": -0.00032,
+            "HR": -0.00032
+          },
+          "muzzle_min_y_m": 0.44307,
+          "min_paws_within_2mm_of_floor": 2,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "in-place lateral-sequence walk (HL, FL, HR, FR at 0, 0.25, 0.5, 0.75 of a stride), duty 0.60, one stride cycle per 0.5 s loop (stride 0.60 m); planted paws move back at the authored 1.2 m/s",
+          "authored_ground_speed_m_per_s": 1.2,
+          "measured_planted_paw_speed_z_m_per_s_median": {
+            "FL": -1.199,
+            "FR": -1.199,
+            "HL": -1.199,
+            "HR": -1.199
+          }
+        },
+        {
+          "name": "trot",
+          "required_by_brief": true,
+          "duration_s": 0.4,
+          "fps": 60,
+          "keys_per_channel": 25,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "FL+HR at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.00089,
+          "paw_min_y_m": {
+            "FL": -0.00082,
+            "FR": -0.00082,
+            "HL": -0.00089,
+            "HR": -0.00089
+          },
+          "muzzle_min_y_m": 0.37139,
+          "min_paws_within_2mm_of_floor": 0,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "in-place diagonal trot (FL+HR, then FR+HL), duty 0.44 with a short suspension, one stride cycle per 0.4 s loop (stride 1.00 m); planted paws move back at the authored 2.5 m/s; head carried lower, tail raised",
+          "authored_ground_speed_m_per_s": 2.5,
+          "measured_planted_paw_speed_z_m_per_s_median": {
+            "FL": -2.491,
+            "FR": -2.491,
+            "HL": -2.495,
+            "HR": -2.495
+          }
+        },
+        {
+          "name": "sit",
+          "required_by_brief": true,
+          "duration_s": 1.0,
+          "fps": 60,
+          "keys_per_channel": 61,
+          "channels": 72,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= idle frame 0",
+          "last_pose": "= sit_idle frame 0",
+          "first_last_key_max_quat_diff": 0.829409,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -3e-05,
+          "paw_min_y_m": {
+            "FL": -2e-05,
+            "FR": -2e-05,
+            "HL": -3e-05,
+            "HR": -3e-05
+          },
+          "muzzle_min_y_m": 0.5008,
+          "min_paws_within_2mm_of_floor": 4,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "stand -> hindquarters fold (hocks to the floor, front legs stay planted) -> seated; ends on sit_idle frame 0"
+        },
+        {
+          "name": "sit_idle",
+          "required_by_brief": false,
+          "duration_s": 2.0,
+          "fps": 60,
+          "keys_per_channel": 121,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "seated",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "paw_min_y_m": {
+            "FL": -0.0,
+            "FR": -0.0,
+            "HL": 0.00033,
+            "HR": 0.00033
+          },
+          "muzzle_min_y_m": 0.51943,
+          "min_paws_within_2mm_of_floor": 4,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "seated: rump and hocks on the floor, front legs straight, breathing and look-around; tail resting on the floor"
+        },
+        {
+          "name": "sit_up",
+          "required_by_brief": false,
+          "duration_s": 0.8,
+          "fps": 60,
+          "keys_per_channel": 49,
+          "channels": 72,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= sit_idle frame 0",
+          "last_pose": "= idle frame 0",
+          "first_last_key_max_quat_diff": 0.829409,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -4e-05,
+          "paw_min_y_m": {
+            "FL": -2e-05,
+            "FR": -2e-05,
+            "HL": -4e-05,
+            "HR": -4e-05
+          },
+          "muzzle_min_y_m": 0.5008,
+          "min_paws_within_2mm_of_floor": 4,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "seated -> standing (hindquarters rise, front legs planted); ends on idle frame 0"
+        },
+        {
+          "name": "lie_down",
+          "required_by_brief": true,
+          "duration_s": 1.8,
+          "fps": 60,
+          "keys_per_channel": 109,
+          "channels": 72,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= idle frame 0",
+          "last_pose": "= lie_idle frame 0",
+          "first_last_key_max_quat_diff": 0.688362,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -3e-05,
+          "paw_min_y_m": {
+            "FL": -2e-05,
+            "FR": -2e-05,
+            "HL": -3e-05,
+            "HR": -3e-05
+          },
+          "muzzle_min_y_m": 0.27132,
+          "min_paws_within_2mm_of_floor": 0,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "stand -> sit -> front legs slide forward and the chest lowers -> sternal ('sphinx') lying; ends on lie_idle frame 0"
+        },
+        {
+          "name": "lie_idle",
+          "required_by_brief": true,
+          "duration_s": 2.0,
+          "fps": 60,
+          "keys_per_channel": 121,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "sternal lying",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": 0.002,
+          "paw_min_y_m": {
+            "FL": 0.00319,
+            "FR": 0.00319,
+            "HL": 0.00891,
+            "HR": 0.00891
+          },
+          "muzzle_min_y_m": 0.26783,
+          "min_paws_within_2mm_of_floor": 0,
+          "blender_reimport_min_vertex_y_m": 0.002,
+          "behaviour": "sternal lying: belly, forearms and hocks on the floor, head up; breathing, slow look-around"
+        },
+        {
+          "name": "stand_up",
+          "required_by_brief": true,
+          "duration_s": 1.4,
+          "fps": 60,
+          "keys_per_channel": 85,
+          "channels": 72,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= lie_idle frame 0",
+          "last_pose": "= idle frame 0",
+          "first_last_key_max_quat_diff": 0.688362,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.00021,
+          "paw_min_y_m": {
+            "FL": -0.00021,
+            "FR": -0.00021,
+            "HL": -6e-05,
+            "HR": -6e-05
+          },
+          "muzzle_min_y_m": 0.27132,
+          "min_paws_within_2mm_of_floor": 0,
+          "blender_reimport_min_vertex_y_m": -0.0002,
+          "behaviour": "lying -> front legs push up into a sit -> hindquarters rise -> standing (front end first); ends on idle frame 0"
+        },
+        {
+          "name": "sniff_ground",
+          "required_by_brief": true,
+          "duration_s": 2.0,
+          "fps": 60,
+          "keys_per_channel": 121,
+          "channels": 72,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "nose down, sweep centre",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "pelvis_world_z_range_m": [
+            -0.29,
+            -0.29
+          ],
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "paw_min_y_m": {
+            "FL": -0.0,
+            "FR": 0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.01194,
+          "min_paws_within_2mm_of_floor": 4,
+          "blender_reimport_min_vertex_y_m": -0.0,
+          "behaviour": "nose to the ground (muzzle >= ~12 mm above the floor at its lowest), front legs slightly flexed, four sniff pulses and a slow side-to-side sweep per loop, tail raised with a slow wag; paws planted"
+        }
+      ],
+      "design_solves": {
+        "sit": {
+          "pelvis_pitch_deg": 38.0,
+          "pelvis_drop_m": 0.3299,
+          "front_paw_back_m": 0.0126,
+          "tail_pitch_deg": 83.413,
+          "max_reach_error_m": 0.0
+        },
+        "lie": {
+          "pelvis_drop_m": 0.2507,
+          "front_down_param": 0.5222,
+          "tail_pitch_deg": 14.806,
+          "lowest_vertex_m": 0.002
+        },
+        "sniff_neck_pitch_deg": 74.602
+      },
+      "coat_variants": {
+        "default_column": 0,
+        "columns": [
+          "tawny / yellow-brown",
+          "grey agouti",
+          "dark with tan underside",
+          "pale cream"
+        ],
+        "selection": "same GLB + same atlas; set StandardMaterial3D.uv1_offset = (0.25 * k, 0, 0) on a duplicate of the imported material (k = 0..3)"
+      },
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": []
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "DOG_coat"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "dog_atlas",
+      "width": 256,
+      "height": 256,
+      "sha256_embedded": "e4e1d868a1e05c8151d7af53b4d3ca3177e200bce98e55740993d28b54f1945c",
+      "source_file": "source/textures/dog_atlas.png",
+      "layout": "4 coat columns x 64 px; rows 0-159 coat gradient (back -> belly / legs), rows 160-255 four 16 px detail cells (points, dark nose/eye/pads, inner ear, muzzle)"
+    }
+  ],
+  "budget_summary": {
+    "triangles": 960,
+    "triangle_budget": 1000,
+    "materials": 1,
+    "material_budget": 1,
+    "bones": 24,
+    "bone_budget": 24,
+    "texture": "1 x 256x256 PNG",
+    "visible_meshes": 1,
+    "village_demo_still": {
+      "dogs": 4,
+      "dog_triangles": 3840,
+      "note": "plus PERSON r002, 6 ANIMAL-001 sheep, HOUSE, POT fixtures (not part of this kit); each demo dog duplicates the material only to set a coat uv1_offset"
+    }
+  },
+  "reference_ids": [
+    "KY16 (Kysely 2016, Ziva 2016/5, cite only, as given in the brief)",
+    "S22 p. 12 (no animal bones at Brezice, via the economy research notes)",
+    "subsistence.md F8 herding risk note"
+  ],
+  "reference_note": "No reference image was used. Shape, colours and motion are generic R forms; no breed, no measured specimen.",
+  "fixture_hashes": {
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models/sheep.glb": "beefdac8b2a2f427f62e6254ff4a56ffa0f07893a460fc240b136d52a96611b0"
+  },
+  "parts_and_uncertainties": [
+    "E (negative): no animal bones survive at Brezice; a dog there is a regional R (brief; economy research subsistence.md section 2.8 / F8)",
+    "E (regional, cite only): the brief cites Kysely 2016 for dogs as regional domestic animals; that source was not opened in this session (research notes mark it cite-only)",
+    "R: size (withers ~0.52 m), proportions, semi-erect ears, hanging tail, four coat colours",
+    "R: gaits and speeds (walk 1.2 m/s lateral sequence, trot 2.5 m/s diagonal), sit / lie / rise sequences, sniffing posture",
+    "R: role as a herding companion; subsistence.md F8 warns not to present dogs as locally evidenced",
+    "F: demo placement only (herder, flock, house)"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "deviations": [
+    "Proposal brief, not a frozen pack: executed under the opus-v2 COMMON/RETURN contract; the repository intake tool does not know this ID, so independent measurements are supplied in checks/ instead (tool not edited)",
+    "Two extra clips beyond the brief: sit_idle (seated loop) and sit_up (sit -> stand), so that the one-shot 'sit' can be held and left without a pop",
+    "Paw bones leg_*_4 added to the ANIMAL-001 naming (24 bones in total, at the <= 24 limit); tail has 2 bones (tail1, tail2); no jaw or ear bones",
+    "Keys at 60 fps (ANIMAL-001 used 30 fps) so that the 2.5 m/s trot stays within 1 mm of the floor between keys",
+    "Demo villager: MILK-001 person_herding is not merged (branch art/milk-001-r001 only), so the accepted PERSON-001 r002 (walk / idle) is used",
+    "Preview sun uses shadow_bias 0.2 / normal_bias 4.0 like ANIMAL-001 (renderer setting, not part of the asset)"
+  ]
+}

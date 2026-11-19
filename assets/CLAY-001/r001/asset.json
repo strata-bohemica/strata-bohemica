@@ -1,0 +1,1254 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "CLAY-001",
+ "revision": "r001",
+ "brief": "CLAY-001 r001 clay pit, clay heap, daub mixing and wall patch (art/briefs/economy-batch4/CLAY-001.md + README.md; proposal brief, contract = bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+ "status": "draft",
+ "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural Blender generators written for this job); character body/rig/skin copied unchanged from PERSON-001 r002",
+ "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session, resumed after a runtime restart); the underlying model identity cannot be independently verified from inside the session",
+ "tools": [
+  "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/contact checks)",
+  "Khronos glTF Blender I/O bundled with Blender 5.2.3 (GLB export/import)",
+  "Godot Engine 4.5.1-stable (official) (headless import + state check; GPU viewport captures with the Compatibility renderer, OpenGL 4.1 Metal-90.5 on Apple M1 Pro)",
+  "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheets)",
+  "ffmpeg 9.0.2 (GIF/MP4)",
+  "macOS 26.7.1, Apple M1 Pro"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "scale_basis": "project_fit",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "models": [
+  {
+   "file": "models/clay_heap_large.glb",
+   "role": "clay heap, large state (<=0.9 m)",
+   "triangles": 190,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.4213,
+    "height": 0.865,
+    "depth": 1.2245,
+    "min": [
+     -0.7212,
+     -0.025,
+     -0.6556
+    ],
+    "max": [
+     0.7001,
+     0.84,
+     0.5688
+    ]
+   },
+   "root_node": "CLAY_HEAP_LARGE",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CLAY_HEAP_LARGE",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "heap_top": {
+     "parent": "CLAY_HEAP_LARGE",
+     "translation": [
+      0.042,
+      0.84,
+      -0.03
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "tip_stand": {
+     "parent": "CLAY_HEAP_LARGE",
+     "translation": [
+      0.0,
+      0.0,
+      0.99
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "base_center": "root",
+    "heap_top": "highest point",
+    "tip_stand": "person root to tip a carried load onto the heap, yaw 180 (faces the heap)"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 190,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/clay_heap_medium.glb",
+   "role": "clay heap, medium state",
+   "triangles": 166,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.1346,
+    "height": 0.605,
+    "depth": 0.8633,
+    "min": [
+     -0.5759,
+     -0.025,
+     -0.427
+    ],
+    "max": [
+     0.5586,
+     0.58,
+     0.4362
+    ]
+   },
+   "root_node": "CLAY_HEAP_MEDIUM",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CLAY_HEAP_MEDIUM",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "heap_top": {
+     "parent": "CLAY_HEAP_MEDIUM",
+     "translation": [
+      0.0312,
+      0.58,
+      -0.0225
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "tip_stand": {
+     "parent": "CLAY_HEAP_MEDIUM",
+     "translation": [
+      0.0,
+      0.0,
+      0.8175
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "base_center": "root",
+    "heap_top": "highest point",
+    "tip_stand": "person root to tip a carried load onto the heap, yaw 180 (faces the heap)"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 166,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/clay_heap_small.glb",
+   "role": "clay heap by a house, 1 of 3 sizes (mutually exclusive states); root = heap base centre",
+   "triangles": 142,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.7806,
+    "height": 0.365,
+    "depth": 0.587,
+    "min": [
+     -0.3553,
+     -0.025,
+     -0.2873
+    ],
+    "max": [
+     0.4253,
+     0.34,
+     0.2996
+    ]
+   },
+   "root_node": "CLAY_HEAP_SMALL",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CLAY_HEAP_SMALL",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "heap_top": {
+     "parent": "CLAY_HEAP_SMALL",
+     "translation": [
+      0.0216,
+      0.34,
+      -0.0155
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "tip_stand": {
+     "parent": "CLAY_HEAP_SMALL",
+     "translation": [
+      0.0,
+      0.0,
+      0.6565
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "base_center": "root",
+    "heap_top": "highest point",
+    "tip_stand": "person root to tip a carried load onto the heap, yaw 180 (faces the heap)"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 142,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/clay_pit_fresh.glb",
+   "role": "state A of the clay pit: freshly opened shallow scoop (y=0 cut outline 1.58 x 1.37 m, 0.227 m deep) with spoil lip; root = pit centre on ground level; front (+Z) = digging side",
+   "triangles": 456,
+   "triangle_budget": 600,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 2.2438,
+    "height": 0.3513,
+    "depth": 1.8065,
+    "min": [
+     -1.1705,
+     -0.2274,
+     -1.115
+    ],
+    "max": [
+     1.0732,
+     0.1239,
+     0.6915
+    ]
+   },
+   "root_node": "CLAY_PIT_FRESH",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CLAY_PIT_FRESH",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "dig_stand": {
+     "parent": "CLAY_PIT_FRESH",
+     "translation": [
+      0.0,
+      0.0,
+      1.16356
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "dig_target": {
+     "parent": "CLAY_PIT_FRESH",
+     "translation": [
+      0.0,
+      -0.05,
+      0.60356
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "pit_floor": {
+     "parent": "CLAY_PIT_FRESH",
+     "translation": [
+      -0.0383,
+      -0.2274,
+      -0.1428
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "base_center": "root/ground origin",
+    "dig_target": "digging-stick bite point on the +Z pit wall, 0.05 m below ground; stick tip reaches it during dig strokes",
+    "dig_stand": "person_clay root for the dig clip, yaw 180 deg (person faces -Z towards the pit)",
+    "pit_floor": "deepest pit vertex"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 456,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/clay_pit_worked.glb",
+   "role": "state B of the clay pit (mutually exclusive with fresh): enlarged worked scoop (y=0 cut outline 2.28 x 1.92 m, 0.374 m deep), opaque puddle in the deepest scoop; same root/anchor names as fresh",
+   "triangles": 542,
+   "triangle_budget": 600,
+   "budget_ok": true,
+   "materials": 2,
+   "material_names": [
+    "CLAY_kit",
+    "CLAY_wet"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 2.8617,
+    "height": 0.4687,
+    "depth": 2.2103,
+    "min": [
+     -1.4718,
+     -0.3737,
+     -1.229
+    ],
+    "max": [
+     1.39,
+     0.095,
+     0.9813
+    ]
+   },
+   "root_node": "CLAY_PIT_WORKED",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CLAY_PIT_WORKED",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "dig_stand": {
+     "parent": "CLAY_PIT_WORKED",
+     "translation": [
+      0.0,
+      0.0,
+      1.4136
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "dig_target": {
+     "parent": "CLAY_PIT_WORKED",
+     "translation": [
+      0.0,
+      -0.05,
+      0.8536
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "pit_floor": {
+     "parent": "CLAY_PIT_WORKED",
+     "translation": [
+      -0.2243,
+      -0.3737,
+      -0.108
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "base_center": "root/ground origin",
+    "dig_target": "digging-stick bite point on the +Z pit wall, 0.05 m below ground; stick tip reaches it during dig strokes",
+    "dig_stand": "person_clay root for the dig clip, yaw 180 deg (person faces -Z towards the pit)",
+    "pit_floor": "deepest pit vertex"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 542,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     },
+     "CLAY_wet": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/daub_mix_patch.glb",
+   "role": "trampled clay + chaff mixing patch with opaque water-puddle edge (-X) and small chaff heap (+X back); tread_stand = person root for tread_mix",
+   "triangles": 229,
+   "triangle_budget": 250,
+   "budget_ok": true,
+   "materials": 2,
+   "material_names": [
+    "CLAY_kit",
+    "CLAY_wet"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.3078,
+    "height": 0.085,
+    "depth": 1.0,
+    "min": [
+     -0.6533,
+     -0.01,
+     -0.5278
+    ],
+    "max": [
+     0.6545,
+     0.075,
+     0.4722
+    ]
+   },
+   "root_node": "DAUB_MIX_PATCH",
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "DAUB_MIX_PATCH",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "chaff_spot": {
+     "parent": "DAUB_MIX_PATCH",
+     "translation": [
+      0.42,
+      0.0,
+      -0.3
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "tread_stand": {
+     "parent": "DAUB_MIX_PATCH",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "water_edge": {
+     "parent": "DAUB_MIX_PATCH",
+     "translation": [
+      -0.47,
+      0.011,
+      0.06
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "tread_stand": "person_clay root for tread_mix",
+    "water_edge": "puddle centre",
+    "chaff_spot": "small chaff heap"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 229,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     },
+     "CLAY_wet": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/digging_stick.glb",
+   "role": "1.10 m wooden digging stick, tip at origin, shaft along +Y; grip at 0.75 m",
+   "triangles": 72,
+   "triangle_budget": 80,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.0465,
+    "height": 1.1,
+    "depth": 0.0313,
+    "min": [
+     -0.0127,
+     0.0,
+     -0.0156
+    ],
+    "max": [
+     0.0338,
+     1.1,
+     0.0156
+    ]
+   },
+   "root_node": "DIGGING_STICK",
+   "root_transform_identity": true,
+   "anchors": {
+    "grip": {
+     "parent": "DIGGING_STICK",
+     "translation": [
+      0.0,
+      0.75,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "tip": {
+     "parent": "DIGGING_STICK",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "tip": "working tip (origin)",
+    "grip": "right-hand grip; stick root = person tool_hold * inverse(grip)"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 72,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/person_clay.glb",
+   "role": "PERSON-001 r002 body/rig/skin/palette byte-identical + clips dig, tread_mix, plaster + new tool_hold node under hand.R",
+   "triangles": 2052,
+   "triangle_budget": "r002 body unchanged (2052)",
+   "budget_ok": true,
+   "materials": 2,
+   "material_names": [
+    "body",
+    "garment"
+   ],
+   "textures": [
+    {
+     "name": "person_palette",
+     "width": 256,
+     "height": 256,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.6045,
+    "height": 1.7,
+    "depth": 0.4,
+    "min": [
+     -0.3023,
+     0.0,
+     -0.2
+    ],
+    "max": [
+     0.3023,
+     1.7,
+     0.2
+    ]
+   },
+   "root_node": "PERSON_rig",
+   "root_transform_identity": true,
+   "anchors": {
+    "carry_anchor": {
+     "parent": "hand.R",
+     "translation": [
+      0.2235,
+      -0.15274,
+      -0.06773
+     ],
+     "rotation_xyzw": [
+      0.04663,
+      0.08431,
+      -0.05528,
+      0.99381
+     ]
+    },
+    "tool_hold": {
+     "parent": "hand.R",
+     "translation": [
+      0.02954,
+      0.062,
+      -0.00521
+     ],
+     "rotation_xyzw": [
+      0.90286,
+      0.03683,
+      -0.07899,
+      0.42101
+     ]
+    }
+   },
+   "anchor_notes": {
+    "tool_hold": "NEW. child of joint hand.R; digging-stick grip frame (local +Y towards the stick top). Stick root = tool_hold * inverse(digging_stick.grip). Measured hold-to-right-hand-centroid <= 0.026 m",
+    "carry_anchor": "unchanged r002 node"
+   },
+   "animations": [
+    {
+     "name": "dig",
+     "duration_s": 4.2,
+     "keys": 127,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "seamless linear loop (last key = first key, 0.0 deg); in place (root not animated, pelvis x/z offsets only)",
+     "godot_loop_mode": "LINEAR (set by import option; glTF has no loop flag)",
+     "first_pose": "r002 idle t=0 (0.0 deg / 0.0 m difference from r002 idle first key)",
+     "last_pose": "r002 idle t=0 (0.0 deg / 0.0 m difference from r002 idle first key)",
+     "max_per_key_rotation_step_deg": 22.8646,
+     "loop_wrap_step_deg": 0.2115,
+     "behaviour": "R: from idle the worker lifts the stick (two-handed, right hand on tool_hold, left hand lower), takes 3 thrust-and-lever strokes into the pit wall at dig_target (1.0 s each, thrust accelerates into the bite, lever back, withdraw), returns to idle. Tip penetrates the pit surface up to 0.035 m (fresh) / 0.009 m (worked) at the bite."
+    },
+    {
+     "name": "plaster",
+     "duration_s": 4.0,
+     "keys": 121,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "seamless linear loop (last key = first key, 0.0 deg); in place (root not animated, pelvis x/z offsets only)",
+     "godot_loop_mode": "LINEAR (set by import option; glTF has no loop flag)",
+     "first_pose": "r002 idle t=0",
+     "last_pose": "r002 idle t=0",
+     "max_per_key_rotation_step_deg": 21.3813,
+     "loop_wrap_step_deg": 2.6594,
+     "behaviour": "R: left palm braced on the wall at ~1.2 m, right palm smears three strokes over the patch (down, up, up) at 0.79-1.32 m above the floor; palm-to-wall-plane 11.9-14.3 mm while in contact (patch surface is 4-17.6 mm proud, so the palm presses into the wet daub); hands approach and leave along a straight path that never crosses the wall plane"
+    },
+    {
+     "name": "tread_mix",
+     "duration_s": 4.0,
+     "keys": 121,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "seamless linear loop (last key = first key, 0.0 deg); in place (root not animated, pelvis x/z offsets only)",
+     "godot_loop_mode": "LINEAR (set by import option; glTF has no loop flag)",
+     "first_pose": "r002 idle t=0",
+     "last_pose": "r002 idle t=0",
+     "max_per_key_rotation_step_deg": 9.9832,
+     "loop_wrap_step_deg": 0.7477,
+     "behaviour": "R: in-place treading/kneading of the mix: alternate small steps (lift <=~0.1 m) with a twist of the planted foot; soles sink 4.7-8 mm into the mix surface on daub_mix_patch.tread_stand"
+    }
+   ],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 2052,
+    "materials": {
+     "body": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     },
+     "garment": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   },
+   "export_bounds_note": "rest/bind pose (identical to r002); animated poses differ",
+   "skeleton": {
+    "joints": 23,
+    "max_influences_per_vertex": 3,
+    "identical_to_fixture": "vertex streams, indices, inverse bind matrices, joint rest TRS, hierarchy, materials, palette image and carry_anchor byte-identical/equal to PERSON-001 r002 model.glb (checks/glb_inspect.json fixture_comparison)"
+   }
+  },
+  {
+   "file": "models/wall_patch_fresh.glb",
+   "role": "wet-brown re-daub overlay strip, 1.0 x 0.8 m, 4-17 mm proud; root = bottom centre on the wall plane; faces +Z",
+   "triangles": 48,
+   "triangle_budget": 60,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_wet"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.0,
+    "height": 0.8,
+    "depth": 0.0129,
+    "min": [
+     -0.5116,
+     0.0,
+     0.004
+    ],
+    "max": [
+     0.4884,
+     0.8,
+     0.0169
+    ]
+   },
+   "root_node": "WALL_PATCH_FRESH",
+   "root_transform_identity": true,
+   "anchors": {
+    "patch_origin": {
+     "parent": "WALL_PATCH_FRESH",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "plaster_center": {
+     "parent": "WALL_PATCH_FRESH",
+     "translation": [
+      0.0,
+      0.4,
+      0.018
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "worker_stand": {
+     "parent": "WALL_PATCH_FRESH",
+     "translation": [
+      -0.2,
+      -0.6,
+      0.42
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "patch_origin": "= root, bottom centre on the wall plane",
+    "plaster_center": "patch centre on its outer surface",
+    "worker_stand": "person_clay root for plaster, 0.42 m in front of the wall, 0.6 m below the patch root (= house floor), yaw 180"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 48,
+    "materials": {
+     "CLAY_wet": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  },
+  {
+   "file": "models/wall_patch_white.glb",
+   "role": "white-coated variant of the same overlay (mutually exclusive with fresh); identical root/anchors",
+   "triangles": 48,
+   "triangle_budget": 60,
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "CLAY_kit"
+   ],
+   "textures": [
+    {
+     "name": "clay_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.0,
+    "height": 0.8,
+    "depth": 0.0136,
+    "min": [
+     -0.4908,
+     0.0,
+     0.004
+    ],
+    "max": [
+     0.5092,
+     0.8,
+     0.0176
+    ]
+   },
+   "root_node": "WALL_PATCH_WHITE",
+   "root_transform_identity": true,
+   "anchors": {
+    "patch_origin": {
+     "parent": "WALL_PATCH_WHITE",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "plaster_center": {
+     "parent": "WALL_PATCH_WHITE",
+     "translation": [
+      0.0,
+      0.4,
+      0.018
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "worker_stand": {
+     "parent": "WALL_PATCH_WHITE",
+     "translation": [
+      -0.2,
+      -0.6,
+      0.42
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "anchor_notes": {
+    "patch_origin": "= root, bottom centre on the wall plane",
+    "plaster_center": "patch centre on its outer surface",
+    "worker_stand": "person_clay root for plaster, 0.42 m in front of the wall, 0.6 m below the patch root (= house floor), yaw 180"
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "godot_import": {
+    "mesh_instances": 1,
+    "triangles": 48,
+    "materials": {
+     "CLAY_kit": {
+      "cull_mode": "BACK",
+      "transparency": 0
+     }
+    }
+   }
+  }
+ ],
+ "kit_unique_materials": 4,
+ "kit_unique_material_names": [
+  "CLAY_kit (pits, heaps, mix, white patch, stick)",
+  "CLAY_wet (puddles, fresh patch; roughness 0.42)",
+  "body (r002, unchanged)",
+  "garment (r002, unchanged)"
+ ],
+ "props_unique_materials": 2,
+ "kit_unique_textures": [
+  {
+   "name": "clay_atlas",
+   "width": 512,
+   "height": 512,
+   "used_by": [
+    "clay_heap_large.glb",
+    "clay_heap_medium.glb",
+    "clay_heap_small.glb",
+    "clay_pit_fresh.glb",
+    "clay_pit_worked.glb",
+    "daub_mix_patch.glb",
+    "digging_stick.glb",
+    "wall_patch_fresh.glb",
+    "wall_patch_white.glb"
+   ],
+   "role": "base colour only, sRGB; 4x4/2x2 cells (two pit top maps, heap, mix, wet daub, white coat, wood, water, chaff, earth)",
+   "source_file": "source/textures/clay_atlas.png"
+  },
+  {
+   "name": "person_palette",
+   "width": 256,
+   "height": 256,
+   "used_by": [
+    "person_clay.glb"
+   ],
+   "role": "unchanged PERSON-001 r002 palette (byte-identical)"
+  }
+ ],
+ "budgets": {
+  "brief_limits": "pits <=600 tris each, heaps <=200, mix <=250, patches <=60, stick <=80; kit <=3 materials, <=1 atlas 512^2",
+  "props_alone": {
+   "materials": 2,
+   "textures": "1 x 512x512 clay_atlas; each prop GLB embeds its own copy of the same image (self-contained GLBs)",
+   "limit_met": true
+  },
+  "one_state_each_demo": {
+   "triangles": 1081,
+   "composition": "clay_pit_worked + clay_heap_large + daub_mix_patch + wall_patch_fresh + digging_stick (one state per mutually exclusive family)",
+   "visible_meshes": 5,
+   "materials": 2
+  },
+  "all_states_overview": {
+   "triangles": 1893,
+   "visible_meshes": 9,
+   "note": "every prop GLB once (states are mutually exclusive in production)"
+  },
+  "godot_preview_yard_instantiated": {
+   "triangles": 8121,
+   "note": "kit GLBs as placed in source/godot/shot.gd (both pits, three heaps, mix, both patch variants loaded with one hidden, two sticks) + 3 x person_clay (2052 each); fixtures (HOUSE-001, PERSON-001 r002) and ground/grid helpers excluded. Arithmetic from the measured per-GLB counts."
+  },
+  "repeated_instance_demo": "not built; N households with one pit state + one heap + mix + patch + stick = N x (one_state_each_demo) triangles by arithmetic (not measured)"
+ },
+ "reference_ids": [
+  "S-ZEN (Zenodo 10.5281/zenodo.6475797, via crafts-exchange.md §2.2)",
+  "S-KU22 (Kuna et al. 2022, via crafts-exchange.md §2.2, §2.4)",
+  "S-CH19 (via crafts-exchange.md §2.3)",
+  "settlement-features.md CLAYPIT-001 row (l.39, l.98; K22 §3.2, §5.3.1; Z22)"
+ ],
+ "reference_use": {
+  "S-ZEN / S-KU22 p.4": "E: a feature classed clay pit (2005-O-05, ~12 m2, 0.3 m preserved) exists at Brezenice -> justifies a clay pit asset and its shallow depth class; no plan shape, profile or tool used",
+  "S-KU22 p.10": "E: up to three plaster layers with a white coating -> justifies wet-brown and white-coated patch variants; patch size/shape/position R",
+  "S-CH19 pp.294-295, 301": "E: unsorted crop-processing waste (chaff etc.) used as temper in clay weights; S22 p.8 (via subsistence.md l.107) names ceramics or daub as reuse examples -> chaff in the daub mix; amount/appearance/treading R",
+  "crafts-exchange.md F1/F5": "R game-loop description (dig -> carry -> heap; mix clay+chaff+water -> re-daub/re-plaster)"
+ },
+ "fixture_hashes": {
+  "PERSON-001 r002 model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "PERSON-001 r002 source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+  "PERSON-001 r002 source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+  "PERSON-001 r002 source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+  "HOUSE-001 r001 fixture model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+  "WORK-001 r001 source/inspect_glb.py (adapted)": "33f67619076b88b4b37304b773cf28c45b163db823b028c570413d70cfcc98c3",
+  "WORK-001 r001 source/godot/set_import.py (adapted)": "42d9220ff8717fe69bfdc1ea9de8b50ca4037461b807e70c88aa663f6e6b8bb2",
+  "brief CLAY-001.md": "a0d4e287c70dbfcac0668344bb44f53dedd3dd8fb692b3c7241f746f86988a4b",
+  "brief README.md": "fe88072c86fc805aa2cdc925cfc6453544d2addea0f8c3003cba8163829f40ec"
+ },
+ "fixture_copies_in_source": {
+  "source/fixture_PERSON-001-r002/gen_person.py": {
+   "sha256": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+   "byte_identical_to_r002_source": true
+  },
+  "source/fixture_PERSON-001-r002/person_001.blend": {
+   "sha256": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+   "byte_identical_to_r002_source": true
+  },
+  "source/fixture_PERSON-001-r002/person_palette.png": {
+   "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+   "byte_identical_to_r002_source": true
+  }
+ },
+ "parts_and_uncertainties": [
+  {
+   "part": "pit plan shape (irregular oval scoop), size (fresh 2.24 x 1.81 m, worked 2.86 x 2.21 m incl. lip), depth 0.227 / 0.374 m, spoil lip",
+   "status": "R",
+   "note": "excavated Brezenice clay pit ~12 m2 / 0.3 m preserved (E) is larger than the brief limit 3.0 x 2.5 m; the asset is a game-fit working scoop"
+  },
+  {
+   "part": "opaque puddle in the worked pit and at the mix edge",
+   "status": "R",
+   "note": "water source/handling unknown"
+  },
+  {
+   "part": "heap shapes and yellow-grey colour",
+   "status": "R",
+   "note": "local clay colour not sourced"
+  },
+  {
+   "part": "chaff in the daub mix, treading as the mixing method",
+   "status": "R",
+   "note": "chaff temper is E for clay weights only (S-CH19); mixing method R per brief"
+  },
+  {
+   "part": "wall patch outline, thickness, wet-brown / white colours",
+   "status": "R (white coating existence E)",
+   "note": "white coat colour/material (lime? clay slip?) not established"
+  },
+  {
+   "part": "digging stick (1.10 m, fire-darkened tip) and two-handed thrust/lever technique",
+   "status": "R",
+   "note": "brief marks the digging tool R"
+  },
+  {
+   "part": "all clip postures and timing",
+   "status": "R",
+   "note": "no source for posture or tempo"
+  },
+  {
+   "part": "people and placement in previews",
+   "status": "F",
+   "note": "preview yard layout is fictional"
+  }
+ ],
+ "own_work_license": "Unselected original project work; manager/owner decision",
+ "incorporated_resources": [
+  "PERSON-001 r002 (project fixture, unchanged body/rig/skin/palette) — private project material, no public sublicence",
+  "WORK-001 r001 source/inspect_glb.py and source/godot/set_import.py adapted (project-internal code)"
+ ],
+ "third_party_media": [],
+ "deviations": [
+  "pit roots are named CLAY_PIT_FRESH / CLAY_PIT_WORKED (and heaps/patches likewise per state); origin, transform (identity) and anchor names are identical across states, but the glTF root node names differ",
+  "ground-hugging / overlay meshes (pits, daub_mix_patch, wall patches) need cast_shadow OFF in Godot: with default shadow casting the single-sided pit bowl self-shadows into large acne blotches (previews/godot_pits_ortho6_cast_shadow_on_acne.png). Heaps, stick and person cast normally.",
+  "the host terrain must be cut under each pit (checks/ground_cut.json outline); the preview yard leaves those ground cells open",
+  "the brief counts kit materials <=3: the props use 2 (CLAY_kit, CLAY_wet); person_clay keeps r002 body/garment, so the full kit inventory is 4 unique materials"
+ ],
+ "standard_previews": [
+  "previews/front.png",
+  "previews/side.png",
+  "previews/back.png",
+  "previews/top.png",
+  "previews/isometric.png",
+  "previews/wireframe.png"
+ ]
+}

@@ -1,0 +1,1247 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "THRESH-001",
+ "revision": "r001",
+ "brief": "THRESH-001 r001 threshing and winnowing kit + motions (art/briefs/economy-batch4/THRESH-001.md and README.md; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md; kit spec 2.0)",
+ "status": "draft",
+ "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generators written for this job); character body/rig/skin copied unchanged from PERSON-001 r002",
+ "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session, resumed after a runtime restart); the underlying model identity cannot be independently verified from inside the session",
+ "tools": [
+  "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/contact checks)",
+  "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+  "Godot Engine 4.5.1.stable.official.f62fdbde1 (headless import checks; GPU viewport captures with the Compatibility renderer, OpenGL 4.1 Metal-90.5 on Apple M1 Pro)",
+  "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheet composition)",
+  "ffmpeg 9.0.2 (MP4/GIF)",
+  "macOS 26.7.1, Apple M1 Pro"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "scale_basis": "project_fit",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "models": [
+  {
+   "file": "models/threshing_floor_clean.glb",
+   "role": "state CLEAN of the 2.0 x 2.0 m beaten-earth threshing floor (y=0 base, plateau 5 mm); mutually exclusive with _strewn",
+   "triangles": 140,
+   "triangle_budget": 300,
+   "budget_ok": true,
+   "vertices": 81,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.9988,
+    "height": 0.0062,
+    "depth": 1.994,
+    "min": [
+     -0.9988,
+     0.0,
+     -1.0
+    ],
+    "max": [
+     1.0,
+     0.0062,
+     0.994
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    },
+    "heap_chaff": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.56,
+      0.005,
+      -0.5
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "chaff heap base_center"
+    },
+    "heap_grain": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.58,
+      0.005,
+      0.52
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "grain_heap_small base_center"
+    },
+    "sheaf_drop": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.62,
+      0.005,
+      -0.58
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.30071,
+      0.0,
+      0.95372
+     ],
+     "note": "sheaf_bundle / straw_bundle base_center (35 deg yaw)"
+    },
+    "stick_rest": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.5,
+      0.005,
+      0.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "beating_stick base_center when not held"
+    },
+    "strike_target": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.04,
+      0.005,
+      0.56
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "where the stick tip lands at the deepest strike (thresh t=0.367 s)"
+    },
+    "tray_rest": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.42,
+      0.005,
+      -0.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "winnowing_tray base_center when not held"
+    },
+    "worker_origin": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.0,
+      0.005,
+      -0.3
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "person_threshing root goes here (faces +Z)"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/threshing_floor_strewn.glb",
+   "role": "state STREWN: same footprint/root/anchors, plus chaff litter patches, 14 lying stems and 6 broken ears (relief <= 17 mm)",
+   "triangles": 268,
+   "triangle_budget": 300,
+   "budget_ok": true,
+   "vertices": 295,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 1.9988,
+    "height": 0.017,
+    "depth": 1.994,
+    "min": [
+     -0.9988,
+     0.0,
+     -1.0
+    ],
+    "max": [
+     1.0,
+     0.017,
+     0.994
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    },
+    "heap_chaff": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.56,
+      0.005,
+      -0.5
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "chaff heap base_center"
+    },
+    "heap_grain": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.58,
+      0.005,
+      0.52
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "grain_heap_small base_center"
+    },
+    "sheaf_drop": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.62,
+      0.005,
+      -0.58
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.30071,
+      0.0,
+      0.95372
+     ],
+     "note": "sheaf_bundle / straw_bundle base_center (35 deg yaw)"
+    },
+    "stick_rest": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.5,
+      0.005,
+      0.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "beating_stick base_center when not held"
+    },
+    "strike_target": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      -0.04,
+      0.005,
+      0.56
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "where the stick tip lands at the deepest strike (thresh t=0.367 s)"
+    },
+    "tray_rest": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.42,
+      0.005,
+      -0.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "winnowing_tray base_center when not held"
+    },
+    "worker_origin": {
+     "parent": "THRESHING_FLOOR",
+     "translation": [
+      0.0,
+      0.005,
+      -0.3
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "person_threshing root goes here (faces +Z)"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/sheaf_bundle.glb",
+   "role": "one tied bundle of cut cereal stems with ears, lying (axis along X, ears toward +X)",
+   "triangles": 224,
+   "triangle_budget": 250,
+   "budget_ok": true,
+   "vertices": 237,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.6761,
+    "height": 0.1695,
+    "depth": 0.2161,
+    "min": [
+     -0.33,
+     0.0,
+     -0.108
+    ],
+    "max": [
+     0.3461,
+     0.1695,
+     0.108
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "SHEAF_BUNDLE",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/beating_stick.glb",
+   "role": "plain wooden beating stick 0.9 m, lying along Z (tip toward +Z)",
+   "triangles": 60,
+   "triangle_budget": 80,
+   "budget_ok": true,
+   "vertices": 49,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.045,
+    "height": 0.0327,
+    "depth": 0.908,
+    "min": [
+     -0.0165,
+     0.0006,
+     -0.454
+    ],
+    "max": [
+     0.0285,
+     0.0334,
+     0.454
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "BEATING_STICK",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    },
+    "grip": {
+     "parent": "BEATING_STICK",
+     "translation": [
+      0.0,
+      0.017,
+      -0.35
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "right-hand grip point 0.10 m from the butt; identity rotation"
+    },
+    "tip": {
+     "parent": "BEATING_STICK",
+     "translation": [
+      0.0,
+      0.017,
+      0.45
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "stick tip axis point (end face centre)"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/winnowing_tray.glb",
+   "role": "shallow oval wooden/bark tray 0.55 x 0.40 m (R: no winnowing basket attested locally)",
+   "triangles": 192,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "vertices": 153,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.55,
+    "height": 0.072,
+    "depth": 0.4,
+    "min": [
+     -0.275,
+     0.0,
+     -0.2
+    ],
+    "max": [
+     0.275,
+     0.072,
+     0.2
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "WINNOWING_TRAY",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    },
+    "grip_l": {
+     "parent": "WINNOWING_TRAY",
+     "translation": [
+      0.279,
+      0.045,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "left palm contact on the outer end wall"
+    },
+    "grip_r": {
+     "parent": "WINNOWING_TRAY",
+     "translation": [
+      -0.279,
+      0.045,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "right palm contact; identity rotation; used for the held tray"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/grain_heap_small.glb",
+   "role": "small heap of cleaned grain, compact and darker",
+   "triangles": 144,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "vertices": 102,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.3353,
+    "height": 0.115,
+    "depth": 0.3303,
+    "min": [
+     -0.1615,
+     0.0,
+     -0.163
+    ],
+    "max": [
+     0.1737,
+     0.115,
+     0.1674
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "GRAIN_HEAP_SMALL",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/chaff_heap_small.glb",
+   "role": "small pale chaff heap, broad and flat",
+   "triangles": 162,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "vertices": 114,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.5036,
+    "height": 0.0979,
+    "depth": 0.4657,
+    "min": [
+     -0.2576,
+     0.0,
+     -0.2439
+    ],
+    "max": [
+     0.246,
+     0.0979,
+     0.2218
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CHAFF_HEAP_SMALL",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/chaff_heap_large.glb",
+   "role": "large pale chaff heap",
+   "triangles": 180,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "vertices": 126,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.7412,
+    "height": 0.1917,
+    "depth": 0.707,
+    "min": [
+     -0.3494,
+     0.0,
+     -0.3579
+    ],
+    "max": [
+     0.3918,
+     0.1917,
+     0.3491
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "CHAFF_HEAP_LARGE",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/straw_bundle.glb",
+   "role": "threshed straw bundle tied twice, no ears",
+   "triangles": 192,
+   "triangle_budget": 200,
+   "budget_ok": true,
+   "vertices": 162,
+   "materials": 1,
+   "material_names": [
+    "THRESH_kit"
+   ],
+   "textures": [
+    {
+     "name": "thresh_atlas",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.86,
+    "height": 0.0925,
+    "depth": 0.1602,
+    "min": [
+     -0.43,
+     0.0024,
+     -0.0779
+    ],
+    "max": [
+     0.43,
+     0.0949,
+     0.0823
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "base_center": {
+     "parent": "STRAW_BUNDLE",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "root/base centre on y=0"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "THRESH_kit": false
+   },
+   "alpha_mode": {
+    "THRESH_kit": "OPAQUE"
+   },
+   "gltf_extensions": []
+  },
+  {
+   "file": "models/person_threshing.glb",
+   "role": "motion study: unchanged PERSON-001 r002 body/rig/skin + four new clips",
+   "triangles": 2052,
+   "triangle_budget": null,
+   "budget_ok": null,
+   "vertices": 1443,
+   "materials": 2,
+   "material_names": [
+    "body",
+    "garment"
+   ],
+   "textures": [
+    {
+     "name": "person_palette",
+     "width": 256,
+     "height": 256,
+     "format": "image/png",
+     "embedded": true
+    }
+   ],
+   "visible_meshes": 1,
+   "export_bounds_m": {
+    "width": 0.6045,
+    "height": 1.7,
+    "depth": 0.4,
+    "min": [
+     -0.3023,
+     0.0,
+     -0.2
+    ],
+    "max": [
+     0.3023,
+     1.7,
+     0.2
+    ]
+   },
+   "root_transform_identity": true,
+   "anchors": {
+    "carry_anchor": {
+     "parent": "hand.R",
+     "translation": [
+      0.2235,
+      -0.15274,
+      -0.06773
+     ],
+     "rotation_xyzw": [
+      0.04663,
+      0.08431,
+      -0.05528,
+      0.99381
+     ],
+     "note": "unchanged r002 node (not used by these clips)"
+    },
+    "stick_hold": {
+     "parent": "hand.R",
+     "translation": [
+      0.02954,
+      0.068,
+      -0.00521
+     ],
+     "rotation_xyzw": [
+      -0.68301,
+      -0.64086,
+      -0.18301,
+      0.29884
+     ],
+     "note": "NEW, child of joint hand.R: stick root = stick_hold * inverse(beating_stick grip)"
+    },
+    "tray_hold": {
+     "parent": "hand.R",
+     "translation": [
+      0.00859,
+      0.05052,
+      -0.0015
+     ],
+     "rotation_xyzw": [
+      -0.98494,
+      -0.14025,
+      0.08141,
+      0.05999
+     ],
+     "note": "NEW, child of joint hand.R: tray root = tray_hold * inverse(winnowing_tray grip_r)"
+    }
+   },
+   "animations": [
+    {
+     "name": "thresh_enter",
+     "duration_s": 1.4,
+     "keys": 43,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "none (one-shot)",
+     "godot_loop_mode": "LOOP_NONE",
+     "first_pose": "PERSON-001 r002 idle t=0 (0.0 deg / 0.0 m from the r002 idle first key)",
+     "last_pose": "thresh t=0 (top of swing; seam 5e-5 deg)",
+     "behaviour": "R: right foot steps back/out, left foot forward/out, trunk leans 34 deg, right hand brings the stick up, left hand joins; stick is in the right hand from t=0",
+     "root_node_animated": false,
+     "translation_channels": {
+      "pelvis": 0.04
+     },
+     "max_per_key_rotation_step_deg": 14.3519
+    },
+    {
+     "name": "thresh",
+     "duration_s": 2.0,
+     "keys": 61,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "loop (2.0 s, two strikes)",
+     "godot_loop_mode": "LOOP_LINEAR",
+     "first_pose": "top of swing",
+     "last_pose": "= first key (0.0 deg)",
+     "behaviour": "R: bent standing, two-handed beating of the floor with a plain stick; tip lands on strike_target at t=0.367 s and 1.367 s",
+     "root_node_animated": false,
+     "translation_channels": {
+      "pelvis": 0.02
+     },
+     "max_per_key_rotation_step_deg": 22.2539
+    },
+    {
+     "name": "thresh_exit",
+     "duration_s": 1.4,
+     "keys": 43,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "none (one-shot)",
+     "godot_loop_mode": "LOOP_NONE",
+     "first_pose": "thresh t=0 (seam 5e-5 deg)",
+     "last_pose": "PERSON-001 r002 idle t=0 (0.0 deg / 0.0 m)",
+     "behaviour": "R: thresh_enter played in reverse time",
+     "root_node_animated": false,
+     "translation_channels": {
+      "pelvis": 0.04
+     },
+     "max_per_key_rotation_step_deg": 14.3519
+    },
+    {
+     "name": "winnow",
+     "duration_s": 2.0,
+     "keys": 61,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "loop (2.0 s, two tosses)",
+     "godot_loop_mode": "LOOP_LINEAR",
+     "first_pose": "standing, tray at belt height in both hands",
+     "last_pose": "= first key (0.0 deg)",
+     "behaviour": "R: standing, tray held at both end walls, two upward tosses with front-edge-up pitch per loop. No transition clips: the first key differs from r002 idle by up to 82.5 deg (arms); cross-fade in the game (see deviations)",
+     "root_node_animated": false,
+     "translation_channels": {
+      "pelvis": 0.022
+     },
+     "max_per_key_rotation_step_deg": 6.5352
+    }
+   ],
+   "double_sided_exceptions": [],
+   "double_sided": {
+    "body": false,
+    "garment": false
+   },
+   "alpha_mode": {
+    "body": "OPAQUE",
+    "garment": "OPAQUE"
+   },
+   "gltf_extensions": [],
+   "export_bounds_note": "rest/bind pose (identical to PERSON r002); animated poses differ",
+   "skeleton": {
+    "joints": 23,
+    "max_influences_per_vertex": 3,
+    "identical_to_fixture": "vertex streams, indices, inverse bind matrices, joint rest TRS, hierarchy, materials and palette byte-identical to PERSON-001 r002 model.glb (checks/glb_inspect.json fixture_comparison)"
+   },
+   "budget_note": "no triangle budget in the brief for the character; mesh is the unchanged PERSON r002 body (2052 triangles)"
+  }
+ ],
+ "kit_unique_materials": 3,
+ "kit_unique_material_names": [
+  "THRESH_kit (all nine props)",
+  "body (PERSON r002, unchanged)",
+  "garment (PERSON r002, unchanged)"
+ ],
+ "props_unique_materials": 1,
+ "kit_unique_textures": [
+  {
+   "name": "thresh_atlas",
+   "width": 512,
+   "height": 512,
+   "used_by": [
+    "threshing_floor_clean.glb",
+    "threshing_floor_strewn.glb",
+    "sheaf_bundle.glb",
+    "beating_stick.glb",
+    "winnowing_tray.glb",
+    "grain_heap_small.glb",
+    "chaff_heap_small.glb",
+    "chaff_heap_large.glb",
+    "straw_bundle.glb"
+   ],
+   "role": "base colour only, sRGB; cells: earth clean, earth strewn, straw, ear, chaff, grain, wood, tray interior, bark, twine",
+   "source_file": "source/textures/thresh_atlas.png"
+  },
+  {
+   "name": "person_palette",
+   "width": 256,
+   "height": 256,
+   "used_by": [
+    "person_threshing.glb"
+   ],
+   "role": "unchanged PERSON-001 r002 palette (byte-identical); not a new kit texture"
+  }
+ ],
+ "budgets": {
+  "per_model": {
+   "threshing_floor_clean": {
+    "triangles": 140,
+    "limit": 300,
+    "ok": true
+   },
+   "threshing_floor_strewn": {
+    "triangles": 268,
+    "limit": 300,
+    "ok": true
+   },
+   "sheaf_bundle": {
+    "triangles": 224,
+    "limit": 250,
+    "ok": true
+   },
+   "beating_stick": {
+    "triangles": 60,
+    "limit": 80,
+    "ok": true
+   },
+   "winnowing_tray": {
+    "triangles": 192,
+    "limit": 200,
+    "ok": true
+   },
+   "grain_heap_small": {
+    "triangles": 144,
+    "limit": 200,
+    "ok": true
+   },
+   "chaff_heap_small": {
+    "triangles": 162,
+    "limit": 200,
+    "ok": true
+   },
+   "chaff_heap_large": {
+    "triangles": 180,
+    "limit": 200,
+    "ok": true
+   },
+   "straw_bundle": {
+    "triangles": 192,
+    "limit": 200,
+    "ok": true
+   },
+   "person_threshing": {
+    "triangles": 2052,
+    "limit": null,
+    "ok": null,
+    "note": "unchanged PERSON r002 body; brief sets no budget"
+   }
+  },
+  "props_all_states_together": {
+   "triangles": 1562,
+   "materials": 1,
+   "textures": "1 x 512x512",
+   "visible_meshes": 9,
+   "note": "all nine prop GLBs, both floor states included (states are mutually exclusive in production)"
+  },
+  "one_state_station": {
+   "triangles": 3120,
+   "composition": "strewn floor + sheaf + stick + tray + grain heap + large chaff heap + person_threshing",
+   "materials": 3,
+   "textures": "512x512 atlas + 256x256 palette",
+   "visible_meshes": 7,
+   "note": "sum of the per-GLB triangle counts measured by checks/glb_inspect.json and checks/godot_check.json"
+  },
+  "preview_scene": {
+   "note": "the Godot GPU preview instantiates 15 kit GLB instances (2 floors, 2 persons, 2 sticks, 2 trays, 5 heaps/bundles) + 3 fixtures; per-instance counts as above. Repeated-instance demo not built separately (arithmetic only: 3 stations = 3 x one_state_station)"
+  },
+  "limits": "kit <= 3 unique materials and <= 1 atlas 512^2: met (1 kit material + 1 atlas 512^2; PERSON r002 body/garment materials and palette are inherited unchanged)"
+ },
+ "reference_ids": [
+  "SP23",
+  "C19",
+  "brief THRESH-001"
+ ],
+ "reference_use": {
+  "SP23": "Šálková et al. preprint rs-2665597/v1 §3.1 p. 7 (glume bases outnumber grains among hulled wheats) via content/research/economy/subsistence.md §2.4: supports on-site crop processing near the houses; no tool, floor or posture evidence",
+  "C19": "Chvojka et al. 2019, Archeologické rozhledy 71, pp. 283, 286, 295 via subsistence.md §2.4: chaff/straw abundant in clay-weight impressions; supports the chaff/straw by-products; no form evidence",
+  "brief THRESH-001": "states that threshing method, tools, floor and winnowing container are R; asks for simple beating with a wooden stick and tossing in a shallow wooden/bark tray"
+ },
+ "fixture_hashes": {
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+  "art/briefs/economy-batch4/THRESH-001.md": "5242a93718ca72bdb575f142a2e806fb9b0562b19703b605fc29beb27d3132ed",
+  "art/briefs/economy-batch4/README.md": "fe88072c86fc805aa2cdc925cfc6453544d2addea0f8c3003cba8163829f40ec",
+  "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+  "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+  "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+ },
+ "fixture_copies_in_source": {
+  "source/fixture_PERSON-001_r002/person_001.blend": {
+   "sha256": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+   "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend",
+   "identical_to_source": true
+  },
+  "source/fixture_PERSON-001_r002/gen_person.py": {
+   "sha256": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+   "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py",
+   "identical_to_source": true
+  },
+  "source/fixture_PERSON-001_r002/person_palette.png": {
+   "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+   "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png",
+   "identical_to_source": true
+  }
+ },
+ "parts_and_uncertainties": [
+  {
+   "part": "threshing method (beating with a plain stick on a beaten-earth floor)",
+   "status": "R",
+   "note": "no flail, sledge or threshing floor attested locally (brief; subsistence.md §2.4)"
+  },
+  {
+   "part": "winnowing in a shallow oval wooden/bark tray, two-handed tosses",
+   "status": "R",
+   "note": "no winnowing basket/tray attested locally"
+  },
+  {
+   "part": "floor size 2.0 x 2.0 m, rounded outline, 5 mm plateau, litter pattern",
+   "status": "R",
+   "note": "game-fit per brief"
+  },
+  {
+   "part": "sheaf (0.68 m), straw bundle (0.86 m), stick (0.91 m incl. end caps), tray (0.55 x 0.40 x 0.072 m)",
+   "status": "R",
+   "note": "sizes from the brief; no measured artefacts"
+  },
+  {
+   "part": "crop identity of sheaf/grain/chaff",
+   "status": "R",
+   "note": "generic cereal; no cultivar implied. Heaps show no countable grains (no quantity claim)"
+  },
+  {
+   "part": "posture, stance, swing timing (2 strikes / 2 s), toss timing (2 tosses / 2 s)",
+   "status": "R",
+   "note": "game readability; animation time follows the game clock"
+  },
+  {
+   "part": "people",
+   "status": "F",
+   "note": "PERSON r002 fictional villager"
+  }
+ ],
+ "own_work_license": "Unselected original project work; manager/owner decision",
+ "incorporated_resources": [
+  {
+   "resource": "PERSON-001 r002 (body, rig, skin, materials, palette, pose solver)",
+   "origin": "accepted project return art/returns/bronze-bohemia-opus-v2/PERSON-001/r002",
+   "modification": "none to mesh/skin/materials/palette; r002 actions removed and four new actions + two hold nodes added"
+  }
+ ],
+ "deviations": [
+  "winnow has no enter/exit transition clips (the brief lists only the winnow loop). Its first key differs from the r002 idle pose by up to 82.5 deg (arm joints) and 0.02 m (pelvis); the game should cross-fade (~0.3-0.5 s) and show the tray at the switch. thresh_enter/thresh_exit do start/end exactly on r002 idle.",
+  "Extra floor anchors strike_target, tray_rest and stick_rest and extra stick anchor tip were added for placement/contact checks; the five required floor anchors are present.",
+  "The stick is held in the right hand from the first key of thresh_enter (idle pose, stick hanging forward-down, >= 0.39 m above the floor): the game shows the stick for the whole enter/thresh/exit sequence.",
+  "At the deepest strike the stick tip is 1.65 mm above the clean floor plateau but 1.74 mm into the low chaff-litter patch of the strewn floor (litter apex ~4 mm above the plateau) - reads as the tip pressing into chaff.",
+  "Clips are authored at 30 fps with LINEAR interpolation (61/43 keys); Godot import needs the loop + optimizer-off settings documented in source/README.md."
+ ]
+}

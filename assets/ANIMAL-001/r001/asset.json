@@ -1,0 +1,668 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "ANIMAL-001",
+  "revision": "r001",
+  "brief": "ANIMAL-001 r001 cattle and sheep (first livestock kit) \u2014 DRAFT brief in content/research/next-batch/settlement-features.md section 6 (proposal, not a frozen pack), per-candidate notes section 3, README.md; executed under art/handoffs/bronze-bohemia-opus-v2 COMMON.md / RETURN.md as a batch-3 kit job",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generator written for this job)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, Workbench stills, re-import/contact check)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+    "Godot Engine 4.5.1.stable.official.f62fdbde1 (headless import checks; GPU viewport captures with the Compatibility renderer, gl_compatibility on Apple M1 Pro, OpenGL 4.1 Metal-90.5)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser and skinning) + Pillow 11.3.0 (sheets)",
+    "ffmpeg 9.0.2 (MP4/GIF)",
+    "macOS 26.7.1, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "floor point between the four hooves (0,0,0); scene root node identity",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source exists: animal bones did not survive at Brezice (S22 p. 12); every size is an R design envelope from the draft brief.",
+  "models": [
+    {
+      "file": "models/cattle.glb",
+      "role": "small generic short-horned cow (R), rigged, six in-place clips; origin on the floor between the hooves, +Z front",
+      "triangles": 1554,
+      "triangle_budget": 1800,
+      "budget_ok": true,
+      "vertices_exported": 1088,
+      "materials": 1,
+      "material_budget": 2,
+      "material_names": [
+        "ANIMAL_coat"
+      ],
+      "textures": [
+        {
+          "name": "animal_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "1e5b85ce46ed79259775d0a928874ef2e4e2ef03223d6b261cd899b39f28b0e2",
+          "role": "base colour only (sRGB), shared kit atlas"
+        }
+      ],
+      "texture_budget": "<= 1024 x 1024",
+      "visible_meshes": 1,
+      "glb_bytes": 469880,
+      "glb_sha256": "f4e8ea48ec44c823f0cc7130f4cbea6737814505df61ba0adb3b72feca63f67c",
+      "export_bounds_m": {
+        "width": 0.55,
+        "height": 1.15,
+        "depth": 1.8258,
+        "min": [
+          -0.275,
+          0.0,
+          -0.7228
+        ],
+        "max": [
+          0.275,
+          1.15,
+          1.1031
+        ]
+      },
+      "export_bounds_note": "rest/bind pose from the POSITION accessor; animated envelopes per clip are in checks/glb_inspect.json (animated_bounds_m)",
+      "design_dimensions_R": {
+        "withers_height_m": 1.15,
+        "nose_to_rump_length_m": 1.83,
+        "brief_envelope": "withers 1.05-1.20 m, length ~1.8 m"
+      },
+      "skeleton": {
+        "joints": 20,
+        "deforming_bones": 19,
+        "deforming_bone_budget": 24,
+        "max_weights_per_vertex": 2,
+        "weights_budget": 4,
+        "bones": [
+          "root",
+          "pelvis",
+          "leg_HL_1",
+          "leg_HL_2",
+          "leg_HL_3",
+          "leg_HR_1",
+          "leg_HR_2",
+          "leg_HR_3",
+          "spine1",
+          "spine2",
+          "leg_FL_1",
+          "leg_FL_2",
+          "leg_FL_3",
+          "leg_FR_1",
+          "leg_FR_2",
+          "leg_FR_3",
+          "neck",
+          "head",
+          "tail1",
+          "tail2"
+        ],
+        "naming": "shared quadruped scheme: root (non-deforming, never animated), pelvis, spine1, spine2, neck, head, tail1, tail2, leg_{FL,FR,HL,HR}_{1,2,3}; F/H = front/hind, L/R = animal's left (+X) / right (-X), 1/2/3 = upper/middle/lower (3 carries the hoof); no jaw bone"
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "cattle_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "head_lead": {
+          "parent": "head",
+          "translation": [
+            -0.0,
+            0.1,
+            0.1045
+          ],
+          "rotation_xyzw": [
+            -0.93449,
+            -0.0,
+            -0.0,
+            0.356
+          ],
+          "rest_world_position": [
+            0.0,
+            0.8358,
+            0.8255
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "exported node on the root (identity, floor point between the hooves)",
+        "head_lead": "exported node on bone 'head' at the throat/cheek (halter/rope attachment point); Godot imports it as Skeleton3D/head (BoneAttachment3D)/head_lead; world rotation is identity at rest"
+      },
+      "animations": [
+        {
+          "name": "idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "neutral stand",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -1e-05,
+          "hoof_min_y_m": {
+            "FL": -1e-05,
+            "FR": -1e-05,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.65917,
+          "behaviour": "standing; weight sway, two breaths, slow head turn, tail swish; all four hooves planted"
+        },
+        {
+          "name": "walk",
+          "duration_s": 1.0,
+          "fps": 30,
+          "keys_per_channel": 31,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0002,
+          "hoof_min_y_m": {
+            "FL": -0.0002,
+            "FR": -0.0002,
+            "HL": -0.00018,
+            "HR": -0.00018
+          },
+          "muzzle_min_y_m": 0.63357,
+          "behaviour": "in-place lateral-sequence walk (HL, FL, HR, FR at 0, 0.25, 0.5, 0.75 of a cycle), duty 0.64 cattle / 0.62 sheep; cattle 1 stride cycle per loop (stride 0.8 m), sheep 2 cycles per loop (stride 0.4 m); planted hooves move back at the authored ground speed",
+          "authored_ground_speed_m_per_s": 0.8,
+          "measured_planted_hoof_speed_z_m_per_s_median": {
+            "FL": -0.785,
+            "FR": -0.785,
+            "HL": -0.786,
+            "HR": -0.786
+          },
+          "min_hooves_in_contact": 2
+        },
+        {
+          "name": "graze",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "head down, nibble start",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "hoof_min_y_m": {
+            "FL": 0.0,
+            "FR": 0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.012,
+          "behaviour": "head down to the floor (muzzle 12 mm cattle / 10 mm sheep above y=0 at its lowest), two nibble/tear cycles, slow head sweep; hooves planted"
+        },
+        {
+          "name": "lie_idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "sternal lying",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": 0.00098,
+          "hoof_min_y_m": {
+            "FL": 0.04895,
+            "FR": 0.06987,
+            "HL": 0.08566,
+            "HR": 0.10507
+          },
+          "muzzle_min_y_m": 0.31809,
+          "behaviour": "sternal lying, legs folded (hind legs to the sides), breathing, slow head turn, small rumination nod"
+        },
+        {
+          "name": "lie_down",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= idle frame 0",
+          "last_pose": "= lie_idle frame 0",
+          "first_last_key_max_quat_diff": 0.885496,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00022,
+          "hoof_min_y_m": {
+            "FL": -0.00022,
+            "FR": -0.00022,
+            "HL": -1e-05,
+            "HR": -1e-05
+          },
+          "muzzle_min_y_m": 0.32953,
+          "behaviour": "stand -> head lowered -> front carpi (knees) to the floor while hind legs stay planted -> hindquarters fold down -> sternal lying; ends on lie_idle frame 0"
+        },
+        {
+          "name": "stand_up",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= lie_idle frame 0",
+          "last_pose": "= idle frame 0",
+          "first_last_key_max_quat_diff": 0.885496,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0002,
+          "hoof_min_y_m": {
+            "FL": -0.0002,
+            "FR": -0.0002,
+            "HL": -1e-05,
+            "HR": -1e-05
+          },
+          "muzzle_min_y_m": 0.14432,
+          "behaviour": "lying -> head lunge -> hindquarters rise first (front still kneeling) -> front legs unfold -> standing; ends on idle frame 0"
+        }
+      ],
+      "design_solves": {
+        "lie_pelvis_drop_m": 0.488,
+        "kneel_body_pitch_deg": 14.823,
+        "graze_neck_pitch_deg": 62.974,
+        "graze_head_pitch_deg": -45.0
+      },
+      "coat_variants": {
+        "default_column": 0,
+        "columns": [
+          "red-brown",
+          "dun / grey-fawn",
+          "dark brown",
+          "pale tan"
+        ],
+        "selection": "same GLB + same atlas; set StandardMaterial3D.uv1_offset = (0.25 * k, 0, 0) on a duplicate of the imported material (k = 0..3)"
+      },
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": []
+    },
+    {
+      "file": "models/sheep.glb",
+      "role": "small short-tailed, polled (hornless) sheep in fleece (R), rigged, six in-place clips; origin on the floor between the hooves, +Z front",
+      "triangles": 962,
+      "triangle_budget": 1200,
+      "budget_ok": true,
+      "vertices_exported": 745,
+      "materials": 1,
+      "material_budget": 2,
+      "material_names": [
+        "ANIMAL_coat"
+      ],
+      "textures": [
+        {
+          "name": "animal_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "1e5b85ce46ed79259775d0a928874ef2e4e2ef03223d6b261cd899b39f28b0e2",
+          "role": "base colour only (sRGB), shared kit atlas"
+        }
+      ],
+      "texture_budget": "<= 1024 x 1024",
+      "visible_meshes": 1,
+      "glb_bytes": 446996,
+      "glb_sha256": "beefdac8b2a2f427f62e6254ff4a56ffa0f07893a460fc240b136d52a96611b0",
+      "export_bounds_m": {
+        "width": 0.4323,
+        "height": 0.6971,
+        "depth": 1.016,
+        "min": [
+          -0.2183,
+          0.0,
+          -0.4489
+        ],
+        "max": [
+          0.214,
+          0.6971,
+          0.5671
+        ]
+      },
+      "export_bounds_note": "rest/bind pose from the POSITION accessor; animated envelopes per clip are in checks/glb_inspect.json (animated_bounds_m)",
+      "design_dimensions_R": {
+        "withers_height_m": 0.63,
+        "nose_to_rump_length_m": 1.02,
+        "brief_envelope": "withers 0.55-0.65 m"
+      },
+      "skeleton": {
+        "joints": 20,
+        "deforming_bones": 19,
+        "deforming_bone_budget": 24,
+        "max_weights_per_vertex": 2,
+        "weights_budget": 4,
+        "bones": [
+          "root",
+          "pelvis",
+          "leg_HL_1",
+          "leg_HL_2",
+          "leg_HL_3",
+          "leg_HR_1",
+          "leg_HR_2",
+          "leg_HR_3",
+          "spine1",
+          "spine2",
+          "leg_FL_1",
+          "leg_FL_2",
+          "leg_FL_3",
+          "leg_FR_1",
+          "leg_FR_2",
+          "leg_FR_3",
+          "neck",
+          "head",
+          "tail1",
+          "tail2"
+        ],
+        "naming": "shared quadruped scheme: root (non-deforming, never animated), pelvis, spine1, spine2, neck, head, tail1, tail2, leg_{FL,FR,HL,HR}_{1,2,3}; F/H = front/hind, L/R = animal's left (+X) / right (-X), 1/2/3 = upper/middle/lower (3 carries the hoof); no jaw bone"
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "sheep_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "head_lead": {
+          "parent": "head",
+          "translation": [
+            0.0,
+            0.05,
+            0.05018
+          ],
+          "rotation_xyzw": [
+            -0.90851,
+            -0.0,
+            -0.0,
+            0.41786
+          ],
+          "rest_world_position": [
+            -0.0,
+            0.5694,
+            0.4253
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "exported node on the root (identity, floor point between the hooves)",
+        "head_lead": "exported node on bone 'head' at the throat/cheek (halter/rope attachment point); Godot imports it as Skeleton3D/head (BoneAttachment3D)/head_lead; world rotation is identity at rest"
+      },
+      "animations": [
+        {
+          "name": "idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "neutral stand",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -1e-05,
+          "hoof_min_y_m": {
+            "FL": -1e-05,
+            "FR": -1e-05,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.49579,
+          "behaviour": "standing; weight sway, two breaths, slow head turn, tail swish; all four hooves planted"
+        },
+        {
+          "name": "walk",
+          "duration_s": 1.0,
+          "fps": 30,
+          "keys_per_channel": 31,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00042,
+          "hoof_min_y_m": {
+            "FL": -0.0003,
+            "FR": -0.00029,
+            "HL": -0.00027,
+            "HR": -0.00042
+          },
+          "muzzle_min_y_m": 0.48204,
+          "behaviour": "in-place lateral-sequence walk (HL, FL, HR, FR at 0, 0.25, 0.5, 0.75 of a cycle), duty 0.64 cattle / 0.62 sheep; cattle 1 stride cycle per loop (stride 0.8 m), sheep 2 cycles per loop (stride 0.4 m); planted hooves move back at the authored ground speed",
+          "authored_ground_speed_m_per_s": 0.8,
+          "measured_planted_hoof_speed_z_m_per_s_median": {
+            "FL": -0.783,
+            "FR": -0.784,
+            "HL": -0.785,
+            "HR": -0.783
+          },
+          "min_hooves_in_contact": 2
+        },
+        {
+          "name": "graze",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "head down, nibble start",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "hoof_min_y_m": {
+            "FL": -0.0,
+            "FR": -0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.01,
+          "behaviour": "head down to the floor (muzzle 12 mm cattle / 10 mm sheep above y=0 at its lowest), two nibble/tear cycles, slow head sweep; hooves planted"
+        },
+        {
+          "name": "lie_idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "sternal lying",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": 0.00096,
+          "hoof_min_y_m": {
+            "FL": 0.04943,
+            "FR": 0.05991,
+            "HL": 0.05717,
+            "HR": 0.06693
+          },
+          "muzzle_min_y_m": 0.29623,
+          "behaviour": "sternal lying, legs folded (hind legs to the sides), breathing, slow head turn, small rumination nod"
+        },
+        {
+          "name": "lie_down",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= idle frame 0",
+          "last_pose": "= lie_idle frame 0",
+          "first_last_key_max_quat_diff": 0.887967,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00022,
+          "hoof_min_y_m": {
+            "FL": -0.00022,
+            "FR": -0.00022,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.30282,
+          "behaviour": "stand -> head lowered -> front carpi (knees) to the floor while hind legs stay planted -> hindquarters fold down -> sternal lying; ends on lie_idle frame 0"
+        },
+        {
+          "name": "stand_up",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= lie_idle frame 0",
+          "last_pose": "= idle frame 0",
+          "first_last_key_max_quat_diff": 0.887967,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00021,
+          "hoof_min_y_m": {
+            "FL": -0.00021,
+            "FR": -0.00021,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "muzzle_min_y_m": 0.21603,
+          "behaviour": "lying -> head lunge -> hindquarters rise first (front still kneeling) -> front legs unfold -> standing; ends on idle frame 0"
+        }
+      ],
+      "design_solves": {
+        "lie_pelvis_drop_m": 0.2682,
+        "kneel_body_pitch_deg": 18.217,
+        "graze_neck_pitch_deg": 79.492,
+        "graze_head_pitch_deg": -45.0
+      },
+      "coat_variants": {
+        "default_column": 0,
+        "columns": [
+          "oatmeal / cream",
+          "brown",
+          "dark brown-black",
+          "grey"
+        ],
+        "selection": "same GLB + same atlas; set StandardMaterial3D.uv1_offset = (0.25 * k, 0, 0) on a duplicate of the imported material (k = 0..3)"
+      },
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": []
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "ANIMAL_coat"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "animal_atlas",
+      "width": 512,
+      "height": 512,
+      "sha256_embedded": "1e5b85ce46ed79259775d0a928874ef2e4e2ef03223d6b261cd899b39f28b0e2",
+      "source_file": "source/textures/animal_atlas.png",
+      "layout": "4 coat columns x 128 px; rows 0-255 cattle, 256-511 sheep; per species: 160-row coat gradient (back -> belly) + four 32 px detail cells (points, dark hoof/nose/eye, horn or inner ear, muzzle)"
+    }
+  ],
+  "kit_totals": {
+    "triangles_both_models": 2516,
+    "herd_demo_4_cattle_8_sheep": {
+      "instances": 12,
+      "triangles": 13912,
+      "visible_meshes": 12,
+      "materials_unique": 1,
+      "material_instances_in_demo": 12,
+      "note": "each demo instance duplicates the material only to set a coat uv1_offset; a game could share 4+4 material instances"
+    }
+  },
+  "reference_ids": [
+    "S22",
+    "KY16",
+    "draft brief ANIMAL-001 r001 (settlement-features.md section 6)"
+  ],
+  "reference_note": "No reference image was adopted for animals (settlement-features.md section 3: no freely licensed Bohemian LBA faunal image or verified ancient-breed reference). No MC/SF picture is relevant to this job; none was used for shape or texture.",
+  "fixture_hashes": {
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/PERSON-001/asset.json": "aff4c3322facfa24140687296723183e0b5b7ea106010e5b2cffb462a83a6388",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/asset.json": "2361eb662a3cddc040881d136bbc74c0b7561db234dc1d22730605143ba3f114",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/asset.json": "f439769f9cc9f2565480f7ca9ead711c4adcf1602941a168e9812bc688637a4f"
+  },
+  "parts_and_uncertainties": [
+    "E (negative, S22 p. 12): no animal bones survive at Brezice; any animal there is a regional R",
+    "E (regional, KY16 as cited in settlement-features.md): cattle usually dominant, sheep commoner than goats; species choice only",
+    "R: body size, proportions, horn form and length, polled sheep, short tail, fleece look, coat colours, coat-variant set",
+    "R: gait timing, stride, duty factor, walking speed 0.8 m/s, lying/rising sequence (front knees first down, hind first up), grazing posture",
+    "R: herd composition and layout in the demo (4 cattle + 8 sheep), PERSON placement",
+    "F: none in the models; demo placement only"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "deviations": [
+    "Draft brief, not a frozen v3 pack: executed under the opus-v2 COMMON/RETURN contract; repo intake tool does not know the ID, so independent measurements are supplied in checks/ instead",
+    "FENCE-001 pen not available (not returned in this batch) - herd demo has no pen",
+    "No jaw bone ('jaw?' optional in the brief); grazing/rumination use head motion only",
+    "Sheep walk loop holds two stride cycles (1 s loop) to keep a 0.8 m/s authored speed with sheep-sized strides",
+    "Preview sun uses shadow_bias 0.2 / normal_bias 4.0 (Godot defaults 0.1 / 2.0 gave self-shadow acne on the broad cattle back at close range); renderer setting, not part of the asset"
+  ]
+}

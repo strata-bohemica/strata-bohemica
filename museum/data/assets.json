@@ -1237,5 +1237,998 @@
     }
    }
   }
+ },
+ "SPIN-001": {
+  "source": "economy-batch5/SPIN-001",
+  "rev": "r001",
+  "models": {
+   "distaff_with_fibre": {
+    "file": "SPIN-001/r001/models/distaff_with_fibre.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "fibre_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "fibre_basket": {
+    "file": "SPIN-001/r001/models/fibre_basket.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "pick_point": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_spinning": {
+    "file": "SPIN-001/r001/models/person_spinning.glb",
+    "animations": {
+     "spin_enter": 1,
+     "spin_exit": 1,
+     "spin_stand": 2,
+     "spin_walk": 1
+    },
+    "anchors": {
+     "distaff_hold": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "carry_anchor": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "spindle_hold": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "spindle_whorl": {
+    "file": "SPIN-001/r001/models/spindle_whorl.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "shaft_top": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "THRESH-001": {
+  "source": "economy-batch4/THRESH-001",
+  "rev": "r001",
+  "models": {
+   "beating_stick": {
+    "file": "THRESH-001/r001/models/beating_stick.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": [
+       0.0,
+       0.017,
+       -0.35
+      ],
+      "yaw_deg": 0.0
+     },
+     "tip": {
+      "translation": [
+       0.0,
+       0.017,
+       0.45
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "chaff_heap_small": {
+    "file": "THRESH-001/r001/models/chaff_heap_small.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "grain_heap_small": {
+    "file": "THRESH-001/r001/models/grain_heap_small.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_threshing": {
+    "file": "THRESH-001/r001/models/person_threshing.glb",
+    "animations": {
+     "thresh": 2,
+     "thresh_enter": 1.4,
+     "thresh_exit": 1.4,
+     "winnow": 2
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "stick_hold": {
+      "translation": [
+       0.02954,
+       0.068,
+       -0.00521
+      ],
+      "yaw_deg": 0.0
+     },
+     "tray_hold": {
+      "translation": [
+       0.00859,
+       0.05052,
+       -0.0015
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "sheaf_bundle": {
+    "file": "THRESH-001/r001/models/sheaf_bundle.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "threshing_floor_strewn": {
+    "file": "THRESH-001/r001/models/threshing_floor_strewn.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "heap_chaff": {
+      "translation": [
+       0.56,
+       0.005,
+       -0.5
+      ],
+      "yaw_deg": 0.0
+     },
+     "heap_grain": {
+      "translation": [
+       0.58,
+       0.005,
+       0.52
+      ],
+      "yaw_deg": 0.0
+     },
+     "sheaf_drop": {
+      "translation": [
+       -0.62,
+       0.005,
+       -0.58
+      ],
+      "yaw_deg": 0.0
+     },
+     "stick_rest": {
+      "translation": [
+       -0.5,
+       0.005,
+       0.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "strike_target": {
+      "translation": [
+       -0.04,
+       0.005,
+       0.56
+      ],
+      "yaw_deg": 0.0
+     },
+     "tray_rest": {
+      "translation": [
+       0.42,
+       0.005,
+       -0.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "worker_origin": {
+      "translation": [
+       0.0,
+       0.005,
+       -0.3
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "winnowing_tray": {
+    "file": "THRESH-001/r001/models/winnowing_tray.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip_l": {
+      "translation": [
+       0.279,
+       0.045,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip_r": {
+      "translation": [
+       -0.279,
+       0.045,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "PARCH-001": {
+  "source": "economy-batch9/PARCH-001",
+  "rev": "r001",
+  "models": {
+   "parching_tray_with_grain": {
+    "file": "PARCH-001/r001/models/parching_tray_with_grain.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "dish_center": {
+      "translation": [
+       0.0,
+       0.016,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grain_surface": {
+      "translation": [
+       0.0,
+       0.031,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_parching": {
+    "file": "PARCH-001/r001/models/person_parching.glb",
+    "animations": {
+     "parch_enter": 2,
+     "parch_exit": 2,
+     "parch_stir": 2.4
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_place": {
+      "translation": [
+       0.0,
+       0.0,
+       0.82
+      ],
+      "yaw_deg": 0.0
+     },
+     "stick_hold": {
+      "translation": [
+       0.08716,
+       0.06714,
+       0.18772
+      ],
+      "yaw_deg": 0.0
+     },
+     "stick_rest": {
+      "translation": [
+       -0.45,
+       0.0,
+       0.25
+      ],
+      "yaw_deg": 0.0
+     },
+     "tray_place": {
+      "translation": [
+       0.0,
+       0.0695,
+       0.82
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "stir_stick": {
+    "file": "PARCH-001/r001/models/stir_stick.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": [
+       0.00086,
+       0.01124,
+       -0.2
+      ],
+      "yaw_deg": 0.0
+     },
+     "tip": {
+      "translation": [
+       0.0,
+       0.00917,
+       0.33
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "HIDE-001": {
+  "source": "economy-batch8/HIDE-001",
+  "rev": "r001",
+  "models": {
+   "hide_drying_rack": {
+    "file": "HIDE-001/r001/models/hide_drying_rack.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "hang_point": {
+      "translation": [
+       0.0,
+       1.33,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "hide_frame": {
+    "file": "HIDE-001/r001/models/hide_frame.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "hide_center": {
+      "translation": [
+       0.0,
+       0.9692,
+       -0.20192
+      ],
+      "yaw_deg": 0.0
+     },
+     "scrape_zone": {
+      "translation": [
+       -0.01,
+       1.07679,
+       -0.22479
+      ],
+      "yaw_deg": 0.0
+     },
+     "worker_place": {
+      "translation": [
+       0.0,
+       0.0,
+       0.3
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "leather_bundle": {
+    "file": "HIDE-001/r001/models/leather_bundle.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "carry_grip": {
+      "translation": [
+       0.0,
+       0.12418,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_hide": {
+    "file": "HIDE-001/r001/models/person_hide.glb",
+    "animations": {
+     "scrape_enter": 1.2,
+     "scrape_exit": 1.2,
+     "scrape_hide": 2
+    },
+    "anchors": {
+     "bundle_place": {
+      "translation": [
+       0.78,
+       0.0,
+       -0.35
+      ],
+      "yaw_deg": 0.0
+     },
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "frame_place": {
+      "translation": [
+       0.0,
+       0.0,
+       0.3
+      ],
+      "yaw_deg": 0.0
+     },
+     "rack_place": {
+      "translation": [
+       -1.95,
+       0.0,
+       -0.6
+      ],
+      "yaw_deg": 0.0
+     },
+     "scraper_hold": {
+      "translation": [
+       0.00195,
+       0.10653,
+       -0.12514
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "scraper_bone": {
+    "file": "HIDE-001/r001/models/scraper_bone.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "edge_mid": {
+      "translation": [
+       0.0,
+       0.008,
+       0.055
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": [
+       -0.125,
+       0.008,
+       0.0015
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "MILK-001": {
+  "source": "economy-batch5/MILK-001",
+  "rev": "r001",
+  "models": {
+   "milk_pail": {
+    "file": "MILK-001/r001/models/milk_pail.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grip": {
+      "translation": [
+       0.0,
+       0.315,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "rim_center": {
+      "translation": [
+       0.0,
+       0.2,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "milking_stool": {
+    "file": "MILK-001/r001/models/milking_stool.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "cow_place": {
+      "translation": [
+       -0.165,
+       0.0,
+       0.847
+      ],
+      "yaw_deg": 0.0
+     },
+     "pail_place": {
+      "translation": [
+       -0.0225,
+       0.0,
+       0.707
+      ],
+      "yaw_deg": 0.0
+     },
+     "pail_wait": {
+      "translation": [
+       0.0,
+       0.0,
+       0.595
+      ],
+      "yaw_deg": 0.0
+     },
+     "seat": {
+      "translation": [
+       0.0,
+       0.3,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "worker_origin": {
+      "translation": [
+       0.0,
+       0.0,
+       0.25
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_herding": {
+    "file": "MILK-001/r001/models/person_herding.glb",
+    "animations": {
+     "herd_idle": 2,
+     "herd_walk": 1,
+     "herd_walk_gesture": 1,
+     "milk": 1,
+     "milk_enter": 2,
+     "milk_exit": 2
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "pail_hold": {
+      "translation": [
+       -0.02757,
+       0.058,
+       -0.00486
+      ],
+      "yaw_deg": 0.0
+     },
+     "stick_hold": {
+      "translation": [
+       0.03398,
+       0.06,
+       -0.00599
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "CLAY-001": {
+  "source": "economy-batch4/CLAY-001",
+  "rev": "r001",
+  "models": {
+   "clay_heap_medium": {
+    "file": "CLAY-001/r001/models/clay_heap_medium.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "heap_top": {
+      "translation": [
+       0.0312,
+       0.58,
+       -0.0225
+      ],
+      "yaw_deg": 0.0
+     },
+     "tip_stand": {
+      "translation": [
+       0.0,
+       0.0,
+       0.8175
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "daub_mix_patch": {
+    "file": "CLAY-001/r001/models/daub_mix_patch.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "chaff_spot": {
+      "translation": [
+       0.42,
+       0.0,
+       -0.3
+      ],
+      "yaw_deg": 0.0
+     },
+     "tread_stand": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "water_edge": {
+      "translation": [
+       -0.47,
+       0.011,
+       0.06
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_clay": {
+    "file": "CLAY-001/r001/models/person_clay.glb",
+    "animations": {
+     "dig": 4.2,
+     "plaster": 4,
+     "tread_mix": 4
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "tool_hold": {
+      "translation": [
+       0.02954,
+       0.062,
+       -0.00521
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "ANIMAL-001": {
+  "source": "bronze-bohemia-v3/ANIMAL-001",
+  "rev": "r001",
+  "models": {
+   "cattle": {
+    "file": "ANIMAL-001/r001/models/cattle.glb",
+    "animations": {
+     "graze": 2,
+     "idle": 2,
+     "lie_down": 2,
+     "lie_idle": 2,
+     "stand_up": 2,
+     "walk": 1
+    },
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "head_lead": {
+      "translation": [
+       -0.0,
+       0.1,
+       0.1045
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "sheep": {
+    "file": "ANIMAL-001/r001/models/sheep.glb",
+    "animations": {
+     "graze": 2,
+     "idle": 2,
+     "lie_down": 2,
+     "lie_idle": 2,
+     "stand_up": 2,
+     "walk": 1
+    },
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "head_lead": {
+      "translation": [
+       0.0,
+       0.05,
+       0.05018
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "ANIMAL-002": {
+  "source": "economy-batch5/ANIMAL-002",
+  "rev": "r001",
+  "models": {
+   "pig": {
+    "file": "ANIMAL-002/r001/models/pig.glb",
+    "animations": {
+     "idle": 2,
+     "lie_down": 2,
+     "lie_idle": 2,
+     "root_forage": 3,
+     "stand_up": 2,
+     "walk": 1
+    },
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "head_lead": {
+      "translation": [
+       -0.0,
+       0.1,
+       0.10418
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "piglet": {
+    "file": "ANIMAL-002/r001/models/piglet.glb",
+    "animations": {
+     "idle": 2,
+     "trot": 1,
+     "walk": 1
+    },
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "head_lead": {
+      "translation": [
+       -0.0,
+       0.0436,
+       0.05824
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "DOG-001": {
+  "source": "economy-batch8/DOG-001",
+  "rev": "r001",
+  "models": {
+   "dog": {
+    "file": "DOG-001/r001/models/dog.glb",
+    "animations": {
+     "idle": 2,
+     "lie_down": 1.8,
+     "lie_idle": 2,
+     "sit": 1,
+     "sit_idle": 2,
+     "sit_up": 0.8,
+     "sniff_ground": 2,
+     "stand_up": 1.4,
+     "trot": 0.4,
+     "walk": 0.5
+    },
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "head_lead": {
+      "translation": [
+       -0.0,
+       0.16758,
+       -0.03889
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "VEG-001": {
+  "source": "bronze-bohemia-opus-v2/VEG-001",
+  "rev": "r001",
+  "models": {
+   "hazel_leafed": {
+    "file": "VEG-001/r001/models/hazel_leafed.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "oak_summer": {
+    "file": "VEG-001/r001/models/oak_summer.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
  }
 }

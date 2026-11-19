@@ -58,6 +58,25 @@ func _init() -> void:
 		for j in range(i + 1, houses.size()):
 			t.ok(p.distance_to(Vector2(houses[j].pos[0], houses[j].pos[1])) > 14.0, "houses %d and %d keep their distance" % [int(h.id), int(houses[j].id)])
 
+	# trees stand inside the disc, off houses, fields and the stream, on gentle ground
+	t.ok(village.trees.size() >= 40, "the village has trees (%d)" % village.trees.size())
+	for tr in village.trees:
+		var q := Vector2(tr.pos[0], tr.pos[1])
+		t.ok(q.length() < radius, "tree stays inside the disc")
+		var near_house := INF
+		for h in houses:
+			near_house = minf(near_house, q.distance_to(Vector2(h.pos[0], h.pos[1])))
+		t.ok(near_house > 9.5, "tree keeps clear of houses (%.1f m)" % near_house)
+		var d_s := INF
+		for k in range(stream.size() - 1):
+			d_s = minf(d_s, Geometry2D.get_closest_point_to_segment(q, Vector2(stream[k][0], stream[k][1]), Vector2(stream[k + 1][0], stream[k + 1][1])).distance_to(q))
+		t.ok(d_s > 5.5, "tree keeps clear of the stream (%.1f m)" % d_s)
+		for poly in village.fields:
+			var pv := PackedVector2Array()
+			for pt in poly:
+				pv.append(Vector2(pt[0], pt[1]))
+			t.ok(not Geometry2D.is_point_in_polygon(q, pv), "tree is not in a field")
+		t.ok(terrain.slope_deg_at(q.x, q.y) < 24.0, "tree stands on ground it can grow on (%.1f deg)" % terrain.slope_deg_at(q.x, q.y))
 	for path in village.paths:
 		t.ok(path.size() >= 4, "a path has points")
 		for q in path:
