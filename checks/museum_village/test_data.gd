@@ -102,6 +102,10 @@ func _init() -> void:
 		t.ok(str(craft.card.status) in ["E", "R", "F"], "%s: card has a status" % tag)
 		t.ok(craft.card.sources.size() >= 2, "%s: card cites at least two sources" % tag)
 		t.ok(craft.card.unknown.size() >= 1, "%s: card says what is unknown" % tag)
+		for src in craft.card.sources:
+			var m := RegEx.create_from_string("research/[A-Za-z0-9_/.-]+\\.md").search(str(src))
+			if m != null:
+				t.ok(FileAccess.file_exists("res://" + m.get_string()), "%s: cited note %s is in the repo" % [tag, m.get_string()])
 		t.ok(craft.card.reconstruction.has("cs") and craft.card.reconstruction.has("en"), "%s: card separates the reconstruction (both languages)" % tag)
 		for ev in craft.card.evidence:
 			t.ok(ev["class"] in ["E", "R", "F"], "%s: evidence entry has a class" % tag)
