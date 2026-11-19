@@ -1,0 +1,484 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "HOUSE-002",
+ "revision": "r001",
+ "status": "draft",
+ "label": "PROPOSAL FOR SCALE TESTING - NOT AN EXCAVATED PLAN",
+ "brief": "art/briefs/economy-batch5/HOUSE-002.md (economy batch 5 backlog, proposal, not a frozen pack); shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md",
+ "author": "GitHub Copilot (AI modelling agent) for the Bronze Bohemia project",
+ "actual_agent_model": "Claude Opus 5.5 (as assigned by the coordinator; self-reported)",
+ "tools": [
+  "Blender 5.2.3 LTS (bpy generator, glTF 2.0 exporter/importer, Workbench stills)",
+  "Godot 4.5.1-stable (Compatibility renderer: headless import + OpenGL GPU viewport captures, Apple M1 Pro)",
+  "Python 3 + numpy (independent GLB parser, contact check)",
+  "Pillow (contact sheets)"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "origin": "floor centre of the house footprint (terrain line y=0), root transforms identity",
+ "scale_basis": "project_fit",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "models": [
+  {
+   "file": "models/house_002.glb",
+   "role": "complete house: Wall, Frame, Roof, DoorRecess mesh nodes (HOUSE-001 split) + anchor nodes; the Roof node is separable (hide it for the roof-off/interior state).",
+   "sha256": "d19be793cbf9f816287a1acee8474d295dea62d9dee76aa60ed21e44cfb1696c",
+   "bytes": 1856412,
+   "triangles": 2804,
+   "triangle_budget": 5000,
+   "budget_ok": true,
+   "triangles_by_mesh": {
+    "DoorRecess": 28,
+    "Frame": 1348,
+    "Roof": 1372,
+    "Wall": 56
+   },
+   "godot_imported_triangles": 2804,
+   "blender_reimport_triangles": 2804,
+   "vertices_exported": 3423,
+   "materials": 3,
+   "material_budget": 3,
+   "material_details": [
+    {
+     "name": "Timber",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8500000238418579,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Thatch",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.9200000166893005,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Daub",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.949999988079071,
+     "baseColorTexture": true
+    }
+   ],
+   "textures": [
+    {
+     "name": "timber_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/png",
+     "embedded": true,
+     "colorspace": "sRGB base colour",
+     "origin": "procedural (seeded numpy noise), own work",
+     "sha256": "20f23ed672a7aa42ddc4186e96f891e80705d17d158102f7c4ee0bc0cb0b7fe1"
+    },
+    {
+     "name": "thatch_basecolor",
+     "width": 1024,
+     "height": 1024,
+     "format": "image/png",
+     "embedded": true,
+     "colorspace": "sRGB base colour",
+     "origin": "procedural (seeded numpy noise), own work",
+     "sha256": "2de4fcbe93577fed6135592b1b38dd8c60912204b34922c21977c218d36e6bfc"
+    },
+    {
+     "name": "daub_basecolor",
+     "width": 1024,
+     "height": 1024,
+     "format": "image/png",
+     "embedded": true,
+     "colorspace": "sRGB base colour",
+     "origin": "procedural (seeded numpy noise), own work",
+     "sha256": "e5d6d93ef29513809237df7a0508f82e876ecc5265c495f83dec3bd0fb3ba9b2"
+    }
+   ],
+   "texture_budget_px": 1024,
+   "visible_meshes": 4,
+   "mesh_nodes": [
+    "DoorRecess",
+    "Frame",
+    "Roof",
+    "Wall"
+   ],
+   "root_transforms_identity": {
+    "DoorRecess": true,
+    "Frame": true,
+    "Roof": true,
+    "Wall": true
+   },
+   "export_bounds_m": {
+    "width": 10.7976,
+    "height": 4.6,
+    "depth": 6.2991,
+    "min": [
+     -5.3979,
+     0.0,
+     -3.15
+    ],
+    "max": [
+     5.3997,
+     4.6,
+     3.1491
+    ],
+    "note": "incl. roof overhang/verge (~10.8 x 6.3 m envelope); walls are 10.0 x 5.5 m outer, eave 2.2 m, ridge 4.6 m"
+   },
+   "anchors": {
+    "door_inside": {
+     "parent": null,
+     "translation": [
+      0.0,
+      0.0,
+      2.2
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0,
+     "use": "extra: ground point just inside the threshold (0,0,2.2) for path-finding through the door"
+    },
+    "entry": {
+     "parent": null,
+     "translation": [
+      0.0,
+      0.0,
+      3.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0,
+     "use": "ground point outside the centred +Z door, under the eave (roof underside 1.96 m above it); identity rotation like HOUSE-001 entry"
+    },
+    "hearth_spot": {
+     "parent": null,
+     "translation": [
+      -3.4,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0,
+     "use": "floor point (-3.4,0,0), yaw 0: KILN-001 hearth_base origin; KILN's own anchors (fire_center, pot_rest, firewood_spot, tend_origin) stay valid at yaw 0 and were measured clear of posts and walls"
+    },
+    "interior_center": {
+     "parent": null,
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0,
+     "use": "floor centre (0,0,0), free floor between the two internal ridge posts at x = +-1.75"
+    },
+    "label_anchor": {
+     "parent": null,
+     "translation": [
+      0.0,
+      5.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0,
+     "use": "(0, 5.0, 0): 0.40 m above the 4.60 m ridge"
+    },
+    "store_spot_1": {
+     "parent": null,
+     "translation": [
+      1.2,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0,
+     "use": "floor point (1.2,0,-1.75), yaw 180: STORE-001 jar origin along the back wall; yaw 180 turns STORE worker_origin (local -Z) into the room"
+    },
+    "store_spot_2": {
+     "parent": null,
+     "translation": [
+      2.75,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0,
+     "use": "floor point (2.75,0,-1.75), yaw 180 (as store_spot_1)"
+    },
+    "store_spot_3": {
+     "parent": null,
+     "translation": [
+      4.3,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0,
+     "use": "floor point (4.3,0,-1.75), yaw 180 (as store_spot_1); spacing 1.55 m keeps STORE lid_rest clear of the neighbouring jar/renewed pit"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": [
+    "OPAQUE"
+   ],
+   "gltf_extensions": [],
+   "states": {
+    "roof_on": {
+     "materials": [
+      "Timber",
+      "Thatch",
+      "Daub"
+     ],
+     "triangles": 2804,
+     "unique_albedo_texture_instances": 3,
+     "visible_meshes": 4
+    },
+    "roof_off_Roof_node_hidden": {
+     "materials": [
+      "Timber",
+      "Daub"
+     ],
+     "triangles": 1432,
+     "unique_albedo_texture_instances": 2,
+     "visible_meshes": 3
+    },
+    "roof_on_dressed_with_fixtures": {
+     "materials": [
+      "Timber",
+      "Thatch",
+      "Daub",
+      "KILN_earth",
+      "KILN_glow",
+      "POT_001_clay",
+      "STORE_ceramic_wood",
+      "STORE_earth"
+     ],
+     "triangles": 8426,
+     "unique_albedo_texture_instances": 11,
+     "visible_meshes": 12
+    },
+    "roof_off_dressed_with_fixtures": {
+     "materials": [
+      "Timber",
+      "Daub",
+      "KILN_earth",
+      "KILN_glow",
+      "POT_001_clay",
+      "STORE_ceramic_wood",
+      "STORE_earth"
+     ],
+     "triangles": 7054,
+     "unique_albedo_texture_instances": 10,
+     "visible_meshes": 11
+    },
+    "note": "Godot-instantiated visible totals; 'dressed' adds read-only KILN-001/POT-001/STORE-001 fixtures (not part of this kit) and excludes PERSON"
+   },
+   "repeated_instance_demo_three_houses": {
+    "materials": [
+     "Timber",
+     "Thatch",
+     "Daub"
+    ],
+    "triangles": 8412,
+    "unique_albedo_texture_instances": 3,
+    "visible_meshes": 12
+   },
+   "construction_measured": {
+    "wall_outer_half_extents_m": {
+     "x": 5.0,
+     "z": 2.75
+    },
+    "wall_inner_half_extents_m": {
+     "x": 4.82,
+     "z": 2.57
+    },
+    "wall_thickness_m": 0.18,
+    "eave_y_m": 2.2,
+    "ridge_y_m": 4.6,
+    "roof_pitch_underside_deg": 36.43,
+    "roof_pitch_thatch_top_deg": 34.75,
+    "roof_underside_at_front_eave_edge_y_m": 1.934,
+    "door": {
+     "clear_height_m": 1.5,
+     "clear_width_m": 0.8,
+     "note": "clear opening inside the DoorRecess lining; a 1.70 m PERSON must stoop through a 1.50 m door (brief value, R)",
+     "recess_x_values": [
+      -0.47,
+      -0.4,
+      0.4,
+      0.47
+     ]
+    },
+    "floor_standing_posts": 23,
+    "internal_ridge_posts_xz": [
+     [
+      -1.749,
+      -0.001
+     ],
+     [
+      1.75,
+      0.0
+     ]
+    ],
+    "fire_to_roof_underside_clearance_m": 3.83
+   }
+  }
+ ],
+ "kit_unique_materials": 3,
+ "kit_unique_material_names": [
+  "Daub",
+  "Thatch",
+  "Timber"
+ ],
+ "kit_unique_textures": [
+  {
+   "name": "timber_basecolor",
+   "width": 512,
+   "height": 512,
+   "sha256": "20f23ed672a7aa42ddc4186e96f891e80705d17d158102f7c4ee0bc0cb0b7fe1"
+  },
+  {
+   "name": "thatch_basecolor",
+   "width": 1024,
+   "height": 1024,
+   "sha256": "2de4fcbe93577fed6135592b1b38dd8c60912204b34922c21977c218d36e6bfc"
+  },
+  {
+   "name": "daub_basecolor",
+   "width": 1024,
+   "height": 1024,
+   "sha256": "e5d6d93ef29513809237df7a0508f82e876ecc5265c495f83dec3bd0fb3ba9b2"
+  }
+ ],
+ "kit_triangles_all_models": 2804,
+ "kit_gltf_extensions": [],
+ "kit_double_sided_true": [],
+ "kit_alpha_modes": [
+  "OPAQUE"
+ ],
+ "reference_ids": [
+  "K22 (Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, CC BY-NC-ND 4.0: link/cite only)",
+  "S-KU22 p.8 via content/research/economy/crafts-exchange.md section 2.1",
+  "HOUSE-001 r001 WH01-WH07 (inspiration only, inherited material language)"
+ ],
+ "fixture_hashes": {
+  "art/briefs/economy-batch5/HOUSE-002.md": "d8e791dc4b37dd20edda4f17048f16c3f27d682d0efd6de5dc5a9440b2cbac20",
+  "art/briefs/economy-batch5/README.md": "fff3ca2311a39052437dc8805835ad05af2fe74b307785939204c6645c466c70",
+  "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+  "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+  "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/asset.json": "f439769f9cc9f2565480f7ca9ead711c4adcf1602941a168e9812bc688637a4f",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/asset.json": "f7b53f4fcf11071247ffd3580596cccfcb9b4b774118025226e105c63c7ec34a",
+  "art/returns/bronze-bohemia-v1/HOUSE-001/r001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+  "art/returns/bronze-bohemia-v1/HOUSE-001/r001/asset.json": "f439769f9cc9f2565480f7ca9ead711c4adcf1602941a168e9812bc688637a4f",
+  "art/returns/bronze-bohemia-v1/HOUSE-001/r001/source/gen_house.py": "43dbd0dcdb8566f0e7c4e1186cd1cb47f8f372f5d725c439f8d6dbc3ebb24d3f",
+  "art/returns/bronze-bohemia-v1/HOUSE-001/r001/references/HOUSE-REFERENCES.md": "9d004993735201b4c29b8c10ed87380fcee64c6d8e9c795fd619d288dc2897da",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_base.glb": "2e12bf68e61480642433a85b1d4c949f23b7207032adbb00fcef2cbcef631de2",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_open_top.glb": "c13b6fe99d3921707dc4856dbad489f5118e84c7ace8690d7911324455467420",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/models/fire_lit.glb": "b84b389c7d9892fceeb69e89aeb3f1da228a062d42df79fb46e65a36053058bc",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/models/firewood_stack.glb": "125cc0121e0cf5214de30af9ee2fb79da3260258db553605e1a4aec3b58c09f5",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/asset.json": "92eee8ad1f10cfd570016f542479211e0e7816b8da87297bcc9fc58d1786b2c4",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/source/inspect_glb.py": "3bc83b2e3a4638918adde77033604779d2343c7571608f8feeaefd66e12629da",
+  "content/research/next-batch/README.md": "3446aaac737bc216f85fff726065776257002cd41bd2039d7bc934d1e31a7606",
+  "content/research/next-batch/settlement-features.md": "eb3e8743029aadf977cb7a40445b336e22a43fc8cd958362edbb34cb2c091c99",
+  "art/returns/bronze-bohemia-v3/STORE-001/r001/models/store_jar.glb": "2391e5deb5951ee57ae50c985a7412bbfd6c01f5e145857f51190ba168a0e23c",
+  "art/returns/bronze-bohemia-v3/STORE-001/r001/models/store_jar_sunken.glb": "3306d9b05b91d5ec8bb718078def18af3c6510f1b223e80f04aabddab3de4226",
+  "art/returns/bronze-bohemia-v3/STORE-001/r001/models/store_jar_renewed.glb": "3601603ebd52a90439e1f2441268164019040dbb46e8fb22f31dfc0785049e59"
+ },
+ "parts_and_uncertainties": [
+  {
+   "part": "footprint 10.0 x 5.5 m, eave 2.2 m, ridge 4.6 m, overhang 0.4 m",
+   "status": "R",
+   "note": "brief design values for scale testing. The 5-8 m width is Kuna et al. 2022's assumption for unobserved regional houses (S-KU22 p.8), not a Brezince measurement; no house length, plan or post-hole layout is known for Brezince."
+  },
+  {
+   "part": "ridge along X, door centred in the +Z long (eave) wall, 0.80 x 1.50 m clear",
+   "status": "R",
+   "note": "brief; door position undocumented at Brezince. A 1.70 m PERSON must stoop (door head 1.50 m; contact preview shows the head above the lintel line). No second/gable door modelled (optional in brief)."
+  },
+  {
+   "part": "internal ridge-supporting posts at x = +-1.75 m + gable centre posts; bays 3.25/3.5/3.25 m",
+   "status": "R",
+   "note": "invented layout for a single open room; tie beams at the internal posts and gables. Visible with the Roof node hidden."
+  },
+  {
+   "part": "wattle-and-daub wall 0.18 m, ochre clay, darker 0.3 m foot band; timber; thatch with turf ridge",
+   "status": "R",
+   "note": "HOUSE-001 r001 material language reused (same palette and recipe, new seed); roof covering/pitch not established for Bohemia"
+  },
+  {
+   "part": "interior anchors (hearth_spot, store_spot_1..3)",
+   "status": "R/F",
+   "note": "placement suggestions for fixtures only. Sunken storage vessels ~mid-house (S-KU22 p.8) is a site pattern; exact positions are F. The hearth/oven function of KILN-001 features is itself unproven."
+  },
+  {
+   "part": "floor, door leaf, partitions, smoke hole, furnishings",
+   "status": "not modelled",
+   "note": "no floor mesh (terrain shows through, sunken STORE jars need a terrain cut by the game); no door leaf"
+  }
+ ],
+ "own_work_license": "Unselected original project work; manager/owner decision",
+ "incorporated_resources": [],
+ "fixtures_used_not_incorporated": [
+  "PERSON-001 r002 model.glb (scale/contact previews; idle/work/rest/walk clips posed by seek only)",
+  "HOUSE-001 r001 fixture (comparison previews)",
+  "POT-001 r001 fixture (KILN pot_rest)",
+  "KILN-001 r001 hearth_base / hearth_open_top / fire_lit / firewood_stack (hearth_spot)",
+  "STORE-001 r001 store_jar / store_jar_sunken / store_jar_renewed from unmerged branch origin/art/store-001-r001 (non-contract study; storage HOLD)"
+ ],
+ "deviations": [
+  "Single kit GLB models/house_002.glb with a separable Roof node (as HOUSE-001) rather than separate roof/shell GLBs; roof-off = hide node 'Roof'.",
+  "Extra anchor door_inside (not in the brief list).",
+  "Daub texture tile 5 m (HOUSE-001: 4 m) so the 4.27 m gable apex never wraps the foot band; band kept at 0.30 m.",
+  "STORE-001 fixture read from an unmerged branch; KILN-001 used as merged provisional data.",
+  "Godot default import settings (incl. generate_lods=true, create_shadow_meshes=true); no animation in this GLB.",
+  "Optional second/gable door not modelled."
+ ]
+}

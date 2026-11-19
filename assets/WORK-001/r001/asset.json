@@ -1,0 +1,532 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "WORK-001",
+  "revision": "r001",
+  "brief": "WORK-001 r001 saddle-quern work study (jobs/WORK-001.md, prompts/WORK-001.md, handoff pack bronze-bohemia-opus-v2, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generators written for this job); character body/rig/skin copied unchanged from PERSON-001 r001",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+    "Godot Engine 4.5.1.stable.official.f62fdbde1 (headless import checks; GPU viewport captures with the Compatibility renderer, OpenGL 4.1 Metal-90.5 on Apple M1 Pro)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheet composition)",
+    "ffmpeg 9.0.2 (MP4/GIF)",
+    "macOS 26.7.1, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "models": [
+    {
+      "file": "models/quern.glb",
+      "role": "lower saddle-quern / grinding slab; base centre on the floor at the origin; long working direction +Z",
+      "triangles": 504,
+      "triangle_budget": 650,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "WORK_props_stone"
+      ],
+      "textures": [
+        {
+          "name": "work_props_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.3225,
+        "height": 0.1211,
+        "depth": 0.5468,
+        "min": [
+          -0.1565,
+          0.0,
+          -0.2734
+        ],
+        "max": [
+          0.166,
+          0.1211,
+          0.2734
+        ]
+      },
+      "export_bounds_note": "concave working arc: centre of the working surface at y=0.1096 (0.4 mm under grind_target), saddle ends rise to 0.121; brief asked ~0.55 x 0.32 x 0.11 (depth x width x height)",
+      "anchors": {
+        "base_center": {
+          "parent": "QUERN",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "grain_patch_spot": {
+          "parent": "QUERN",
+          "translation": [
+            0.0,
+            0.0,
+            0.43
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "grind_target": {
+          "parent": "QUERN",
+          "translation": [
+            0.0,
+            0.11,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "handstone_rest": {
+          "parent": "QUERN",
+          "translation": [
+            0.0,
+            0.11252,
+            -0.10996
+          ],
+          "rotation_xyzw": [
+            0.02291,
+            0.0,
+            0.0,
+            0.99974
+          ]
+        },
+        "worker_origin": {
+          "parent": "QUERN",
+          "translation": [
+            0.0,
+            0.0,
+            -0.55
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "required",
+        "grind_target": "required, (0,0.11,0)",
+        "worker_origin": "required, (0,0,-0.55) = person root during grind clips",
+        "handstone_rest": "added: handstone pose on the back of the working arc during grind_enter/grind_exit; equals the grind t=0 pose",
+        "grain_patch_spot": "added: optional grain_patch placement on the floor in front of the quern (R)"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/handstone.glb",
+      "role": "upper rubbing stone; origin at base centre; handstone_grip at the geometric centre",
+      "triangles": 192,
+      "triangle_budget": 220,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "WORK_props_stone"
+      ],
+      "textures": [
+        {
+          "name": "work_props_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.22,
+        "height": 0.07,
+        "depth": 0.1,
+        "min": [
+          -0.11,
+          0.0,
+          -0.05
+        ],
+        "max": [
+          0.11,
+          0.07,
+          0.05
+        ]
+      },
+      "anchors": {
+        "handstone_grip": {
+          "parent": "HANDSTONE",
+          "translation": [
+            0.0,
+            0.035,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "handstone_grip": "(0,0.035,0), identity rotation = geometric centre of the 0.07 m high stone"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/grain_patch.glb",
+      "role": "sparse generic crushed-grain/meal proxy (three low heaps + three flecks); no claim about what was ground or stored",
+      "triangles": 78,
+      "triangle_budget": 80,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "WORK_props_stone"
+      ],
+      "textures": [
+        {
+          "name": "work_props_atlas",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.256,
+        "height": 0.024,
+        "depth": 0.1476,
+        "min": [
+          -0.134,
+          0.0,
+          -0.0736
+        ],
+        "max": [
+          0.122,
+          0.024,
+          0.074
+        ]
+      },
+      "footprint_limit_m": "within 0.30 x 0.20 (measured 0.256 x 0.148)",
+      "anchors": {},
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/person_grinding.glb",
+      "role": "motion study: unchanged PERSON-001 r001 body/rig/skin + three new clips",
+      "triangles": 2052,
+      "triangle_budget": 2500,
+      "budget_ok": true,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "export_bounds_note": "rest/bind pose (identical to the fixture); animated poses differ",
+      "skeleton": {
+        "joints": 23,
+        "joint_names": [
+          "pelvis",
+          "spine",
+          "chest",
+          "clavicle.L",
+          "upper_arm.L",
+          "forearm.L",
+          "hand.L",
+          "fingers.L",
+          "clavicle.R",
+          "upper_arm.R",
+          "forearm.R",
+          "hand.R",
+          "fingers.R",
+          "neck",
+          "head",
+          "thigh.L",
+          "shin.L",
+          "foot.L",
+          "toe.L",
+          "thigh.R",
+          "shin.R",
+          "foot.R",
+          "toe.R"
+        ],
+        "max_influences_per_vertex": 3,
+        "identical_to_fixture": "vertex streams, indices, inverse bind matrices, joint rest TRS, hierarchy and palette image byte-identical to fixtures/PERSON-001/model.glb (checks/glb_inspect.json fixture_comparison)"
+      },
+      "anchors": {
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ]
+        },
+        "handstone_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.06265,
+            0.05555,
+            -0.0558
+          ],
+          "rotation_xyzw": [
+            -0.5662,
+            0.3826,
+            0.49841,
+            0.53351
+          ]
+        }
+      },
+      "anchor_notes": {
+        "handstone_hold": "NEW. Child of joint hand.R. World pose of the handstone's handstone_grip node during the grind clip; handstone root = handstone_hold * inverse(handstone_grip). See checks/attachment.json.",
+        "carry_anchor": "unchanged r001 node; not meaningful in the grinding clips"
+      },
+      "animations": [
+        {
+          "name": "grind_enter",
+          "duration_s": 1.2,
+          "keys": 37,
+          "fps": 30,
+          "interpolation": "LINEAR",
+          "loop": "none (one-shot)",
+          "godot_loop_mode": "LOOP_NONE",
+          "first_pose": "PERSON-001 r001 idle t=0 neutral stance (0.0 deg / 0.0 m difference from the fixture idle first key)",
+          "last_pose": "grind t=0 (back of the stroke, hands on the handstone resting on handstone_rest)",
+          "behaviour": "R: right foot then left foot step back onto the balls of the feet in a half crouch, both knees go down together (toes tucked), trunk leans forward and both hands come down onto the handstone from above"
+        },
+        {
+          "name": "grind",
+          "duration_s": 2.0,
+          "keys": 61,
+          "fps": 30,
+          "interpolation": "LINEAR",
+          "loop": "seamless linear loop (last key = first key)",
+          "godot_loop_mode": "LOOP_LINEAR (set by import option; glTF has no loop flag)",
+          "first_pose": "kneeling, stone at the back of the stroke (handstone_rest)",
+          "last_pose": "same as first (0.0 deg max difference)",
+          "behaviour": "R: two push/pull strokes per loop; handstone travels -0.11..+0.11 m along the quern's concave arc with the hands; pelvis rocks forward 0.055 m; knees and feet stay planted"
+        },
+        {
+          "name": "grind_exit",
+          "duration_s": 1.2,
+          "keys": 37,
+          "fps": 30,
+          "interpolation": "LINEAR",
+          "loop": "none (one-shot)",
+          "godot_loop_mode": "LOOP_NONE",
+          "first_pose": "grind t=0",
+          "last_pose": "PERSON-001 r001 idle t=0 neutral stance (0.0 deg difference)",
+          "behaviour": "R: grind_enter in reverse time (hands release, sit up, rise to a half crouch, left foot then right foot forward)"
+        }
+      ],
+      "root_motion": "none: PERSON_rig root identity and never animated; only the pelvis joint translates (local), all other joints rotate",
+      "double_sided_exceptions": [],
+      "local_material_deviation": "body and garment exported with doubleSided=false (key omitted) instead of the r001 fixture's doubleSided=true; no other material property differs"
+    }
+  ],
+  "kit_unique_materials": 3,
+  "kit_unique_material_names": [
+    "WORK_props_stone (all three props)",
+    "body",
+    "garment"
+  ],
+  "props_unique_materials": 1,
+  "kit_unique_textures": [
+    {
+      "name": "work_props_atlas",
+      "width": 256,
+      "height": 256,
+      "used_by": [
+        "quern.glb",
+        "handstone.glb",
+        "grain_patch.glb"
+      ],
+      "role": "base colour only, sRGB; 2x2 cells (quern body, worn surface, handstone, grain)",
+      "source_file": "source/textures/work_props_atlas.png"
+    },
+    {
+      "name": "person_palette",
+      "width": 256,
+      "height": 256,
+      "used_by": [
+        "person_grinding.glb"
+      ],
+      "role": "unchanged PERSON-001 r001 palette (byte-identical)"
+    }
+  ],
+  "budgets": {
+    "props_alone": {
+      "triangles": 774,
+      "materials": 1,
+      "textures": "1 x 256x256",
+      "visible_meshes": 3,
+      "limit": "<=2 unique materials, one <=1024^2 atlas: met"
+    },
+    "demo_scene_all_components": {
+      "triangles": 2826,
+      "materials": 3,
+      "textures": "2 x 256x256",
+      "visible_meshes": 4,
+      "note": "measured per GLB in Godot (checks/godot_check.json); the GPU preview scene instantiates exactly these plus preview-only fixtures/helpers"
+    },
+    "states": "single state kit (no seasonal/growth alternates)",
+    "repeated_instance_demo": "not built; three identical work stations would be 3 x 2826 = 8478 triangles by arithmetic (not measured)"
+  },
+  "reference_ids": [
+    "B",
+    "C",
+    "T1"
+  ],
+  "reference_use": {
+    "B": "saddle-quern/grinding-slab context and cereal/legume starch on the slab; no dimensions, form or posture taken",
+    "C": "identifies the implement as a saddle quern used for multifunctional processing; no dimensions or posture",
+    "T1": "Godot 4.5 material/import documentation for cull and import settings",
+    "A": "not used: no barley/cultivar claim is made by grain_patch"
+  },
+  "fixture_hashes": {
+    "PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12",
+    "PERSON-001/source/person_001.blend": "f48900bae80afe629cbda7043959fbd052073be195d954a6f6356f0ccb9792a6",
+    "PERSON-001/source/gen_person.py": "7f3348ef9dead10de541277e7c29ca1f4dbf7d860349ca20d0389d67ff781534",
+    "PERSON-001/textures/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a"
+  },
+  "fixture_copies_in_source": {
+    "source/fixture_PERSON-001/source/person_001.blend": {
+      "sha256": "f48900bae80afe629cbda7043959fbd052073be195d954a6f6356f0ccb9792a6",
+      "identical_to_fixture": true
+    },
+    "source/fixture_PERSON-001/source/gen_person.py": {
+      "sha256": "7f3348ef9dead10de541277e7c29ca1f4dbf7d860349ca20d0389d67ff781534",
+      "identical_to_fixture": true
+    },
+    "source/fixture_PERSON-001/textures/person_palette.png": {
+      "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+      "identical_to_fixture": true
+    }
+  },
+  "parts_and_uncertainties": [
+    {
+      "part": "quern size 0.547 x 0.323 x 0.121 m, outline, side profile",
+      "status": "R",
+      "note": "game-fit from the brief's ~0.55 x 0.32 x 0.11; no measured B\u0159eznice quern was available"
+    },
+    {
+      "part": "concave lengthwise working arc (radius 2.4 m, 12 mm rise to the ends), flat across",
+      "status": "R",
+      "note": "restrained saddle; real wear profile unknown"
+    },
+    {
+      "part": "stone material/colour (granite-like grey with a lighter worn surface)",
+      "status": "R",
+      "note": "stone type not established by B/C"
+    },
+    {
+      "part": "handstone 0.22 x 0.10 x 0.07 m loaf shape, held crosswise",
+      "status": "R",
+      "note": "upper stone geometry not established"
+    },
+    {
+      "part": "grain_patch (meal heaps on the floor in front of the quern)",
+      "status": "R",
+      "note": "generic; B/C report cereal/legume and other products; no claim that any vessel contained barley"
+    },
+    {
+      "part": "kneeling, toes-tucked, forward-leaning posture; two strokes per 2 s; 0.22 m stroke",
+      "status": "R",
+      "note": "a quern finding does not establish the worker's posture or technique"
+    },
+    {
+      "part": "worker identity and placement in the village",
+      "status": "F",
+      "note": "fictional population/placement decided by the manager"
+    }
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r001 body, rig, skin weights, palette texture and pose solver (fixtures/PERSON-001)",
+      "type": "internal private project fixture, copied unchanged",
+      "author": "GitHub Copilot for the Bronze Bohemia project (PERSON-001 r001)",
+      "licence": "unselected (private project material)",
+      "modification": "none to geometry/skin/rig/palette; in this copy only: r001 clips removed, three new clips added, materials exported single-sided, handstone_hold node added",
+      "hashes": "fixture_hashes above"
+    }
+  ],
+  "third_party_media": [],
+  "deviations": [
+    "Quern overall height is 0.121 m (brief ~0.11): grind_target stays at y=0.11 on the working-surface centre and the restrained saddle ends rise 12 mm above it.",
+    "Two extra quern anchors (handstone_rest, grain_patch_spot) were added for reproducible placement; the three required anchors are exact.",
+    "The handstone rests at the back of the stroke (handstone_rest, z=-0.11, 2.63 deg pitch) rather than exactly on grind_target, so that enter/exit hand over to the loop with zero velocity; grind_target is the stroke centre.",
+    "person_grinding.glb contains only the three new clips (the five r001 clips are not duplicated) and keeps the unchanged r001 carry_anchor node.",
+    "grind_exit is grind_enter played in reverse time.",
+    "Godot needs two import settings: grind loop_mode=LINEAR, and the AnimationPlayer optimizer disabled. With Godot's default optimizer the handstone path drifts by up to 3.4 mm (checks/godot_check_default_optimizer.json).",
+    "Scratch work used a folder next to the repository clone, not /tmp, because /tmp is blocked in this environment.",
+    "Transition revised after intake review: the one-knee lunge (raised left thigh through the tunic) was replaced by stepping both feet back in a half crouch and lowering both knees together; no thigh-through-tunic is visible in the GPU captures (visual judgement, skin weights unchanged)."
+  ],
+  "standard_previews": [
+    "previews/front.png",
+    "previews/side.png",
+    "previews/back.png",
+    "previews/top.png",
+    "previews/isometric.png",
+    "previews/wireframe.png"
+  ]
+}

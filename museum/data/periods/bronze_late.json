@@ -1,0 +1,18 @@
+{
+  "id": "bronze_late",
+  "schema": 1,
+  "name": {"cs": "Pozdní doba bronzová (kolem 1100 př. n. l.)", "en": "Late Bronze Age (around 1100 BCE)"},
+  "day_length_s": 360,
+  "note": "Day rhythm is F (fiction): no source gives a daily schedule. Fractions run from midnight (0) through noon (0.5); sunrise is 0.25 and sunset 0.75 (core/day_clock.gd), so people wake before dawn, work in daylight and are home by dusk. Segments tile the day; the two sleep segments are one night across midnight.",
+  "segments": [
+    {"id": "sleep",     "from": 0.00, "to": 0.20},
+    {"id": "wake",      "from": 0.20, "to": 0.23},
+    {"id": "walk_out",  "from": 0.23, "to": 0.27},
+    {"id": "work",      "from": 0.27, "to": 0.50},
+    {"id": "meal",      "from": 0.50, "to": 0.58},
+    {"id": "work",      "from": 0.58, "to": 0.73},
+    {"id": "walk_home", "from": 0.73, "to": 0.77},
+    {"id": "settle",    "from": 0.77, "to": 0.80},
+    {"id": "sleep",     "from": 0.80, "to": 1.00}
+  ]
+}

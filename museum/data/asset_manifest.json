@@ -1,0 +1,10 @@
+{
+  "schema": 1,
+  "note": "Factory assets the museum uses: pack/ID. The sync script copies the newest revision of each into assets/<ID>/<rev>/ and writes museum/data/assets.json.",
+  "assets": [
+    "bronze-bohemia-opus-v2/PERSON-001",
+    "bronze-bohemia-opus-v2/WORK-001",
+    "economy-batch5/HOUSE-002",
+    "economy-batch8/SLEEP-001"
+  ]
+}

@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+"""Import settings the museum needs, applied to every model's .import file:
+
+- gltf/naming_version=2: with the older naming Godot drops nodes parented to bones (hand holds, anchors).
+- animated models: animation optimizer off.
+
+Make Godot import animated models without the lossy animation optimizer.
+
+Godot's default optimizer drops animation keys; for the grinding stone that moves the stone by millimetres (see
+WORK-001 asset.json, godot_import_configurations_compared). Run after the first `godot --import`, then import again.
+usage: tools/import_settings.py
+"""
+import json, os, re
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+catalogue = json.load(open(os.path.join(ROOT, 'museum/data/assets.json')))
+animated = {os.path.join('assets', m['file'].split('/', 1)[0]) + '/' + m['file'].split('/', 1)[1] for a in catalogue.values()
+            for m in a['models'].values() if m['animations']}
+SETTING = '_subresources={\n"nodes": {\n"PATH:AnimationPlayer": {\n"optimizer/enabled": false\n}\n}\n}'
+changed = 0
+for rel in sorted({os.path.join('assets', m['file']) for a in catalogue.values() for m in a['models'].values()}):
+    path = os.path.join(ROOT, rel + '.import')
+    if os.path.exists(path):
+        text = open(path).read()
+        new = re.sub(r'gltf/naming_version=\d+', 'gltf/naming_version=2', text)
+        if new != text:
+            open(path, 'w').write(new)
+for rel in sorted(animated):
+    path = os.path.join(ROOT, rel + '.import')
+    if not os.path.exists(path):
+        print('missing import file (run godot --import first):', rel)
+        continue
+    text = open(path).read()
+    new = re.sub(r'_subresources=\{.*?\n\}(?:\n\}\n\})?(?=\n|$)|_subresources=\{\}', SETTING, text, count=1, flags=re.S)
+    if new != text:
+        open(path, 'w').write(new)
+        changed += 1
+print('patched', changed, 'of', len(animated), 'animated models')

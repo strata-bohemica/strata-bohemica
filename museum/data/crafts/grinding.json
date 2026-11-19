@@ -1,0 +1,22 @@
+{
+  "id": "grinding",
+  "schema": 1,
+  "name": {"cs": "Mletí obilí", "en": "Grinding grain"},
+  "skin": "WORK-001/person_grinding",
+  "block": {"enter": "grind_enter", "loop": "grind", "exit": "grind_exit"},
+  "props": {"quern": "WORK-001/quern", "stone": "WORK-001/handstone", "grain": "WORK-001/grain_patch"},
+  "card": {
+    "status": "R",
+    "evidence": [
+      {"class": "E", "text": {"cs": "Na Březnici jsou drticí kameny; analýza povrchů podporuje zpracování potravin. Nalezeny jsou ječmen a proso.", "en": "Grinding stones were found at Březnice; surface analysis supports food processing. Barley and millet were recovered."}}
+    ],
+    "reconstruction": {"cs": "Klek, předklon a pohyb rukou po spodním kameni jsou rekonstrukce pohybu. Výběr jedné plodiny a rozložení pracoviště také.", "en": "The kneeling posture, forward lean and hand motion over the lower stone are reconstructed, as are the choice of one crop and the layout of the work spot."},
+    "unknown": ["exact quern form (saddle or rotary)", "who did the grinding", "daily output"],
+    "sources": [
+      "Šálková et al. 2022, Scientific Reports 12:20323, p. 3",
+      "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "WORK-001 PROVENANCE.md",
+      "content/research/breznice-workshops.md, section 1"
+    ]
+  }
+}

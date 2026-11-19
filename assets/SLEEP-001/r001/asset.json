@@ -1,0 +1,730 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "SLEEP-001",
+  "revision": "r001",
+  "brief": "SLEEP-001 r001 bedding and lying rest (art/briefs/economy-batch8/SLEEP-001.md + README.md, proposal; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md, RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generators written for this job); character body/rig/skin/palette copied unchanged from PERSON-001 r002",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/contact/reopen checks)",
+    "Khronos glTF Blender I/O (bundled with Blender 5.2.3; GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer over OpenGL, adapter Apple M1 Pro / 4.1 Metal - 90.5)",
+    "Python 3.9.6 + numpy (independent GLB parser) + Pillow (sheet composition)",
+    "ffmpeg (MP4/GIF)"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "models": [
+    {
+      "file": "models/bed_hide_pile.glb",
+      "role": "hide pile bed: low heap of dry bracken/straw litter, a large dark hide over it, two sheepskins (dark at the legs, light at the shoulders) on the body zone and a folded fleece as head rest (R)",
+      "triangles": 284,
+      "triangle_budget": 300,
+      "triangle_budget_source": "self-set (no brief value; same as bed_straw)",
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SLEEP_kit"
+      ],
+      "textures": [
+        {
+          "name": "sleep_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 2.06,
+        "height": 0.187,
+        "depth": 0.8695,
+        "min": [
+          -1.03,
+          0.0,
+          -0.4348
+        ],
+        "max": [
+          1.03,
+          0.187,
+          0.4347
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "bed_hide_pile",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor point of the prop (origin)"
+        },
+        "head_rest": {
+          "parent": "bed_hide_pile",
+          "local_translation": [
+            0.735,
+            0.195,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "top of the head rest under the back of the head (shared sleeping-surface specification)"
+        },
+        "lie_center": {
+          "parent": "bed_hide_pile",
+          "local_translation": [
+            0.05,
+            0.16,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "pelvis contact point on the sleeping surface (shared specification; the lying pelvis bone is 0.15 m above it)"
+        },
+        "sleeper_origin": {
+          "parent": "bed_hide_pile",
+          "local_translation": [
+            0.05,
+            0.0,
+            0.52
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "character root for all three clips: place person_sleep with root = bed * sleeper_origin (identity rotation; the character stands on the access side with its back to the bed, +Z front = bed +Z)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "shell_components": {
+        "closed": 2,
+        "open": 2,
+        "closed_signed_volume_min_m3": 0.003149,
+        "note": "open parts = hide/fleece sheets laid on the bed (mean normal up) and tufts/cords whose open edges are buried in the shell below"
+      },
+      "sha256": "4cacd39800d331db09051b9fb6f1b0ffaff246cf81cbac71fc035f1aa94f2c76"
+    },
+    {
+      "file": "models/bed_straw.glb",
+      "role": "straw mattress: coarse sack stuffed with straw (~1.90 x 0.80 m, gathered tied ends with straw tufts), a cattle hide laid over it as the lying surface, a rolled fleece across the head end (R)",
+      "triangles": 252,
+      "triangle_budget": 300,
+      "triangle_budget_source": "brief (<= 300 tris)",
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SLEEP_kit"
+      ],
+      "textures": [
+        {
+          "name": "sleep_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 2.05,
+        "height": 0.1912,
+        "depth": 0.8175,
+        "min": [
+          -1.025,
+          0.0,
+          -0.4089
+        ],
+        "max": [
+          1.025,
+          0.1912,
+          0.4086
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "bed_straw",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor point of the prop (origin)"
+        },
+        "head_rest": {
+          "parent": "bed_straw",
+          "local_translation": [
+            0.735,
+            0.195,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "top of the head rest under the back of the head (shared sleeping-surface specification)"
+        },
+        "lie_center": {
+          "parent": "bed_straw",
+          "local_translation": [
+            0.05,
+            0.16,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "pelvis contact point on the sleeping surface (shared specification; the lying pelvis bone is 0.15 m above it)"
+        },
+        "sleeper_origin": {
+          "parent": "bed_straw",
+          "local_translation": [
+            0.05,
+            0.0,
+            0.52
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "character root for all three clips: place person_sleep with root = bed * sleeper_origin (identity rotation; the character stands on the access side with its back to the bed, +Z front = bed +Z)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "shell_components": {
+        "closed": 2,
+        "open": 7,
+        "closed_signed_volume_min_m3": 0.004646,
+        "note": "open parts = hide/fleece sheets laid on the bed (mean normal up) and tufts/cords whose open edges are buried in the shell below"
+      },
+      "sha256": "29b84d31e0d9d349e37180b93d509c574c882ca1a3815b859916bf4e511b1290"
+    },
+    {
+      "file": "models/bedding_rolled.glb",
+      "role": "stored bedding: hide and fleece rolled together (~0.78 m long, 0.25 m diameter), tied with two cords, lying on the floor (R)",
+      "triangles": 176,
+      "triangle_budget": 200,
+      "triangle_budget_source": "self-set (no brief value)",
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "SLEEP_kit"
+      ],
+      "textures": [
+        {
+          "name": "sleep_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.788,
+        "height": 0.2481,
+        "depth": 0.2612,
+        "min": [
+          -0.394,
+          0.0,
+          -0.1306
+        ],
+        "max": [
+          0.394,
+          0.2481,
+          0.1306
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "base_center": {
+          "parent": "bedding_rolled",
+          "local_translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "floor point of the prop (origin)"
+        },
+        "carry_grip": {
+          "parent": "bedding_rolled",
+          "local_translation": [
+            0.0,
+            0.2425,
+            0.0
+          ],
+          "local_rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "note": "top centre of the roll (hand/shoulder carry reference for a future carry clip; not used here)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "shell_components": {
+        "closed": 1,
+        "open": 2,
+        "closed_signed_volume_min_m3": 0.03579,
+        "note": "open parts = hide/fleece sheets laid on the bed (mean normal up) and tufts/cords whose open edges are buried in the shell below"
+      },
+      "sha256": "77ab11cb16203e51651acac027c99441ae0be3c0e2202f91758c48fd8e4e8b15"
+    },
+    {
+      "file": "models/person_sleep.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette unchanged + in-place clips lie_down (2 s), sleep_lie (4 s loop, one slow breath), get_up (2 s); no node added",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "triangle_budget_source": "PERSON r002 body unchanged",
+      "budget_ok": null,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform_identity": true,
+      "anchors": {
+        "carry_anchor": {
+          "parent": "hand.R",
+          "local_translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "local_rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "note": "unchanged PERSON-001 r002 node under hand.R (not used by these clips)"
+        }
+      },
+      "animations": [
+        {
+          "name": "get_up",
+          "duration_s": 2.0,
+          "keys_per_channel": [
+            61
+          ],
+          "fps": 30,
+          "intended_loop": "one-shot (LOOP_NONE): sleep_lie t=0 -> roll onto the left hand, knees drawn up (0.58 s) -> legs swung down, seated on the bed edge (1.02 s) -> hands on the knees, pushing up (1.46 s) -> r002 idle t=0 (2.0 s)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_vs_last_key_max_rotation_deg": 148.61414,
+          "loop_wrap_step_deg": null,
+          "max_per_key_rotation_step_deg": 29.1494,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "pelvis": 0.574
+          },
+          "pelvis_local_translation_range": [
+            [
+              -0.03,
+              0.2597,
+              -0.52
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "lie_down",
+          "duration_s": 2.0,
+          "keys_per_channel": [
+            61
+          ],
+          "fps": 30,
+          "intended_loop": "one-shot (LOOP_NONE): r002 idle t=0 standing on sleeper_origin with the bed behind -> squat (0.55 s) -> seated on the bed edge, feet on the floor, hands on the bed (0.92 s) -> leaning back on the left hand, knees drawn up over the bed (1.42 s) -> supine = sleep_lie t=0 (2.0 s)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_vs_last_key_max_rotation_deg": 148.61414,
+          "loop_wrap_step_deg": null,
+          "max_per_key_rotation_step_deg": 29.19,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {
+            "pelvis": 0.62431
+          },
+          "pelvis_local_translation_range": [
+            [
+              -0.03,
+              0.2597,
+              -0.52
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ]
+        },
+        {
+          "name": "sleep_lie",
+          "duration_s": 4.0,
+          "keys_per_channel": [
+            121
+          ],
+          "fps": 30,
+          "intended_loop": "loop (LOOP_LINEAR): supine on the bed, one slow breath per 4 s (chest/shoulders and the hand on the belly rise and fall; pelvis, legs and head still)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "loop_wrap_step_deg": 0.3072,
+          "max_per_key_rotation_step_deg": 0.3245,
+          "root_node_animated": false,
+          "in_place": true,
+          "nodes_with_changing_translation": {},
+          "pelvis_local_translation_range": [
+            [
+              0.0,
+              0.31,
+              -0.52
+            ],
+            [
+              0.0,
+              0.31,
+              -0.52
+            ]
+          ]
+        }
+      ],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "gltf_extensions": [],
+      "shell_components": {
+        "closed": 12,
+        "open": 8,
+        "closed_signed_volume_min_m3": 3e-06,
+        "note": "open parts = hide/fleece sheets laid on the bed (mean normal up) and tufts/cords whose open edges are buried in the shell below"
+      },
+      "sha256": "f1aa8178c327640a642b905ee3f6e0336e34fc285c70e34da26181a7f9130820",
+      "export_bounds_note": "bind-pose skinned geometry (identical to PERSON r002); animated poses differ",
+      "fixture_identity_vs_PERSON_r002": {
+        "vertex_streams_and_indices_byte_identical": true,
+        "inverse_bind_matrices_byte_identical": true,
+        "joint_names_and_parents_equal": true,
+        "joint_rest_trs_max_abs_diff": 0.0,
+        "palette_image_byte_identical": true,
+        "materials_identical": true,
+        "carry_anchor_unchanged": true,
+        "lie_down_first_vs_r002_idle_t0": {
+          "max_rotation_deg_all_joints": 0.0,
+          "max_rotation_deg_legs": 0.0,
+          "max_translation_m": 1e-07
+        },
+        "get_up_last_vs_r002_idle_t0": {
+          "max_rotation_deg_all_joints": 0.0,
+          "max_rotation_deg_legs": 0.0,
+          "max_translation_m": 1e-07
+        },
+        "note": "PERSON r002 palette texture/materials are inherited; they are not part of the kit's own material/atlas budget"
+      },
+      "clip_seams_measured": {
+        "get_up": {
+          "last_vs_first": {
+            "max_rotation_deg": 148.61414,
+            "max_translation_or_scale_m": 0.574
+          }
+        },
+        "lie_down": {
+          "last_vs_first": {
+            "max_rotation_deg": 148.61414,
+            "max_translation_or_scale_m": 0.574
+          }
+        },
+        "sleep_lie": {
+          "last_vs_first": {
+            "max_rotation_deg": 0.0,
+            "max_translation_or_scale_m": 0.0
+          }
+        },
+        "lie_down_last_vs_sleep_lie_first": {
+          "max_rotation_deg": 5e-05,
+          "max_translation_or_scale_m": 2e-07
+        },
+        "sleep_lie_last_vs_get_up_first": {
+          "max_rotation_deg": 5e-05,
+          "max_translation_or_scale_m": 2e-07
+        },
+        "get_up_last_vs_lie_down_first": {
+          "max_rotation_deg": 0.0,
+          "max_translation_or_scale_m": 0.0
+        }
+      },
+      "solver_ik_reach_error_max_m": {
+        "lie_down": 0.0,
+        "sleep_lie": 0.0,
+        "get_up": 0.0
+      }
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "SLEEP_kit"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "sleep_atlas",
+      "width": 512,
+      "height": 512
+    }
+  ],
+  "kit_budget_note": "Own kit: 1 material SLEEP_kit (roughness 0.95, non-metal, single-sided, opaque) with 1 shared 512x512 atlas (sleep_atlas) in all three prop GLBs. person_sleep adds only the inherited, unchanged PERSON r002 materials body + garment and their 256x256 palette.",
+  "sleeping_surface_specification": {
+    "frame": "bed glTF coordinates: base_center origin on the floor, long axis X, head end +X, access side +Z",
+    "body_zone_top_y_m": 0.16,
+    "body_zone_x_m": [
+      -0.9,
+      0.56
+    ],
+    "body_zone_half_width_z_m": 0.25,
+    "head_rest_x_m": 0.735,
+    "head_rest_top_y_m": 0.195,
+    "sleeper_origin_m": [
+      0.05,
+      0.0,
+      0.52
+    ],
+    "measured_surface_probe_y_m": {
+      "bed_straw": {
+        "pelvis": 0.16,
+        "chest": 0.16,
+        "heels": 0.16,
+        "head_rest": 0.1912
+      },
+      "bed_hide_pile": {
+        "pelvis": 0.16,
+        "chest": 0.16,
+        "heels": 0.16,
+        "head_rest": 0.187
+      }
+    },
+    "note": "both sleeping beds follow this specification so one set of clips fits either; bedding_rolled is storage only"
+  },
+  "states": {
+    "note": "no mutually exclusive states; the roll is a separate stored-bedding object (a laid-out bed and the roll are alternatives in a household's inventory, not GLB states)",
+    "one_sleeper_set_triangles": {
+      "person_sleep + bed_straw": 2304,
+      "person_sleep + bed_hide_pile": 2336
+    },
+    "all_models_once_triangles": 2764
+  },
+  "demo_scene": {
+    "files": "previews/godot_village_ortho25_*.png, godot_village_ortho16_*.png (roof off), godot_village_ortho16_cutaway_*.png, godot_interior_ortho6_cutaway_*.png, godot_interior_top_*.png, godot_door_eyelevel_persp.png; animation previews/sleep_lie_down_breathe_get_up.mp4/.gif",
+    "house": "HOUSE-001 fixture at the world origin with its Roof node hidden (roof off); HOUSE-002 is not merged on the integration branch (only on branch art/house-002-r001), so HOUSE-001 only, as the brief allows",
+    "floor_positions_house_local_m": {
+      "bed_straw": {
+        "base_center": [
+          0.55,
+          0.0,
+          -0.88
+        ],
+        "yaw_deg": 0,
+        "note": "along the back wall (inner face z = -1.32), access side toward the room; sleeper_origin at (0.60, 0, -0.36)"
+      },
+      "bed_hide_pile": {
+        "base_center": [
+          -1.17,
+          0.0,
+          -0.27
+        ],
+        "yaw_deg": 90,
+        "note": "along the left wall (inner face x = -1.62), head end toward the back wall; sleeper_origin at (-0.65, 0, -0.32)"
+      },
+      "bedding_rolled": {
+        "base_center": [
+          -1.2,
+          0.0,
+          1.0
+        ],
+        "yaw_deg": 0,
+        "note": "stored in the front-left corner beside the door"
+      },
+      "context_fixtures": "KILN-001 hearth_open_top + fire_embers at (0.85, 0, 0.62); POT-001 at (1.32, 0, -0.05); PERSON r002 idle at (-0.42, 0, 0.88), yaw 215 deg"
+    },
+    "cutaway": "preview-only: HOUSE wall/frame materials replaced in Godot by a shader sampling the same textures and discarding fragments with x+y+z > 1.6 m (front/right walls), recorded per shot in checks/godot_shot_log_stills.json",
+    "instantiated_returned_triangles_village": 5528,
+    "instantiated_triangles_note": "village views: in the house 2 x person_sleep + bed_straw + bed_hide_pile + bedding_rolled, plus the kit line-up beside the house (one of each prop); fixtures and isolated rigs excluded"
+  },
+  "contact_summary": {
+    "tolerance_soft_sink_m": 0.01,
+    "bed_straw": {
+      "sleep_lie_torso_contact_gap_range_m": [
+        0.0031,
+        0.0031
+      ],
+      "sleep_lie_head_min_gap_m": -0.0035,
+      "worst_penetration_all_clips": {
+        "gap_m": -0.008,
+        "clip": "lie_down",
+        "region": "feet"
+      },
+      "min_floor_height_all_clips_m": -0.0005
+    },
+    "bed_hide_pile": {
+      "sleep_lie_torso_contact_gap_range_m": [
+        0.0031,
+        0.0031
+      ],
+      "sleep_lie_head_min_gap_m": -0.0044,
+      "worst_penetration_all_clips": {
+        "gap_m": -0.0053,
+        "clip": "lie_down",
+        "region": "hands"
+      },
+      "min_floor_height_all_clips_m": -0.0005
+    },
+    "requirement": "brief: pelvis/torso contact with the bed top <= 20 mm (sleep_lie)"
+  },
+  "godot_import_settings": {
+    "person_sleep.glb": "_subresources: animations sleep_lie settings/loop_mode=1 (LOOP_LINEAR), lie_down/get_up settings/loop_mode=0 (LOOP_NONE); nodes PATH:AnimationPlayer optimizer/enabled=false (see checks/godot_person_sleep.glb.import.txt)",
+    "props": "Godot defaults"
+  },
+  "reference_ids": [
+    "Brief: 'interior furnishing unattested; bedding R' (art/briefs/economy-batch8/SLEEP-001.md)",
+    "content/research/economy/subsistence.md (docs/economy-research), activity table row 'By-product reuse | chaff/straw -> clay temper, daub, fodder, bedding' (line 349): bedding is listed as a by-product use; the cited evidence covers temper and fodder only, bedding is R",
+    "content/research/economy/subsistence.md F10 outputs 'animal -> meat portions + hide' (line 526): hides as an animal output, R",
+    "content/research/economy/crafts-exchange.md §2.5 'Bone/antler/leather not recoverable locally (acid soil)' (line 97): no local leather/hide evidence (E negative)",
+    "content/research/next-batch/settlement-features.md (docs/next-batch-research) line 57 and README line 30: HOUSE-001 r001 footprint 3.6 x 3.0 m is much smaller than the 5-8 m wide regional house type (flag for the manager; the two beds fill most of its floor)"
+  ],
+  "fixture_hashes": {
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_open_top.glb": "c13b6fe99d3921707dc4856dbad489f5118e84c7ace8690d7911324455467420",
+    "returns/bronze-bohemia-v3/KILN-001/r001/models/fire_embers.glb": "c9dfda43f5390b5fb305fcf36ad167fa0cf2062000eeb3b21267fdb37b9a5a82",
+    "briefs/economy-batch8/SLEEP-001.md": "cdceb50717eecd846be0e3ef09594379e97db14ea248bdc74d2948eb12121a43",
+    "briefs/economy-batch8/README.md": "7e848b0a64b926b10516daabfa2ec32b1ea5417eb678e3551313e67f5eace596",
+    "handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+  },
+  "parts_and_uncertainties": [
+    "No bed, bedding, interior furnishing or sleeping posture is attested at Březnice in the inspected sources (brief: interior furnishing unattested).",
+    "R: straw-filled sack mattress (sack fabric unspecified; straw as crop by-product per subsistence.md, its bedding use is R), cattle hide cover, rolled fleece bolster.",
+    "R: bracken/straw litter heap, hides and sheepskins (hides as an animal output is R; leather does not survive locally, crafts-exchange.md §2.5).",
+    "R: rolled/tied storage of bedding; cord material.",
+    "R: sizes (mattress ~1.9 x 0.8 x 0.16 m), colours, the shared sleeping-surface height and head-rest height.",
+    "R: lying down via squat-sit-roll, supine sleeping pose (one hand on the belly, feet turned out), breath period 4 s, getting up via roll-sit-push.",
+    "F: bed positions inside HOUSE-001, who sleeps where, hearth embers at night."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (accepted return): person_001.blend, gen_person.py, person_palette.png, model.glb",
+      "use": "body/rig/skin/palette copied unchanged; pose solver executed unchanged",
+      "licence": "private project material, no public sublicence"
+    },
+    {
+      "resource": "HOUSE-001, POT-001 fixtures; KILN-001 r001 hearth_open_top, fire_embers",
+      "use": "preview context only (not shipped in models/)",
+      "licence": "private project material"
+    },
+    {
+      "resource": "VISIT-001 r001 source (same project, economy batch 7)",
+      "use": "pipeline scripts adapted (inspect/reimport/reopen/Godot/compose/asset writer)",
+      "licence": "private project material"
+    }
+  ],
+  "deviations": [
+    "Extra anchors beyond the brief: sleeper_origin (character placement), head_rest, lie_center on both beds; base_center + carry_grip on bedding_rolled.",
+    "lie_down/get_up are in place (root fixed at sleeper_origin) but the body travels about 0.5 m from standing to lying (pelvis moves back onto the bed); the game must place the character root on the bed's sleeper_origin before lie_down and keep it there until get_up ends.",
+    "bed_hide_pile and bedding_rolled have no brief triangle budget; self-set budgets 300 and 200 are reported.",
+    "HOUSE-002 is not merged on the integration branch, so the demo uses HOUSE-001 only (as the brief allows). The roof-off views keep HOUSE-001's frame/rafters; extra cutaway and frame-hidden views are preview-only.",
+    "Transitions keep the torso within ~5 cm of the bedding while sitting up/rolling (hips lift slightly as the legs swing); measured per frame in checks/contact_check.json.",
+    "The r002 tunic skirt is skinned to the thighs; in the knees-drawn-up roll poses the skirt panels splay (r002 rig limitation, mesh not edited).",
+    "Inspection uses this job's own tools (source/inspect_glb.py etc.), not tools/inspect_asset.py, which does not know batch-8 IDs (not edited)."
+  ]
+}
