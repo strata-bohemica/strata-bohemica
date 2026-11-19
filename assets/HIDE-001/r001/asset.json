@@ -1,0 +1,1036 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "HIDE-001",
+  "revision": "r001",
+  "brief": "HIDE-001 r001 hide processing (art/briefs/economy-batch8/HIDE-001.md + README.md, proposal not a frozen pack; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent (procedural Blender/Python generators written for this job); character body/rig/skin/palette copied unchanged from the accepted PERSON-001 r002 return",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/reopen/contact checks)",
+    "Khronos glTF Blender I/O (GLB export/import, bundled with Blender 5.2.3)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer on Apple M1 Pro)",
+    "Python 3 + numpy (independent GLB parser) + Pillow (sheet composition)",
+    "ffmpeg (MP4/GIF)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source: frame, hide, rack, scraper and bundle sizes, the posture and the stroke are R design values (hide/leather: regional/general R, no local organics survive).",
+  "models": [
+    {
+      "file": "models/hide_frame.glb",
+      "role": "upright stretching frame (two side poles, two lashed cross bars, two rear braces; leaning back 12 deg) with a cattle-size raw hide laced in by 16 rawhide thongs; flesh side (+Z, pale, with a scraped band) to the front, hair side behind; real 8 mm hide thickness",
+      "triangles": 468,
+      "triangle_budget": 500,
+      "budget_ok": true,
+      "vertices_exported": 764,
+      "materials": 1,
+      "material_names": [
+        "HIDE001_kit"
+      ],
+      "double_sided": {
+        "HIDE001_kit": false
+      },
+      "alpha_mode": {
+        "HIDE001_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "hide001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 323464,
+      "export_bounds_m": {
+        "width": 1.7204,
+        "height": 1.7154,
+        "depth": 0.8615,
+        "min": [
+          -0.8602,
+          -0.0477,
+          -0.8261
+        ],
+        "max": [
+          0.8602,
+          1.6678,
+          0.0354
+        ]
+      },
+      "root_transform": "identity",
+      "godot_imported_triangles": 468,
+      "anchors": {
+        "base_center": {
+          "parent": "HIDE_FRAME",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "hide_center": {
+          "parent": "HIDE_FRAME",
+          "translation": [
+            0.0,
+            0.9692,
+            -0.20192
+          ],
+          "rotation_xyzw": [
+            -0.10453,
+            0.0,
+            0.0,
+            0.99452
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.9692,
+            -0.20192
+          ]
+        },
+        "scrape_zone": {
+          "parent": "HIDE_FRAME",
+          "translation": [
+            -0.01,
+            1.07679,
+            -0.22479
+          ],
+          "rotation_xyzw": [
+            -0.10453,
+            0.0,
+            0.0,
+            0.99452
+          ],
+          "world_rest_translation": [
+            -0.01,
+            1.07679,
+            -0.22479
+          ]
+        },
+        "worker_place": {
+          "parent": "HIDE_FRAME",
+          "translation": [
+            0.0,
+            0.0,
+            0.3
+          ],
+          "rotation_xyzw": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.3
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin under the frame (side-pole floor line)",
+        "worker_place": "where person_hide's root goes: (0, 0, 0.30), yaw 180 deg (worker faces the flesh side); inverse of person_hide.frame_place",
+        "scrape_zone": "centre of the stroke area on the hide's front surface; +Z = front normal",
+        "hide_center": "centre of the hide's front surface; +Z = front normal (hide plane for contact checks)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/hide_drying_rack.glb",
+      "role": "drying rack: two forked posts and a cross pole, a scraped raw hide (flesh side out) and a dried leather piece folded over the pole; posts sunk 6 cm",
+      "triangles": 424,
+      "triangle_budget": 500,
+      "budget_ok": true,
+      "vertices_exported": 498,
+      "materials": 1,
+      "material_names": [
+        "HIDE001_kit"
+      ],
+      "double_sided": {
+        "HIDE001_kit": false
+      },
+      "alpha_mode": {
+        "HIDE001_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "hide001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 314360,
+      "export_bounds_m": {
+        "width": 2.3602,
+        "height": 1.4554,
+        "depth": 0.1793,
+        "min": [
+          -1.1801,
+          -0.06,
+          -0.0903
+        ],
+        "max": [
+          1.1801,
+          1.3954,
+          0.089
+        ]
+      },
+      "root_transform": "identity",
+      "godot_imported_triangles": 424,
+      "anchors": {
+        "base_center": {
+          "parent": "HIDE_DRYING_RACK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "hang_point": {
+          "parent": "HIDE_DRYING_RACK",
+          "translation": [
+            0.0,
+            1.33,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            1.33,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin (rack centre)",
+        "hang_point": "top of the cross pole at its centre (where a hide is thrown over)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/scraper_bone.glb",
+      "role": "bone scraper (split long bone / rib, R): narrow grip at each end, broad convex working edge (+Z) between them; lies flat on the floor at rest",
+      "triangles": 128,
+      "triangle_budget": 150,
+      "budget_ok": true,
+      "vertices_exported": 89,
+      "materials": 1,
+      "material_names": [
+        "HIDE001_kit"
+      ],
+      "double_sided": {
+        "HIDE001_kit": false
+      },
+      "alpha_mode": {
+        "HIDE001_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "hide001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 299564,
+      "export_bounds_m": {
+        "width": 0.32,
+        "height": 0.016,
+        "depth": 0.066,
+        "min": [
+          -0.16,
+          0.0,
+          -0.011
+        ],
+        "max": [
+          0.16,
+          0.016,
+          0.055
+        ]
+      },
+      "root_transform": "identity",
+      "godot_imported_triangles": 128,
+      "anchors": {
+        "base_center": {
+          "parent": "SCRAPER_BONE",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "edge_mid": {
+          "parent": "SCRAPER_BONE",
+          "translation": [
+            0.0,
+            0.008,
+            0.055
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.008,
+            0.055
+          ]
+        },
+        "grip": {
+          "parent": "SCRAPER_BONE",
+          "translation": [
+            -0.125,
+            0.008,
+            0.0015
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            -0.125,
+            0.008,
+            0.0015
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin (rest pose lying flat)",
+        "grip": "right-hand grip at the -X end (person_hide's right fist closes here)",
+        "edge_mid": "middle of the working edge (the point driven along the hide surface)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/leather_bundle.glb",
+      "role": "rolled finished leather (spiral ends) tied with two thongs; flat bottom facet on the floor",
+      "triangles": 92,
+      "triangle_budget": 150,
+      "budget_ok": true,
+      "vertices_exported": 88,
+      "materials": 1,
+      "material_names": [
+        "HIDE001_kit"
+      ],
+      "double_sided": {
+        "HIDE001_kit": false
+      },
+      "alpha_mode": {
+        "HIDE001_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "hide001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 299220,
+      "export_bounds_m": {
+        "width": 0.44,
+        "height": 0.1218,
+        "depth": 0.153,
+        "min": [
+          -0.22,
+          0.0,
+          -0.0765
+        ],
+        "max": [
+          0.22,
+          0.1218,
+          0.0765
+        ]
+      },
+      "root_transform": "identity",
+      "godot_imported_triangles": 92,
+      "anchors": {
+        "base_center": {
+          "parent": "LEATHER_BUNDLE",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "carry_grip": {
+          "parent": "LEATHER_BUNDLE",
+          "translation": [
+            0.0,
+            0.12418,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.12418,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin (bundle centre)",
+        "carry_grip": "top of the roll between the ties (R carry point)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/person_hide.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette byte-identical, with three new in-place clips (scrape_enter, scrape_hide, scrape_exit), the scraper attachment node scraper_hold under hand.R and three placement nodes on the rig root",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "vertices_exported": 1443,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "double_sided": {
+        "body": false,
+        "garment": false
+      },
+      "alpha_mode": {
+        "body": "OPAQUE",
+        "garment": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 267924,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity",
+      "godot_imported_triangles": 2052,
+      "anchors": {
+        "bundle_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.78,
+            0.0,
+            -0.35
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.57358,
+            0.0,
+            0.81915
+          ],
+          "world_rest_translation": [
+            0.78,
+            0.0,
+            -0.35
+          ]
+        },
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "world_rest_translation": [
+            -0.0089,
+            0.94836,
+            0.02789
+          ]
+        },
+        "frame_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.3
+          ],
+          "rotation_xyzw": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.3
+          ]
+        },
+        "rack_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            -1.95,
+            0.0,
+            -0.6
+          ],
+          "rotation_xyzw": [
+            0.0,
+            -0.98481,
+            0.0,
+            0.17365
+          ],
+          "world_rest_translation": [
+            -1.95,
+            0.0,
+            -0.6
+          ]
+        },
+        "scraper_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.00195,
+            0.10653,
+            -0.12514
+          ],
+          "rotation_xyzw": [
+            -0.4894,
+            0.36397,
+            0.69325,
+            0.38395
+          ],
+          "world_rest_translation": [
+            -0.25898,
+            0.72919,
+            0.1229
+          ]
+        }
+      },
+      "anchor_notes": {
+        "carry_anchor": "unchanged from r002 (child of hand.R)",
+        "scraper_hold": "NEW, child of the hand.R joint: put the scraper_bone.glb ROOT here (identity local); rigid for every key of every clip",
+        "frame_place": "NEW, child of PERSON_rig: hide_frame.glb root, person-local (0, 0, 0.30) yaw 180 deg (flesh side facing the worker)",
+        "bundle_place": "NEW, child of PERSON_rig: leather_bundle root to the worker's left-rear (R)",
+        "rack_place": "NEW, child of PERSON_rig: hide_drying_rack root to the worker's right (R, broadside to the default village camera)"
+      },
+      "animations": [
+        {
+          "name": "scrape_enter",
+          "duration_s": 1.2,
+          "fps": 30,
+          "keys_per_track": 37,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track": [
+            37,
+            37
+          ],
+          "first_last_pose": "first = PERSON r002 idle t=0 (scraper hanging in the right fist); last = scrape_hide t=0 (blade edge on the hide at the top of stroke 1)",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 82.5316,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.872,
+              -0.02
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "scraper_gap_to_hide_plane_m": [
+            0.0008,
+            0.26676
+          ]
+        },
+        {
+          "name": "scrape_hide",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "godot_keys_per_track": [
+            61,
+            61
+          ],
+          "first_last_pose": "first = last (periodic); standing with the r002 idle feet, trunk leaning 14-24 deg into the frame, both fists on the scraper grips; two downward strokes per loop",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.837,
+              -0.02
+            ],
+            [
+              0.0,
+              0.872,
+              -0.02
+            ]
+          ],
+          "scraper_gap_to_hide_plane_m": [
+            0.0004,
+            0.012
+          ]
+        },
+        {
+          "name": "scrape_exit",
+          "duration_s": 1.2,
+          "fps": 30,
+          "keys_per_track": 37,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track": [
+            37,
+            37
+          ],
+          "first_last_pose": "first = scrape_hide t=0; last = PERSON r002 idle t=0 (scrape_enter played backwards)",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 82.5316,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.872,
+              -0.02
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "scraper_gap_to_hide_plane_m": [
+            0.0008,
+            0.26676
+          ]
+        }
+      ],
+      "double_sided_exceptions": [],
+      "extensions_used": [],
+      "bind_pose_bounds_note": "export_bounds_m is the bind (A-) pose from the POSITION accessor"
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "HIDE001_kit"
+  ],
+  "kit_unique_textures": [
+    {
+      "sha256": "13ad959b15eaf81e0a83819c2650329af5d99d07ecc60250fd7e038a28632183",
+      "width": 512,
+      "height": 512,
+      "name": "hide001_atlas",
+      "embedded_in": [
+        "hide_frame.glb",
+        "hide_drying_rack.glb",
+        "scraper_bone.glb",
+        "leather_bundle.glb"
+      ],
+      "note": "one shared procedural 512 px atlas (hide flesh/hair 256 px cells; wood, wood end, leather, leather end, cord, bone, bone end 128 px cells); each prop GLB embeds its own identical copy so it stays self-contained"
+    }
+  ],
+  "inherited_materials_textures": {
+    "person_hide.glb": {
+      "materials": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256
+        }
+      ],
+      "note": "unchanged PERSON-001 r002"
+    }
+  },
+  "double_sided_alpha_inventory": {
+    "hide_frame.glb": {
+      "HIDE001_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "hide_drying_rack.glb": {
+      "HIDE001_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "scraper_bone.glb": {
+      "HIDE001_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "leather_bundle.glb": {
+      "HIDE001_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "person_hide.glb": {
+      "body": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "garment": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    }
+  },
+  "double_sided_exceptions": [],
+  "gltf_extensions_used": [],
+  "budget_summary": {
+    "per_model_limit_triangles": {
+      "hide_frame.glb": 500,
+      "hide_drying_rack.glb": 500,
+      "scraper_bone.glb": 150,
+      "leather_bundle.glb": 150
+    },
+    "budget_note": "brief: <=500 triangles for the frame, <=150 for small props; the drying rack is held to the frame's 500 (it is the second large prop)",
+    "props_triangles": {
+      "hide_frame.glb": 468,
+      "hide_drying_rack.glb": 424,
+      "scraper_bone.glb": 128,
+      "leather_bundle.glb": 92
+    },
+    "all_props_together_triangles": 1112,
+    "scraping_station_instantiated_godot": {
+      "materials": [
+        "HIDE001_kit",
+        "body",
+        "garment"
+      ],
+      "triangles": 3164,
+      "visible_mesh_instances": 5
+    },
+    "repeated_instance_yard_demo_godot": {
+      "materials": [
+        "HIDE001_kit",
+        "body",
+        "garment"
+      ],
+      "triangles": 3724,
+      "visible_mesh_instances": 7,
+      "parts": "station (person_hide + hide_frame + scraper_bone + leather_bundle + hide_drying_rack) + a 2nd hide_frame + a 2nd leather_bundle"
+    },
+    "kit_materials": 1,
+    "kit_atlas": "1 x 512^2"
+  },
+  "motion": {
+    "rig": "PERSON-001 r002, 23 bones; vertex streams, indices, inverse binds, joint rest TRS, palette and carry_anchor byte-identical (checks/glb_inspect.json fixture_comparison)",
+    "fixture_comparison_all_identical": true,
+    "seams_vs_r002_idle": {
+      "scrape_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      },
+      "scrape_exit_last": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      }
+    },
+    "clip_seams": {
+      "scrape_enter_last__scrape_hide_first": {
+        "max_rotation_deg": 4e-05,
+        "max_translation_or_scale_m": 1e-07
+      },
+      "scrape_hide_last__scrape_hide_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "scrape_hide_last__scrape_exit_first": {
+        "max_rotation_deg": 4e-05,
+        "max_translation_or_scale_m": 1e-07
+      },
+      "scrape_exit_last__scrape_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      }
+    },
+    "fps_keys": 30,
+    "import_settings_godot": "person_hide.glb: animations scrape_hide settings/loop_mode=1 (LINEAR), scrape_enter/scrape_exit 0; nodes/PATH:AnimationPlayer optimizer/enabled=false (recommended; configuration A with the default optimizer is recorded in checks/godot_check_default_optimizer.json). The scraper is instanced as a child of the imported scraper_hold node (Godot imports it under a BoneAttachment3D for hand.R).",
+    "stroke_design_R": {
+      "edge_contact_s_top_bottom_on_plane_m": [
+        1.27,
+        0.93
+      ],
+      "stroke_x_frame_local_m": [
+        0.06,
+        -0.08
+      ],
+      "contact_offset_m": 0.0008,
+      "return_lift_m": 0.012,
+      "blade_tilt_deg": [
+        18.0,
+        24.0
+      ],
+      "trunk_lean_deg": [
+        14.0,
+        24.0
+      ],
+      "nod_deg": [
+        10.0,
+        19.0
+      ],
+      "frame_lean_deg": 12.0,
+      "worker_distance_m": 0.3
+    },
+    "loop_timeline_s": "per 1.0 s stroke: settle 0.00-0.08, edge drawn down the hide 0.08-0.58, lift off 0.58-0.66, return up <= 12 mm off the surface (and shift sideways to the next stroke line) 0.66-0.94, set down 0.94-1.00; two strokes per 2.0 s loop",
+    "contact_measured_m": {
+      "method": "Blender re-import of the exported GLBs (checks/contact_check.json): hide_frame at person frame_place, scraper at person scraper_hold, deformed body; scrape_hide at 60 Hz (keys + half keys), enter/exit at every key. Hide plane = exported hide_center node; BVH signed distances on welded closed parts.",
+      "brief_requirement": "scraper contact with hide plane <= 20 mm",
+      "scrape_hide_scraper_gap_to_hide_plane_all_samples": [
+        0.0004,
+        0.012
+      ],
+      "scrape_hide_stroke_phase_gap": [
+        0.0004,
+        0.0008
+      ],
+      "scrape_hide_return_phase_gap": [
+        0.00167,
+        0.012
+      ],
+      "scraper_to_frame_mesh_min_all_clips": 0.0004,
+      "scraper_gap_to_hide_plane_min_enter_exit": 0.0008,
+      "hands_to_frame_min": 0.01804,
+      "forearms_to_frame_min": 0.11362,
+      "body_excl_hands_forearms_to_frame_min": 0.14236,
+      "frame_vertices_to_person_min": 0.11834,
+      "scraper_to_body_excl_hands_min": 0.03375,
+      "bundle_rack_to_person_min_clamped": 0.3,
+      "non_foot_lowest_vertex_y": 0.10859,
+      "foot_lowest_vertex_y_all_clips": [
+        -5e-05,
+        0.0
+      ],
+      "toe_joint_drift_m": {
+        "scrape_enter": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "scrape_hide": {
+          "L": 5e-05,
+          "R": 5e-05
+        },
+        "scrape_exit": {
+          "L": 0.0,
+          "R": 0.0
+        }
+      },
+      "edge_travel_scrape_hide_gltf": {
+        "y_range": [
+          0.911,
+          1.245
+        ],
+        "x_range": [
+          -0.06,
+          0.08
+        ]
+      }
+    },
+    "godot_vs_blender": {
+      "hand.L": 0.0,
+      "hand.R": 1e-05,
+      "toe.L": 0.0,
+      "toe.R": 0.0,
+      "edge_mid": 1e-05
+    },
+    "godot_edge_mid_to_hide_plane_m": {
+      "scrape_enter": [
+        0.0008,
+        0.26676
+      ],
+      "scrape_hide": [
+        0.0008,
+        0.012
+      ],
+      "scrape_exit": [
+        0.0008,
+        0.26676
+      ]
+    }
+  },
+  "reference_ids": [
+    "content/research/economy/subsistence.md (branch docs/economy-research) section 3.2 table row 'Milking, slaughter: animals -> milk, meat, hide' (scheduling R) and the seasonal calendar (autumn slaughter of surplus animals, R)",
+    "content/research/economy/crafts-exchange.md section 2.5 'Stone, bone, leather': E (negative) bone/antler/leather not recoverable locally (acid soil); R / Polish LBA quick knife-made bone awls 'very likely by anyone' (S-BA26 pp. 25-26, cited there)",
+    "art/briefs/economy-batch8/HIDE-001.md: 'hide/leather use regional/general R (no local organics survive)'"
+  ],
+  "fixture_hashes": {
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models/cattle.glb": "f4e8ea48ec44c823f0cc7130f4cbea6737814505df61ba0adb3b72feca63f67c",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_summer.glb": "bd98965a24b689840bdaff8a83746999a5dd726a66e6e7c76b49d41d9c753290",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/hazel_leafed.glb": "03f7640274b5a18eb0990036183d488946ff158f4e15cb0661bec31756585045",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/grass_wet.glb": "e107739f32f9e1b2bbcb1cea57277f133666d9462e46af73ff5cee64730c992f",
+    "art/briefs/economy-batch8/HIDE-001.md": "b881194eab56ffdc5bc482debe2b74ba213fa9c72131d2a699c739044340bee3",
+    "art/briefs/economy-batch8/README.md": "7e848b0a64b926b10516daabfa2ec32b1ea5417eb678e3551313e67f5eace596",
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+  },
+  "branch_documents_git_blobs": {
+    "content/research/economy/subsistence.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "1f65f34ee542d12db7fbc2a8952b459f0ca08f46"
+    },
+    "content/research/economy/crafts-exchange.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "0d53fc56a40a8804d6de53cab6c17d1bdd8327c5"
+    },
+    "content/research/economy/README.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "3b196525045fe6dd1fbe7627379035106d792734"
+    },
+    "art/briefs/economy-batch4/README.md": {
+      "git_branch": "docs/economy-batch4-briefs",
+      "branch_commit": "3ea9c4d0d2c0a9941545f5173fc64fa1a5ce5d53",
+      "git_blob": "44a2942bc8333b4c343bb9d14ec279057f91c19f"
+    }
+  },
+  "parts_and_uncertainties": [
+    "E (negative, local): no bone, antler or leather survives at the reference site (acid soil); everything shown is R",
+    "R: hides as a slaughter by-product, processed by the household (subsistence.md process table; scheduling R)",
+    "R: upright pole frame with the hide laced in, leaning against two braces; rawhide thongs; frame size ~1.5 x 1.2 m from the brief",
+    "R: bone scraper form (split long bone / rib with a broad convex edge, two grips) and the two-handed downward stroke; the tool type is not attested locally",
+    "R: drying rack (forked posts + pole), the scraped hide and the dried leather piece over it; colours of flesh side, hair side and leather",
+    "R: rolled and tied finished leather bundle; tanning method (if any) is not modelled or implied",
+    "F: who works hides, when, and how many; hide -> leather conversion is a game rule"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (body, rig, skin, palette, pose solver)",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002 (private project material)",
+      "licence": "project-internal; no public sublicence",
+      "modification": "r002 actions removed in a copy; three new clips keyed; scraper_hold under hand.R and three placement nodes on the rig root added; mesh/skin/palette/carry_anchor unchanged"
+    },
+    {
+      "resource": "POT-001, HOUSE-001 fixtures; VEG-001 oak_summer, hazel_leafed, grass_wet; ANIMAL-001 cattle",
+      "source": "art/handoffs/bronze-bohemia-opus-v2/fixtures, art/returns/bronze-bohemia-opus-v2/VEG-001/r001, art/returns/bronze-bohemia-v3/ANIMAL-001/r001",
+      "licence": "project-internal",
+      "modification": "none; read-only copies in preview scenes only, not part of this return"
+    }
+  ],
+  "deviations": [
+    "Clip set: the brief names one loop (scrape_hide); per the batch-4 character rules (clips start/end on the r002 idle pose) scrape_enter and scrape_exit one-shots are added",
+    "Placement anchors (frame_place, bundle_place, rack_place) are exported on person_hide.glb's rig root, and hide_frame.glb carries the inverse worker_place, so the station is defined from either side",
+    "The drying rack is held to the frame's 500-triangle budget (the brief gives <=500 for the frame and <=150 for 'small' props; the rack is not small)",
+    "Scraper contact is kept at 0.4-0.8 mm above the hide surface during the stroke (keys at +0.8 mm so interpolation never cuts in) and <= 12 mm on the return; the whole loop therefore stays within the brief's 20 mm",
+    "Extra anchors beyond the brief: scrape_zone, hide_center, worker_place (frame); hang_point (rack); edge_mid, base_center (scraper); carry_grip, base_center (bundle)"
+  ]
+}

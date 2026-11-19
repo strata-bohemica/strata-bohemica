@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "note": "Factory assets the museum uses: pack/ID. The sync script copies the newest revision of each into assets/<ID>/<rev>/ and writes museum/data/assets.json.",
+  "note": "Factory assets the museum uses: 'pack/ID', or {id, models} to copy only some models. The sync script copies the newest revision of each into assets/<ID>/<rev>/ and writes museum/data/assets.json.",
   "assets": [
     "bronze-bohemia-opus-v2/PERSON-001",
     "bronze-bohemia-opus-v2/WORK-001",
@@ -12,6 +12,71 @@
     "economy-batch5/MEAL-001",
     "economy-batch8/WEAVE-001",
     "economy-batch5/LOOM-001",
-    "economy-batch4/BRONZE-001"
+    "economy-batch4/BRONZE-001",
+    {
+      "id": "economy-batch5/SPIN-001",
+      "models": [
+        "person_spinning",
+        "distaff_with_fibre",
+        "spindle_whorl",
+        "fibre_basket"
+      ]
+    },
+    {
+      "id": "economy-batch4/THRESH-001",
+      "models": [
+        "person_threshing",
+        "threshing_floor_strewn",
+        "beating_stick",
+        "winnowing_tray",
+        "sheaf_bundle",
+        "grain_heap_small",
+        "chaff_heap_small"
+      ]
+    },
+    {
+      "id": "economy-batch9/PARCH-001",
+      "models": [
+        "person_parching",
+        "parching_tray_with_grain",
+        "stir_stick"
+      ]
+    },
+    {
+      "id": "economy-batch8/HIDE-001",
+      "models": [
+        "person_hide",
+        "hide_frame",
+        "hide_drying_rack",
+        "scraper_bone",
+        "leather_bundle"
+      ]
+    },
+    {
+      "id": "economy-batch5/MILK-001",
+      "models": [
+        "person_herding",
+        "milking_stool",
+        "milk_pail"
+      ]
+    },
+    {
+      "id": "economy-batch4/CLAY-001",
+      "models": [
+        "person_clay",
+        "daub_mix_patch",
+        "clay_heap_medium"
+      ]
+    },
+    "bronze-bohemia-v3/ANIMAL-001",
+    "economy-batch5/ANIMAL-002",
+    "economy-batch8/DOG-001",
+    {
+      "id": "bronze-bohemia-opus-v2/VEG-001",
+      "models": [
+        "oak_summer",
+        "hazel_leafed"
+      ]
+    }
   ]
 }

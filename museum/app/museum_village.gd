@@ -101,7 +101,7 @@ func _refresh(delta: float) -> void:
 		var info: Dictionary = village.homesteads[focus_ids[focus - 1]]
 		line2 = "  |  %s: %s" % [info.data.name.en, info.schedule.state_at(t).phase]
 	hud.text = "%02d:%02d  x%d%s%s\n[Space] pause  [Q/W/E] speed  [0] overview  [1-%d] homestead  [Tab] next  [L] cutaway  right-drag orbit, wheel zoom" % [
-		int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else "", line2, focus_ids.size()]
+		int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else "", line2, mini(focus_ids.size(), 9)]
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:

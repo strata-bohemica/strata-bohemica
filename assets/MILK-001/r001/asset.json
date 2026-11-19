@@ -1,0 +1,1006 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "MILK-001",
+  "revision": "r001",
+  "brief": "MILK-001 r001 herding and milking motions with milk vessel (art/briefs/economy-batch5/MILK-001.md + README.md, proposal not a frozen pack; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent (procedural Blender generators written for this job); character body/rig/skin/palette copied unchanged from the accepted PERSON-001 r002 return",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/reopen/contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer on Apple M1 Pro)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheet composition)",
+    "ffmpeg (MP4/GIF)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source: vessel, staff, stool sizes and the milking set-up are R design values (brief envelopes ~0.25 m vessel, ~1.4 m staff).",
+  "models": [
+    {
+      "file": "models/milk_pail.glb",
+      "role": "milk vessel (R): hand-built coarse ceramic pot (rim 0.214 m, max 0.248 m, height 0.20 m) with two small pierced lugs and a twisted-cord sling over the top; empty; base on the floor",
+      "triangles": 288,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "MILK001_ceramic": 244,
+        "MILK001_wood": 44
+      },
+      "vertices_exported": 388,
+      "materials": 2,
+      "material_names": [
+        "MILK001_ceramic",
+        "MILK001_wood"
+      ],
+      "double_sided": {
+        "MILK001_ceramic": false,
+        "MILK001_wood": false
+      },
+      "alpha_mode": {
+        "MILK001_ceramic": "OPAQUE",
+        "MILK001_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "milk001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 187716,
+      "export_bounds_m": {
+        "width": 0.264,
+        "height": 0.3167,
+        "depth": 0.2395,
+        "min": [
+          -0.132,
+          0.0,
+          -0.1198
+        ],
+        "max": [
+          0.132,
+          0.3167,
+          0.1198
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "MILK_PAIL",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "grip": {
+          "parent": "MILK_PAIL",
+          "translation": [
+            0.0,
+            0.315,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.315,
+            0.0
+          ]
+        },
+        "rim_center": {
+          "parent": "MILK_PAIL",
+          "translation": [
+            0.0,
+            0.2,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.2,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin (pot base centre)",
+        "rim_center": "rim top centre, (0, 0.20, 0)",
+        "grip": "sling apex (0, 0.315, 0); local +X = cord direction, +Y = up; attach as pail_root = person.pail_hold * inverse(grip)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/milk_pail_full.glb",
+      "role": "alternate state of milk_pail: same pot with a milk surface at 0.12 m (inner floor/lower wall not built); mutually exclusive with milk_pail in production",
+      "triangles": 240,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "MILK001_ceramic": 196,
+        "MILK001_wood": 44
+      },
+      "vertices_exported": 336,
+      "materials": 2,
+      "material_names": [
+        "MILK001_ceramic",
+        "MILK001_wood"
+      ],
+      "double_sided": {
+        "MILK001_ceramic": false,
+        "MILK001_wood": false
+      },
+      "alpha_mode": {
+        "MILK001_ceramic": "OPAQUE",
+        "MILK001_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "milk001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 185772,
+      "export_bounds_m": {
+        "width": 0.264,
+        "height": 0.3167,
+        "depth": 0.2395,
+        "min": [
+          -0.132,
+          0.0,
+          -0.1198
+        ],
+        "max": [
+          0.132,
+          0.3167,
+          0.1198
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "MILK_PAIL_FULL",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "grip": {
+          "parent": "MILK_PAIL_FULL",
+          "translation": [
+            0.0,
+            0.315,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.315,
+            0.0
+          ]
+        },
+        "rim_center": {
+          "parent": "MILK_PAIL_FULL",
+          "translation": [
+            0.0,
+            0.2,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.2,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "as milk_pail",
+        "rim_center": "as milk_pail",
+        "grip": "as milk_pail"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/herding_stick.glb",
+      "role": "herding staff (R): 1.40 m slightly bowed hazel-like rod, worn band around the hand grips; rest pose lying on the floor along Z, tip (ground end) at -Z",
+      "triangles": 66,
+      "triangle_budget": 80,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "MILK001_wood": 66
+      },
+      "vertices_exported": 82,
+      "materials": 1,
+      "material_names": [
+        "MILK001_wood"
+      ],
+      "double_sided": {
+        "MILK001_wood": false
+      },
+      "alpha_mode": {
+        "MILK001_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "milk001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 176008,
+      "export_bounds_m": {
+        "width": 0.0466,
+        "height": 0.0314,
+        "depth": 1.4009,
+        "min": [
+          -0.0157,
+          0.0,
+          -0.7005
+        ],
+        "max": [
+          0.0308,
+          0.0314,
+          0.7004
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "HERDING_STICK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "grip": {
+          "parent": "HERDING_STICK",
+          "translation": [
+            0.01102,
+            0.01562,
+            0.4
+          ],
+          "rotation_xyzw": [
+            0.70711,
+            0.0,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.01102,
+            0.01562,
+            0.4
+          ]
+        },
+        "grip_top": {
+          "parent": "HERDING_STICK",
+          "translation": [
+            0.00262,
+            0.01562,
+            0.63
+          ],
+          "rotation_xyzw": [
+            0.70711,
+            0.0,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.00262,
+            0.01562,
+            0.63
+          ]
+        },
+        "tip": {
+          "parent": "HERDING_STICK",
+          "translation": [
+            0.0,
+            0.01562,
+            -0.7
+          ],
+          "rotation_xyzw": [
+            0.70711,
+            0.0,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.01562,
+            -0.7
+          ]
+        }
+      },
+      "anchor_notes": {
+        "grip": "right-hand grip, 1.10 m from the tip; local +Y = along the staff towards the top; attach as stick_root = person.stick_hold * inverse(grip)",
+        "grip_top": "left-hand position near the top (1.33 m) used by herd_idle (no attachment)",
+        "tip": "ground end (planted point)",
+        "base_center": "floor origin of the rest pose"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/milking_stool.glb",
+      "role": "optional three-legged milking stool (R), seat 0.30 m; also carries the milking-station anchors",
+      "triangles": 72,
+      "triangle_budget": 200,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "MILK001_wood": 72
+      },
+      "vertices_exported": 132,
+      "materials": 1,
+      "material_names": [
+        "MILK001_wood"
+      ],
+      "double_sided": {
+        "MILK001_wood": false
+      },
+      "alpha_mode": {
+        "MILK001_wood": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "milk001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 177688,
+      "export_bounds_m": {
+        "width": 0.2959,
+        "height": 0.3,
+        "depth": 0.2998,
+        "min": [
+          -0.1479,
+          0.0,
+          -0.1631
+        ],
+        "max": [
+          0.1479,
+          0.3,
+          0.1367
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "cow_place": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            -0.165,
+            0.0,
+            0.847
+          ],
+          "rotation_xyzw": [
+            0.0,
+            -0.70711,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            -0.165,
+            0.0,
+            0.847
+          ]
+        },
+        "pail_place": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            -0.0225,
+            0.0,
+            0.707
+          ],
+          "rotation_xyzw": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_rest_translation": [
+            -0.0225,
+            0.0,
+            0.707
+          ]
+        },
+        "pail_wait": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            0.0,
+            0.0,
+            0.595
+          ],
+          "rotation_xyzw": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.595
+          ]
+        },
+        "seat": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            0.0,
+            0.3,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.3,
+            0.0
+          ]
+        },
+        "worker_origin": {
+          "parent": "MILKING_STOOL",
+          "translation": [
+            0.0,
+            0.0,
+            0.25
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.25
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin (stool centre)",
+        "seat": "seat top centre (0, 0.30, 0)",
+        "worker_origin": "person_herding root while milking: person_root = stool_root * worker_origin (stool_root = person_root * inverse(worker_origin))",
+        "pail_wait": "pail base before milk_enter pick / after milk_exit put-down (in front of the standing toes)",
+        "pail_place": "pail base during milk (under the two teat points, 6.5 cm towards the milker)",
+        "cow_place": "ANIMAL-001 cattle.glb root during milking: yaw -90 deg (cow head to the milker's right), right flank to the milker"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/person_herding.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette byte-identical, with six new in-place clips and two new hand nodes",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "triangles_by_material": {
+        "body": 1016,
+        "garment": 1036
+      },
+      "vertices_exported": 1443,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "double_sided": {
+        "body": false,
+        "garment": false
+      },
+      "alpha_mode": {
+        "body": "OPAQUE",
+        "garment": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 420932,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "world_rest_translation": [
+            -0.0089,
+            0.94836,
+            0.02789
+          ]
+        },
+        "pail_hold": {
+          "parent": "hand.L",
+          "translation": [
+            -0.02757,
+            0.058,
+            -0.00486
+          ],
+          "rotation_xyzw": [
+            0.54168,
+            0.45452,
+            -0.45452,
+            0.54168
+          ],
+          "world_rest_translation": [
+            0.24627,
+            0.77622,
+            0.0
+          ]
+        },
+        "stick_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.03398,
+            0.06,
+            -0.00599
+          ],
+          "rotation_xyzw": [
+            0.0734,
+            -0.70329,
+            0.70329,
+            0.0734
+          ],
+          "world_rest_translation": [
+            -0.24021,
+            0.77312,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "stick_hold": "NEW, child of hand.R: pose of the stick grip node; stick_root = stick_hold.global * inverse(stick.grip.local) (herd_* clips)",
+        "pail_hold": "NEW, child of hand.L: pose of the pail grip node; pail_root = pail_hold.global * inverse(pail.grip.local) only inside the hold windows (milk_enter keys 34-47 = 1.133-1.567 s; milk_exit keys 13-26 = 0.433-0.867 s)",
+        "carry_anchor": "unchanged from r002"
+      },
+      "animations": [
+        {
+          "name": "herd_walk",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_last_pose": "first = last (periodic); t=0: staff swinging forward (tip 0.03 m up), right foot at heel strike",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0
+        },
+        {
+          "name": "herd_walk_gesture",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_last_pose": "first = last = herd_walk t=0 (phase-aligned drop-in for one herd_walk cycle)",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0
+        },
+        {
+          "name": "herd_idle",
+          "duration_s": 2.0,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_last_pose": "first = last (periodic); leaning on the planted staff",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0
+        },
+        {
+          "name": "milk_enter",
+          "duration_s": 2.0,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_last_pose": "first = PERSON r002 idle t=0 (standing in front of the stool, pail on stool.pail_wait); last = milk t=0",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 120.61235
+        },
+        {
+          "name": "milk",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "first_last_pose": "first = last (periodic); seated, right hand up/open, left hand squeezed down",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0
+        },
+        {
+          "name": "milk_exit",
+          "duration_s": 2.0,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "first_last_pose": "first = milk t=0; last = PERSON r002 idle t=0 (milk_enter played backwards)",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 120.61235
+        }
+      ],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    }
+  ],
+  "kit_unique_materials": 2,
+  "kit_unique_material_names": [
+    "MILK001_ceramic",
+    "MILK001_wood"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "milk001_atlas",
+      "width": 512,
+      "height": 512,
+      "embedded_in": [
+        "milk_pail.glb",
+        "milk_pail_full.glb",
+        "herding_stick.glb",
+        "milking_stool.glb"
+      ],
+      "note": "one shared procedural image (12 used 128 px cells); each prop GLB embeds its own identical copy so it stays self-contained"
+    }
+  ],
+  "character_materials_textures": {
+    "materials": [
+      "body",
+      "garment"
+    ],
+    "textures": [
+      {
+        "name": "person_palette",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "note": "inherited unchanged from PERSON-001 r002; not counted in the kit budget"
+  },
+  "double_sided_alpha_inventory": {
+    "milk_pail.glb": {
+      "MILK001_ceramic": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "MILK001_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "milk_pail_full.glb": {
+      "MILK001_ceramic": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "MILK001_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "herding_stick.glb": {
+      "MILK001_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "milking_stool.glb": {
+      "MILK001_wood": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "person_herding.glb": {
+      "body": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "garment": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    }
+  },
+  "double_sided_exceptions": [],
+  "gltf_extensions_used": [],
+  "budget_summary": {
+    "per_model_limits_triangles": {
+      "milk_pail.glb": 300,
+      "milk_pail_full.glb": 300,
+      "herding_stick.glb": 80,
+      "milking_stool.glb": 200
+    },
+    "props_triangles": {
+      "milk_pail.glb": 288,
+      "milk_pail_full.glb": 240,
+      "herding_stick.glb": 66,
+      "milking_stool.glb": 72
+    },
+    "all_props_together_triangles": 666,
+    "milking_demo_instantiated": {
+      "triangles": 2412,
+      "visible_meshes": 3,
+      "materials": 4,
+      "textures": 2,
+      "note": "person_herding + milk_pail (or milk_pail_full) + milking_stool; the ANIMAL-001 cow (1554 tris) is a fixture, not counted"
+    },
+    "herding_demo_instantiated": {
+      "triangles": 2118,
+      "visible_meshes": 2,
+      "materials": 3,
+      "textures": 2
+    },
+    "kit_materials": 2,
+    "kit_atlas": "1 x 512^2"
+  },
+  "motion": {
+    "rig": "PERSON-001 r002, 23 bones; vertex streams, indices, inverse binds, joint rest TRS and palette byte-identical (checks/glb_inspect.json fixture_comparison)",
+    "fixture_comparison_all_identical": true,
+    "fps_keys": 30,
+    "import_settings_godot": "person_herding.glb: animations herd_walk, herd_idle, milk settings/loop_mode=1 (LINEAR); nodes/PATH:AnimationPlayer optimizer/enabled=false (recommended; configuration A with the default optimizer is recorded in checks/godot_check_default_optimizer.json). herd_walk_gesture, milk_enter, milk_exit stay LOOP_NONE.",
+    "herd_walk_ground_speed_m_per_s": 0.9,
+    "herd_walk_staff": {
+      "tip_contact_window_s": [
+        0.45,
+        0.9
+      ],
+      "tip_moves_with_ground_error_per_frame_m": 0.0,
+      "lowest_staff_point_min_height_m_measured": 0.00013,
+      "staff_outside_hands_to_body_min_m": 0.03007,
+      "body_to_staff_min_m": 0.01283
+    },
+    "herd_walk_gesture_staff": {
+      "lowest_staff_point_min_height_m": 0.01935,
+      "staff_outside_hands_to_body_min_m": 0.03482,
+      "body_to_staff_min_m": 0.02375
+    },
+    "herd_idle_staff": {
+      "lowest_staff_point_height_m": 0.00014,
+      "staff_outside_hands_to_body_min_m": 0.00472,
+      "body_to_staff_min_m": 0.02512
+    },
+    "milking_contact_m": {
+      "hand_L_to_cow_min": 0.02874,
+      "hand_R_to_cow_min": 0.00748,
+      "hand_top_to_belly_above_min": 0.00759,
+      "hand_top_to_belly_above_max": 0.05415,
+      "hand_top_height_range": [
+        0.46948,
+        0.49148
+      ],
+      "head_to_cow_min": 0.01268,
+      "body_nonhand_to_cow_min": 0.01268,
+      "seat_contact_body_to_stool_range": [
+        0.00103,
+        0.00117
+      ],
+      "body_except_left_hand_to_pail_min": 0.04075,
+      "pail_to_cow_min": 0.14865,
+      "enter_exit_body_nonhand_to_cow_min": 0.01118,
+      "enter_exit_body_to_stool_min": -0.00216,
+      "enter_exit_pail_in_hand_to_body_min": 0.02246,
+      "note": "signed distances on the deformed meshes at every 30 fps key (negative = inside); the cow has no modelled udder, so the 'udder region' is the belly underside straight above each hand"
+    },
+    "cow_offset_in_person_frame": {
+      "cow_root_gltf": [
+        -0.165,
+        0.0,
+        0.597
+      ],
+      "cow_yaw_deg": -90.0,
+      "stool_root_gltf": [
+        0.0,
+        0.0,
+        -0.25
+      ],
+      "teat_points_cow_local": {
+        "R": [
+          -0.075,
+          0.425,
+          -0.11
+        ],
+        "L": [
+          -0.075,
+          0.425,
+          -0.205
+        ]
+      }
+    }
+  },
+  "reference_ids": [
+    "SP23 §3.5 (casein, via content/research/economy/subsistence.md §2.5 / F10)",
+    "KY16 p. 227 (regional: cattle and sheep give milk; cite only)",
+    "S22 p. 9 (grazing in enclosures and opened forest)",
+    "material-culture.md §2 S-ZEN (band-handled cups; lugs/sling here are R)"
+  ],
+  "fixture_hashes": {
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models/cattle.glb": "f4e8ea48ec44c823f0cc7130f4cbea6737814505df61ba0adb3b72feca63f67c",
+    "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models/sheep.glb": "beefdac8b2a2f427f62e6254ff4a56ffa0f07893a460fc240b136d52a96611b0",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_summer.glb": "bd98965a24b689840bdaff8a83746999a5dd726a66e6e7c76b49d41d9c753290",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/hazel_leafed.glb": "03f7640274b5a18eb0990036183d488946ff158f4e15cb0661bec31756585045",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/grass_wet.glb": "e107739f32f9e1b2bbcb1cea57277f133666d9462e46af73ff5cee64730c992f",
+    "art/briefs/economy-batch5/MILK-001.md": "a388153b3d2267770edcdcf1ca2e648620a7deda43a82c25039f33d6c258f735",
+    "art/briefs/economy-batch5/README.md": "fff3ca2311a39052437dc8805835ad05af2fe74b307785939204c6645c466c70",
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+  },
+  "parts_and_uncertainties": [
+    "E (presence only): casein detected in feature fills and on bowl 8/19 surface at Březnice (SP23 preprint, via subsistence.md); published S25 not re-verified here",
+    "E (regional): cattle provided milk (KY16 p. 227); sheep milk also regional E; species of the milked animal at Březnice unknown",
+    "R: ceramic milk vessel shape, size, lugs and cord sling; wooden alternative possible",
+    "R: herding staff length/grip, stool, milking posture, side, teat positions, stroke timing, pail placement",
+    "R: herd_walk staff planting rhythm, gesture, leaning idle; F: who herds or milks, when",
+    "ANIMAL-001 cattle has no modelled udder: hand contact targets the belly underside (udder region)"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (body, rig, skin, palette, pose solver)",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002 (private project material)",
+      "licence": "project-internal; no public sublicence",
+      "modification": "r002 actions removed in a copy; six new clips keyed; stick_hold and pail_hold nodes added; mesh/skin/palette unchanged"
+    },
+    {
+      "resource": "ANIMAL-001 r001 cattle.glb / sheep.glb",
+      "source": "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models (private project material)",
+      "licence": "project-internal",
+      "modification": "none; read-only copies used in previews and contact checks only, not part of this return"
+    }
+  ],
+  "deviations": [
+    "herd_walk_gesture (1.0 s, LOOP_NONE) added as a phase-aligned drop-in for single herd_walk cycles: the brief's 'occasional gesture' cannot be occasional inside a 1 s loop",
+    "herd_walk / herd_walk_gesture / herd_idle do not start on the r002 idle pose (like r002 walk/carry_walk they are locomotion/stance loops the game cross-fades into); milk_enter and milk_exit start/end exactly on r002 idle",
+    "milk_pail_full.glb added as an alternate state (milk surface) for after-milking readability; mutually exclusive with milk_pail",
+    "Milking-station placement anchors (worker_origin, pail_wait, pail_place, cow_place) are exported on milking_stool.glb, not on the character, to keep person_herding = r002 + clips + hand nodes",
+    "Extra anchors beyond the brief: grip_top, tip and base_center (staff), base_center (pail), base_center and seat (stool)",
+    "pail_hold is used only inside the milk_enter/milk_exit hold windows (the 0.25 m pot cannot hang from the r002 idle hand without passing through the tunic)",
+    "Milk vessel is ceramic with lugs and a cord sling (brief allowed wooden or ceramic; casein on a ceramic bowl surface is the only local evidence)"
+  ]
+}

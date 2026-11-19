@@ -30,6 +30,7 @@ static func load_all() -> Dictionary:
 		errors.append_array(Schema.validate_homestead(homestead))
 		var craft: Dictionary = Schema.load_json(CRAFT_DIR + "%s.json" % homestead.craft)
 		errors.append_array(Schema.validate_craft(craft))
+		errors.append_array(Schema.validate_animals(homestead.get("animals", []), float(period.day_length_s), str(homestead.id)))
 		var anchors := {
 			"door_inside": Catalogue.anchor(homestead.house.model, "door_inside").pos,
 			"entry": Catalogue.anchor(homestead.house.model, "entry").pos}

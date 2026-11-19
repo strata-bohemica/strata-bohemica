@@ -29,5 +29,53 @@
   "walker": "PERSON-001/model",
   "sleeper": "SLEEP-001/person_sleep",
   "day_offset": 0.003,
-  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F/R. day_offset shifts this household's day (F)."
+  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F/R. day_offset shifts this household's day (F).",
+  "animals": [
+    {
+      "asset": "DOG-001/dog",
+      "pos": [
+        1.9,
+        0.0,
+        6.7
+      ],
+      "yaw_deg": -120.0,
+      "cycle": [
+        [
+          "idle",
+          2.0,
+          "loop"
+        ],
+        [
+          "sniff_ground",
+          4.0,
+          "loop"
+        ],
+        [
+          "idle",
+          2.0,
+          "loop"
+        ],
+        [
+          "sit",
+          1.0,
+          "once"
+        ],
+        [
+          "sit_idle",
+          4.0,
+          "loop"
+        ],
+        [
+          "sit_up",
+          0.8,
+          "once"
+        ],
+        [
+          "idle",
+          1.2,
+          "loop"
+        ]
+      ]
+    }
+  ]
 }

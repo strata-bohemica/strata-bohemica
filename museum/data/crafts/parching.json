@@ -1,0 +1,114 @@
+{
+  "id": "parching",
+  "schema": 2,
+  "name": {
+    "cs": "Pražení obilí",
+    "en": "Parching grain"
+  },
+  "skin": "PARCH-001/person_parching",
+  "block": {
+    "enter": "parch_enter",
+    "cycle": [
+      [
+        "parch_stir",
+        null
+      ]
+    ],
+    "exit": "parch_exit"
+  },
+  "props": [
+    {
+      "id": "hearth",
+      "asset": "KILN-001/hearth_base",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "hearth_top",
+      "asset": "KILN-001/hearth_open_top",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "embers",
+      "asset": "KILN-001/fire_embers",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "tray",
+      "asset": "PARCH-001/parching_tray_with_grain",
+      "place": {
+        "on": "skin",
+        "node": "tray_place"
+      }
+    },
+    {
+      "id": "stick",
+      "asset": "PARCH-001/stir_stick",
+      "grip": "grip",
+      "rest": {
+        "on": "skin",
+        "node": "stick_rest"
+      },
+      "held": [
+        {
+          "node": "stick_hold",
+          "clip": "parch_enter",
+          "from": 1.0
+        },
+        {
+          "node": "stick_hold",
+          "clip": "parch_stir"
+        },
+        {
+          "node": "stick_hold",
+          "clip": "parch_exit",
+          "to": 1.0
+        }
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "on": "prop:embers",
+      "color": "#FF9A4A",
+      "energy": 1.8,
+      "range": 5.0,
+      "flicker": true,
+      "smoke": true
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici jsou ječmen, proso, pšenice dvouzrnka, jednozrnka a špalda a luštěniny. Pražení pluchatých obilí je tu rekonstrukce.",
+          "en": "Barley, millet, emmer, einkorn, spelt and legumes were recovered at Březnice. Parching of hulled cereals is a reconstruction here."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Pražení v misce nad ohništěm, míchání klacíkem a kleku jsou rekonstrukce.",
+      "en": "Parching in a dish over the hearth, stirring with a stick and the crouch are reconstructed."
+    },
+    "unknown": [
+      "whether grain was parched at all",
+      "vessel used",
+      "who did it"
+    ],
+    "sources": [
+      "Šálková et al. 2022, Scientific Reports 12:20323, p. 6",
+      "content/research/economy/subsistence.md, section 2.5",
+      "PARCH-001 PROVENANCE.md"
+    ]
+  }
+}

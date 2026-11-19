@@ -1,0 +1,625 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "ANIMAL-002",
+  "revision": "r001",
+  "brief": "art/briefs/economy-batch5/ANIMAL-002.md (economy batch 5, proposal, not a frozen pack) + economy-batch5/README.md + shared rules economy-batch4/README.md; executed under art/handoffs/bronze-bohemia-opus-v2 COMMON.md / RETURN.md; conventions of the accepted ANIMAL-001 r001 return",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generator adapted from ANIMAL-001 r001 for this job)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, Workbench stills, re-import/contact check, reopen/re-export)",
+    "Khronos glTF Blender I/O (bundled with Blender 5.2.3; GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures with the Compatibility renderer gl_compatibility, Apple M1 Pro 4.1 Metal - 90.5)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser and skinning) + Pillow 11.3.0 (sheets)",
+    "ffmpeg (MP4/GIF)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "floor point between the four hooves (0,0,0); scene root node identity",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source exists: animal bones did not survive at Breznice (S22 p. 12). Size, proportions and colour are an R design envelope from the brief (small, long-legged, bristly, dark/brown later-prehistoric pig).",
+  "models": [
+    {
+      "file": "models/pig.glb",
+      "role": "adult pig (sow/barrow; no tusks), small, long-legged, bristly, dark/brown later-prehistoric type (R); rigged, six in-place clips; origin on the floor between the hooves, +Z front",
+      "triangles": 1088,
+      "triangle_budget": 1200,
+      "budget_ok": true,
+      "vertices_exported": 835,
+      "materials": 1,
+      "material_budget": 1,
+      "material_names": [
+        "PIG_coat"
+      ],
+      "textures": [
+        {
+          "name": "pig_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "3b19ff9c0b65ada3dd5d091c1b533ef5430a1557d59cf5f805c045cb3c25b327",
+          "role": "base colour only (sRGB), shared kit atlas"
+        }
+      ],
+      "texture_budget": "<= 1024 x 1024",
+      "visible_meshes": 1,
+      "glb_bytes": 534868,
+      "glb_sha256": "25b7f8e442dd43683b555765a7de86fb794d7361ac347ade94d942708a80dcb7",
+      "export_bounds_m": {
+        "width": 0.3415,
+        "height": 0.7964,
+        "depth": 1.3559,
+        "min": [
+          -0.1697,
+          0.0,
+          -0.5768
+        ],
+        "max": [
+          0.1718,
+          0.7964,
+          0.7791
+        ]
+      },
+      "export_bounds_note": "rest/bind pose from the POSITION accessor (height includes the bristle crest; depth = snout tip to tail tip); animated envelopes per clip are in checks/glb_inspect.json (animated_bounds_m)",
+      "design_dimensions_R": {
+        "back_height_at_withers_excl_crest_m": 0.765,
+        "crest_top_m": 0.7964,
+        "snout_to_rump_m": 1.28,
+        "brief_envelope": "small, long-legged, bristly, dark/brown (brief form R); no measured source"
+      },
+      "skeleton": {
+        "joints": 20,
+        "deforming_bones": 19,
+        "deforming_bone_budget": 24,
+        "max_weights_per_vertex": 2,
+        "weights_budget": 4,
+        "bones": [
+          "root",
+          "pelvis",
+          "leg_HL_1",
+          "leg_HL_2",
+          "leg_HL_3",
+          "leg_HR_1",
+          "leg_HR_2",
+          "leg_HR_3",
+          "spine1",
+          "spine2",
+          "leg_FL_1",
+          "leg_FL_2",
+          "leg_FL_3",
+          "leg_FR_1",
+          "leg_FR_2",
+          "leg_FR_3",
+          "neck",
+          "head",
+          "tail1",
+          "tail2"
+        ],
+        "naming": "ANIMAL-001 quadruped scheme unchanged: root (non-deforming, never animated), pelvis, spine1, spine2, neck, head, tail1, tail2, leg_{FL,FR,HL,HR}_{1,2,3}; F/H = front/hind, L/R = animal's left (+X) / right (-X), 1/2/3 = upper/middle/lower (3 carries the hoof); no jaw/ear bones"
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "pig_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "head_lead": {
+          "parent": "head",
+          "translation": [
+            -0.0,
+            0.1,
+            0.10418
+          ],
+          "rotation_xyzw": [
+            -0.89377,
+            -0.0,
+            0.0,
+            0.44852
+          ],
+          "rest_world_position": [
+            -0.0,
+            0.4317,
+            0.5079
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "exported node on the root (identity, floor point between the hooves)",
+        "head_lead": "exported node on bone 'head' under the jaw/throat (rope/halter or herding-stick target point, same convention as ANIMAL-001); Godot imports it as Skeleton3D/head (BoneAttachment3D)/head_lead"
+      },
+      "animations": [
+        {
+          "name": "idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "neutral stand",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -1e-05,
+          "hoof_min_y_m": {
+            "FL": -1e-05,
+            "FR": -1e-05,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "snout_min_y_m": 0.32366,
+          "behaviour": "standing; weight sway, two breaths, slow head turn, tail swish; all four hooves planted"
+        },
+        {
+          "name": "walk",
+          "duration_s": 1.0,
+          "fps": 30,
+          "keys_per_channel": 31,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": 0.0001,
+          "hoof_min_y_m": {
+            "FL": 0.00035,
+            "FR": 0.00018,
+            "HL": 0.00032,
+            "HR": 0.0001
+          },
+          "snout_min_y_m": 0.31422,
+          "behaviour": "in-place lateral-sequence walk (HL, FL, HR, FR at 0, 0.25, 0.5, 0.75 of a stride), duty 0.62, 2 strides per 1 s loop (stride 0.50 m); planted hooves move back at the authored 1.0 m/s",
+          "authored_ground_speed_m_per_s": 1.0,
+          "measured_contact_hoof_speed_z_m_per_s_median": {
+            "FL": -1.0,
+            "FR": -1.0,
+            "HL": -1.0,
+            "HR": -0.999
+          },
+          "contact_speed_note": "median speed of each hoof between consecutive 120 Hz samples in which its lowest vertex is within 2 mm of the floor (independent GLB skinning); -Z = backwards = the animal moving forward at that speed",
+          "min_hooves_in_contact_2mm": 2
+        },
+        {
+          "name": "root_forage",
+          "duration_s": 3.0,
+          "fps": 30,
+          "keys_per_channel": 91,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "head down, push start",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "hoof_min_y_m": {
+            "FL": -0.0,
+            "FR": -0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "snout_min_y_m": 0.004,
+          "behaviour": "nosing/rooting the ground (e.g. for acorns under oaks): forequarters lowered by bending the front legs, head down with the snout disc at the soil (lowest snout vertex ~4 mm above y=0 at the deepest press), three press-forward-and-flick pushes per 3 s loop while the head sweeps slowly left/right; hooves planted"
+        },
+        {
+          "name": "lie_down",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= idle frame 0",
+          "last_pose": "= lie_idle frame 0",
+          "first_last_key_max_quat_diff": 0.882243,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00022,
+          "hoof_min_y_m": {
+            "FL": -0.00022,
+            "FR": -0.00022,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "snout_min_y_m": 0.12015,
+          "behaviour": "stand -> head lowered -> front carpi (knees) to the floor while hind legs stay planted -> hindquarters fold down -> sternal lying; ends on lie_idle frame 0"
+        },
+        {
+          "name": "lie_idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "sternal lying",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": 0.001,
+          "hoof_min_y_m": {
+            "FL": 0.03005,
+            "FR": 0.04403,
+            "HL": 0.04502,
+            "HR": 0.05758
+          },
+          "snout_min_y_m": 0.11261,
+          "behaviour": "sternal lying, legs folded (hind legs to the sides), breathing, slow head turn"
+        },
+        {
+          "name": "stand_up",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "once",
+          "godot_import_loop_mode": 0,
+          "first_pose": "= lie_idle frame 0",
+          "last_pose": "= idle frame 0",
+          "first_last_key_max_quat_diff": 0.882243,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00022,
+          "hoof_min_y_m": {
+            "FL": -0.00022,
+            "FR": -0.00022,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "snout_min_y_m": 0.0005,
+          "behaviour": "lying -> head lunge -> hindquarters rise first (front still kneeling) -> front legs unfold -> standing; ends on idle frame 0"
+        }
+      ],
+      "coat_variants": {
+        "default_column": 0,
+        "columns": [
+          "dark brown",
+          "red-brown / rust",
+          "near-black",
+          "grizzled grey-brown"
+        ],
+        "selection": "same GLB + same atlas; set StandardMaterial3D.uv1_offset = (0.25 * k, 0, 0) on a duplicate of the imported material (k = 0..3); piglet column k is meant to accompany sow column k"
+      },
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "double_sided": [
+        false
+      ],
+      "gltf_extensions": [],
+      "design_solves": {
+        "lie_pelvis_drop_m": 0.318,
+        "kneel_body_pitch_deg": 10.926,
+        "forage_neck_pitch_deg": 54.997,
+        "forage_head_pitch_deg": -48.0,
+        "forage_snout_axis_below_horizontal_deg": 66.6
+      }
+    },
+    {
+      "file": "models/piglet.glb",
+      "role": "piglet of a few weeks (R juvenile proportions: larger head, shorter snout and body), same rig scheme, three in-place clips (idle, walk, trot to follow the sow); origin on the floor between the hooves, +Z front",
+      "triangles": 592,
+      "triangle_budget": 600,
+      "budget_ok": true,
+      "vertices_exported": 540,
+      "materials": 1,
+      "material_budget": 1,
+      "material_names": [
+        "PIG_coat"
+      ],
+      "textures": [
+        {
+          "name": "pig_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "3b19ff9c0b65ada3dd5d091c1b533ef5430a1557d59cf5f805c045cb3c25b327",
+          "role": "base colour only (sRGB), shared kit atlas"
+        }
+      ],
+      "texture_budget": "<= 1024 x 1024",
+      "visible_meshes": 1,
+      "glb_bytes": 289672,
+      "glb_sha256": "14c946d7ee050a03aa4326e647418b9e48c3d498a189ac5604dc9f40bc3688c6",
+      "export_bounds_m": {
+        "width": 0.155,
+        "height": 0.3207,
+        "depth": 0.5043,
+        "min": [
+          -0.0775,
+          0.0,
+          -0.2047
+        ],
+        "max": [
+          0.0775,
+          0.3207,
+          0.2996
+        ]
+      },
+      "export_bounds_note": "rest/bind pose from the POSITION accessor (height includes the bristle crest; depth = snout tip to tail tip); animated envelopes per clip are in checks/glb_inspect.json (animated_bounds_m)",
+      "design_dimensions_R": {
+        "back_height_m": 0.3207,
+        "snout_to_rump_m": 0.48,
+        "scale_vs_adult": "0.43 linear, head x1.30, snout x0.78, body length x0.84"
+      },
+      "skeleton": {
+        "joints": 20,
+        "deforming_bones": 19,
+        "deforming_bone_budget": 24,
+        "max_weights_per_vertex": 2,
+        "weights_budget": 4,
+        "bones": [
+          "root",
+          "pelvis",
+          "leg_HL_1",
+          "leg_HL_2",
+          "leg_HL_3",
+          "leg_HR_1",
+          "leg_HR_2",
+          "leg_HR_3",
+          "spine1",
+          "spine2",
+          "leg_FL_1",
+          "leg_FL_2",
+          "leg_FL_3",
+          "leg_FR_1",
+          "leg_FR_2",
+          "leg_FR_3",
+          "neck",
+          "head",
+          "tail1",
+          "tail2"
+        ],
+        "naming": "ANIMAL-001 quadruped scheme unchanged: root (non-deforming, never animated), pelvis, spine1, spine2, neck, head, tail1, tail2, leg_{FL,FR,HL,HR}_{1,2,3}; F/H = front/hind, L/R = animal's left (+X) / right (-X), 1/2/3 = upper/middle/lower (3 carries the hoof); no jaw/ear bones"
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "piglet_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "rest_world_position": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "head_lead": {
+          "parent": "head",
+          "translation": [
+            -0.0,
+            0.0436,
+            0.05824
+          ],
+          "rotation_xyzw": [
+            -0.91207,
+            0.0,
+            -0.0,
+            0.41002
+          ],
+          "rest_world_position": [
+            -0.0,
+            0.1747,
+            0.1709
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "exported node on the root (identity, floor point between the hooves)",
+        "head_lead": "exported node on bone 'head' under the jaw/throat (rope/halter or herding-stick target point, same convention as ANIMAL-001); Godot imports it as Skeleton3D/head (BoneAttachment3D)/head_lead"
+      },
+      "animations": [
+        {
+          "name": "idle",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_channel": 61,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "neutral stand",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.0,
+          "hoof_min_y_m": {
+            "FL": -0.0,
+            "FR": -0.0,
+            "HL": -0.0,
+            "HR": -0.0
+          },
+          "snout_min_y_m": 0.12611,
+          "behaviour": "standing; weight sway, breathing, head turn, tail swish; hooves planted"
+        },
+        {
+          "name": "walk",
+          "duration_s": 1.0,
+          "fps": 30,
+          "keys_per_channel": 31,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00027,
+          "hoof_min_y_m": {
+            "FL": -0.00024,
+            "FR": -0.00024,
+            "HL": -0.00027,
+            "HR": -0.00027
+          },
+          "snout_min_y_m": 0.11614,
+          "behaviour": "in-place lateral-sequence walk, duty 0.62, 2 strides per 1 s loop (stride 0.25 m) at the authored 0.5 m/s",
+          "authored_ground_speed_m_per_s": 0.5,
+          "measured_contact_hoof_speed_z_m_per_s_median": {
+            "FL": -0.5,
+            "FR": -0.5,
+            "HL": -0.5,
+            "HR": -0.499
+          },
+          "contact_speed_note": "median speed of each hoof between consecutive 120 Hz samples in which its lowest vertex is within 2 mm of the floor (independent GLB skinning); -Z = backwards = the animal moving forward at that speed",
+          "min_hooves_in_contact_2mm": 2
+        },
+        {
+          "name": "trot",
+          "duration_s": 1.0,
+          "fps": 30,
+          "keys_per_channel": 31,
+          "channels": 60,
+          "loop_mode_intended": "loop",
+          "godot_import_loop_mode": 1,
+          "first_pose": "HL+FR at touchdown",
+          "last_pose": "= first pose (seamless)",
+          "first_last_key_max_quat_diff": 0.0,
+          "in_place": true,
+          "root_joint_moves_m": 0.0,
+          "min_vertex_y_m_incl_interpolated_playback": -0.00012,
+          "hoof_min_y_m": {
+            "FL": -0.00012,
+            "FR": -0.0001,
+            "HL": 0.00056,
+            "HR": 0.00057
+          },
+          "snout_min_y_m": 0.11981,
+          "behaviour": "in-place diagonal trot (HL+FR, then FL+HR), duty 0.46 (short suspension), 3 strides per 1 s loop (stride 0.33 m) at the authored 1.0 m/s, i.e. the sow's walking speed: used to follow her",
+          "authored_ground_speed_m_per_s": 1.0,
+          "measured_contact_hoof_speed_z_m_per_s_median": {
+            "FL": -1.011,
+            "FR": -1.011,
+            "HL": -1.003,
+            "HR": -1.003
+          },
+          "contact_speed_note": "median speed of each hoof between consecutive 120 Hz samples in which its lowest vertex is within 2 mm of the floor (independent GLB skinning); -Z = backwards = the animal moving forward at that speed",
+          "min_hooves_in_contact_2mm": 0
+        }
+      ],
+      "coat_variants": {
+        "default_column": 0,
+        "columns": [
+          "brown",
+          "rust-brown with light longitudinal flank stripes (wild-type option)",
+          "dark",
+          "grizzled"
+        ],
+        "selection": "same GLB + same atlas; set StandardMaterial3D.uv1_offset = (0.25 * k, 0, 0) on a duplicate of the imported material (k = 0..3); piglet column k is meant to accompany sow column k"
+      },
+      "double_sided_exceptions": [],
+      "alpha_mode": [
+        "OPAQUE"
+      ],
+      "double_sided": [
+        false
+      ],
+      "gltf_extensions": []
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "PIG_coat"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "pig_atlas",
+      "width": 512,
+      "height": 512,
+      "sha256_embedded": "3b19ff9c0b65ada3dd5d091c1b533ef5430a1557d59cf5f805c045cb3c25b327",
+      "source_file": "source/textures/pig_atlas.png",
+      "layout": "4 coat columns x 128 px; rows 0-255 pig, 256-511 piglet; per species: 160-row coat gradient (back -> belly, dark dorsal line on top, bristle streak noise; piglet column 1 light flank stripes) + four 32 px detail cells (points = lower legs and bristle crest, dark = hooves/eyes, inner ear, snout disc)"
+    }
+  ],
+  "kit_totals": {
+    "triangles_both_models": 1680,
+    "village_demo": {
+      "pigs": 6,
+      "piglets": 7,
+      "triangles_pigs_and_piglets": 10672,
+      "visible_meshes_pigs_and_piglets": 13,
+      "materials_unique": 1,
+      "material_instances_in_demo": 13,
+      "companions_not_part_of_this_kit": {
+        "ANIMAL-001 sheep": 2,
+        "PERSON-001 r002": 1,
+        "VEG-001 oak_autumn": 1,
+        "HOUSE-001": 1,
+        "POT-001": 1,
+        "placeholder pen (preview primitives)": 1
+      },
+      "note": "each demo instance duplicates the material only to set a coat uv1_offset; a game could share 4+4 material instances"
+    }
+  },
+  "reference_ids": [
+    "S22 p. 12 (no bones survive, acid soil)",
+    "KY16 p. 227 (regional: farming always based on cattle, pig, sheep/goat; cite only)",
+    "SP23 section 3.5 p. 9 (cooked/uncooked pork proteins detected; preprint, immunological)",
+    "C19 p. 295 (acorns possibly animal fodder; authors' interpretation)",
+    "content/research/economy/subsistence.md sections 2.7-2.8 (branch docs/economy-research)",
+    "art/briefs/economy-batch5/ANIMAL-002.md"
+  ],
+  "reference_note": "No reference image was adopted. No freely licensed image of a Bohemian LBA pig exists in the project references; the form follows the brief's R description only.",
+  "fixture_hashes": {
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_autumn.glb": "f51ad37a5d79c9ceee2c8a52db4e17cae4d9b090936e6510bec03a49d3bb1822",
+    "art/returns/bronze-bohemia-v3/ANIMAL-001/r001/models/sheep.glb": "beefdac8b2a2f427f62e6254ff4a56ffa0f07893a460fc240b136d52a96611b0"
+  },
+  "parts_and_uncertainties": [
+    "E (negative, S22 p. 12): no animal bones survive at Breznice; pig presence there is a regional inference",
+    "E (regional, KY16 p. 227, cite only): Bohemian/Moravian farming communities were always based on cattle, pig and sheep/goat; no herd ratio inferred",
+    "E (local product, SP23 section 3.5 p. 9, preprint): pork proteins detected on Breznice samples (cooked pork positive in 13 of 18 samples); proves pork use, not live pig keeping on site, breed or look",
+    "E (C19 p. 295, authors' interpretation): acorns may have served as animal fodder; pigs rooting under oaks is an R demo scene",
+    "R: body size, long legs, narrow deep body, bristle crest, erect ears, straight tasselled tail, no tusks, coat colours and variant set, piglet stripes option",
+    "R: gait timing, stride, duty factor, walking speed 1.0 m/s (piglet walk 0.5 m/s, trot 1.0 m/s), rooting posture and rhythm, lying/rising sequence",
+    "R/F: herd composition and layout in the demo; the pen is a placeholder for FENCE-001"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "deviations": [
+    "Brief is a proposal backlog, not a frozen pack: executed under the opus-v2 COMMON/RETURN contract; the repo intake tool does not know the ID and was neither run nor edited; independent measurements are supplied in checks/",
+    "FENCE-001 is not merged in this checkout: the demo uses a preview-only placeholder pen built from Godot primitives at the FENCE-001 brief size (5 x 4 m, 1.05 m high, 1 m gate gap)",
+    "Acorn litter and rooted-soil patches in the demo are preview-only primitives, not kit assets",
+    "Rig kept identical to ANIMAL-001 (20 joints, no jaw/ear bones) as the brief asks to follow its conventions exactly; rooting is head/neck/forequarter motion only",
+    "Piglet clips are idle/walk/trot only (as listed in the brief); piglet has no lie or forage clip",
+    "Preview sun uses shadow_bias 0.2 / normal_bias 4.0 like ANIMAL-001 (renderer setting, not part of the asset)"
+  ]
+}

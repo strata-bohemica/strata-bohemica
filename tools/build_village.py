@@ -133,6 +133,57 @@ wa = layout['water_access']
 kw = min(keys, key=lambda q: math.hypot(hubs[q][0] - wa[0], hubs[q][1] - wa[1]))
 paths.append(route(node(*hubs[kw]), node(*wa)))
 
+# ---- trees: oaks (spaced) and hazel scrub, kept off houses, yards, fields, paths and the stream --------------------
+def min_seg_dist(px, py, pts):
+    """Smallest distance from (px, py) to the polyline through pts."""
+    best = 1e9
+    for (x1, y1), (x2, y2) in zip(pts[:-1], pts[1:]):
+        vx, vy = x2 - x1, y2 - y1
+        length2 = vx * vx + vy * vy
+        t = 0.0 if length2 == 0 else max(0.0, min(1.0, ((px - x1) * vx + (py - y1) * vy) / length2))
+        best = min(best, math.hypot(px - (x1 + t * vx), py - (y1 + t * vy)))
+    return best
+def inside(poly, x, y):
+    c = False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            c = not c
+    return c
+trng = np.random.default_rng(SEED + 11)
+yard_pts = []
+for h in houses:
+    jj = math.radians(h['yaw_deg']); sd = 1 if h['door'] == 'E' else -1
+    yard_pts.append((h['x'] + sd * math.cos(jj) * YARD_LOCAL_Z, h['y'] + sd * math.sin(jj) * YARD_LOCAL_Z))
+stream_poly = [(float(stream_x(y)), float(y)) for y in range(-80, 81, 4)]
+gslope = np.degrees(np.arctan(np.hypot(gx, gy)))
+trees = []
+def try_place(kind, min_gap, house_gap, count, rim_bias):
+    placed = 0
+    for _ in range(40000):
+        if placed >= count:
+            break
+        r = DISC - 3.0 - (DISC - 8.0) * (trng.random() ** rim_bias)
+        a = trng.uniform(0, 2 * math.pi)
+        x, y = r * math.cos(a), r * math.sin(a)
+        if any(math.hypot(x - h['x'], y - h['y']) < house_gap for h in houses):
+            continue
+        if any(math.hypot(x - yx, y - yy) < 7.0 for yx, yy in yard_pts):
+            continue
+        if any(inside(poly, x, y) or min_seg_dist(x, y, poly + poly[:1]) < 2.5 for poly in fields):
+            continue
+        if any(min_seg_dist(x, y, [tuple(q) for q in pth]) < 3.5 for pth in paths):
+            continue
+        if min_seg_dist(x, y, stream_poly) < 6.0:
+            continue
+        if at(gslope, x, y) > 22:
+            continue
+        if any(math.hypot(x - t['x'], y - t['y']) < (min_gap if t['kind'] == kind else 4.0) for t in trees):
+            continue
+        trees.append(dict(kind=kind, x=x, y=y, yaw=float(trng.uniform(0, 360)), scale=float(trng.uniform(0.85, 1.25))))
+        placed += 1
+try_place('oak_summer', 13.0, 13.0, 14, 0.55)
+try_place('hazel_leafed', 4.5, 10.0, 34, 0.5)
+
 # ---- export (world coordinates: x east, z south = -y) -----------------------------------------------
 W = lambda x, y: [round(float(x), 2), round(float(-y), 2)]
 out_houses = []
@@ -144,7 +195,8 @@ for h in houses:
 village = dict(id='breznice', schema=1, disc_radius_m=DISC, note='Layout and terrain are F/R: no house plan or terrain model of Březnice exists. World coordinates, x east, z south.',
     houses=out_houses, paths=[[W(x, y) for x, y in p] for p in paths], fields=[[W(x, y) for x, y in poly] for poly in fields],
     stream=dict(points=[W(float(stream_x(y)), y) for y in range(-80, 81, 4)], width_m=4.0),
-    clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']))
+    clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']),
+    trees=[dict(kind=t['kind'], pos=W(t['x'], t['y']), yaw_deg=round(t['yaw'], 1), scale=round(t['scale'], 2)) for t in trees])
 json.dump(village, open(os.path.join(DATA, 'breznice.json'), 'w'), separators=(',', ':'))
 heights_cm = np.round(H * 100).astype(int)
 heights_cm -= int(heights_cm.min())   # lowest point is 0 cm

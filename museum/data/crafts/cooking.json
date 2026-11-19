@@ -158,7 +158,8 @@
       "color": "#FF9A4A",
       "energy": 2.4,
       "range": 7.0,
-      "flicker": true
+      "flicker": true,
+      "smoke": true
     }
   ],
   "card": {

@@ -4,7 +4,7 @@
 usage: tools/sync_assets.py FACTORY_RETURNS_DIR [--dry-run]
 
 Reads museum/data/asset_manifest.json. For each "pack/ID" the newest revision is copied to assets/<ID>/<rev>/
-(models, asset.json, PROVENANCE.md, Godot .import files with paths rewritten). The generated assets.json holds,
+(models, asset.json, PROVENANCE.md, Godot .import files with paths rewritten); a manifest entry may list the models to copy. The generated assets.json holds,
 per model, the GLB path, animation names with durations and the anchors listed in the asset's own asset.json.
 """
 import json, os, re, shutil, struct, sys
@@ -37,7 +37,9 @@ def newest(d):
 
 
 catalogue = {}
-for rel in manifest['assets']:
+for entry in manifest['assets']:
+    rel = entry if isinstance(entry, str) else entry['id']
+    only_models = None if isinstance(entry, str) else set(entry['models'])
     aid = rel.split('/')[-1]
     src_rev_dir = os.path.join(SRC, rel, newest(os.path.join(SRC, rel)))
     rev = os.path.basename(src_rev_dir)
@@ -53,9 +55,8 @@ for rel in manifest['assets']:
             p = os.path.join(dirpath, f)
             r = os.path.relpath(p, src_rev_dir)
             keep = f in ('asset.json', 'PROVENANCE.md', 'CHANGELOG.md') and dirpath == src_rev_dir
-            keep = keep or f.endswith('.glb') or f.endswith('.glb.import')
-            keep = keep or (f.endswith('.png') and os.path.basename(dirpath) in ('models', 'textures'))
-            keep = keep or (f.endswith('.png.import') and os.path.basename(dirpath) in ('models', 'textures'))
+            stem = f.split('.glb')[0] if '.glb' in f else None
+            keep = keep or (stem is not None and (only_models is None or stem in only_models))
             if not keep:
                 continue
             if not DRY:

@@ -2,6 +2,7 @@
 """Import settings the museum needs, applied to every model's .import file:
 
 - gltf/naming_version=2: with the older naming Godot drops nodes parented to bones (hand holds, anchors).
+- gltf/embedded_image_handling=3: keep the textures inside the imported scene; the default (1) writes a PNG next to every GLB.
 - animated models: animation optimizer off.
 
 Make Godot import animated models without the lossy animation optimizer.
@@ -23,6 +24,7 @@ for rel in sorted({os.path.join('assets', m['file']) for a in catalogue.values()
     if os.path.exists(path):
         text = open(path).read()
         new = re.sub(r'gltf/naming_version=\d+', 'gltf/naming_version=2', text)
+        new = re.sub(r'gltf/embedded_image_handling=\d+', 'gltf/embedded_image_handling=3', new)
         if new != text:
             open(path, 'w').write(new)
 for rel in sorted(animated):

@@ -3,6 +3,7 @@ extends SceneTree
 const T = preload("res://checks/museum_village/t.gd")
 const Fixture = preload("res://checks/museum_village/fixture.gd")
 const VillageView = preload("res://museum/view/village_view.gd")
+const Animals = preload("res://museum/core/animals.gd")
 
 func _initialize() -> void:
 	await process_frame
@@ -13,7 +14,7 @@ func _initialize() -> void:
 	view.build(all.village, all.terrain, all.occupied)
 	var day: float = float(all.period.day_length_s)
 	t.eq(view.homesteads.size(), all.occupied.size(), "a view for every occupied homestead")
-	t.eq(view.empty_houses.size(), 12 - all.occupied.size(), "the other houses stand empty")
+	t.eq(view.empty_houses.size(), 12 - all.occupied.size(), "the other houses stand empty (%d)" % view.empty_houses.size())
 
 	# ground mesh: vertices sit on the terrain, triangles face up (front faces in Godot are clockwise)
 	var ground: MeshInstance3D = view.terrain_view.get_child(0)
@@ -75,6 +76,29 @@ func _initialize() -> void:
 	t.ok(held_checked > 100, "checked held props many times (%d)" % held_checked)
 	t.ok(max_grip < 1e-3, "a held prop's grip coincides with the hand node (max %.5f m)" % max_grip)
 	t.ok(checked_nodes.size() >= 6, "every held prop of every craft was seen in a hand (%d)" % checked_nodes.size())
+
+	# trees and animals
+	t.eq(view.trees.size(), all.village.trees.size(), "every tree is instanced")
+	var animals_seen := 0
+	for id in view.homesteads:
+		var hv = view.homesteads[id].view
+		for a in hv.animals:
+			animals_seen += 1
+			t.ok(a.driver.has_clip(Animals.pose_at(a.def, 1.0, a.lengths).clip), "animal has its clip")
+	t.ok(animals_seen >= 3, "animals are in the scene (%d)" % animals_seen)
+	for id in view.homesteads:
+		var hv = view.homesteads[id].view
+		if view.homesteads[id].data.craft == "milking":
+			var cow: Node3D = hv.animals[0].root
+			var spot: Node3D = hv.props.stool.nodes[0].find_child("cow_place", true, false)
+			t.ok(cow.global_position.distance_to(spot.global_position) < 1e-3, "the cow stands on the stool's cow_place")
+		# the hearth smoke rises only while someone is at the fire
+		for l in hv.lights:
+			if l.smoke != null:
+				hv.apply(view.homesteads[id].schedule.state_at(0.30 * day), 0.0, false, 1.0)
+				t.ok(l.smoke.emitting, "smoke rises while the fire is tended")
+				hv.apply(view.homesteads[id].schedule.state_at(0.02 * day), 1.0, false, 1.0)
+				t.ok(not l.smoke.emitting, "no smoke while everyone sleeps")
 
 	# the cook's fire only burns while she works, and brighter at night
 	var cook_view = null

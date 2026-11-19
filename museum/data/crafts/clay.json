@@ -1,0 +1,64 @@
+{
+  "id": "clay",
+  "schema": 2,
+  "name": {
+    "cs": "Příprava mazanice",
+    "en": "Daub preparation"
+  },
+  "skin": "CLAY-001/person_clay",
+  "block": {
+    "cycle": [
+      [
+        "tread_mix",
+        null
+      ]
+    ]
+  },
+  "props": [
+    {
+      "id": "patch",
+      "asset": "CLAY-001/daub_mix_patch",
+      "place": {
+        "station": "tread_stand"
+      }
+    },
+    {
+      "id": "heap",
+      "asset": "CLAY-001/clay_heap_medium",
+      "place": {
+        "at": [
+          1.4,
+          0.0,
+          0.7,
+          0.0
+        ]
+      }
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici je jáma na hlínu (objekt 5/05) a mazanice s bílým nátěrem až ve třech vrstvách.",
+          "en": "A clay pit (feature 5/05) and daub with a white coat, up to three layers, are recorded at Březnice."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Šlapání hlíny s plevami, míchání a nanášení omítky jsou rekonstrukce.",
+      "en": "Treading clay with chaff, mixing and plastering are reconstructed."
+    },
+    "unknown": [
+      "tools and method",
+      "who maintained the walls",
+      "how often"
+    ],
+    "sources": [
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, sections 3.2 and 5.3.1",
+      "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "CLAY-001 PROVENANCE.md"
+    ]
+  }
+}

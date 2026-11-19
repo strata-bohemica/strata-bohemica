@@ -1,0 +1,1028 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "VEG-001",
+  "revision": "r001",
+  "status": "draft",
+  "brief": "jobs/VEG-001.md + prompts/VEG-001.md, bronze-bohemia-opus-v2 (batch 2.0)",
+  "author": "GitHub Copilot AI modelling agent (sub-agent for the Bronze Bohemia project); original procedural work",
+  "actual_agent_model": "Assigned as Opus 5.5 (Claude Opus 5.5) by the coordinator; ran as a GitHub Copilot CLI sub-agent. Model identity is as assigned, not independently verifiable from inside the session.",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator; Khronos glTF Blender I/O v5.2.41 exporter/importer; EEVEE + Workbench stills)",
+    "Godot 4.5.1-stable official (f62fdbde1): headless import/check + real GPU viewport captures, Compatibility renderer (gl_compatibility), OpenGL 4.1 via Metal on Apple M1 Pro",
+    "Python 3.9.6 + Pillow 11.3.0 + numpy 1.26.4 (procedural atlases, independent GLB inspector, pixel analysis)",
+    "macOS 26.7.1 on Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "models": [
+    {
+      "file": "models/oak_spring.glb",
+      "state_group": "oak_season (mutually exclusive: spring|summer|autumn|winter)",
+      "triangles": 960,
+      "triangles_by_material": {
+        "veg_bark": 460,
+        "veg_foliage_card": 284,
+        "veg_leafmass": 216
+      },
+      "triangle_budget": 1200,
+      "triangle_budget_pass": true,
+      "materials": 3,
+      "material_names": [
+        "veg_bark",
+        "veg_leafmass",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 3.2556,
+        "height": 4.7654,
+        "depth": 3.1569,
+        "min": [
+          -1.6844,
+          0.0,
+          -1.5578
+        ],
+        "max": [
+          1.5712,
+          4.7654,
+          1.5991
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~5 m high, crown width <= 3.8 m",
+        "height_range_pm10pct": [
+          4.5,
+          5.5
+        ],
+        "max_width": 3.8,
+        "measured_w_h_d": [
+          3.2556,
+          4.7654,
+          3.1569
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_leafmass": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 3,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 960,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 460,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_leafmass",
+            "triangles": 216,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 284,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1921428,
+      "sha256": "dd57615ba6f93dd46e48aa4fc76967cc65785a6c9afeaded31530802510ebfa9",
+      "notes": "R: young-leaf state - small light yellow-green cores + two-sided sprigs at branch ends; open crown, woody layout readable"
+    },
+    {
+      "file": "models/oak_summer.glb",
+      "state_group": "oak_season (mutually exclusive: spring|summer|autumn|winter)",
+      "triangles": 1076,
+      "triangles_by_material": {
+        "veg_bark": 460,
+        "veg_foliage_card": 224,
+        "veg_leafmass": 392
+      },
+      "triangle_budget": 1200,
+      "triangle_budget_pass": true,
+      "materials": 3,
+      "material_names": [
+        "veg_bark",
+        "veg_leafmass",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 3.769,
+        "height": 5.242,
+        "depth": 3.6747,
+        "min": [
+          -1.8915,
+          0.0,
+          -1.7973
+        ],
+        "max": [
+          1.8775,
+          5.242,
+          1.8773
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~5 m high, crown width <= 3.8 m",
+        "height_range_pm10pct": [
+          4.5,
+          5.5
+        ],
+        "max_width": 3.8,
+        "measured_w_h_d": [
+          3.769,
+          5.242,
+          3.6747
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_leafmass": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 3,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 1076,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 460,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_leafmass",
+            "triangles": 392,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 224,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1923596,
+      "sha256": "bd98965a24b689840bdaff8a83746999a5dd726a66e6e7c76b49d41d9c753290",
+      "notes": "R: full crown - 7 overlapping opaque lobes + outward leaf cards; densest coverage"
+    },
+    {
+      "file": "models/oak_autumn.glb",
+      "state_group": "oak_season (mutually exclusive: spring|summer|autumn|winter)",
+      "triangles": 844,
+      "triangles_by_material": {
+        "veg_bark": 460,
+        "veg_foliage_card": 160,
+        "veg_leafmass": 224
+      },
+      "triangle_budget": 1200,
+      "triangle_budget_pass": true,
+      "materials": 3,
+      "material_names": [
+        "veg_bark",
+        "veg_leafmass",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 3.7671,
+        "height": 4.7684,
+        "depth": 3.1351,
+        "min": [
+          -1.9699,
+          0.0,
+          -1.7582
+        ],
+        "max": [
+          1.7971,
+          4.7684,
+          1.3769
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~5 m high, crown width <= 3.8 m",
+        "height_range_pm10pct": [
+          4.5,
+          5.5
+        ],
+        "max_width": 3.8,
+        "measured_w_h_d": [
+          3.7671,
+          4.7684,
+          3.1351
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_leafmass": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 3,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 844,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 460,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_leafmass",
+            "triangles": 224,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 160,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1912316,
+      "sha256": "f51ad37a5d79c9ceee2c8a52db4e17cae4d9b090936e6510bec03a49d3bb1822",
+      "notes": "R: thinning/sagging crown - 4 lobes (L3/L4/L6 dropped), ochre/russet mix, bare twig sprays at gaps"
+    },
+    {
+      "file": "models/oak_winter.glb",
+      "state_group": "oak_season (mutually exclusive: spring|summer|autumn|winter)",
+      "triangles": 564,
+      "triangles_by_material": {
+        "veg_bark": 460,
+        "veg_foliage_card": 104
+      },
+      "triangle_budget": 1200,
+      "triangle_budget_pass": true,
+      "materials": 2,
+      "material_names": [
+        "veg_bark",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 3.5898,
+        "height": 4.8505,
+        "depth": 3.3189,
+        "min": [
+          -1.7204,
+          0.0,
+          -1.8469
+        ],
+        "max": [
+          1.8694,
+          4.8505,
+          1.472
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~5 m high, crown width <= 3.8 m",
+        "height_range_pm10pct": [
+          4.5,
+          5.5
+        ],
+        "max_width": 3.8,
+        "measured_w_h_d": [
+          3.5898,
+          4.8505,
+          3.3189
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 2,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 564,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 460,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 104,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1898212,
+      "sha256": "27c9a3455552b764890b3cd1724167370e2c60d754249c2cdcde5a6133424672",
+      "notes": "R: bare - shared woody layout + two-sided twig-spray cards; no leaves"
+    },
+    {
+      "file": "models/hazel_leafed.glb",
+      "state_group": "hazel_state (mutually exclusive: leafed|bare)",
+      "triangles": 472,
+      "triangles_by_material": {
+        "veg_bark": 154,
+        "veg_foliage_card": 108,
+        "veg_leafmass": 210
+      },
+      "triangle_budget": 500,
+      "triangle_budget_pass": true,
+      "materials": 3,
+      "material_names": [
+        "veg_bark",
+        "veg_leafmass",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 1.8301,
+        "height": 1.5856,
+        "depth": 1.7672,
+        "min": [
+          -0.9228,
+          0.0,
+          -0.9588
+        ],
+        "max": [
+          0.9073,
+          1.5856,
+          0.8084
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~1.6 m high, ~1.8 m wide",
+        "height_range_pm10pct": [
+          1.44,
+          1.76
+        ],
+        "width_range_pm10pct": [
+          1.62,
+          1.98
+        ],
+        "measured_w_h_d": [
+          1.8301,
+          1.5856,
+          1.7672
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_leafmass": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 3,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 472,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 154,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_leafmass",
+            "triangles": 210,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 108,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1898184,
+      "sha256": "03f7640274b5a18eb0990036183d488946ff158f4e15cb0661bec31756585045",
+      "notes": "R: 7 arching stems + 5 vertical leaf lobes and cards; stem bases visible"
+    },
+    {
+      "file": "models/hazel_bare.glb",
+      "state_group": "hazel_state (mutually exclusive: leafed|bare)",
+      "triangles": 210,
+      "triangles_by_material": {
+        "veg_bark": 154,
+        "veg_foliage_card": 56
+      },
+      "triangle_budget": 500,
+      "triangle_budget_pass": true,
+      "materials": 2,
+      "material_names": [
+        "veg_bark",
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_opaque",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGB",
+          "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+          "embedded": true
+        },
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 1.6502,
+        "height": 1.7203,
+        "depth": 1.6598,
+        "min": [
+          -0.8398,
+          0.0,
+          -0.8395
+        ],
+        "max": [
+          0.8103,
+          1.7203,
+          0.8203
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "~1.6 m high, ~1.8 m wide",
+        "height_range_pm10pct": [
+          1.44,
+          1.76
+        ],
+        "width_range_pm10pct": [
+          1.62,
+          1.98
+        ],
+        "measured_w_h_d": [
+          1.6502,
+          1.7203,
+          1.6598
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_bark": "OPAQUE",
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 2,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 210,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_bark",
+            "triangles": 154,
+            "cull_mode": "CULL_BACK",
+            "transparency": "DISABLED"
+          },
+          {
+            "material": "veg_foliage_card",
+            "triangles": 56,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 1884532,
+      "sha256": "4d8bf673bb0cb6b1db2fcdec59150d3f68c11495d178f33d6a8f3e87cb41b1b9",
+      "notes": "R: same 7 stems + upright two-sided twig cards (no catkins modelled)"
+    },
+    {
+      "file": "models/grass_dry.glb",
+      "state_group": "grass_type (independent clump variants; choose one per instance)",
+      "triangles": 72,
+      "triangles_by_material": {
+        "veg_foliage_card": 72
+      },
+      "triangle_budget": 120,
+      "triangle_budget_pass": true,
+      "materials": 1,
+      "material_names": [
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 0.4543,
+        "height": 0.4005,
+        "depth": 0.4367,
+        "min": [
+          -0.2339,
+          0.0,
+          -0.2308
+        ],
+        "max": [
+          0.2205,
+          0.4005,
+          0.2058
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "<= 0.45 m high within 0.6 x 0.6 m",
+        "max_height": 0.45,
+        "max_footprint": 0.6,
+        "measured_w_h_d": [
+          0.4543,
+          0.4005,
+          0.4367
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 1,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 72,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_foliage_card",
+            "triangles": 72,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 880116,
+      "sha256": "950e7556694c5fb3013ed9588c28548333130beb889d7ea52cbf145734f03867",
+      "notes": "R: generic dry-grassland clump, straw/ochre blades with a few seed heads; not a species claim"
+    },
+    {
+      "file": "models/grass_wet.glb",
+      "state_group": "grass_type (independent clump variants; choose one per instance)",
+      "triangles": 80,
+      "triangles_by_material": {
+        "veg_foliage_card": 80
+      },
+      "triangle_budget": 120,
+      "triangle_budget_pass": true,
+      "materials": 1,
+      "material_names": [
+        "veg_foliage_card"
+      ],
+      "textures": [
+        {
+          "name": "veg_atlas_cards",
+          "size": [
+            1024,
+            1024
+          ],
+          "channels": "RGBA",
+          "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+          "embedded": true
+        }
+      ],
+      "export_bounds_m": {
+        "width": 0.3864,
+        "height": 0.4203,
+        "depth": 0.3901,
+        "min": [
+          -0.1921,
+          0.0,
+          -0.2028
+        ],
+        "max": [
+          0.1943,
+          0.4203,
+          0.1873
+        ],
+        "note": "measured from GLB POSITION data incl. transparent card corners (X=width, Y=height, Z=depth)"
+      },
+      "design_envelope": {
+        "target": "<= 0.45 m high within 0.6 x 0.6 m",
+        "max_height": 0.45,
+        "max_footprint": 0.6,
+        "measured_w_h_d": [
+          0.3864,
+          0.4203,
+          0.3901
+        ],
+        "within": true
+      },
+      "anchors": {
+        "base_center": {
+          "position_m": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "meaning": "base centre on the floor plane (origin); +Y up, +Z front"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "veg_foliage_card": "MASK cutoff 0.5"
+      },
+      "mesh_nodes": 1,
+      "draw_surfaces": 1,
+      "root_transform_identity": true,
+      "godot_import": {
+        "triangles": 80,
+        "mesh_instances": 1,
+        "surfaces": [
+          {
+            "material": "veg_foliage_card",
+            "triangles": 80,
+            "cull_mode": "CULL_BACK",
+            "transparency": "ALPHA_SCISSOR"
+          }
+        ]
+      },
+      "glb_bytes": 880544,
+      "sha256": "e107739f32f9e1b2bbcb1cea57277f133666d9462e46af73ff5cee64730c992f",
+      "notes": "R: generic wet-meadow clump, darker blue-green upright blades/rush-like; not a species claim"
+    }
+  ],
+  "kit_unique_materials": 3,
+  "kit_unique_material_list": [
+    {
+      "name": "veg_bark",
+      "alphaMode": "OPAQUE",
+      "doubleSided": false,
+      "texture": "veg_atlas_opaque",
+      "use": "trunks, limbs, stems (closed shells)"
+    },
+    {
+      "name": "veg_leafmass",
+      "alphaMode": "OPAQUE",
+      "doubleSided": false,
+      "texture": "veg_atlas_opaque",
+      "use": "opaque crown/shrub lobes (closed shells)"
+    },
+    {
+      "name": "veg_foliage_card",
+      "alphaMode": "MASK (cutoff 0.5)",
+      "doubleSided": false,
+      "texture": "veg_atlas_cards",
+      "use": "leaf/twig/grass cutout cards; cards that must read from both sides carry a separate reversed back face instead of doubleSided"
+    }
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "veg_atlas_cards",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": "RGBA",
+      "sha256": "61178ffc1f878384d5ce6ef3333714f6da2cf6546af5b4868f8956f9ff57b003",
+      "source": "source/textures/veg_atlas_cards.png (gen_textures.py, seed 1100)"
+    },
+    {
+      "name": "veg_atlas_opaque",
+      "size": [
+        1024,
+        1024
+      ],
+      "channels": "RGB",
+      "sha256": "446f9e80d0ca4db15b203e4c385a47e2f33ea735e8c8614d194e8949a5b68051",
+      "source": "source/textures/veg_atlas_opaque.png (gen_textures.py, seed 1100)"
+    }
+  ],
+  "kit_texture_note": "2 unique atlases (pixel-identical sha256 in every GLB). Each GLB embeds its own copy to stay self-contained; Godot therefore imports one texture resource per GLB unless the manager extracts/shares them at import.",
+  "uv_material_layout": {
+    "veg_atlas_opaque": "1024x1024 RGB; bark_oak px(0,0)-(512,512), bark_hazel (512,0)-(768,512), mass_autumn_b (768,0)-(1024,512), mass_spring (0,512)-(256,1024), mass_summer (256,512)-(512,1024), mass_autumn (512,512)-(768,1024), mass_hazel (768,512)-(1024,1024)",
+    "veg_atlas_cards": "1024x1024 RGBA, 4x4 cells of 256 px: row0 oak_spring a/b, oak_summer a/b; row1 oak_autumn a/b, hazel_leaf a/b; row2 oak_twig a/b, hazel_twig a/b; row3 grass_dry a/b, grass_wet a/b",
+    "purpose": "fixed per-season cells and fixed material slot roles allow future renderer-side colour/wind work; no wind, timers or custom shaders are included"
+  },
+  "kit_totals": {
+    "all_8_states_triangles_sum": 4278,
+    "note": "states are mutually exclusive in production; the sum is only an all-state overview figure"
+  },
+  "repeated_instance_demo": {
+    "composition": "12 trees + 20 shrubs + 40 clumps (20 grass_dry + 20 grass_wet), ONE state per plant; plus 3 HOUSE-001 and 5 PERSON-001 fixtures",
+    "plant_triangles_instantiated": {
+      "summer(oak_summer+hazel_leafed)": 25392,
+      "spring(oak_spring+hazel_leafed)": 24000,
+      "autumn(oak_autumn+hazel_leafed)": 22608,
+      "winter(oak_winter+hazel_bare)": 14008
+    },
+    "plant_mesh_instances": 72,
+    "plant_draw_surfaces_summer": 136,
+    "unique_materials": 3,
+    "unique_textures": 2,
+    "godot_measured_frame": {
+      "repeat:summer@size25": {
+        "frame_primitives": 63296,
+        "frame_draw_calls": 423,
+        "frame_objects": 423,
+        "mean_frame_ms_120f_vsync_off": 2.99
+      },
+      "repeat:summer@size16": {
+        "frame_primitives": 59770,
+        "frame_draw_calls": 364,
+        "frame_objects": 364,
+        "mean_frame_ms_120f_vsync_off": 2.7
+      },
+      "repeat:spring@size25": {
+        "frame_primitives": 58536,
+        "frame_draw_calls": 420,
+        "frame_objects": 420,
+        "mean_frame_ms_120f_vsync_off": 3.19
+      },
+      "repeat:autumn@size25": {
+        "frame_primitives": 57428,
+        "frame_draw_calls": 420,
+        "frame_objects": 420,
+        "mean_frame_ms_120f_vsync_off": 3.43
+      },
+      "repeat:winter@size25": {
+        "frame_primitives": 40040,
+        "frame_draw_calls": 338,
+        "frame_objects": 338,
+        "mean_frame_ms_120f_vsync_off": 2.79
+      },
+      "repeat:summer_noshadow@size25": {
+        "frame_primitives": 36036,
+        "frame_draw_calls": 160,
+        "frame_objects": 160,
+        "mean_frame_ms_120f_vsync_off": 1.55
+      },
+      "repeat:winter_noshadow@size25": {
+        "frame_primitives": 22412,
+        "frame_draw_calls": 128,
+        "frame_objects": 128,
+        "mean_frame_ms_120f_vsync_off": 1.46
+      }
+    },
+    "measurement_note": "Godot RenderingServer totals for the whole visible frame incl. houses/persons/ground/grid; with shadows they include the directional shadow pass. Frame times: Godot 4.5.1 Compatibility, Apple M1 Pro, 1280x800, vsync off, mean of 120 frames - informational only, not an FPS requirement."
+  },
+  "reference_ids": [
+    "A",
+    "T1"
+  ],
+  "reference_use": {
+    "A": "Šálková et al. 2022, Sci Rep 12:20323 - oak/hazel presence in charcoal record and dry grassland/wet meadow reconstruction (via references/SOURCES.md + research-notes.md); supports presence only",
+    "T1": "Godot 4.5 StandardMaterial3D transparency + scene import docs - opaque/cutout material choice",
+    "guides": "references/vegetation.svg (design envelopes), layout.svg (scene scale), godot-village.png (visual gap) - R design guidance, not evidence"
+  },
+  "fixture_hashes": {
+    "fixtures/PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12",
+    "fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a"
+  },
+  "parts_and_uncertainties": [
+    "Oak-like tree: genus presence only (source A). Species, branching habit, crown proportions, 5 m height and seasonal appearance are R design choices.",
+    "Season states: leaf colours (spring yellow-green, summer green, autumn ochre/russet, winter bare) and coverage changes are R; no phenology dates are claimed.",
+    "Hazel-like shrub: presence only (A). Multi-stem arching habit, 1.6 m height, leaf outline and absence of catkins in the bare state are R.",
+    "Grass clumps: generic dry/wet design proxies for reconstructed dry grassland/fallow and wet meadow (A, abstract/conclusion); NOT identified grass species.",
+    "Leaf outlines are simple parametric shapes (lobed obovate oak-like, serrate ovate hazel-like); no botanical photo pixels or tracings used.",
+    "Crowns fully conceal a 1.70 m PERSON standing directly behind the summer/autumn oak along the village camera axis (measured; see checks/behind_visibility.json); fade/cut-away behaviour left to manager."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "deviations": [
+    "No glTF doubleSided materials at all: the only cutout material (veg_foliage_card) is single-sided MASK; where both sides must show (sprigs, twig sprays, grass) the generator emits a separate reversed back face. This keeps both sides lit consistently in Godot (no back-face normal flip) at the cost of extra triangles (counted in all budgets).",
+    "Card and lobe vertex normals are intentionally bent outward from crown/lobe centres (soft volumetric shading); per-card geometric vs shading normal can differ (reported in checks/glb_inspect.json).",
+    "Oak crown width is held at <= 3.8 m (hard cap) rather than using the +10% tolerance; measured max horizontal extent 3.769 m (oak_summer)."
+  ]
+}

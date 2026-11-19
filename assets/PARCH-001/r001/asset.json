@@ -1,0 +1,1288 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "PARCH-001",
+  "revision": "r001",
+  "brief": "PARCH-001 r001 grain parching, R study (art/briefs/economy-batch9/PARCH-001.md + README.md, proposal not a frozen pack; shared rules art/briefs/economy-batch4/README.md; contract art/handoffs/bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "optional_job": "The whole job is R and optional: subsistence.md section 2.4 states no Březnice source reports parching or kiln-drying.",
+  "author": "GitHub Copilot autonomous modelling agent (procedural Blender/Python generators written for this job); character body/rig/skin/palette copied unchanged from the accepted PERSON-001 r002 return",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/reopen/contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (bundled with Blender 5.2.3; GLB export/import)",
+    "Godot Engine 4.5.1-stable (official) (headless import checks; GPU viewport captures, Compatibility renderer on )",
+    "Python 3.9 + numpy (independent GLB parser) + Pillow (sheet composition)",
+    "ffmpeg (MP4/GIF)",
+    "git (read-only rev-parse)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No measured source: tray size and form, grain layer, stick, crouch posture and station layout are R design values.",
+  "models": [
+    {
+      "file": "models/parching_tray_sherd.glb",
+      "role": "Large re-used base sherd / clay plate (~0.51 x 0.46 m, 34 mm high incl. the low rim) for parching on the embers; one side is a fresh break without rim; dished, heat-darkened top; sooted, gently convex underside. Empty state (mutually exclusive with parching_tray_with_grain). Root = underside centre (lowest point).",
+      "triangles": 192,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "vertices_exported": 182,
+      "materials": 1,
+      "material_names": [
+        "parch_kit"
+      ],
+      "double_sided": {
+        "parch_kit": false
+      },
+      "alpha_mode": {
+        "parch_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "parch_atlas",
+          "width": 128,
+          "height": 128,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 18744,
+      "export_bounds_m": {
+        "width": 0.5069,
+        "height": 0.034,
+        "depth": 0.4612,
+        "min": [
+          -0.2429,
+          0.0,
+          -0.2398
+        ],
+        "max": [
+          0.2641,
+          0.034,
+          0.2214
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        {
+          "welded_vertices": 98,
+          "edges": 288,
+          "open_edges": 0,
+          "non_manifold_edges": 0,
+          "inconsistent_edges": 0,
+          "signed_volume_m3": 0.0029384
+        }
+      ],
+      "godot_imported_triangles": 192,
+      "anchors": {
+        "base_center": {
+          "parent": "PARCHING_TRAY_SHERD",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "dish_center": {
+          "parent": "PARCHING_TRAY_SHERD",
+          "translation": [
+            0.0,
+            0.016,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.016,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "underside centre = root; goes on person_parching tray_place (which seats it on the KILN-001 ember logs)",
+        "dish_center": "top of the dished floor at the centre (y 0.016)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/parching_tray_with_grain.glb",
+      "role": "The same tray with a thin spread layer of parched grain (~12 mm; open sheet whose edge ring is tucked inside the clay, measured 5.8-6.6 mm deep). Working state. Root = underside centre.",
+      "triangles": 272,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "vertices_exported": 231,
+      "materials": 1,
+      "material_names": [
+        "parch_kit"
+      ],
+      "double_sided": {
+        "parch_kit": false
+      },
+      "alpha_mode": {
+        "parch_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "parch_atlas",
+          "width": 128,
+          "height": 128,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 20872,
+      "export_bounds_m": {
+        "width": 0.5069,
+        "height": 0.034,
+        "depth": 0.4612,
+        "min": [
+          -0.2429,
+          0.0,
+          -0.2398
+        ],
+        "max": [
+          0.2641,
+          0.034,
+          0.2214
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        {
+          "welded_vertices": 147,
+          "edges": 416,
+          "open_edges": 16,
+          "non_manifold_edges": 0,
+          "inconsistent_edges": 0,
+          "signed_volume_m3": 0.004873
+        }
+      ],
+      "godot_imported_triangles": 272,
+      "anchors": {
+        "base_center": {
+          "parent": "PARCHING_TRAY_WITH_GRAIN",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "dish_center": {
+          "parent": "PARCHING_TRAY_WITH_GRAIN",
+          "translation": [
+            0.0,
+            0.016,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.016,
+            0.0
+          ]
+        },
+        "grain_surface": {
+          "parent": "PARCHING_TRAY_WITH_GRAIN",
+          "translation": [
+            0.0,
+            0.031,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.031,
+            0.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "underside centre = root (identical to parching_tray_sherd)",
+        "dish_center": "as parching_tray_sherd",
+        "grain_surface": "grain surface at the centre (y 0.031)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": [],
+      "intentional_open_edges": "16 welded open edges = the grain sheet's boundary ring, hidden inside the closed clay tray (checks/contact_check.json tray_static.grain_open_boundary_sd_to_tray_solid_m)"
+    },
+    {
+      "file": "models/stir_stick.glb",
+      "role": "0.66 m peeled, slightly crooked stirring stick (6-sided, tapering 22 %%) with a charred stirring end. Root = floor point under the stick centre when lying (+Z = charred end); lies on the floor at root identity.",
+      "triangles": 104,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "vertices_exported": 172,
+      "materials": 1,
+      "material_names": [
+        "parch_kit"
+      ],
+      "double_sided": {
+        "parch_kit": false
+      },
+      "alpha_mode": {
+        "parch_kit": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "parch_atlas",
+          "width": 128,
+          "height": 128,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 17992,
+      "export_bounds_m": {
+        "width": 0.0304,
+        "height": 0.0235,
+        "depth": 0.66,
+        "min": [
+          -0.0108,
+          0.0,
+          -0.33
+        ],
+        "max": [
+          0.0196,
+          0.0235,
+          0.33
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        {
+          "welded_vertices": 54,
+          "edges": 156,
+          "open_edges": 0,
+          "non_manifold_edges": 0,
+          "inconsistent_edges": 0,
+          "signed_volume_m3": 0.0002005
+        }
+      ],
+      "godot_imported_triangles": 104,
+      "anchors": {
+        "base_center": {
+          "parent": "STIR_STICK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "grip": {
+          "parent": "STIR_STICK",
+          "translation": [
+            0.00086,
+            0.01124,
+            -0.2
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.00086,
+            0.01124,
+            -0.2
+          ]
+        },
+        "tip": {
+          "parent": "STIR_STICK",
+          "translation": [
+            0.0,
+            0.00917,
+            0.33
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.00917,
+            0.33
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin under the stick centre (lying pose; person_parching stick_rest uses it)",
+        "grip": "right-hand grip point (person_parching stick_hold convention)",
+        "tip": "charred end-cap centre (stirring point)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "extensions_used": []
+    },
+    {
+      "file": "models/person_parching.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette byte-identical, with three new in-place clips (parch_enter, parch_stir, parch_exit), one hand attachment node and three placement nodes",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "vertices_exported": 1443,
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "double_sided": {
+        "body": false,
+        "garment": false
+      },
+      "alpha_mode": {
+        "body": "OPAQUE",
+        "garment": "OPAQUE"
+      },
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "glb_bytes": 324412,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity",
+      "topology_welded": [
+        null,
+        null
+      ],
+      "godot_imported_triangles": 2052,
+      "anchors": {
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ],
+          "world_rest_translation": [
+            -0.0089,
+            0.94836,
+            0.02789
+          ]
+        },
+        "hearth_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.0,
+            0.0,
+            0.82
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0,
+            0.82
+          ]
+        },
+        "stick_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.08716,
+            0.06714,
+            0.18772
+          ],
+          "rotation_xyzw": [
+            0.06163,
+            0.06163,
+            0.70442,
+            0.70442
+          ],
+          "world_rest_translation": [
+            -0.223,
+            0.76284,
+            -0.2
+          ]
+        },
+        "stick_rest": {
+          "parent": "PERSON_rig",
+          "translation": [
+            -0.45,
+            0.0,
+            0.25
+          ],
+          "rotation_xyzw": [
+            0.0,
+            -0.20791,
+            0.0,
+            0.97815
+          ],
+          "world_rest_translation": [
+            -0.45,
+            0.0,
+            0.25
+          ]
+        },
+        "tray_place": {
+          "parent": "PERSON_rig",
+          "translation": [
+            0.0,
+            0.0695,
+            0.82
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.17365,
+            0.0,
+            0.98481
+          ],
+          "world_rest_translation": [
+            0.0,
+            0.0695,
+            0.82
+          ]
+        }
+      },
+      "anchor_notes": {
+        "carry_anchor": "unchanged from r002 (child of hand.R)",
+        "stick_hold": "NEW, child of bone hand.R: stir_stick.glb ROOT goes here with an identity transform while held (stick `grip` in the fist, charred end leaving the fist on the little-finger side)",
+        "hearth_place": "NEW, child of PERSON_rig: KILN-001 hearth_base / hearth_open_top / fire_embers root at (0, 0, 0.82), yaw 90 so the KILN firewood_spot lies behind the fire",
+        "tray_place": "NEW, child of PERSON_rig: tray root (either tray GLB) at (0, 0.0695, 0.82), yaw 20: the convex underside rests on the KILN-001 ember logs inside the stone ring",
+        "stick_rest": "NEW, child of PERSON_rig: stir_stick ROOT when not held = lying on the floor at the worker's right (-0.45, 0, 0.25), yaw -24; equals the held stick pose at the grab"
+      },
+      "animations": [
+        {
+          "name": "parch_enter",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            21,
+            51
+          ],
+          "first_last_pose": "first = PERSON r002 idle t=0 (0.0 deg / 0.0 m from the fixture idle first key); last = crouch base pose B = parch_stir t=0",
+          "behaviour": "R: the hips go down onto the balls of the feet (toe joints stay where the r002 idle pose plants them) while the trunk leans and turns to the right; the open right hand comes down onto the stir_stick lying on the floor at stick_rest and closes at 1.00 s; the stick is raised, swung out to the right-front over the hearth stones and its charred end set into the grain on the tray (base pose B); the left forearm settles on the left knee",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 113.11815,
+          "pelvis_local_translation_range_m": [
+            [
+              -0.06,
+              0.38,
+              -0.03
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "parch_stir",
+          "duration_s": 2.4,
+          "fps": 30,
+          "keys_per_track": 73,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "godot_imported_loop_mode": "LOOP_LINEAR",
+          "godot_keys_per_track_optimizer_off": [
+            73,
+            73
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            1,
+            71
+          ],
+          "first_last_pose": "first = last (periodic) = base pose B: low crouch on the balls of the feet, knees forward and apart, trunk leaning 40 deg, right fist on the stir_stick with its charred end in the grain at the near side of the stirring oval, left forearm on the left knee",
+          "behaviour": "R: two oval sweeps per loop (oval 170 x 120 mm in the tray frame); the charred end stays in the grain (lowest stick point 4.3-9.6 mm under the grain surface, 4.9-5.4 mm above the clay), the fist follows 55 % of the tip motion so the stick also pivots; light trunk sway",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 0.0,
+          "pelvis_local_translation_range_m": [
+            [
+              0.0,
+              0.44,
+              -0.03
+            ],
+            [
+              0.0,
+              0.44,
+              -0.018
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        },
+        {
+          "name": "parch_exit",
+          "duration_s": 2.0,
+          "fps": 30,
+          "keys_per_track": 61,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "godot_imported_loop_mode": "LOOP_NONE",
+          "godot_keys_per_track_optimizer_off": [
+            61,
+            61
+          ],
+          "godot_keys_per_track_default_optimizer": [
+            21,
+            51
+          ],
+          "first_last_pose": "first = base pose B; last = PERSON r002 idle t=0 (parch_enter played backwards)",
+          "behaviour": "R: parch_enter in reverse time: the stick is lifted out of the grain, carried back over the stones and laid on the floor at stick_rest; the hand opens at 1.00 s and the worker stands up",
+          "in_place": true,
+          "root_node_animated": false,
+          "first_vs_last_key_max_rotation_deg": 113.11815,
+          "pelvis_local_translation_range_m": [
+            [
+              -0.06,
+              0.38,
+              -0.03
+            ],
+            [
+              0.0,
+              0.884,
+              0.0
+            ]
+          ],
+          "solver_max_ik_reach_error_m": 0.0
+        }
+      ],
+      "double_sided_exceptions": [],
+      "extensions_used": [],
+      "bind_pose_bounds_note": "export_bounds_m is the bind (A-) pose from the POSITION accessor",
+      "prop_visibility_windows_s": {
+        "stir_stick": "stick_hold while held: parch_enter t >= 1.00, parch_stir, parch_exit t <= 1.00; otherwise stick_rest"
+      },
+      "hold_node_vs_ideal_prop_pose": {
+        "parch_enter": {
+          "stick_hold": {
+            "held_keys": 31,
+            "node_vs_ideal_prop_max_pos_m": 3.48e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "parch_stir": {
+          "stick_hold": {
+            "held_keys": 73,
+            "node_vs_ideal_prop_max_pos_m": 3.13e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        },
+        "parch_exit": {
+          "stick_hold": {
+            "held_keys": 31,
+            "node_vs_ideal_prop_max_pos_m": 3.48e-07,
+            "node_vs_ideal_prop_max_rot_deg": 0.0
+          }
+        }
+      }
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_material_names": [
+    "parch_kit"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "parch_atlas",
+      "width": 128,
+      "height": 128,
+      "embedded_in": [
+        "parching_tray_sherd.glb",
+        "parching_tray_with_grain.glb",
+        "stir_stick.glb"
+      ],
+      "note": "one procedural 128 px atlas (fired clay, scorched clay, soot, fresh break, 64 px parched-grain block, peeled wood, end grain, char); each prop GLB embeds its own identical copy; source/textures/parch_atlas.png"
+    }
+  ],
+  "inherited_materials_textures": {
+    "person_parching.glb": {
+      "materials": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256
+        }
+      ],
+      "note": "unchanged PERSON-001 r002"
+    }
+  },
+  "double_sided_alpha_inventory": {
+    "parching_tray_sherd.glb": {
+      "parch_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "parching_tray_with_grain.glb": {
+      "parch_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "stir_stick.glb": {
+      "parch_kit": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    },
+    "person_parching.glb": {
+      "body": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      },
+      "garment": {
+        "doubleSided": false,
+        "alphaMode": "OPAQUE"
+      }
+    }
+  },
+  "double_sided_exceptions": [],
+  "gltf_extensions_used": [],
+  "budget_summary": {
+    "per_model_limit_triangles": {
+      "parching_tray_sherd.glb": 300,
+      "parching_tray_with_grain.glb": 300,
+      "stir_stick.glb": 300
+    },
+    "props_triangles": {
+      "parching_tray_sherd.glb": 192,
+      "parching_tray_with_grain.glb": 272,
+      "stir_stick.glb": 104
+    },
+    "budget_ok_all_props": true,
+    "person_parching_triangles": 2052,
+    "states_note": "parching_tray_sherd (empty) and parching_tray_with_grain (working) are mutually exclusive tray states; each state is reported separately below with the KILN-001 host it uses",
+    "state_working_instantiated": {
+      "triangles": 3326,
+      "parts": {
+        "person_parching": 2052,
+        "parching_tray_with_grain": 272,
+        "stir_stick": 104,
+        "KILN-001 hearth_base": 526,
+        "KILN-001 hearth_open_top": 270,
+        "KILN-001 fire_embers": 102
+      },
+      "visible_meshes": 6,
+      "materials": 5,
+      "materials_list": [
+        "KILN_earth",
+        "KILN_glow",
+        "body",
+        "garment",
+        "parch_kit"
+      ],
+      "textures": [
+        "fire_embers 512x512",
+        "hearth_base 512x512",
+        "hearth_open_top 512x512",
+        "parch_atlas 128x128",
+        "person_palette 256x256"
+      ]
+    },
+    "state_empty_instantiated": {
+      "triangles": 3246,
+      "parts": {
+        "person_parching": 2052,
+        "parching_tray_sherd": 192,
+        "stir_stick": 104,
+        "KILN-001 hearth_base": 526,
+        "KILN-001 hearth_open_top": 270,
+        "KILN-001 fire_embers": 102
+      },
+      "visible_meshes": 6,
+      "materials": 5,
+      "materials_list": [
+        "KILN_earth",
+        "KILN_glow",
+        "body",
+        "garment",
+        "parch_kit"
+      ],
+      "textures": [
+        "fire_embers 512x512",
+        "hearth_base 512x512",
+        "hearth_open_top 512x512",
+        "parch_atlas 128x128",
+        "person_palette 256x256"
+      ]
+    },
+    "all_returned_models_once": {
+      "triangles": 2620,
+      "visible_meshes": 4
+    },
+    "repeated_instance_demo_4_stations": {
+      "triangles": 13304,
+      "parts": {
+        "parching_tray_with_grain x4": 1088,
+        "stir_stick x4": 416,
+        "person_parching x4": 8208,
+        "KILN-001 hearth_base x4": 2104,
+        "KILN-001 hearth_open_top x4": 1080,
+        "KILN-001 fire_embers x4": 408
+      },
+      "note": "arithmetic from the measured per-GLB counts (4 independent parching stations incl. their KILN-001 hosts); the GPU village views show one station"
+    },
+    "kit_materials": 1,
+    "kit_atlas": "1 x 128^2"
+  },
+  "motion": {
+    "rig": "PERSON-001 r002, 23 bones; vertex streams, indices, inverse binds, joint rest TRS, palette, materials and carry_anchor byte-identical (checks/glb_inspect.json fixture_comparison)",
+    "fixture_comparison_all_identical": true,
+    "seams_vs_r002_idle": {
+      "parch_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      },
+      "parch_exit_last": {
+        "max_rotation_deg": 0.0,
+        "max_translation_m": 0.0
+      }
+    },
+    "clip_seams": {
+      "parch_enter_last__parch_stir_first": {
+        "max_rotation_deg": 3e-05,
+        "max_translation_or_scale_m": 2e-07
+      },
+      "parch_stir_last__parch_stir_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      },
+      "parch_stir_first__parch_exit_first": {
+        "max_rotation_deg": 3e-05,
+        "max_translation_or_scale_m": 2e-07
+      },
+      "parch_exit_last__parch_enter_first": {
+        "max_rotation_deg": 0.0,
+        "max_translation_or_scale_m": 0.0
+      }
+    },
+    "fps_keys": 30,
+    "import_settings_godot": "person_parching.glb: animations parch_stir settings/loop_mode=1 (LINEAR); parch_enter, parch_exit 0; nodes/PATH:AnimationPlayer optimizer/enabled=false (recommended: keeps all 30 fps keys; with Godot's default optimizer key counts drop, checks/godot_check_default_optimizer.json). See checks/godot_person_parching.glb.import.txt.",
+    "state_machine_R": "idle -> parch_enter -> parch_stir (loop) -> parch_exit -> idle",
+    "crouch_design_R": {
+      "pelvis_joint_height_m": 0.44,
+      "pelvis_joint_gltf_z": -0.03,
+      "heel_pitch_deg": 38.0,
+      "trunk_lean_deg": 40.0,
+      "nod_deg": 18.0,
+      "base_ik_error_m": 0.0
+    },
+    "contact_measured_m": {
+      "method": "Blender re-import of the exported GLBs (person_parching, KILN-001 hearth_base/open_top/fire_embers, both trays, stir_stick), deformed meshes at every 30 fps key of every clip; BVH signed distances (negative = inside), stick points include 4 interior points per edge; hearth base also as a height field",
+      "person_non_foot_lowest_vertex_y": 0.01777,
+      "person_foot_lowest_vertex_y": [
+        0.0,
+        0.0
+      ],
+      "person_right_hand_lowest_vertex_y": 0.01777,
+      "person_below_hearth_base_surface_max": 0.0,
+      "toe_joint_drift_m": {
+        "parch_enter": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "parch_stir": {
+          "L": 0.0,
+          "R": 0.0
+        },
+        "parch_exit": {
+          "L": 0.0,
+          "R": 0.0
+        }
+      },
+      "person_to_stone_ring_min": 0.12608,
+      "person_to_hearth_base_min": 0.02698,
+      "person_to_embers_min": 0.26781,
+      "person_to_tray_min": 0.23713,
+      "stick_to_tray_clay_min": 0.0049,
+      "stick_tray_overlapping_triangle_pairs_max": 0,
+      "stick_to_stone_ring_min": 0.12216,
+      "stick_to_hearth_base_min": 0.04819,
+      "stick_to_embers_min": 0.02353,
+      "stick_lowest_y_min": 0.0,
+      "stick_to_person_excl_right_hand_min": 0.02948,
+      "right_hand_grip_contact": -0.00325,
+      "parch_stir_stick_in_grain": {
+        "tip_below_grain_surface_m": [
+          -0.00057,
+          0.00411
+        ],
+        "stick_lowest_point_below_grain_surface_m": [
+          0.00427,
+          0.00956
+        ],
+        "stick_lowest_point_above_tray_surface_m": [
+          0.0049,
+          0.00542
+        ],
+        "tip_radial_from_tray_centre_m": [
+          0.025,
+          0.09824
+        ]
+      },
+      "tray_static": {
+        "tray_min_sd_to_embers_m": 0.00106,
+        "embers_points_max_depth_inside_tray_m": 0.0011,
+        "tray_embers_overlapping_triangle_pairs": 10,
+        "tray_min_sd_to_base_m": 0.045,
+        "base_points_max_depth_inside_tray_m": -0.0,
+        "tray_base_overlapping_triangle_pairs": 0,
+        "tray_min_sd_to_ring_m": 0.07526,
+        "ring_points_max_depth_inside_tray_m": -0.0,
+        "tray_ring_overlapping_triangle_pairs": 0,
+        "underside_vertices_vertical_gap_to_embers_or_base_m": {
+          "min": 0.00913,
+          "max": 0.05795,
+          "n": 65,
+          "within_5mm": 0
+        },
+        "tray_lowest_y_m": 0.0695,
+        "tray_rim_top_y_m": 0.1035,
+        "tray_max_radius_from_hearth_centre_m": 0.26538,
+        "ring_min_radius_from_hearth_centre_m": 0.30951,
+        "grain_tray_mesh_top_y_m": 0.1035,
+        "grain_open_boundary_vertices": 16,
+        "grain_open_boundary_sd_to_tray_solid_m": {
+          "min": -0.0066,
+          "max": -0.00584,
+          "inside_clay": 16
+        }
+      },
+      "stick_rest_static": {
+        "stick_rest_min_y_m": 0.0,
+        "stick_rest_vertices_within_2mm_of_floor": 18,
+        "stick_rest_min_sd_to_hearth_base_m": 0.04819,
+        "stick_rest_max_below_hearth_base_surface_m": 0.0
+      },
+      "notes": "the -3.3 mm grip value is the low-poly fist closing round the stick (fingers and palm touch/overlap the shaft); the tray is bedded up to 1.1 mm into the KILN-001 ember-log tops it rests on"
+    },
+    "stick_tip_in_grain_16_samples_parch_stir": [
+      {
+        "t_s": 0.0,
+        "tip_tray_local_gltf": [
+          0.0,
+          0.0275,
+          -0.095
+        ],
+        "tip_radial_from_tray_centre_m": 0.095,
+        "tip_below_grain_surface_m": 0.00411,
+        "stick_lowest_point_above_tray_surface_m": 0.00514,
+        "stick_min_signed_distance_to_tray_m": 0.00514,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05438
+      },
+      {
+        "t_s": 0.15,
+        "tip_tray_local_gltf": [
+          0.05987,
+          0.02747,
+          -0.07724
+        ],
+        "tip_radial_from_tray_centre_m": 0.09773,
+        "tip_below_grain_surface_m": 0.00027,
+        "stick_lowest_point_above_tray_surface_m": 0.00515,
+        "stick_min_signed_distance_to_tray_m": 0.00515,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05514
+      },
+      {
+        "t_s": 0.3,
+        "tip_tray_local_gltf": [
+          0.085,
+          0.0275,
+          -0.035
+        ],
+        "tip_radial_from_tray_centre_m": 0.09192,
+        "tip_below_grain_surface_m": 0.00039,
+        "stick_lowest_point_above_tray_surface_m": 0.00523,
+        "stick_min_signed_distance_to_tray_m": 0.00523,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.0555
+      },
+      {
+        "t_s": 0.45,
+        "tip_tray_local_gltf": [
+          0.05988,
+          0.02748,
+          0.00727
+        ],
+        "tip_radial_from_tray_centre_m": 0.06032,
+        "tip_below_grain_surface_m": 0.00357,
+        "stick_lowest_point_above_tray_surface_m": 0.00528,
+        "stick_min_signed_distance_to_tray_m": 0.00528,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05506
+      },
+      {
+        "t_s": 0.6,
+        "tip_tray_local_gltf": [
+          0.0,
+          0.0275,
+          0.025
+        ],
+        "tip_radial_from_tray_centre_m": 0.025,
+        "tip_below_grain_surface_m": 0.00251,
+        "stick_lowest_point_above_tray_surface_m": 0.00542,
+        "stick_min_signed_distance_to_tray_m": 0.00542,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05427
+      },
+      {
+        "t_s": 0.75,
+        "tip_tray_local_gltf": [
+          -0.05988,
+          0.02748,
+          0.00728
+        ],
+        "tip_radial_from_tray_centre_m": 0.06032,
+        "tip_below_grain_surface_m": 0.00264,
+        "stick_lowest_point_above_tray_surface_m": 0.005,
+        "stick_min_signed_distance_to_tray_m": 0.005,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05373
+      },
+      {
+        "t_s": 0.9,
+        "tip_tray_local_gltf": [
+          -0.085,
+          0.0275,
+          -0.035
+        ],
+        "tip_radial_from_tray_centre_m": 0.09192,
+        "tip_below_grain_surface_m": -0.00017,
+        "stick_lowest_point_above_tray_surface_m": 0.00492,
+        "stick_min_signed_distance_to_tray_m": 0.00492,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05358
+      },
+      {
+        "t_s": 1.05,
+        "tip_tray_local_gltf": [
+          -0.05987,
+          0.02747,
+          -0.07727
+        ],
+        "tip_radial_from_tray_centre_m": 0.09775,
+        "tip_below_grain_surface_m": 0.00164,
+        "stick_lowest_point_above_tray_surface_m": 0.00493,
+        "stick_min_signed_distance_to_tray_m": 0.00493,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05381
+      },
+      {
+        "t_s": 1.2,
+        "tip_tray_local_gltf": [
+          0.0,
+          0.0275,
+          -0.095
+        ],
+        "tip_radial_from_tray_centre_m": 0.095,
+        "tip_below_grain_surface_m": 0.00411,
+        "stick_lowest_point_above_tray_surface_m": 0.00514,
+        "stick_min_signed_distance_to_tray_m": 0.00514,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05438
+      },
+      {
+        "t_s": 1.35,
+        "tip_tray_local_gltf": [
+          0.05987,
+          0.02747,
+          -0.07724
+        ],
+        "tip_radial_from_tray_centre_m": 0.09773,
+        "tip_below_grain_surface_m": 0.00027,
+        "stick_lowest_point_above_tray_surface_m": 0.00515,
+        "stick_min_signed_distance_to_tray_m": 0.00515,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05514
+      },
+      {
+        "t_s": 1.5,
+        "tip_tray_local_gltf": [
+          0.085,
+          0.0275,
+          -0.035
+        ],
+        "tip_radial_from_tray_centre_m": 0.09192,
+        "tip_below_grain_surface_m": 0.00039,
+        "stick_lowest_point_above_tray_surface_m": 0.00523,
+        "stick_min_signed_distance_to_tray_m": 0.00523,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.0555
+      },
+      {
+        "t_s": 1.65,
+        "tip_tray_local_gltf": [
+          0.05988,
+          0.02748,
+          0.00727
+        ],
+        "tip_radial_from_tray_centre_m": 0.06032,
+        "tip_below_grain_surface_m": 0.00357,
+        "stick_lowest_point_above_tray_surface_m": 0.00528,
+        "stick_min_signed_distance_to_tray_m": 0.00528,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05506
+      },
+      {
+        "t_s": 1.8,
+        "tip_tray_local_gltf": [
+          0.0,
+          0.0275,
+          0.025
+        ],
+        "tip_radial_from_tray_centre_m": 0.025,
+        "tip_below_grain_surface_m": 0.00251,
+        "stick_lowest_point_above_tray_surface_m": 0.00542,
+        "stick_min_signed_distance_to_tray_m": 0.00542,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05427
+      },
+      {
+        "t_s": 1.95,
+        "tip_tray_local_gltf": [
+          -0.05988,
+          0.02748,
+          0.00728
+        ],
+        "tip_radial_from_tray_centre_m": 0.06032,
+        "tip_below_grain_surface_m": 0.00264,
+        "stick_lowest_point_above_tray_surface_m": 0.005,
+        "stick_min_signed_distance_to_tray_m": 0.005,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05373
+      },
+      {
+        "t_s": 2.1,
+        "tip_tray_local_gltf": [
+          -0.085,
+          0.0275,
+          -0.035
+        ],
+        "tip_radial_from_tray_centre_m": 0.09192,
+        "tip_below_grain_surface_m": -0.00017,
+        "stick_lowest_point_above_tray_surface_m": 0.00492,
+        "stick_min_signed_distance_to_tray_m": 0.00492,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05358
+      },
+      {
+        "t_s": 2.25,
+        "tip_tray_local_gltf": [
+          -0.05987,
+          0.02747,
+          -0.07727
+        ],
+        "tip_radial_from_tray_centre_m": 0.09775,
+        "tip_below_grain_surface_m": 0.00164,
+        "stick_lowest_point_above_tray_surface_m": 0.00493,
+        "stick_min_signed_distance_to_tray_m": 0.00493,
+        "stick_min_signed_distance_to_person_excl_right_hand_m": 0.05381
+      }
+    ],
+    "godot_vs_blender_pose": {
+      "compared_keys": 195,
+      "max_position_difference_m": {
+        "hand.L": 1e-05,
+        "hand.R": 1e-05,
+        "toe.L": 0.0,
+        "toe.R": 0.0,
+        "stick_tip_held": 1e-05
+      },
+      "stick_tip_16_samples_max_difference_m": 0.0,
+      "note": "Godot probe = Skeleton3D global bone pose origin; Blender = pose-bone head in world space; stick tip = stir_stick `tip` anchor on stick_hold; all from models/person_parching.glb"
+    }
+  },
+  "reference_ids": [
+    "subsistence.md section 2.4 'Crop processing: threshing, winnowing, dehusking, parching' (bullet 'Parching: no Březnice source inspected here reports parching or kiln-drying. R only.') on branch docs/economy-research",
+    "content/research/next-batch/README.md (O-pec records are burnt surfaces/fills, not demonstrated ovens; no grain-drying function attached) on branch docs/economy-research",
+    "crafts-exchange.md read for context; no parching statement used",
+    "Read-only geometry references: KILN-001 r001 (hearth_base, hearth_open_top, fire_embers; ring inner radius and anchors from its asset.json/CHECKS.md), PERSON-001 r002, POT-001 / HOUSE-001 fixtures (context only), VEG-001 (context only)"
+  ],
+  "fixture_hashes": {
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_base.glb": "2e12bf68e61480642433a85b1d4c949f23b7207032adbb00fcef2cbcef631de2",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_open_top.glb": "c13b6fe99d3921707dc4856dbad489f5118e84c7ace8690d7911324455467420",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/fire_embers.glb": "c9dfda43f5390b5fb305fcf36ad167fa0cf2062000eeb3b21267fdb37b9a5a82",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/firewood_stack.glb": "125cc0121e0cf5214de30af9ee2fb79da3260258db553605e1a4aec3b58c09f5",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/asset.json": "92eee8ad1f10cfd570016f542479211e0e7816b8da87297bcc9fc58d1786b2c4",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/CHECKS.md": "99bea57bd5937efa57560fddb25f9d444dd63ce6b4f27c988937c6d3ceb06eb1",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_summer.glb": "bd98965a24b689840bdaff8a83746999a5dd726a66e6e7c76b49d41d9c753290",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/hazel_leafed.glb": "03f7640274b5a18eb0990036183d488946ff158f4e15cb0661bec31756585045",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/grass_wet.glb": "e107739f32f9e1b2bbcb1cea57277f133666d9462e46af73ff5cee64730c992f",
+    "art/briefs/economy-batch9/PARCH-001.md": "edddebc09139dbf473388cb821c19f855785fe9a2ed1d16f0819896d6a1a8dfa",
+    "art/briefs/economy-batch9/README.md": "4e688d7ac438815ef8cdb111147e6c890af6c91c9dbf238d96e266dfea7b796d",
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c"
+  },
+  "branch_documents_git_blobs": {
+    "content/research/economy/subsistence.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "1f65f34ee542d12db7fbc2a8952b459f0ca08f46"
+    },
+    "content/research/economy/crafts-exchange.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "0d53fc56a40a8804d6de53cab6c17d1bdd8327c5"
+    },
+    "content/research/next-batch/README.md": {
+      "git_branch": "docs/economy-research",
+      "branch_commit": "d8918fdf84c09d9fde0763e32d427e81d056eda9",
+      "git_blob": "3c53e1e963a56231905eee540fc328d68c00707f"
+    },
+    "art/briefs/economy-batch4/README.md": {
+      "git_branch": "docs/economy-batch4-briefs",
+      "branch_commit": "3ea9c4d0d2c0a9941545f5173fc64fa1a5ce5d53",
+      "git_blob": "44a2942bc8333b4c343bb9d14ec279057f91c19f"
+    },
+    "art/briefs/economy-batch9/PARCH-001.md": {
+      "git_branch": "docs/economy-batch9-briefs",
+      "branch_commit": "10fce31f88b94c735a0f0f24701f8bce9506520c",
+      "git_blob": "5d3208d644cbc83a5e93b25e6f0d49c3af39457a"
+    }
+  },
+  "reference_copies_in_source": {
+    "source/fixture_PERSON-001_r002/source/person_001.blend": {
+      "sha256": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend",
+      "identical_to_source": true
+    },
+    "source/fixture_PERSON-001_r002/source/gen_person.py": {
+      "sha256": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py",
+      "identical_to_source": true
+    },
+    "source/fixture_PERSON-001_r002/source/person_palette.png": {
+      "sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png",
+      "identical_to_source": true
+    }
+  },
+  "parts_and_uncertainties": [
+    "R (whole job): grain parching itself is not attested at Březnice (subsistence.md section 2.4); this kit is an optional game illustration of a plausible processing step",
+    "R: a re-used large flat base sherd / clay plate as the parching surface, its size (~0.5 m), low rim, break, soot and convex underside",
+    "R: parching on embers of the KILN-001 open hearth (fire_embers, no flames); the tray rests on the ember logs inside the stone ring",
+    "R: a thin layer of hulled/clean grain (species not implied), its colour and texture; stirring with a peeled stick with a charred end",
+    "R: crouched posture, right-hand overhand grip, oval stirring path, timing; picking the stick up from the floor at the right",
+    "F: who parches, when, how much; the game's simulation clock drives the clips",
+    "Limit: the grain does not move with the stick (static layer); no smoke, heat shimmer or popping grain",
+    "Limit: the stir_stick is shown only on stick_rest / stick_hold by game-side visibility (no physics)"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (body, rig, skin, palette, pose solver)",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002 (private project material)",
+      "licence": "project-internal; no public sublicence",
+      "modification": "r002 actions removed in a copy; three new clips keyed; one hand node and three placement nodes added; mesh/skin/palette/carry_anchor unchanged"
+    },
+    {
+      "resource": "KILN-001 r001 (hearth_base, hearth_open_top, fire_embers, firewood_stack), POT-001, HOUSE-001, VEG-001",
+      "source": "art/returns/..., art/handoffs/bronze-bohemia-opus-v2/fixtures (private project material)",
+      "licence": "project-internal",
+      "modification": "none; read-only copies in check/preview scenes only"
+    },
+    {
+      "resource": "COOK-002 r001 crouch/keying approach (in progress on a sibling branch)",
+      "source": "art/returns/economy-batch8/COOK-002/r001/source (sibling job, private project material)",
+      "licence": "project-internal",
+      "modification": "code structure for the crouch trunk/feet, keying and Godot capture adapted; all values for this job set and measured here"
+    }
+  ],
+  "deviations": [
+    "Only the three new clips are exported (as WORK-001 person_grinding / COOK-002 person_cooking); the r002 idle/walk/carry_walk/work/rest clips stay in PERSON-001",
+    "parch_stir starts and ends on a crouch base pose (not on r002 idle); parch_enter / parch_exit connect it to r002 idle",
+    "A hand node stick_hold (hand.R) and placement nodes hearth_place, tray_place and stick_rest are added to person_parching.glb (the shared rules require hand attachments as new nodes under hand.R/hand.L)",
+    "The KILN-001 host is the open top with fire_embers (not fire_lit): flames would pass through the tray",
+    "The tray sits inside the stone ring on the ember logs rather than across the ring stones: KILN-001's inner ring radius (0.31 m) is wider than a ~0.5 m tray"
+  ]
+}

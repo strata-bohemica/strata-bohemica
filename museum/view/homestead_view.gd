@@ -5,13 +5,15 @@ extends Node3D
 
 const Catalogue = preload("res://museum/assets/catalogue.gd")
 const PoseDriver = preload("res://museum/view/pose_driver.gd")
+const Animals = preload("res://museum/core/animals.gd")
 const W := TAU / 360.0       # one cycle per 360 s; flicker uses whole multiples so the scene stays periodic
 
 var house: Node3D
 var bed: Node3D
 var skins: Dictionary = {}          # "walker"/"worker"/"sleeper" -> {"root": Node3D, "driver": PoseDriver}
 var props: Dictionary = {}          # id -> {"nodes": Array[Node3D], "grip_inverse": Transform3D, "def": Dictionary}
-var lights: Array = []              # [{"light": OmniLight3D, "base": float, "flicker": bool}]
+var lights: Array = []              # [{"light": OmniLight3D, "base": float, "flicker": bool, "smoke": CPUParticles3D or null}]
+var animals: Array = []             # [{"root": Node3D, "driver": PoseDriver, "def": Dictionary, "lengths": Dictionary}]
 var glow: OmniLight3D
 var workplace := Transform3D.IDENTITY
 var _skin_nodes: Dictionary = {}    # "node name" -> Node3D on the worker skin
@@ -36,7 +38,14 @@ func build(homestead: Dictionary, craft: Dictionary) -> void:
 		light.omni_range = float(l.range)
 		light.position = Vector3(0, 0.35, 0)
 		node.add_child(light)
-		lights.append({"light": light, "base": float(l.energy), "flicker": bool(l.get("flicker", false))})
+		var smoke: CPUParticles3D = null
+		if bool(l.get("smoke", false)):
+			smoke = _smoke()
+			smoke.position = Vector3(0, 0.5, 0)
+			node.add_child(smoke)
+		lights.append({"light": light, "base": float(l.energy), "flicker": bool(l.get("flicker", false)), "smoke": smoke})
+	for a in homestead.get("animals", []):
+		_build_animal(a)
 	glow = OmniLight3D.new()
 	glow.light_color = Color("#FFB070")
 	glow.omni_range = 9.0
@@ -56,6 +65,57 @@ func _skin(ref: String) -> Dictionary:
 	var root := _add(ref)
 	return {"root": root, "driver": PoseDriver.new(root)}
 
+func _smoke() -> CPUParticles3D:
+	var p := CPUParticles3D.new()
+	p.amount = 14
+	p.lifetime = 6.0
+	p.emitting = false
+	p.preprocess = 6.0          # the stream exists from the first frame instead of starting as a ball
+	p.local_coords = false
+	p.direction = Vector3.UP
+	p.spread = 10.0
+	p.initial_velocity_min = 0.35
+	p.initial_velocity_max = 0.6
+	p.gravity = Vector3(0.12, 0.0, -0.05)
+	p.scale_amount_min = 0.5
+	p.scale_amount_max = 0.8
+	var curve := Curve.new()      # a puff swells, then thins out by shrinking (no per-particle colour needed)
+	curve.add_point(Vector2(0.0, 0.25))
+	curve.add_point(Vector2(0.45, 2.0))
+	curve.add_point(Vector2(1.0, 0.3))
+	p.scale_amount_curve = curve
+	var quad := QuadMesh.new()
+	quad.size = Vector2(1, 1)
+	var mat := StandardMaterial3D.new()
+	mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+	mat.billboard_mode = BaseMaterial3D.BILLBOARD_ENABLED
+	mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	mat.albedo_color = Color(0.86, 0.83, 0.79, 0.2)
+	var grad := Gradient.new()
+	grad.colors = PackedColorArray([Color(1, 1, 1, 0.9), Color(1, 1, 1, 0.0)])
+	var tex := GradientTexture2D.new()
+	tex.gradient = grad
+	tex.fill = GradientTexture2D.FILL_RADIAL
+	tex.fill_from = Vector2(0.5, 0.5)
+	tex.fill_to = Vector2(1.0, 0.5)
+	tex.width = 64
+	tex.height = 64
+	mat.albedo_texture = tex
+	quad.material = mat
+	p.mesh = quad
+	p.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	return p
+
+func _build_animal(def: Dictionary) -> void:
+	var root := _add(def.asset)
+	var yaw := deg_to_rad(float(def.get("yaw_deg", 0.0)))
+	if def.has("on"):
+		var anchor := _anchor_transform(str(def.on), str(def.node))
+		root.global_transform = anchor * Transform3D(Basis(Vector3.UP, yaw), Vector3.ZERO)
+	else:
+		root.transform = Transform3D(Basis(Vector3.UP, yaw), _v(def.pos))
+	animals.append({"root": root, "driver": PoseDriver.new(root), "def": def, "lengths": Catalogue.clip_lengths(def.asset)})
+
 func _anchor_transform(on: String, node_name: String) -> Transform3D:
 	var holder: Node3D = skins.worker.root if on == "skin" else props[on.trim_prefix("prop:")].nodes[0]
 	var n := holder.find_child(node_name, true, false) as Node3D
@@ -68,7 +128,10 @@ func _build_prop(def: Dictionary) -> void:
 	props[def.id] = entry
 	if def.has("place"):
 		var place: Dictionary = def.place
-		if place.has("station"):
+		if place.has("at"):
+			var at: Array = place["at"]
+			root.transform = workplace * Transform3D(Basis(Vector3.UP, deg_to_rad(float(at[3]))), Vector3(float(at[0]), float(at[1]), float(at[2])))
+		elif place.has("station"):
 			var n := root.find_child(str(place.station), true, false) as Node3D
 			root.transform = workplace * n.transform.affine_inverse()
 		else:
@@ -130,3 +193,8 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 		if l.flicker:
 			flicker = 0.78 + 0.14 * sin(time * W * 20.0) + 0.08 * sin(time * W * 52.0 + 1.3)
 		l.light.light_energy = l.base * flicker * (0.12 + 0.88 * night) if on else 0.0
+		if l.smoke != null:
+			l.smoke.emitting = on
+	for a in animals:
+		var pose: Dictionary = Animals.pose_at(a.def, time, a.lengths)
+		a.driver.apply(pose.clip, float(pose.clip_time))
