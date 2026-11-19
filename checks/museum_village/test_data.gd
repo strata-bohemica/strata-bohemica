@@ -24,6 +24,15 @@ func _init() -> void:
 			if not scenes.has(ref) and ResourceLoader.exists(Catalogue.path(ref)):
 				scenes[ref] = (load(Catalogue.path(ref)) as PackedScene).instantiate()
 
+		# the house keeps its textures (they are extracted from the GLB and imported lossy; a missing pass would leave it grey)
+		var house_textures := 0
+		for mi in scenes[homestead.house.model].find_children("*", "MeshInstance3D", true, false):
+			for surface in (mi as MeshInstance3D).mesh.get_surface_count():
+				var material := (mi as MeshInstance3D).get_active_material(surface) as BaseMaterial3D
+				if material != null and material.albedo_texture != null and material.albedo_texture.get_width() >= 256:
+					house_textures += 1
+		t.ok(house_textures >= 1, "%s: the house model has its textures (%d)" % [tag, house_textures])
+
 		# clips on the right rigs
 		var clips: Array = [craft.block.get("enter", ""), craft.block.get("exit", "")]
 		if craft.has("travel"):

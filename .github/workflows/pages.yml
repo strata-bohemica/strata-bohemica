@@ -10,6 +10,14 @@ on:
       - 'project.godot'
       - 'export_presets.cfg'
       - '.github/workflows/pages.yml'
+  pull_request:                  # build only (never deploys), so a change to the build is checked before it is merged
+    paths:
+      - 'site/**'
+      - 'museum/**'
+      - 'assets/**'
+      - 'project.godot'
+      - 'export_presets.cfg'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -35,9 +43,11 @@ jobs:
       - name: Import and export the museum (Web build, single-threaded, no special headers needed)
         run: |
           mkdir -p build/web
-          godot --headless --import || true      # first import writes the .godot cache
+          godot --headless --import || true      # first import writes the .godot cache and extracts the model textures
+          godot --headless --import || true      # second pass: the scenes pick the textures up
           godot --headless --export-release "Web" build/web/index.html
           ls -la build/web
+          du -h build/web/index.pck
       - name: Assemble the site
         run: |
           mkdir -p public/diorama public/museum
@@ -51,6 +61,7 @@ jobs:
           path: public
 
   deploy:
+    if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
     environment:

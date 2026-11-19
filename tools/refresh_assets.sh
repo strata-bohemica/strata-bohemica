@@ -8,7 +8,8 @@ cd "$here"
 python3 tools/sync_assets.py "$1"
 "$godot" --headless --path . --import --quit >/dev/null 2>&1      # first import creates the .import files
 python3 tools/import_settings.py
-find assets -name '*.png' -delete -o -name '*.png.import' -delete    # extracted by that first import; not wanted
+find assets -name '*.png' -delete -o -name '*.png.import' -delete    # extracted textures: drop the stale ones
 rm -rf .godot/imported                                              # drop scenes cached with the old options
-"$godot" --headless --path . --import --quit >/dev/null 2>&1
+"$godot" --headless --path . --import --quit >/dev/null 2>&1       # extracts the textures again
+"$godot" --headless --path . --import --quit >/dev/null 2>&1       # second pass: scenes pick up the imported textures
 echo "assets refreshed"

@@ -13,7 +13,8 @@ trap 'rm -rf "$state"' EXIT
 mkdir -p "$state/data" "$state/config" "$state/cache"
 export XDG_DATA_HOME="$state/data" XDG_CONFIG_HOME="$state/config" XDG_CACHE_HOME="$state/cache"
 cd "$here"
-"$godot" --headless --path . --import --quit >/dev/null 2>&1
+"$godot" --headless --path . --import --quit >/dev/null 2>&1      # first pass extracts the model textures
+"$godot" --headless --path . --import --quit >/dev/null 2>&1      # second pass: scenes pick them up
 tests=("$@")
 if (( ${#tests[@]} == 0 )); then tests=(core data terrain boundary view ui); fi
 status=0
