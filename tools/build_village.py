@@ -154,7 +154,28 @@ yard_pts = []
 for h in houses:
     jj = math.radians(h['yaw_deg']); sd = 1 if h['door'] == 'E' else -1
     yard_pts.append((h['x'] + sd * math.cos(jj) * YARD_LOCAL_Z, h['y'] + sd * math.sin(jj) * YARD_LOCAL_Z))
-stream_poly = [(float(stream_x(y)), float(y)) for y in range(-80, 81, 4)]
+stream_poly = [(float(stream_x(y)), float(y)) for y in range(-80, 81, 4)]   # full course: keeps the tree placement unchanged
+
+# the water ends at the slab: keep the 4 m ribbon inside the disc, end points found on the same stream_x course
+STREAM_W = 4.0
+def stream_ends():
+    lim = DISC - STREAM_W / 2
+    f = lambda y: math.hypot(float(stream_x(y)), y) - lim
+    ys = [float(y) for y in range(-80, 81, 4)]
+    keep = [y for y in ys if f(y) <= 0]
+    lo, hi = keep[0], keep[-1]
+    def edge(inside, outside):
+        for _ in range(60):
+            mid = (inside + outside) / 2
+            if f(mid) <= 0: inside = mid
+            else: outside = mid
+        return inside
+    out = [edge(lo, lo - 4.0)] if f(lo - 4.0) > 0 or lo > -80 else []
+    out += keep
+    if hi < 80:
+        out.append(edge(hi, hi + 4.0))
+    return out
+stream_ys = stream_ends()
 gslope = np.degrees(np.arctan(np.hypot(gx, gy)))
 trees = []
 def try_place(kind, min_gap, house_gap, count, rim_bias):
@@ -216,7 +237,7 @@ for h in houses:
         yaw_deg=round((90 + h['yaw_deg']) if side > 0 else (-90 + h['yaw_deg']), 1), door=h['door']))
 village = dict(id='breznice', schema=1, disc_radius_m=DISC, note='Layout and terrain are F/R: no house plan or terrain model of Březnice exists. World coordinates, x east, z south.',
     houses=out_houses, paths=[[W(x, y) for x, y in p] for p in paths], fields=[[W(x, y) for x, y in poly] for poly in fields],
-    stream=dict(points=[W(float(stream_x(y)), y) for y in range(-80, 81, 4)], width_m=4.0),
+    stream=dict(points=[W(float(stream_x(y)), y) for y in stream_ys], width_m=STREAM_W),
     clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']), sites=sites,
     trees=[dict(kind=t['kind'], pos=W(t['x'], t['y']), yaw_deg=round(t['yaw'], 1), scale=round(t['scale'], 2)) for t in trees])
 json.dump(village, open(os.path.join(DATA, 'breznice.json'), 'w'), separators=(',', ':'))
