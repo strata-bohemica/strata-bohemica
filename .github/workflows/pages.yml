@@ -27,7 +27,7 @@ jobs:
     container: barichello/godot-ci:4.5.1     # Godot 4.5.1 with the export templates
     steps:
       - uses: actions/checkout@v4
-      - name: Import and export the museum (Web, single-threaded: no special headers needed)
+      - name: Import and export the museum (Web build, single-threaded, no special headers needed)
         run: |
           mkdir -p build/web
           godot --headless --import || true      # first import writes the .godot cache
