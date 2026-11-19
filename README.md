@@ -19,7 +19,16 @@
 
 ## Status
 
-Early development. The source code and the 3D models will be published in this repository. Until a licence is added, all rights are reserved, including to the brand assets in [`docs/brand/`](docs/brand/BRAND.md).
+Early development. The living diorama above runs in the browser; the museum itself (a Godot 4.5 project in [`museum/`](museum/)) is being built homestead by homestead.
+
+## Licence
+
+- **Models, textures, animations and renders:** [CC BY 4.0](LICENSE-ASSETS.md). Use them, also commercially, with credit.
+- **Source code:** [MIT](LICENSE).
+- **Name, wordmark and logo** ([`docs/brand/`](docs/brand/BRAND.md)): all rights reserved.
+- Third-party material: [THIRD_PARTY.md](THIRD_PARTY.md).
+
+All reconstructions are provisional.
 
 ## Brand
 

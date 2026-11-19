@@ -9,4 +9,4 @@ Published to https://strata-bohemica.github.io/strata-bohemica/ by `.github/work
 - Animation is a pure function of time with a 14 s period, so every effect repeats exactly.
 - Query switches for development: `?rotate=1` auto-orbit, `?exp=`, `?sun=`, `?amb=` lighting,
   `?focus=x,z,dist` close-up, `?warm=seconds` pre-simulate.
-- All reconstructions are provisional. Until a licence is added, all rights are reserved.
+- All reconstructions are provisional. Models: CC BY 4.0 (`../LICENSE-ASSETS.md`); page code: MIT (`../LICENSE`).
