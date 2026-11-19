@@ -7,7 +7,7 @@ import * as SkeletonUtils from './vendor/three/examples/utils/SkeletonUtils.js';
 const Q = new URLSearchParams(location.search);
 const WARM = parseFloat(Q.get('warm') || '0');       // pre-simulate seconds (for stills)
 const ROTATE = Q.get('rotate') === '1';                 // the live page is still: you orbit it yourself
-const CALM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let paused = false;                                     // animation always starts playing; the button below pauses it
 
 // every periodic effect uses whole multiples of W, so the scene repeats exactly every T seconds
 const T = 14, TAU = Math.PI * 2, W = TAU / T;
@@ -55,7 +55,7 @@ scene.add(fill);
 scene.add(new THREE.HemisphereLight(0xB9B2A8, 0x3A2F25, parseFloat(Q.get('amb') || '1.9')));
 
 const fireLight = new THREE.PointLight(0xFF9A4A, 6, 9, 1.6);
-fireLight.position.set(2.4, 0.7, 3.0);
+fireLight.position.set(2.4, 0.7, 3.0);   // HEARTH
 fireLight.castShadow = false;
 scene.add(fireLight);
 
@@ -105,6 +105,7 @@ const FILES = {
   weaver: 'person_weaving', bobbin: 'weft_bobbin', beater: 'sword_beater', wheat: 'wheat_mature',
   millet: 'millet_mature', oak: 'oak_summer', hazel: 'hazel_leafed', grass: 'grass_dry',
   dog: 'dog', pig: 'pig', amphora: 'amphora_sealed',
+  hearthTop: 'hearth_open_top', firewood: 'firewood_stack', pot: 'pot_001', stew: 'pot_fill_pulse_stew', ladle: 'ladle', stick: 'fire_stick',
 };
 const loader = new GLTFLoader();
 loader.setMeshoptDecoder(MeshoptDecoder);
@@ -134,9 +135,18 @@ const HOUSE_AT = [-0.4, 0, -5.3];
 const house = place('house', HOUSE_AT, 3);
 place('pit', [PIT.x, 0, PIT.z]);
 place('jar', [PIT.x, 0, PIT.z]);
-place('hearth', [2.4, 0, 3.0]);
-const embers = place('embers', [2.4, 0, 3.0]);
-const cook = place('cook', [3.3, 0, 3.0], parseFloat(Q.get('cookyaw') || '-90'));
+// the cooking station is laid out exactly as COOK-002 defines it: every prop sits on a node of the cook model
+const HEARTH = new THREE.Vector3(2.4, 0, 3.0);
+const cook = place('cook', [HEARTH.x + 0.82, 0, HEARTH.z], parseFloat(Q.get('cookyaw') || '-90'));
+cook.g.updateMatrixWorld(true);
+const nodeWorld = (obj, name) => { const n = obj.getObjectByName(name), p = new THREE.Vector3(), q = new THREE.Quaternion(); n.updateWorldMatrix(true, false); n.getWorldPosition(p); n.getWorldQuaternion(q); return { p, q, m: n.matrixWorld.clone() }; };
+const atNode = (key, nodeName) => { const w = nodeWorld(cook.g, nodeName); const o = place(key, [w.p.x, w.p.y, w.p.z]); o.g.quaternion.copy(w.q); o.g.updateMatrixWorld(true); return o; };
+atNode('hearth', 'hearth_place');
+const hearthTop = atNode('hearthTop', 'hearth_place');
+const embers = atNode('embers', 'hearth_place');
+{ const fw = nodeWorld(hearthTop.g, 'firewood_spot'); const o = place('firewood', [fw.p.x, fw.p.y, fw.p.z]); o.g.quaternion.copy(fw.q); }
+atNode('pot', 'pot_place');
+atNode('stew', 'pot_place');
 const LOOM_AT = [-8.3, 0, -1.6], LOOM_YAW = parseFloat(Q.get('loomyaw') || '90');
 const loom = place('loom', LOOM_AT, LOOM_YAW);
 loom.g.updateMatrixWorld(true);
@@ -198,7 +208,6 @@ function timeline(entity, key, entries, onPose = null) {
   timelines.push({ set });
 }
 const L = (clip, dur) => ({ clip, dur, loop: true }), O = (clip, dur = null) => ({ clip, dur: dur ?? { tend_fire: 3.2, stir_crouch: 2.4, serve_ladle: 2, sit: 1, sit_up: 0.8, weave_pass: 3, weave_beat: 2, weave_shed_change: 2 }[clip] });
-timeline(cook, 'cook', [O('tend_fire'), O('stir_crouch'), O('stir_crouch'), O('serve_ladle'), O('tend_fire')]);
 timeline(dog, 'dog', [L('idle', 2), L('sniff_ground', 4), O('sit'), L('sit_idle', 4), O('sit_up'), L('idle', 2)]);
 // props follow the hands: bobbin L/R during the pass, sword beater during the beat
 function hand(propKey) {
@@ -213,6 +222,21 @@ function hand(propKey) {
   return wrap;
 }
 const bobbin = hand('bobbin'), beater = hand('beater');
+// cook: ladle in the right hand, fire stick in the left only while tending, three kindling sticks by the hearth
+const ladle = hand('ladle'), stick = hand('stick');
+cook.g.getObjectByName('ladle_hold').add(ladle); ladle.visible = true;
+cook.g.getObjectByName('stick_hold').add(stick);
+{ const kp = nodeWorld(cook.g, 'kindling_place');
+  for (const [x, y, z, yaw] of [[-0.0175, 0, 0, 0], [0.0175, 0, 0.02, 3], [0, 0.0222, -0.015, -2]]) {
+    const k = SkeletonUtils.clone(gltf.stick.scene);
+    k.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.frustumCulled = false; } });
+    const g = new THREE.Group(); g.matrixAutoUpdate = false;
+    g.matrix.copy(kp.m).multiply(new THREE.Matrix4().makeRotationY(THREE.MathUtils.degToRad(yaw)).setPosition(x, y, z));
+    g.add(k); world.add(g);
+  } }
+timeline(cook, 'cook', [O('tend_fire'), O('stir_crouch'), O('tend_fire'), O('stir_crouch'), O('stir_crouch')], (p) => {
+  stick.visible = p.clip === 'tend_fire' && p.t >= 0.96 && p.t < 2.176;
+});
 const holds = {
   L: weaver.g.getObjectByName('bobbin_hold_L'), R: weaver.g.getObjectByName('bobbin_hold_R'),
   B: weaver.g.getObjectByName('beater_hold'),
@@ -349,7 +373,7 @@ for (let t = 0; t < WARM; t += 1 / 30) update(1 / 30);
 let prev = performance.now();
 function frame(now) {
   const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
-  update(CALM ? 0 : dt);
+  update(paused ? 0 : dt);
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
 }
@@ -367,4 +391,6 @@ window.__step = (dt, azDeg, elDeg) => {         // orbit at constant distance; e
   camera.lookAt(t);
   renderer.render(scene, camera);
 };
+const pauseBtn = document.getElementById('pause');
+if (pauseBtn) pauseBtn.addEventListener('click', () => { paused = !paused; pauseBtn.textContent = paused ? 'play animation' : 'pause animation'; });
 window.__ready = true;

@@ -21,6 +21,8 @@
   header img { width:min(46vw,300px); height:auto; display:block; }
   .cap { position:fixed; left:16px; right:16px; bottom:12px; font:12px/1.4 "IBM Plex Mono",ui-monospace,monospace;
     color:var(--straw); opacity:.75; display:flex; justify-content:space-between; gap:12px; pointer-events:none; }
+  .cap a, .cap button { color:inherit; pointer-events:auto; }
+  .cap button { font:inherit; background:none; border:0; padding:0; text-decoration:underline; cursor:pointer; }
   #load { position:fixed; inset:0; display:grid; place-items:center; background:var(--soil);
     font:13px "IBM Plex Mono",ui-monospace,monospace; color:var(--straw); transition:opacity .8s; }
   #load.done { opacity:0; pointer-events:none; }
@@ -29,7 +31,7 @@
 </head>
 <body>
 <header><img src="logo.svg" alt="Strata Bohemica"></header>
-<div class="cap"><span>Render of the project's own models. All reconstructions are provisional.</span><span><a href="https://github.com/strata-bohemica/strata-bohemica" style="color:inherit;pointer-events:auto">source on GitHub</a> · drag to orbit · scroll to zoom</span></div>
+<div class="cap"><span>Render of the project's own models. All reconstructions are provisional.</span><span><a href="https://github.com/strata-bohemica/strata-bohemica">source on GitHub</a> · <button id="pause" type="button">pause animation</button> · drag to orbit</span></div>
 <div id="load">loading models…</div>
 <canvas id="c"></canvas>
 <script type="module" src="main.js"></script>
