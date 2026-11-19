@@ -69,6 +69,13 @@
           "cs": "Kůže se nedochovává a na Březnici se nedochovaly ani kosti (kyselá půda). Doloženo tu není nic.",
           "en": "Leather does not survive and no bones survive at Březnice (acid soil). Nothing is attested here."
         }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "Nejbližší přímý doklad zpracování kůže z doby bronzové je z hallstattských solných dolů (Horní Rakousy, těžba od asi 1500 př. n. l.): sůl zachovala kůži, kožešinu a useň včetně barev a pružnosti. Z českých sídlišť takový nález není.",
+          "en": "The closest direct Bronze Age evidence for hide working comes from the Hallstatt salt mines (Upper Austria, mining from about 1500 BCE): salt preserved skin, fur and leather, even colour and flexibility. No such find exists from a Czech settlement."
+        }
       }
     ],
     "reconstruction": {
@@ -92,6 +99,8 @@
     "sources": [
       "research/economy/subsistence.md, process table",
       "research/economy/crafts-exchange.md, section 2.5",
+      "Šálková et al. 2022, Scientific Reports 12: 20323 (animal bones not preserved in the acidic soil)",
+      "Saunderson, Zimmermann, Grömer 2026, EXARC Journal 2026/2 (Hallstatt)",
       "HIDE-001 PROVENANCE.md"
     ]
   }
