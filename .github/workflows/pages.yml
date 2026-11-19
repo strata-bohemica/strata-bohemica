@@ -40,10 +40,12 @@ jobs:
           ls -la build/web
       - name: Assemble the site
         run: |
-          mkdir -p public/museum
-          cp -r site/. public/
-          cp -r build/web/. public/museum/
-          cp public/museum/index.html public/museum/museum.html || true
+          mkdir -p public/diorama public/museum
+          cp -r site/. public/diorama/          # the three.js diorama lives at /diorama/
+          cp -r build/web/. public/             # the museum (Godot Web build) is the front page
+          cp site/og.png site/favicon.svg public/
+          # the old address keeps working
+          printf '%s\n' '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=../"><link rel="canonical" href="https://strata-bohemica.github.io/strata-bohemica/"><a href="../">Strata Bohemica</a>' > public/museum/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: public

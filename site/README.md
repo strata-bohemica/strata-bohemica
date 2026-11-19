@@ -1,7 +1,7 @@
 # Living diorama (GitHub Pages)
 
 Static page, no build step: three.js (vendored, MIT) loads the glTF models and plays their animations.
-Published to https://strata-bohemica.github.io/strata-bohemica/ by `.github/workflows/pages.yml`.
+Published to https://strata-bohemica.github.io/strata-bohemica/diorama/ by `.github/workflows/pages.yml`.
 
 - `models/` are **web copies** of the project's own models: textures re-encoded to WebP and meshes
   compressed with meshopt (`gltf-transform webp` + `meshopt`, no geometry is removed or merged).

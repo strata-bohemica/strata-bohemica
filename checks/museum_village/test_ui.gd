@@ -9,6 +9,13 @@ const Schema = preload("res://museum/core/schema.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const DayClock = preload("res://museum/core/day_clock.gd")
 
+func _wheel(button: int) -> InputEventMouseButton:
+	var e := InputEventMouseButton.new()
+	e.button_index = button
+	e.pressed = true
+	e.factor = 1.0
+	return e
+
 func _button(pos: Vector2, pressed: bool) -> InputEventMouseButton:
 	var e := InputEventMouseButton.new()
 	e.button_index = MOUSE_BUTTON_LEFT
@@ -173,6 +180,31 @@ func _initialize() -> void:
 	t.ok(app.cam_dist < d0, "spreading two fingers zooms in (%.1f -> %.1f)" % [d0, app.cam_dist])
 	_touch(app, 0, Vector2(300, 300), false)
 	_touch(app, 1, Vector2(500, 300), false)
+	# zoom sticks: the camera must not drift back to the default distance (it used to, every frame)
+	app.select(0)
+	app._refresh(0.0)
+	var base_d: float = app.cam_dist
+	for i in 6:
+		app._unhandled_input(_wheel(MOUSE_BUTTON_WHEEL_UP))
+	var goal: float = app.dist_goal
+	t.ok(goal < base_d * 0.5, "six wheel notches zoom in at least 2x (%.1f -> %.1f)" % [base_d, goal])
+	for i in 180:
+		app._refresh(1.0 / 60.0)
+	t.ok(absf(app.cam_dist - goal) < 0.5, "after 3 s the zoom has settled at the chosen distance, not the default (%.1f vs %.1f)" % [app.cam_dist, goal])
+	for i in 60:
+		app._unhandled_input(_wheel(MOUSE_BUTTON_WHEEL_UP))
+	t.ok(app.dist_goal >= app.MIN_OVERVIEW_DIST - 0.001, "the overview cannot be zoomed in past its minimum")
+	for i in 80:
+		app._unhandled_input(_wheel(MOUSE_BUTTON_WHEEL_DOWN))
+	t.ok(app.dist_goal <= app.MAX_DIST + 0.001, "nor out past the maximum")
+	var mag := InputEventMagnifyGesture.new()
+	mag.factor = 2.0
+	app.dist_goal = 100.0
+	app._unhandled_input(mag)
+	t.ok(absf(app.dist_goal - 50.0) < 0.01, "a trackpad pinch spreading to 2x halves the distance")
+	app.select(target_id)
+	t.eq(app.dist_goal, app.FOCUS_DIST, "selecting a homestead resets the zoom to its default")
+	app.select(0)
 	app.select(target_id)
 	var esc := InputEventKey.new()
 	esc.keycode = KEY_ESCAPE

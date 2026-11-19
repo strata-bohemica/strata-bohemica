@@ -14,6 +14,9 @@ const START_FRACTION := 0.30    # a bright morning, the households already at wo
 const OVERVIEW_DIST := 175.0
 const FOCUS_DIST := 15.0
 const NARROW_OVERVIEW_DIST := 205.0
+const MIN_OVERVIEW_DIST := 30.0
+const MIN_FOCUS_DIST := 4.0
+const MAX_DIST := 300.0
 const HOUSE_DIST := 32.0           # an unstaffed house is looked at from further away (there is no person to see)
 
 var world: Dictionary
@@ -38,6 +41,7 @@ var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
 var cam_dist := OVERVIEW_DIST
+var dist_goal := OVERVIEW_DIST     # the distance the viewer chose; cam_dist eases to it (select() resets it)
 var _card_phase := ""
 var _press_pos := Vector2.ZERO     # left button: a press that does not move is a click (pick), one that moves orbits
 var _pressing := false
@@ -117,16 +121,33 @@ func _fit_ui_scale() -> void:
 
 ## Re-flow the UI for a viewport of this size (what the window reports after content scaling).
 func apply_layout(size: Vector2) -> void:
+	var was_narrow := narrow
 	narrow = size.x < 700.0
+	if narrow != was_narrow:
+		dist_goal = base_dist()                  # a different layout frames the overview differently
 	camera.keep_aspect = Camera3D.KEEP_WIDTH if narrow else Camera3D.KEEP_HEIGHT   # on a phone the field of view spans the width
 	card_panel.set_layout(size)
 	time_bar.set_narrow(narrow)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
+## The distance a selection starts from (zoom changes dist_goal, never this).
+func base_dist() -> float:
+	if selected == 0:
+		return NARROW_OVERVIEW_DIST if narrow else OVERVIEW_DIST
+	return FOCUS_DIST if world.occupied.has(selected) else HOUSE_DIST
+
+func min_dist() -> float:
+	return MIN_OVERVIEW_DIST if selected == 0 else MIN_FOCUS_DIST
+
+## Zoom by a factor (<1 in, >1 out) around the current target.
+func zoom_by(factor: float) -> void:
+	dist_goal = clampf(dist_goal * factor, min_dist(), MAX_DIST)
+
 ## Select a house (0 = overview): the camera goes there and its card opens.
 func select(id: int) -> void:
 	selected = id
+	dist_goal = base_dist()
 	_card_phase = ""
 	if id == 0:
 		card_panel.hide_card()
@@ -200,10 +221,10 @@ func _refresh(delta: float) -> void:
 	env.background_color = Color("#0c0f18").lerp(Color("#8fb5d9"), daylight)
 	env.ambient_light_color = Color("#2b3652").lerp(Color("#a09c92"), daylight)
 	env.ambient_light_energy = lerpf(0.5, 0.6, daylight)
-	var want_dist := (NARROW_OVERVIEW_DIST if narrow else OVERVIEW_DIST) if selected == 0 else (FOCUS_DIST if world.occupied.has(selected) else HOUSE_DIST)
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
+	var kz := 1.0 - exp(-12.0 * delta) if delta > 0.0 else 1.0      # zoom follows the fingers/wheel quickly
 	cam_target = cam_target.lerp(_focus_target(), k)
-	cam_dist = lerpf(cam_dist, want_dist, k)
+	cam_dist = lerpf(cam_dist, dist_goal, kz)
 	var dir := Vector3(sin(orbit_yaw) * cos(orbit_pitch), -sin(orbit_pitch), cos(orbit_yaw) * cos(orbit_pitch))
 	camera.position = cam_target + dir * cam_dist
 	camera.look_at(cam_target)
@@ -271,7 +292,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		if _touches.size() == 2:
 			var d := _pinch_distance()
 			if _pinch_dist > 1.0 and d > 1.0:
-				cam_dist = clampf(cam_dist * _pinch_dist / d, 5.0 if selected != 0 else 40.0, 300.0)
+				zoom_by(_pinch_dist / d)
+				cam_dist = dist_goal                   # the view tracks the fingers directly
 			_pinch_dist = d
 	elif event is InputEventMouseMotion:
 		var left: bool = (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0
@@ -294,9 +316,11 @@ func _unhandled_input(event: InputEvent) -> void:
 					if id != 0:
 						select(id)
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			cam_dist = maxf(5.0 if selected != 0 else 40.0, cam_dist * 0.9)
+			zoom_by(pow(0.85, event.factor if event.factor > 0.0 else 1.0))
 		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-			cam_dist = minf(300.0, cam_dist * 1.1)
+			zoom_by(pow(1.0 / 0.85, event.factor if event.factor > 0.0 else 1.0))
+	elif event is InputEventMagnifyGesture:        # trackpad pinch (desktop browsers, Safari)
+		zoom_by(1.0 / maxf(event.factor, 0.1))
 
 func _pinch_distance() -> float:
 	var pts := _touches.values()
