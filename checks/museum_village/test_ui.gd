@@ -205,6 +205,92 @@ func _initialize() -> void:
 	app.select(target_id)
 	t.eq(app.dist_goal, app.FOCUS_DIST, "selecting a homestead resets the zoom to its default")
 	app.select(0)
+
+	# panning: the ground follows the pointer, only in the overview, bounded, reset by selecting
+	app.select(0)
+	app._refresh(0.0)
+	var cam_right: Vector3 = app.camera.global_transform.basis.x
+	cam_right.y = 0.0
+	cam_right = cam_right.normalized()
+	var cam_fwd: Vector3 = -app.camera.global_transform.basis.z
+	cam_fwd.y = 0.0
+	cam_fwd = cam_fwd.normalized()
+	var origin: Vector3 = app.cam_target
+	app.pan_by_pixels(Vector2(100, 0))
+	var moved: Vector3 = app.cam_target - origin
+	t.ok(moved.dot(cam_right) < -1.0, "dragging the ground right moves the camera target left (%.1f m)" % moved.dot(cam_right))
+	t.ok(absf(moved.dot(cam_fwd)) < 0.01 and absf(moved.y) < 0.001, "a sideways drag moves only sideways, on the ground")
+	app.pan_by_pixels(Vector2(-100, 0))
+	app.pan_by_pixels(Vector2(0, 100))
+	t.ok((app.cam_target - origin).dot(cam_fwd) > 1.0, "dragging the ground down moves the target away from the viewer")
+	app.select(0)
+	t.eq(app.pan, Vector3.ZERO, "selecting resets the pan")
+	for i in 100:
+		app.pan_by_pixels(Vector2(500, 0))
+	t.ok(app.pan.length() <= app.PAN_LIMIT + 0.001, "the pan stops at the edge of the terrain (%.1f m)" % app.pan.length())
+	t.ok(app.pan.length() > app.PAN_LIMIT - 0.5, "and does reach it")
+	app.select(0)
+	app.pan_by_pixels(Vector2(50, 0))
+	var wide: float = app.pan.length()
+	app.select(0)
+	app.dist_goal = 40.0
+	app.cam_dist = 40.0
+	app.pan_by_pixels(Vector2(50, 0))
+	t.ok(app.pan.length() < wide * 0.5, "the same drag moves less ground when zoomed in (%.1f vs %.1f m)" % [app.pan.length(), wide])
+	app.select(target_id)
+	app.pan_by_pixels(Vector2(300, 0))
+	t.eq(app.pan, Vector3.ZERO, "a selected homestead cannot be panned off its person")
+	app.select(0)
+	# the right button pans and does not orbit; the left still orbits; shift+left pans
+	var rmotion := InputEventMouseMotion.new()
+	rmotion.relative = Vector2(60, 0)
+	rmotion.position = Vector2(500, 300)
+	rmotion.button_mask = MOUSE_BUTTON_MASK_RIGHT
+	var yaw_before: float = app.orbit_yaw
+	app._unhandled_input(rmotion)
+	t.ok(app.pan.length() > 0.5 and app.orbit_yaw == yaw_before, "right-drag pans without orbiting")
+	app.select(0)
+	var smotion := InputEventMouseMotion.new()
+	smotion.relative = Vector2(60, 0)
+	smotion.position = Vector2(500, 300)
+	smotion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	smotion.shift_pressed = true
+	app._pressing = true
+	app._unhandled_input(smotion)
+	t.ok(app.pan.length() > 0.5 and app.orbit_yaw == yaw_before, "shift + left-drag pans without orbiting")
+	app.select(0)
+	var lmotion := InputEventMouseMotion.new()
+	lmotion.relative = Vector2(60, 0)
+	lmotion.position = Vector2(500, 300)
+	lmotion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	app._dragged = true
+	app._unhandled_input(lmotion)
+	t.ok(app.orbit_yaw != yaw_before and app.pan == Vector3.ZERO, "plain left-drag still orbits and does not pan")
+	app._pressing = false
+	app._dragged = false
+	# two fingers moving together pan the map
+	app.select(0)
+	_touch(app, 0, Vector2(300, 300), true)
+	_touch(app, 1, Vector2(400, 300), true)
+	_drag(app, 0, Vector2(300, 300), Vector2(340, 300))
+	_drag(app, 1, Vector2(400, 300), Vector2(440, 300))
+	t.ok(app.pan.length() > 0.5, "two fingers moving together pan the map (%.1f m)" % app.pan.length())
+	_touch(app, 0, Vector2(340, 300), false)
+	_touch(app, 1, Vector2(440, 300), false)
+	app.select(0)
+	app._refresh(0.0)
+	app.pan_by_pixels(Vector2.ZERO)
+	t.eq(app.pan, Vector3.ZERO, "no movement, no pan")
+	Input.action_press(&"ui_right")
+	app._pan_keys(0.2)
+	Input.action_release(&"ui_right")
+	var key_moved: Vector3 = app.pan
+	t.ok(key_moved.length() > 1.0 and key_moved.length() < 40.0 and key_moved.dot(cam_right) > 0.0, "the right arrow moves the view right, not off the map (%.1f m)" % key_moved.length())
+	Input.action_press(&"ui_left")
+	app._pan_keys(0.2)
+	Input.action_release(&"ui_left")
+	t.ok(app.pan.length() < key_moved.length() * 0.1, "and the left arrow moves it back")
+	app.select(0)
 	app.select(target_id)
 	var esc := InputEventKey.new()
 	esc.keycode = KEY_ESCAPE

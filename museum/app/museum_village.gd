@@ -17,6 +17,7 @@ const NARROW_OVERVIEW_DIST := 205.0
 const MIN_OVERVIEW_DIST := 30.0
 const MIN_FOCUS_DIST := 4.0
 const MAX_DIST := 300.0
+const PAN_LIMIT := 70.0             # metres from the centre; the terrain is 161 m across
 const HOUSE_DIST := 32.0           # an unstaffed house is looked at from further away (there is no person to see)
 
 var world: Dictionary
@@ -41,6 +42,7 @@ var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
 var cam_dist := OVERVIEW_DIST
+var pan := Vector3.ZERO           # how far the viewer moved the overview off the village centre (ground plane)
 var dist_goal := OVERVIEW_DIST     # the distance the viewer chose; cam_dist eases to it (select() resets it)
 var _card_phase := ""
 var _press_pos := Vector2.ZERO     # left button: a press that does not move is a click (pick), one that moves orbits
@@ -48,6 +50,7 @@ var _pressing := false
 var _dragged := false
 var _touches: Dictionary = {}      # finger index -> position; two fingers pinch-zoom
 var _pinch_dist := 0.0
+var _pinch_center := Vector2.ZERO
 var narrow := false                # a phone-sized screen: card as a bottom sheet, fewer controls
 var _card_shift := 0.0            # 0..1: how far the view is pushed aside for the open card
 
@@ -140,6 +143,24 @@ func base_dist() -> float:
 func min_dist() -> float:
 	return MIN_OVERVIEW_DIST if selected == 0 else MIN_FOCUS_DIST
 
+## Move the overview by a screen-space drag, the way a map moves: the ground follows the pointer.
+## Only in the overview; a selected homestead has its own target.
+func pan_by_pixels(delta: Vector2) -> void:
+	if selected != 0:
+		return
+	var vp := get_viewport().get_visible_rect().size
+	var per_px := 2.0 * cam_dist * tan(deg_to_rad(camera.fov * 0.5)) / (vp.x if narrow else vp.y)
+	var right := camera.global_transform.basis.x
+	right.y = 0.0
+	var fwd := -camera.global_transform.basis.z
+	fwd.y = 0.0
+	var foreshorten := 1.0 / maxf(sin(-orbit_pitch), 0.25)     # a screen pixel covers more ground when looking along it
+	pan += (-right.normalized() * delta.x + fwd.normalized() * delta.y * foreshorten) * per_px
+	pan.y = 0.0
+	if pan.length() > PAN_LIMIT:
+		pan = pan.normalized() * PAN_LIMIT
+	cam_target = _focus_target()                    # direct, like the pinch
+
 ## Zoom by a factor (<1 in, >1 out) around the current target.
 func zoom_by(factor: float) -> void:
 	dist_goal = clampf(dist_goal * factor, min_dist(), MAX_DIST)
@@ -147,6 +168,7 @@ func zoom_by(factor: float) -> void:
 ## Select a house (0 = overview): the camera goes there and its card opens.
 func select(id: int) -> void:
 	selected = id
+	pan = Vector3.ZERO
 	dist_goal = base_dist()
 	_card_phase = ""
 	if id == 0:
@@ -201,12 +223,21 @@ func _name_of(id: int) -> String:
 func _process(delta: float) -> void:
 	if not paused:
 		t += delta * speed
+	_pan_keys(delta)
 	_refresh(delta)
 	_hover()
 
+## Arrow keys move the overview, always at the same speed on screen.
+func _pan_keys(delta: float) -> void:
+	if selected != 0:
+		return
+	var dir := Vector2(Input.get_axis(&"ui_left", &"ui_right"), Input.get_axis(&"ui_up", &"ui_down"))
+	if dir != Vector2.ZERO:
+		pan_by_pixels(-dir * delta * 0.4 * get_viewport().get_visible_rect().size.y)     # 40% of the screen height per second at any zoom
+
 func _focus_target() -> Vector3:
 	if selected == 0:
-		return Vector3(0, 4, 0)
+		return Vector3(0, 4, 0) + pan
 	if not world.occupied.has(selected):
 		return village.house_world(selected) + Vector3(0, 1.5, 0)
 	return (village.character_world(selected) if follow else village.workplace_world(selected)) + Vector3(0, 0.9, 0)
@@ -279,6 +310,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_HOME:
 				orbit_yaw = deg_to_rad(20.0)
 				orbit_pitch = deg_to_rad(-38.0)
+				pan = Vector3.ZERO
 	elif event is InputEventScreenTouch:
 		if event.pressed:
 			_touches[event.index] = event.position
@@ -286,6 +318,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_touches.erase(event.index)
 		if _touches.size() == 2:
 			_pinch_dist = _pinch_distance()
+			_pinch_center = _touch_center()
 			_dragged = true                       # the emulated mouse press of the first finger must not become a click
 	elif event is InputEventScreenDrag:
 		_touches[event.index] = event.position
@@ -295,12 +328,18 @@ func _unhandled_input(event: InputEvent) -> void:
 				zoom_by(_pinch_dist / d)
 				cam_dist = dist_goal                   # the view tracks the fingers directly
 			_pinch_dist = d
+			var c := _touch_center()
+			pan_by_pixels(c - _pinch_center)       # two fingers also move the map
+			_pinch_center = c
 	elif event is InputEventMouseMotion:
 		var left: bool = (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0
 		var other: bool = (event.button_mask & (MOUSE_BUTTON_MASK_RIGHT | MOUSE_BUTTON_MASK_MIDDLE)) != 0
+		var panning: bool = other or (left and event.shift_pressed and _touches.size() < 2)
 		if left and _pressing and _touches.size() < 2 and event.position.distance_to(_press_pos) > 8.0:
 			_dragged = true
-		if (left and _dragged and _touches.size() < 2) or other:
+		if panning:
+			pan_by_pixels(event.relative)
+		elif left and _dragged and _touches.size() < 2:
 			orbit_yaw -= event.relative.x * 0.006
 			orbit_pitch = clampf(orbit_pitch - event.relative.y * 0.006, deg_to_rad(-85.0), deg_to_rad(-3.0))
 	elif event is InputEventMouseButton:
@@ -321,6 +360,10 @@ func _unhandled_input(event: InputEvent) -> void:
 			zoom_by(pow(1.0 / 0.85, event.factor if event.factor > 0.0 else 1.0))
 	elif event is InputEventMagnifyGesture:        # trackpad pinch (desktop browsers, Safari)
 		zoom_by(1.0 / maxf(event.factor, 0.1))
+
+func _touch_center() -> Vector2:
+	var pts := _touches.values()
+	return ((pts[0] as Vector2) + (pts[1] as Vector2)) * 0.5 if pts.size() >= 2 else Vector2.ZERO
 
 func _pinch_distance() -> float:
 	var pts := _touches.values()
