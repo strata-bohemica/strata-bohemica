@@ -13,6 +13,7 @@ const TimeBar = preload("res://museum/ui/time_bar.gd")
 const START_FRACTION := 0.24
 const OVERVIEW_DIST := 175.0
 const FOCUS_DIST := 15.0
+const NARROW_OVERVIEW_DIST := 205.0
 const HOUSE_DIST := 32.0           # an unstaffed house is looked at from further away (there is no person to see)
 
 var world: Dictionary
@@ -38,6 +39,12 @@ var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
 var cam_dist := OVERVIEW_DIST
 var _card_phase := ""
+var _press_pos := Vector2.ZERO     # left button: a press that does not move is a click (pick), one that moves orbits
+var _pressing := false
+var _dragged := false
+var _touches: Dictionary = {}      # finger index -> position; two fingers pinch-zoom
+var _pinch_dist := 0.0
+var narrow := false                # a phone-sized screen: card as a bottom sheet, fewer controls
 var _card_shift := 0.0            # 0..1: how far the view is pushed aside for the open card
 
 func _ready() -> void:
@@ -53,6 +60,9 @@ func _ready() -> void:
 	add_child(village)
 	village.build(world.village, world.terrain, world.occupied)
 	t = START_FRACTION * float(period.day_length_s)
+	_fit_ui_scale()
+	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
+	apply_layout(get_viewport().get_visible_rect().size)
 	_refresh(0.0)
 
 func _build_world() -> void:
@@ -94,6 +104,23 @@ func _build_world() -> void:
 	time_bar.cutaway_toggled.connect(func(): cutaway = not cutaway)
 	layer.add_child(time_bar)
 	add_child(layer)
+
+# ---- layout ---------------------------------------------------------------------------------------------------
+
+## Scale the UI to the screen density, so text is as large on a phone as on a desktop (in CSS pixels).
+func _fit_ui_scale() -> void:
+	var scale := DisplayServer.screen_get_scale()
+	if OS.has_feature("web"):
+		var dpr: Variant = JavaScriptBridge.eval("window.devicePixelRatio || 1")
+		scale = float(dpr) if dpr != null else 1.0
+	get_window().content_scale_factor = clampf(scale, 1.0, 3.0)
+
+## Re-flow the UI for a viewport of this size (what the window reports after content scaling).
+func apply_layout(size: Vector2) -> void:
+	narrow = size.x < 700.0
+	camera.keep_aspect = Camera3D.KEEP_WIDTH if narrow else Camera3D.KEEP_HEIGHT   # on a phone the field of view spans the width
+	card_panel.set_layout(size)
+	time_bar.set_narrow(narrow)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
@@ -173,7 +200,7 @@ func _refresh(delta: float) -> void:
 	env.background_color = Color("#0c0f18").lerp(Color("#8fb5d9"), daylight)
 	env.ambient_light_color = Color("#2b3652").lerp(Color("#a09c92"), daylight)
 	env.ambient_light_energy = lerpf(0.5, 0.6, daylight)
-	var want_dist := OVERVIEW_DIST if selected == 0 else (FOCUS_DIST if world.occupied.has(selected) else HOUSE_DIST)
+	var want_dist := (NARROW_OVERVIEW_DIST if narrow else OVERVIEW_DIST) if selected == 0 else (FOCUS_DIST if world.occupied.has(selected) else HOUSE_DIST)
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
 	cam_target = cam_target.lerp(_focus_target(), k)
 	cam_dist = lerpf(cam_dist, want_dist, k)
@@ -183,7 +210,11 @@ func _refresh(delta: float) -> void:
 	# keep the subject in the free part of the screen while the card covers the right side
 	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)
 	var aspect: float = get_viewport().get_visible_rect().size.aspect()
-	camera.h_offset = _card_shift * 0.17 * 2.0 * cam_dist * tan(deg_to_rad(camera.fov * 0.5)) * aspect
+	var span := 2.0 * cam_dist * tan(deg_to_rad(camera.fov * 0.5))     # world size of the kept dimension at the target
+	var view_w := span if narrow else span * aspect
+	var view_h := span / aspect if narrow else span
+	camera.h_offset = 0.0 if narrow else _card_shift * 0.17 * view_w
+	camera.v_offset = -_card_shift * 0.2 * view_h if narrow else 0.0
 	_update_card(false)
 	var hours := f * 24.0
 	var line := "%02d:%02d  x%d%s" % [int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else ""]
@@ -191,7 +222,7 @@ func _refresh(delta: float) -> void:
 		line += "  |  %s: %s" % [_name_of(selected), I18n.tr_("phase.%s" % _phase_of(selected), lang) if _phase_of(selected) != "" else ""]
 	elif hover_id != 0:
 		line += "  |  %s" % _name_of(hover_id)
-	hud.text = line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
+	hud.text = line if narrow else line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
 	time_bar.sync(f, paused, speed, follow, cutaway, lang)
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
@@ -227,15 +258,46 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_HOME:
 				orbit_yaw = deg_to_rad(20.0)
 				orbit_pitch = deg_to_rad(-38.0)
-	elif event is InputEventMouseMotion and (event.button_mask & (MOUSE_BUTTON_MASK_RIGHT | MOUSE_BUTTON_MASK_MIDDLE)) != 0:
-		orbit_yaw -= event.relative.x * 0.006
-		orbit_pitch = clampf(orbit_pitch - event.relative.y * 0.006, deg_to_rad(-85.0), deg_to_rad(-3.0))
-	elif event is InputEventMouseButton and event.pressed:
+	elif event is InputEventScreenTouch:
+		if event.pressed:
+			_touches[event.index] = event.position
+		else:
+			_touches.erase(event.index)
+		if _touches.size() == 2:
+			_pinch_dist = _pinch_distance()
+			_dragged = true                       # the emulated mouse press of the first finger must not become a click
+	elif event is InputEventScreenDrag:
+		_touches[event.index] = event.position
+		if _touches.size() == 2:
+			var d := _pinch_distance()
+			if _pinch_dist > 1.0 and d > 1.0:
+				cam_dist = clampf(cam_dist * _pinch_dist / d, 5.0 if selected != 0 else 40.0, 300.0)
+			_pinch_dist = d
+	elif event is InputEventMouseMotion:
+		var left: bool = (event.button_mask & MOUSE_BUTTON_MASK_LEFT) != 0
+		var other: bool = (event.button_mask & (MOUSE_BUTTON_MASK_RIGHT | MOUSE_BUTTON_MASK_MIDDLE)) != 0
+		if left and _pressing and _touches.size() < 2 and event.position.distance_to(_press_pos) > 8.0:
+			_dragged = true
+		if (left and _dragged and _touches.size() < 2) or other:
+			orbit_yaw -= event.relative.x * 0.006
+			orbit_pitch = clampf(orbit_pitch - event.relative.y * 0.006, deg_to_rad(-85.0), deg_to_rad(-3.0))
+	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT:
-			var id := pick_at(event.position)
-			if id != 0:
-				select(id)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			if event.pressed:
+				_pressing = true
+				_dragged = _touches.size() >= 2
+				_press_pos = event.position
+			elif _pressing:
+				_pressing = false
+				if not _dragged:
+					var id := pick_at(event.position)
+					if id != 0:
+						select(id)
+		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			cam_dist = maxf(5.0 if selected != 0 else 40.0, cam_dist * 0.9)
-		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+		elif event.pressed and event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			cam_dist = minf(300.0, cam_dist * 1.1)
+
+func _pinch_distance() -> float:
+	var pts := _touches.values()
+	return (pts[0] as Vector2).distance_to(pts[1]) if pts.size() >= 2 else 0.0

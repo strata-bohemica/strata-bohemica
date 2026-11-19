@@ -60,6 +60,12 @@ func _init() -> void:
 	cutaway_button.pressed.connect(func(): cutaway_toggled.emit())
 	add_child(cutaway_button)
 
+## On a phone the speed buttons and the clock label make way for the slider.
+func set_narrow(narrow: bool) -> void:
+	for b in speed_buttons:
+		b.visible = not narrow
+	clock_label.visible = not narrow
+
 ## Reflect the app's state (no signals fired).
 func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bool, lang: String) -> void:
 	if not dragging:

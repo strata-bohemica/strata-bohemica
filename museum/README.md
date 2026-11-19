@@ -30,6 +30,20 @@ work yard, routes the paths over the terrain and writes `data/villages/breznice*
 A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
 node during named clips, or resting where it is put down (`core/craft_props.gd`).
 
+## Web build
+
+`export_presets.cfg` has a single-threaded Web preset (no special server headers needed). `.github/workflows/pages.yml` exports it in a
+`barichello/godot-ci:4.5.1` container and publishes it at `/museum/` next to the diorama page. Locally:
+
+```sh
+godot --headless --import
+godot --headless --export-release "Web" build/web/index.html     # needs the 4.5.1 export templates
+python3 -m http.server -d build/web 8000
+```
+
+The first load is about 30 MB of engine and 30 MB of data. The UI scales to the screen density and re-flows on a phone (the card
+becomes a sheet along the bottom); touch: tap to select, drag to orbit, two fingers to zoom.
+
 ## Assets
 
 `tools/sync_assets.py FACTORY_RETURNS_DIR` copies the assets listed in `data/asset_manifest.json` into `assets/`

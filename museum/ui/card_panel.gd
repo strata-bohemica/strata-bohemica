@@ -66,6 +66,28 @@ func _init() -> void:
 	body.add_theme_color_override("default_color", Color("#F3EBDD"))
 	scroll.add_child(body)
 
+## Wide screens: a panel on the right. Narrow ones (phones): a sheet along the bottom, above the time bar.
+func set_layout(viewport_size: Vector2) -> void:
+	var narrow := viewport_size.x < 700.0
+	if narrow:
+		anchor_left = 0.0
+		anchor_right = 1.0
+		anchor_top = 1.0
+		anchor_bottom = 1.0
+		offset_left = 8.0
+		offset_right = -8.0
+		offset_bottom = -56.0
+		offset_top = -56.0 - clampf(viewport_size.y * 0.5, 260.0, 560.0)
+	else:
+		anchor_left = 1.0
+		anchor_right = 1.0
+		anchor_top = 0.0
+		anchor_bottom = 1.0
+		offset_left = -460.0
+		offset_right = -12.0
+		offset_top = 12.0
+		offset_bottom = -64.0
+
 func show_card(card: Dictionary, p_lang: String) -> void:
 	current = card
 	lang = p_lang
