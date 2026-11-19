@@ -12,7 +12,7 @@
  "ui.pause": "Pause",
  "ui.play": "Play",
  "ui.language": "CS",
- "ui.hint": "Click a person for details. Right-drag orbits, wheel zooms.",
+ "ui.hint": "Click a person for details. Drag orbits, right-drag or arrows move, wheel zooms.",
  "ui.empty_house": "House without a household",
  "ui.pending": "Not yet staffed",
  "ui.status.E": "Evidence (E)",

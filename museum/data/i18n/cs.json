@@ -12,7 +12,7 @@
  "ui.pause": "Pauza",
  "ui.play": "Přehrát",
  "ui.language": "EN",
- "ui.hint": "Kliknutím na postavu zobrazíš podrobnosti. Pravé tlačítko otáčí, kolečko přibližuje.",
+ "ui.hint": "Kliknutím na postavu zobrazíš podrobnosti. Tažení otáčí, pravé tlačítko nebo šipky posouvají, kolečko přibližuje.",
  "ui.empty_house": "Dům bez domácnosti",
  "ui.pending": "Zatím neobsazeno",
  "ui.status.E": "Doloženo (E)",
