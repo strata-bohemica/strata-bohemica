@@ -1,37 +1,51 @@
 extends Node3D
-## Main scene of the open-air museum. M2: the village on uneven ground, four homesteads working through the day.
-## Wires data -> schedules -> views; owns the clock, light, camera and a small HUD. No game rules here.
+## Main scene of the open-air museum. M4: click a person for the information card, follow them, scrub the day.
+## Wires data -> schedules -> views -> UI; owns the clock, light and camera. No game rules here.
 
 const Loader = preload("res://museum/app/village_loader.gd")
 const VillageView = preload("res://museum/view/village_view.gd")
+const Card = preload("res://museum/core/card.gd")
+const I18n = preload("res://museum/core/i18n.gd")
+const Picking = preload("res://museum/core/picking.gd")
+const CardPanel = preload("res://museum/ui/card_panel.gd")
+const TimeBar = preload("res://museum/ui/time_bar.gd")
 
 const START_FRACTION := 0.24
 const OVERVIEW_DIST := 175.0
 const FOCUS_DIST := 15.0
+const HOUSE_DIST := 32.0           # an unstaffed house is looked at from further away (there is no person to see)
 
 var world: Dictionary
 var period: Dictionary
 var village
-var focus_ids: Array = []
-var focus := 0                     # 0 = overview, 1.. = homestead index
+var focus_ids: Array = []          # occupied house ids, sorted (keys 1-9 and Tab walk this list)
+var selected := 0                  # house id, 0 = overview
+var follow := true                 # the camera follows the person, not the work place
+var lang := "en"
 var t := 0.0
 var speed := 1.0
 var paused := false
 var cutaway := false
+var hover_id := 0
 var sun: DirectionalLight3D
 var env: Environment
 var camera: Camera3D
 var hud: Label
+var card_panel
+var time_bar
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
 var cam_dist := OVERVIEW_DIST
+var _card_phase := ""
+var _card_shift := 0.0            # 0..1: how far the view is pushed aside for the open card
 
 func _ready() -> void:
 	world = Loader.load_all()
 	for e in world.errors:
 		push_error(e)
 	period = world.period
+	lang = I18n.default_lang()
 	focus_ids = world.occupied.keys()
 	focus_ids.sort()
 	_build_world()
@@ -61,22 +75,93 @@ func _build_world() -> void:
 	var layer := CanvasLayer.new()
 	hud = Label.new()
 	hud.position = Vector2(16, 12)
+	hud.custom_minimum_size = Vector2(430, 0)
+	hud.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	hud.add_theme_color_override("font_color", Color("#F3EBDD"))
 	hud.add_theme_color_override("font_shadow_color", Color("#1E1914"))
 	hud.add_theme_constant_override("shadow_offset_x", 1)
 	hud.add_theme_constant_override("shadow_offset_y", 1)
 	layer.add_child(hud)
+	card_panel = CardPanel.new()
+	card_panel.closed.connect(func(): select(0))
+	card_panel.language_toggled.connect(toggle_language)
+	layer.add_child(card_panel)
+	time_bar = TimeBar.new()
+	time_bar.pause_toggled.connect(func(): paused = not paused)
+	time_bar.speed_chosen.connect(func(s): speed = s)
+	time_bar.scrubbed.connect(scrub)
+	time_bar.follow_toggled.connect(func(): follow = not follow)
+	time_bar.cutaway_toggled.connect(func(): cutaway = not cutaway)
+	layer.add_child(time_bar)
 	add_child(layer)
+
+# ---- state changes (also what the checks drive) ---------------------------------------------------------
+
+## Select a house (0 = overview): the camera goes there and its card opens.
+func select(id: int) -> void:
+	selected = id
+	_card_phase = ""
+	if id == 0:
+		card_panel.hide_card()
+	else:
+		_update_card(true)
+
+func toggle_language() -> void:
+	lang = "cs" if lang == "en" else "en"
+	_card_phase = ""
+	if selected != 0:
+		_update_card(true)
+
+## Jump to a time of day (0..1), keeping the day number.
+func scrub(fraction: float) -> void:
+	t = world.occupied[focus_ids[0]].schedule.clock.time_at(t, fraction)
+
+## The index (1-9) of the selected homestead in the sorted list, 0 for overview or an unstaffed house.
+func focus_index() -> int:
+	return focus_ids.find(selected) + 1 if selected != 0 and focus_ids.has(selected) else 0
+
+func _phase_of(id: int) -> String:
+	return world.occupied[id].schedule.state_at(t).phase if world.occupied.has(id) else ""
+
+func _update_card(force: bool) -> void:
+	if selected == 0:
+		return
+	var phase := _phase_of(selected)
+	if not force and phase == _card_phase:
+		return
+	_card_phase = phase
+	var card: Dictionary
+	if world.occupied.has(selected):
+		var info: Dictionary = world.occupied[selected]
+		card = Card.build(info.craft, info.homestead, lang, phase)
+	elif world.pending.has(selected):
+		card = Card.build_pending(world.pending[selected], lang)
+	else:
+		card = {"title": I18n.tr_("ui.empty_house", lang), "craft": "", "status": "F", "status_label": I18n.tr_("ui.status.F", lang), "now": "",
+			"sections": [], "footer": I18n.tr_("ui.provisional", lang)}
+	card_panel.show_card(card, lang)
+
+func _name_of(id: int) -> String:
+	if world.occupied.has(id):
+		return I18n.pick(world.occupied[id].homestead.name, lang)
+	if world.pending.has(id):
+		return I18n.pick(world.pending[id].name, lang)
+	return I18n.tr_("ui.empty_house", lang)
+
+# ---- per frame ----------------------------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
 	if not paused:
 		t += delta * speed
 	_refresh(delta)
+	_hover()
 
 func _focus_target() -> Vector3:
-	if focus == 0:
+	if selected == 0:
 		return Vector3(0, 4, 0)
-	return village.workplace_world(focus_ids[focus - 1]) + Vector3(0, 0.9, 0)
+	if not world.occupied.has(selected):
+		return village.house_world(selected) + Vector3(0, 1.5, 0)
+	return (village.character_world(selected) if follow else village.workplace_world(selected)) + Vector3(0, 0.9, 0)
 
 func _refresh(delta: float) -> void:
 	var clock = world.occupied[focus_ids[0]].schedule.clock
@@ -88,20 +173,38 @@ func _refresh(delta: float) -> void:
 	env.background_color = Color("#0c0f18").lerp(Color("#8fb5d9"), daylight)
 	env.ambient_light_color = Color("#2b3652").lerp(Color("#a09c92"), daylight)
 	env.ambient_light_energy = lerpf(0.5, 0.6, daylight)
-	var want_dist := OVERVIEW_DIST if focus == 0 else FOCUS_DIST
+	var want_dist := OVERVIEW_DIST if selected == 0 else (FOCUS_DIST if world.occupied.has(selected) else HOUSE_DIST)
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
 	cam_target = cam_target.lerp(_focus_target(), k)
 	cam_dist = lerpf(cam_dist, want_dist, k)
 	var dir := Vector3(sin(orbit_yaw) * cos(orbit_pitch), -sin(orbit_pitch), cos(orbit_yaw) * cos(orbit_pitch))
 	camera.position = cam_target + dir * cam_dist
 	camera.look_at(cam_target)
+	# keep the subject in the free part of the screen while the card covers the right side
+	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)
+	var aspect: float = get_viewport().get_visible_rect().size.aspect()
+	camera.h_offset = _card_shift * 0.17 * 2.0 * cam_dist * tan(deg_to_rad(camera.fov * 0.5)) * aspect
+	_update_card(false)
 	var hours := f * 24.0
-	var line2 := ""
-	if focus > 0:
-		var info: Dictionary = village.homesteads[focus_ids[focus - 1]]
-		line2 = "  |  %s: %s" % [info.data.name.en, info.schedule.state_at(t).phase]
-	hud.text = "%02d:%02d  x%d%s%s\n[Space] pause  [Q/W/E] speed  [0] overview  [1-%d] homestead  [Tab] next  [L] cutaway  right-drag orbit, wheel zoom" % [
-		int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else "", line2, mini(focus_ids.size(), 9)]
+	var line := "%02d:%02d  x%d%s" % [int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else ""]
+	if selected != 0:
+		line += "  |  %s: %s" % [_name_of(selected), I18n.tr_("phase.%s" % _phase_of(selected), lang) if _phase_of(selected) != "" else ""]
+	elif hover_id != 0:
+		line += "  |  %s" % _name_of(hover_id)
+	hud.text = line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
+	time_bar.sync(f, paused, speed, follow, cutaway, lang)
+
+## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
+func _hover() -> void:
+	if Input.get_mouse_button_mask() != 0:
+		return
+	var pos := get_viewport().get_mouse_position()
+	hover_id = pick_at(pos)
+	DisplayServer.cursor_set_shape(DisplayServer.CURSOR_POINTING_HAND if hover_id != 0 else DisplayServer.CURSOR_ARROW)
+
+## The homestead whose target a ray through the screen point hits; 0 for none.
+func pick_at(screen_pos: Vector2) -> int:
+	return Picking.pick(village.pick_targets(), camera.project_ray_origin(screen_pos), camera.project_ray_normal(screen_pos))
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
@@ -111,12 +214,16 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_W: speed = 10.0
 			KEY_E: speed = 40.0
 			KEY_L: cutaway = not cutaway
-			KEY_0: focus = 0
-			KEY_TAB: focus = (focus + 1) % (focus_ids.size() + 1)
+			KEY_F: follow = not follow
+			KEY_C: toggle_language()
+			KEY_0, KEY_ESCAPE: select(0)
+			KEY_TAB:
+				var i := focus_index()
+				select(focus_ids[i] if i < focus_ids.size() else 0)
 			KEY_1, KEY_2, KEY_3, KEY_4, KEY_5, KEY_6, KEY_7, KEY_8, KEY_9:
 				var n: int = event.keycode - KEY_0
 				if n <= focus_ids.size():
-					focus = n
+					select(focus_ids[n - 1])
 			KEY_HOME:
 				orbit_yaw = deg_to_rad(20.0)
 				orbit_pitch = deg_to_rad(-38.0)
@@ -124,8 +231,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		orbit_yaw -= event.relative.x * 0.006
 		orbit_pitch = clampf(orbit_pitch - event.relative.y * 0.006, deg_to_rad(-85.0), deg_to_rad(-3.0))
 	elif event is InputEventMouseButton and event.pressed:
-		var limit_lo := 5.0 if focus > 0 else 40.0
-		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
-			cam_dist = maxf(limit_lo, cam_dist * 0.9)
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			var id := pick_at(event.position)
+			if id != 0:
+				select(id)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			cam_dist = maxf(5.0 if selected != 0 else 40.0, cam_dist * 0.9)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			cam_dist = minf(300.0, cam_dist * 1.1)

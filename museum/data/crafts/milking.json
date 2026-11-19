@@ -49,9 +49,18 @@
       "en": "The milking, stool, pail and the milker's position are reconstructed. The cattle model has no udder; the hands aim at the belly underside."
     },
     "unknown": [
-      "whether milk was used (lipid analysis not available here)",
-      "breed and size",
-      "who milked and when"
+      {
+        "cs": "zda se využívalo mléko (analýza tuků zde není k dispozici)",
+        "en": "whether milk was used (lipid analysis not available here)"
+      },
+      {
+        "cs": "plemeno a velikost",
+        "en": "breed and size"
+      },
+      {
+        "cs": "kdo a kdy dojil",
+        "en": "who milked and when"
+      }
     ],
     "sources": [
       "Kyselý 2016, Živa 2016/5:225–229 (cite only)",

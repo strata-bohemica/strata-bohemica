@@ -60,9 +60,18 @@
       "en": "Chopping with a bronze axe on a block is reconstructed. Bronze tools are attested regionally, not at this site."
     },
     "unknown": [
-      "tool kit used on site",
-      "felling versus trimming techniques",
-      "who did the woodwork"
+      {
+        "cs": "sada nástrojů na místě",
+        "en": "tool kit used on site"
+      },
+      {
+        "cs": "techniky kácení a opracování",
+        "en": "felling versus trimming techniques"
+      },
+      {
+        "cs": "kdo pracoval se dřevem",
+        "en": "who did the woodwork"
+      }
     ],
     "sources": [
       "Šálková et al. 2022, Scientific Reports 12:20323, pp. 6 and 10",

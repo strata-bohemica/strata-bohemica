@@ -13,7 +13,7 @@ const TERRAIN_PATH := "res://museum/data/villages/breznice-terrain.json"
 const HOMESTEAD_DIR := "res://museum/data/homesteads/"
 const CRAFT_DIR := "res://museum/data/crafts/"
 
-## -> {period, village, terrain, occupied: {house id: {homestead, craft, schedule}}, errors: PackedStringArray}
+## -> {period, village, terrain, occupied: {house id: {homestead, craft, schedule}}, pending: {house id: homestead}, errors}
 static func load_all() -> Dictionary:
 	var errors := PackedStringArray()
 	var period: Dictionary = Schema.load_json(PERIOD_PATH)
@@ -23,11 +23,15 @@ static func load_all() -> Dictionary:
 	errors.append_array(Schema.validate_village(village))
 	errors.append_array(Schema.validate_terrain(terrain_data))
 	var occupied := {}
+	var pending := {}
 	for file in DirAccess.get_files_at(HOMESTEAD_DIR):
 		if not file.ends_with(".json"):
 			continue
 		var homestead: Dictionary = Schema.load_json(HOMESTEAD_DIR + file)
 		errors.append_array(Schema.validate_homestead(homestead))
+		if homestead.get("craft", "x") == null:
+			pending[int(str(homestead.id).substr(3))] = homestead
+			continue
 		var craft: Dictionary = Schema.load_json(CRAFT_DIR + "%s.json" % homestead.craft)
 		errors.append_array(Schema.validate_craft(craft))
 		errors.append_array(Schema.validate_animals(homestead.get("animals", []), float(period.day_length_s), str(homestead.id)))
@@ -40,4 +44,4 @@ static func load_all() -> Dictionary:
 			"sleeper": Catalogue.clip_lengths(homestead.sleeper)}
 		var house_id := int(str(homestead.id).substr(3))
 		occupied[house_id] = {"homestead": homestead, "craft": craft, "schedule": Schedule.new(period, craft, homestead, anchors, durations), "durations": durations}
-	return {"period": period, "village": village, "terrain": Terrain.from_dict(terrain_data), "terrain_data": terrain_data, "occupied": occupied, "errors": errors}
+	return {"period": period, "village": village, "terrain": Terrain.from_dict(terrain_data), "terrain_data": terrain_data, "occupied": occupied, "pending": pending, "errors": errors}

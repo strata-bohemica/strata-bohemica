@@ -1,0 +1,13 @@
+{
+  "id": "hs-11",
+  "schema": 2,
+  "craft": null,
+  "name": {
+    "cs": "Hrnčířka",
+    "en": "The potter"
+  },
+  "pending": {
+    "cs": "Čeká na rešerši k hrnčířství v pozdní době bronzové. Dostupné modely jsou z doby starší a střední bronzové.",
+    "en": "Waiting for research on Late Bronze Age pottery. The available models date from the Early and Middle Bronze Age."
+  }
+}

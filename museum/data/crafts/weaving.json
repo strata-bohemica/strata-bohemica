@@ -95,9 +95,18 @@
       "en": "The loom type (warp-weighted), the weights hung base-up, the shuttle passes and the beating are reconstructed."
     },
     "unknown": [
-      "whether a loom was used at all",
-      "fibre (flax not found, wool unverified locally)",
-      "who wove"
+      {
+        "cs": "zda se stav vůbec používal",
+        "en": "whether a loom was used at all"
+      },
+      {
+        "cs": "vlákno (len nenalezen, vlna místně neověřena)",
+        "en": "fibre (flax not found, wool unverified locally)"
+      },
+      {
+        "cs": "kdo tkal",
+        "en": "who wove"
+      }
     ],
     "sources": [
       "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308",

@@ -55,12 +55,21 @@ static func validate_craft(d: Dictionary) -> PackedStringArray:
 			for rule in p.held:
 				_need(rule, ["node", "clip"], "%s prop '%s' held rule" % [where, p.get("id", "?")], errors)
 	_need(d.card, ["status", "sources", "unknown", "evidence", "reconstruction"], where + " card", errors)
+	if d.card.has("unknown"):
+		for u in d.card.unknown:
+			if not (u is Dictionary) or not u.has("cs") or not u.has("en"):
+				errors.append("%s: card.unknown entries need both cs and en" % where)
 	if d.card.has("status") and not (str(d.card.status) in ["E", "R", "F"]):
 		errors.append("%s: card.status must be E, R or F" % where)
 	return errors
 
 static func validate_homestead(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
+	if d.get("craft", "x") == null:         # a house that is not staffed yet
+		_need(d, ["id", "schema", "name", "pending"], "pending homestead", errors)
+		if d.has("pending") and not (d.pending.has("cs") and d.pending.has("en")):
+			errors.append("pending homestead '%s': the reason needs cs and en" % d.get("id", "?"))
+		return errors
 	_need(d, ["id", "schema", "craft", "house", "workplace", "bed", "walker", "sleeper"], "homestead", errors)
 	if errors.is_empty() and int(d.schema) != 2:
 		errors.append("homestead '%s': unsupported schema %s" % [d.id, d.schema])

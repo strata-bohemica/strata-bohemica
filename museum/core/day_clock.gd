@@ -18,3 +18,7 @@ func elevation(t: float) -> float:
 ## 0 at night, 1 by day, smooth in between (twilight).
 func daylight(t: float) -> float:
 	return smoothstep(-0.15, 0.3, elevation(t))
+
+## The clock time that shows `frac` (0..1) of the day, keeping the current day number. For a time-of-day slider.
+func time_at(t: float, frac: float) -> float:
+	return floorf(t / day_length) * day_length + clampf(frac, 0.0, 0.9999) * day_length
