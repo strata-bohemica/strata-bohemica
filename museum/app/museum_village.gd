@@ -10,7 +10,7 @@ const Picking = preload("res://museum/core/picking.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
 
-const START_FRACTION := 0.24
+const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
 const FOCUS_DIST := 15.0
 const NARROW_OVERVIEW_DIST := 205.0
