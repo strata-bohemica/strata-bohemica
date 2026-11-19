@@ -76,9 +76,18 @@
       "en": "Scraping a hide on a frame with a bone scraper, and drying it, are reconstructed. Hides are a by-product of slaughter."
     },
     "unknown": [
-      "tool type (bone scraper not attested locally)",
-      "tanning method",
-      "who processed hides"
+      {
+        "cs": "druh nástroje (kostěné škrabadlo místně doloženo není)",
+        "en": "tool type (bone scraper not attested locally)"
+      },
+      {
+        "cs": "způsob vyčinění",
+        "en": "tanning method"
+      },
+      {
+        "cs": "kdo zpracovával kůže",
+        "en": "who processed hides"
+      }
     ],
     "sources": [
       "content/research/economy/subsistence.md, process table",

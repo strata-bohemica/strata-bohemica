@@ -101,9 +101,18 @@
       "en": "Parching in a dish over the hearth, stirring with a stick and the crouch are reconstructed."
     },
     "unknown": [
-      "whether grain was parched at all",
-      "vessel used",
-      "who did it"
+      {
+        "cs": "zda se obilí vůbec pražilo",
+        "en": "whether grain was parched at all"
+      },
+      {
+        "cs": "použitá nádoba",
+        "en": "vessel used"
+      },
+      {
+        "cs": "kdo to dělal",
+        "en": "who did it"
+      }
     ],
     "sources": [
       "Šálková et al. 2022, Scientific Reports 12:20323, p. 6",

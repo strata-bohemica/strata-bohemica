@@ -178,9 +178,18 @@
       "en": "The hearth superstructure (stone ring, open top), the crouch at the fire, the ladle, the pot standing in the embers and feeding kindling are reconstructed."
     },
     "unknown": [
-      "whether these features were used for cooking, pottery firing or drying",
-      "roofing of the hearth",
-      "vessel shape and recipe"
+      {
+        "cs": "zda tyto objekty sloužily k vaření, výpalu keramiky, nebo k sušení",
+        "en": "whether these features were used for cooking, pottery firing or drying"
+      },
+      {
+        "cs": "zastřešení ohniště",
+        "en": "roofing of the hearth"
+      },
+      {
+        "cs": "tvar nádoby a recept",
+        "en": "vessel shape and recipe"
+      }
     ],
     "sources": [
       "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, section 3.2 and p. 10",

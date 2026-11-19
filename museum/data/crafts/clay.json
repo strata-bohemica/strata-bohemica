@@ -51,9 +51,18 @@
       "en": "Treading clay with chaff, mixing and plastering are reconstructed."
     },
     "unknown": [
-      "tools and method",
-      "who maintained the walls",
-      "how often"
+      {
+        "cs": "nástroje a postup",
+        "en": "tools and method"
+      },
+      {
+        "cs": "kdo udržoval stěny",
+        "en": "who maintained the walls"
+      },
+      {
+        "cs": "jak často",
+        "en": "how often"
+      }
     ],
     "sources": [
       "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, sections 3.2 and 5.3.1",

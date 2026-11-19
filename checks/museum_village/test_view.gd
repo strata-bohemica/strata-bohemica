@@ -129,9 +129,9 @@ func _initialize() -> void:
 	for i in range(5):
 		await process_frame
 	t.ok(app.world.errors.size() == 0 and app.village != null, "main scene built its village")
-	app.focus = 2
+	app.select(app.focus_ids[1])
 	for i in range(240):
 		await process_frame
-	var want: Vector3 = app.village.workplace_world(app.focus_ids[1]) + Vector3(0, 0.9, 0)
+	var want: Vector3 = app.village.character_world(app.focus_ids[1]) + Vector3(0, 0.9, 0)
 	t.ok(app.cam_target.distance_to(want) < 1.0, "camera glides to the focused homestead (%.2f m away)" % app.cam_target.distance_to(want))
 	quit(t.finish("view"))

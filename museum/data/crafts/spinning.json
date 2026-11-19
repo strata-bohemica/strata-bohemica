@@ -84,9 +84,18 @@
       "en": "The stance, drafting, wrist flick and spindle turn are reconstructed. The spindle is slowed in the animation for readability."
     },
     "unknown": [
-      "fibre (flax not found, wool unverified locally)",
-      "spindle whorls found at Březnice (not verified)",
-      "who spun"
+      {
+        "cs": "vlákno (len nenalezen, vlna místně neověřena)",
+        "en": "fibre (flax not found, wool unverified locally)"
+      },
+      {
+        "cs": "zda se na Březnici našly přesleny (neověřeno)",
+        "en": "spindle whorls found at Březnice (not verified)"
+      },
+      {
+        "cs": "kdo předl",
+        "en": "who spun"
+      }
     ],
     "sources": [
       "Sabatini, Earle & Cardarelli 2018, Proc. Prehist. Soc. 84:359–385, p. 364 (analogy)",

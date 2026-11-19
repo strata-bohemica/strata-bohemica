@@ -1,7 +1,7 @@
 extends SceneTree
 ## Renders the museum scene to PNG files (needs a display, not --headless).
-## usage: godot --path . --windowed --resolution 960x540 -s res://tools/screenshot.gd -- OUTDIR 0.3 0.5@1 0.7@2@c ...
-## Each token is DAYFRACTION[@FOCUS[@c]]: focus 0 = overview, 1.. = homestead; a trailing @c turns the cutaway on.
+## usage: godot --path . --windowed --resolution 960x540 -s res://tools/screenshot.gd -- OUTDIR 0.3 0.5@3 0.7@7@c@cs ...
+## Each token is DAYFRACTION[@HOUSE[@c][@cs|en]]: house 0 = overview, otherwise a house id (its card opens); @c turns the cutaway on.
 const Scene = preload("res://museum/app/museum_village.tscn")
 
 func _initialize() -> void:
@@ -18,10 +18,13 @@ func _initialize() -> void:
 		var parts := args[i].split("@")
 		var frac := float(parts[0])
 		app.t = frac * day
-		app.focus = int(parts[1]) if parts.size() > 1 else 0
-		app.cutaway = parts.size() > 2 and parts[2] == "c"
+		app.cutaway = "c" in parts
+		if "cs" in parts: app.lang = "cs"
+		if "en" in parts: app.lang = "en"
+		app.select(int(parts[1]) if parts.size() > 1 else 0)
+		app._refresh(0.0)
 		app.cam_target = app._focus_target()
-		app.cam_dist = app.OVERVIEW_DIST if app.focus == 0 else app.FOCUS_DIST
+		app.cam_dist = app.OVERVIEW_DIST if app.selected == 0 else (app.FOCUS_DIST if app.world.occupied.has(app.selected) else app.HOUSE_DIST)
 		for k in 4:
 			await process_frame
 		var img := root.get_texture().get_image()

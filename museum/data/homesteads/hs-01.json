@@ -1,0 +1,13 @@
+{
+  "id": "hs-01",
+  "schema": 2,
+  "craft": null,
+  "name": {
+    "cs": "Oráč",
+    "en": "The plougher"
+  },
+  "pending": {
+    "cs": "Čeká na pohyb pracovníka po poli (pluh se pohybuje) a na rešerši k pluhu v pozdní době bronzové.",
+    "en": "Waiting for a worker who walks along the field (the plough moves) and for research on the Late Bronze Age plough."
+  }
+}

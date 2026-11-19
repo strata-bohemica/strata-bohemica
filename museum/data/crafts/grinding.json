@@ -64,9 +64,18 @@
       "en": "The kneeling posture, forward lean and hand motion over the lower stone are reconstructed, as are the choice of one crop and the layout of the work spot."
     },
     "unknown": [
-      "exact quern form (saddle or rotary)",
-      "who did the grinding",
-      "daily output"
+      {
+        "cs": "přesný tvar žernovu (sedlový, nebo rotační)",
+        "en": "exact quern form (saddle or rotary)"
+      },
+      {
+        "cs": "kdo mlel",
+        "en": "who did the grinding"
+      },
+      {
+        "cs": "denní výkon",
+        "en": "daily output"
+      }
     ],
     "sources": [
       "Šálková et al. 2022, Scientific Reports 12:20323, p. 3",
