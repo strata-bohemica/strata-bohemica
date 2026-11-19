@@ -5,6 +5,7 @@ This licence covers the project's own **3D models, textures, animations and rend
 - `assets/` (models, textures, animations, their `asset.json` and `PROVENANCE.md` files)
 - `site/models/` (web copies of the models: textures re-encoded to WebP, meshes compressed with meshopt)
 - `docs/brand/diorama/` (renders and animations made from those models)
+- `research/` (our research notes behind the info cards; no photos)
 
 You may share and adapt them, including commercially, **as long as you give credit**.
 
