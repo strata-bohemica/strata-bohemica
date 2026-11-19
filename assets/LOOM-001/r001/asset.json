@@ -1,0 +1,698 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "LOOM-001",
+  "revision": "r001",
+  "brief": "LOOM-001 r001 upright loom study (DRAFT brief, content/research/next-batch/material-culture.md §5 'LOOM-001 r001', dispatched via art/briefs/economy-batch5/README.md, a proposal, not a frozen pack). Contract followed: art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md, kit spec 2.0, economy-batch4 README shared rules.",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generator written for this job; resumed after a runtime restart, see CHANGELOG.md)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, re-import/clearance checks, EEVEE + Workbench stills)",
+    "Khronos glTF Blender I/O bundled with Blender 5.2.3 for GLB export/import",
+    "Godot Engine 4.5.1-stable (official) (headless import probe; GPU viewport captures, gl_compatibility / opengl3 on Apple M1 Pro, API 4.1 Metal - 90.5)",
+    "Python 3 + numpy (independent GLB parser)"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "scale_note": "All dimensions are R/design game envelopes from the brief (height 1.9 m, width 1.5 m, footprint depth 0.6 m, cloth 0.9 m wide, weights ~0.25 m above the floor, weaver 0.7 m in front). No loom is demonstrated at Březnice.",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "metadata_notes": {
+    "evidence_boundary": "No securely demonstrated in-situ loom at Březnice; S-CH19 judges classic warp-weighted suspension rather unlikely and hypothesises base-up hanging; mass weight deposits are waste, not looms in situ. Text/UI must not say Březnice weights came from this loom or that trenches were loom pits.",
+    "weights_reused": "LOOMWEIGHT-001 r001 loomweight.glb imported unchanged (mesh, material, atlas); 18 instances per row",
+    "no_pit": "No pit is baked in; a pit setting would be a separate scene decision.",
+    "no_animation": "No weaving motion (needs a separate motion brief)."
+  },
+  "models": [
+    {
+      "file": "models/loom_frame.glb",
+      "role": "bare frame: two leaning round-wood uprights (15 deg), cloth beam (1.5 m), heddle rod on forked bracket stubs, shed rod, cord lashings; no warp, cloth or weights",
+      "triangles": 760,
+      "triangles_excluding_weight_instances": 760,
+      "triangle_budget": 1200,
+      "budget_basis": "brief: <=1,200 (frame)",
+      "budget_ok": true,
+      "weight_instance_triangles": 0,
+      "materials": 1,
+      "material_names": [
+        "LOOM_wood_cloth"
+      ],
+      "textures": [
+        {
+          "name": "loom_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 383368
+        }
+      ],
+      "visible_meshes": 1,
+      "unique_meshes": 1,
+      "file_bytes": 414500,
+      "export_bounds_m": {
+        "width": 1.50066,
+        "height": 1.90986,
+        "depth": 0.59157,
+        "min": [
+          -0.75029,
+          0.0,
+          -0.29578
+        ],
+        "max": [
+          0.75036,
+          1.90986,
+          0.29578
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "LOOM_FRAME",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "placement origin on the floor, centre of the footprint (x, z bounds centred); identity"
+        },
+        "wall_contact": {
+          "parent": "LOOM_FRAME",
+          "translation": [
+            0.0,
+            1.9,
+            -0.299824
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "supplementary: back surface of the upright tops (x = 0); a wall plane at this z leans the loom ~4 mm behind its rearmost vertex. Not required by the brief"
+        },
+        "weaver_origin": {
+          "parent": "LOOM_FRAME",
+          "translation": [
+            0.0,
+            0.0,
+            0.7
+          ],
+          "rotation_xyzw": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "note": "weaver standing/working spot 0.70 m in front (+Z); rotated 180 deg about +Y so a PERSON root placed with this transform faces the loom (-Z). Verified with PERSON r002 in Blender and Godot"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": {
+        "LOOM_wood_cloth": "OPAQUE"
+      },
+      "extensions_used": [],
+      "frame_floor_contact": {
+        "min_y": 0.0,
+        "upright_lean_deg": 14.98,
+        "blender_triangles_on_floor_plane": 12
+      },
+      "blender_reimport_triangles": 760,
+      "godot_triangles": 760,
+      "godot_materials": {
+        "LOOM_wood_cloth": {
+          "cull_back": true,
+          "cull_disabled": false,
+          "alpha_scissor": false
+        }
+      },
+      "godot_gpu_visible_pass": {
+        "draw_calls": 3,
+        "objects": 3,
+        "primitives": 760
+      }
+    },
+    {
+      "file": "models/loom_weaving.glb",
+      "role": "frame + cloth roll and partly woven panel (0.9 m wide, undyed design colour) + warp alpha-mask cards + row option `weights_base_down` (18 LOOMWEIGHT-001 instances in two staggered ranks, tied through the holes ~0.25 m above the floor; common museum convention)",
+      "triangles": 5226,
+      "triangles_excluding_weight_instances": 2058,
+      "triangle_budget": 2500,
+      "budget_basis": "brief: <=2,500 excluding weight instances",
+      "budget_ok": true,
+      "weight_instance_triangles": 3168,
+      "materials": 3,
+      "material_names": [
+        "LOOM_wood_cloth",
+        "LOOM_warp",
+        "LOOMWEIGHT_clay"
+      ],
+      "textures": [
+        {
+          "name": "loom_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 383368
+        },
+        {
+          "name": "loom_warp",
+          "width": 128,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 4694
+        },
+        {
+          "name": "loomweight_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 191476
+        }
+      ],
+      "visible_meshes": 22,
+      "unique_meshes": 5,
+      "file_bytes": 666000,
+      "export_bounds_m": {
+        "width": 1.50066,
+        "height": 1.90986,
+        "depth": 0.59157,
+        "min": [
+          -0.75029,
+          0.0,
+          -0.29578
+        ],
+        "max": [
+          0.75036,
+          1.90986,
+          0.29578
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "placement origin on the floor, centre of the footprint (x, z bounds centred); identity"
+        },
+        "cloth_face": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            1.4625,
+            -0.077941
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "front surface of the woven panel, mid-height between the cloth roll and the fell; identity (face normal +Z)"
+        },
+        "wall_contact": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            1.9,
+            -0.299824
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "supplementary: back surface of the upright tops (x = 0); a wall plane at this z leans the loom ~4 mm behind its rearmost vertex. Not required by the brief"
+        },
+        "weaver_origin": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            0.0,
+            0.7
+          ],
+          "rotation_xyzw": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "note": "weaver standing/working spot 0.70 m in front (+Z); rotated 180 deg about +Y so a PERSON root placed with this transform faces the loom (-Z). Verified with PERSON r002 in Blender and Godot"
+        },
+        "weights_base_down": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "row option node (empty) holding 18 weight instances + one tie_loops mesh; identity"
+        },
+        "weights_row_center": {
+          "parent": "LOOM_WEAVING",
+          "translation": [
+            0.0,
+            0.33,
+            0.046412
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the 18 weight hole centres (warp tie points, y = 0.33 m), midway between the two staggered ranks; identity"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [
+        {
+          "material": "LOOM_warp",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.5,
+          "mesh": "warp",
+          "why": "warp threads as alpha-mask cards, visible from both sides (brief exception)"
+        }
+      ],
+      "alpha_modes": {
+        "LOOM_wood_cloth": "OPAQUE",
+        "LOOM_warp": "MASK",
+        "LOOMWEIGHT_clay": "OPAQUE"
+      },
+      "extensions_used": [],
+      "frame_floor_contact": {
+        "min_y": 0.0,
+        "upright_lean_deg": 14.98,
+        "blender_triangles_on_floor_plane": 12
+      },
+      "blender_reimport_triangles": 5226,
+      "godot_triangles": 5226,
+      "godot_materials": {
+        "LOOMWEIGHT_clay": {
+          "cull_back": true,
+          "cull_disabled": false,
+          "alpha_scissor": false
+        },
+        "LOOM_warp": {
+          "cull_back": false,
+          "cull_disabled": true,
+          "alpha_scissor": true
+        },
+        "LOOM_wood_cloth": {
+          "cull_back": true,
+          "cull_disabled": false,
+          "alpha_scissor": false
+        }
+      },
+      "godot_gpu_visible_pass": {
+        "draw_calls": 47,
+        "objects": 47,
+        "primitives": 5130
+      },
+      "weight_row": {
+        "node": "weights_base_down",
+        "instances": 18,
+        "instance_mesh": "loomweight (LOOMWEIGHT-001 r001 mesh, unchanged, 176 triangles each; one shared mesh)",
+        "orientation": "all base-down (local +Y up)",
+        "ranks_z_m": [
+          -0.082,
+          0.175
+        ],
+        "pitch_within_rank_m": [
+          0.105
+        ],
+        "lowest_point_above_floor_m": 0.23,
+        "highest_point_m": 0.385,
+        "hole_centres_y_m": [
+          0.33,
+          0.33
+        ],
+        "weights_interpenetration_vertices": 0,
+        "min_gap_between_weights_m": 0.0075,
+        "min_gap_weights_to_frame_m": 0.1037,
+        "tie_loops": {
+          "triangles": 1080,
+          "min_vertex_distance_to_weights_m": 0.00178,
+          "vertices_inside_weights": 0
+        },
+        "warp_tie_alignment_m": {
+          "hole_y_minus_warp_bottom": 0.0,
+          "hole_z_to_warp_edge": 4e-05
+        }
+      },
+      "person_r002_at_weaver_origin": {
+        "facing": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "min_distance_to_loom_m": 0.2736,
+        "person_vertices_inside_weights_or_cloth": 0
+      }
+    },
+    {
+      "file": "models/loom_weaving_base_up.glb",
+      "role": "identical to loom_weaving.glb except the row option `weights_base_up` (same 18 tie points, each weight rotated 180 deg about its hole axis: S-CH19 base-up hypothesis). Supplied as a sibling file because glTF core has no node visibility switch (see deviations)",
+      "triangles": 5226,
+      "triangles_excluding_weight_instances": 2058,
+      "triangle_budget": 2500,
+      "budget_basis": "brief: <=2,500 excluding weight instances",
+      "budget_ok": true,
+      "weight_instance_triangles": 3168,
+      "materials": 3,
+      "material_names": [
+        "LOOM_wood_cloth",
+        "LOOM_warp",
+        "LOOMWEIGHT_clay"
+      ],
+      "textures": [
+        {
+          "name": "loom_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 383368
+        },
+        {
+          "name": "loom_warp",
+          "width": 128,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 4694
+        },
+        {
+          "name": "loomweight_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 191476
+        }
+      ],
+      "visible_meshes": 22,
+      "unique_meshes": 5,
+      "file_bytes": 666368,
+      "export_bounds_m": {
+        "width": 1.50066,
+        "height": 1.90986,
+        "depth": 0.59157,
+        "min": [
+          -0.75029,
+          0.0,
+          -0.29578
+        ],
+        "max": [
+          0.75036,
+          1.90986,
+          0.29578
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "placement origin on the floor, centre of the footprint (x, z bounds centred); identity"
+        },
+        "cloth_face": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            1.4625,
+            -0.077941
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "front surface of the woven panel, mid-height between the cloth roll and the fell; identity (face normal +Z)"
+        },
+        "wall_contact": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            1.9,
+            -0.299824
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "supplementary: back surface of the upright tops (x = 0); a wall plane at this z leans the loom ~4 mm behind its rearmost vertex. Not required by the brief"
+        },
+        "weaver_origin": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            0.0,
+            0.7
+          ],
+          "rotation_xyzw": [
+            0,
+            1,
+            0,
+            0
+          ],
+          "note": "weaver standing/working spot 0.70 m in front (+Z); rotated 180 deg about +Y so a PERSON root placed with this transform faces the loom (-Z). Verified with PERSON r002 in Blender and Godot"
+        },
+        "weights_base_up": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "row option node (empty) holding 18 weight instances + one tie_loops mesh; identity"
+        },
+        "weights_row_center": {
+          "parent": "LOOM_WEAVING_BASE_UP",
+          "translation": [
+            0.0,
+            0.33,
+            0.046412
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the 18 weight hole centres (warp tie points, y = 0.33 m), midway between the two staggered ranks; identity"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [
+        {
+          "material": "LOOM_warp",
+          "alphaMode": "MASK",
+          "alphaCutoff": 0.5,
+          "mesh": "warp",
+          "why": "warp threads as alpha-mask cards, visible from both sides (brief exception)"
+        }
+      ],
+      "alpha_modes": {
+        "LOOM_wood_cloth": "OPAQUE",
+        "LOOM_warp": "MASK",
+        "LOOMWEIGHT_clay": "OPAQUE"
+      },
+      "extensions_used": [],
+      "frame_floor_contact": {
+        "min_y": 0.0,
+        "upright_lean_deg": 14.98,
+        "blender_triangles_on_floor_plane": 12
+      },
+      "blender_reimport_triangles": 5226,
+      "godot_triangles": 5226,
+      "godot_materials": {
+        "LOOMWEIGHT_clay": {
+          "cull_back": true,
+          "cull_disabled": false,
+          "alpha_scissor": false
+        },
+        "LOOM_warp": {
+          "cull_back": false,
+          "cull_disabled": true,
+          "alpha_scissor": true
+        },
+        "LOOM_wood_cloth": {
+          "cull_back": true,
+          "cull_disabled": false,
+          "alpha_scissor": false
+        }
+      },
+      "godot_gpu_visible_pass": {
+        "draw_calls": 47,
+        "objects": 47,
+        "primitives": 5130
+      },
+      "weight_row": {
+        "node": "weights_base_up",
+        "instances": 18,
+        "instance_mesh": "loomweight (LOOMWEIGHT-001 r001 mesh, unchanged, 176 triangles each; one shared mesh)",
+        "orientation": "all base-up (local +Y down)",
+        "ranks_z_m": [
+          -0.082,
+          0.175
+        ],
+        "pitch_within_rank_m": [
+          0.105
+        ],
+        "lowest_point_above_floor_m": 0.275,
+        "highest_point_m": 0.43,
+        "hole_centres_y_m": [
+          0.33,
+          0.33
+        ],
+        "weights_interpenetration_vertices": 0,
+        "min_gap_between_weights_m": 0.0078,
+        "min_gap_weights_to_frame_m": 0.1035,
+        "tie_loops": {
+          "triangles": 1080,
+          "min_vertex_distance_to_weights_m": 0.00201,
+          "vertices_inside_weights": 0
+        },
+        "warp_tie_alignment_m": {
+          "hole_y_minus_warp_bottom": 0.0,
+          "hole_z_to_warp_edge": 4e-05
+        }
+      },
+      "person_r002_at_weaver_origin": {
+        "facing": [
+          0.0,
+          0.0,
+          -1.0
+        ],
+        "min_distance_to_loom_m": 0.2478,
+        "person_vertices_inside_weights_or_cloth": 0
+      }
+    }
+  ],
+  "kit_unique_materials": 3,
+  "kit_unique_material_names": [
+    "LOOM_wood_cloth",
+    "LOOM_warp",
+    "LOOMWEIGHT_clay (reused unchanged from LOOMWEIGHT-001)"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "loom_atlas",
+      "width": 512,
+      "height": 512,
+      "format": "image/png",
+      "note": "base colour atlas shared by wood, rods, cut ends, cord and woven cloth (source/textures/loom_atlas.png)"
+    },
+    {
+      "name": "loom_warp",
+      "width": 128,
+      "height": 512,
+      "format": "image/png",
+      "note": "RGBA warp-thread card texture, alpha 0/1 (source/textures/loom_warp.png)"
+    },
+    {
+      "name": "loomweight_atlas",
+      "width": 512,
+      "height": 512,
+      "format": "image/png",
+      "note": "unchanged LOOMWEIGHT-001 r001 atlas, embedded with the reused weight mesh"
+    }
+  ],
+  "kit_totals": {
+    "triangles_all_models": 11212,
+    "glb_bytes_total": 1746868,
+    "note": "loom_weaving and loom_weaving_base_up are mutually exclusive states; one is used at a time"
+  },
+  "reference_ids": [
+    "S-CH19",
+    "S-KU22 (context, abstract-level in material-culture.md)",
+    "MC02 (comparator only, not copied)"
+  ],
+  "fixture_hashes": {
+    "source/inputs/loomweight.glb (copy of art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/models/loomweight.glb, branch art/loomweight-001-r001)": "5c13e7effeee7d9216d5155f426217870eb7685626d6758b09a7b96c9a9127d0",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/asset.json": "f7b53f4fcf11071247ffd3580596cccfcb9b4b774118025226e105c63c7ec34a",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c",
+    "art/briefs/economy-batch5/README.md": "fff3ca2311a39052437dc8805835ad05af2fe74b307785939204c6645c466c70",
+    "content/research/next-batch/material-culture.md": "36df2adc8c5ce0f6b980007252c6239a3f979c2eb2d6fa8d8e6b95bec0978636",
+    "content/research/next-batch/references/MC02-loom-reconstruction-quintana.jpg": "5c2e9573de564866efb33485f125d425c7a429c3567c79c46c4627c8953e8de8"
+  },
+  "parts_and_uncertainties": [
+    "Frame layout (two leaning posts, beam on top, heddle rod on brackets, shed rod): R, generic warp-weighted loom type; MC02 is a modern Bavarian museum reconstruction used only as a type comparator.",
+    "Lean 15 deg, height 1.9 m, width 1.5 m, depth 0.6 m: R/design (brief).",
+    "Cloth 0.9 m wide, tabby texture, undyed colour: R/design, not evidence of fibre, weave or colour.",
+    "Warp density: stylised (8 visible threads per bundle per layer); real warps are far denser.",
+    "18 weights in two staggered ranks, 0.105 m pitch: R/design (brief count; research elsewhere suggests 24 per household loom).",
+    "Base-down vs base-up rows: both offered; base-up follows the S-CH19 hypothesis from hole wear, base-down the museum convention.",
+    "Tie loops through the holes bear on the hole side nearest the upper end when hanging (R): in the base-up row that is the side towards the base, consistent with the reported wear in the lower part of the hole when the weight stands base-down.",
+    "Weaver position 0.7 m in front: R/design (brief); no posture or technique claimed."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "what": "LOOMWEIGHT-001 r001 models/loomweight.glb (this project's own earlier return, unchanged)",
+      "path": "source/inputs/loomweight.glb",
+      "licence": "Unselected original project work (same owner)"
+    }
+  ],
+  "deviations": [
+    "Three GLBs instead of the brief's two: the required loom_frame.glb and loom_weaving.glb (with row option node `weights_base_down`) plus loom_weaving_base_up.glb carrying the named option `weights_base_up`. Putting both rows in one file would overlap 36 weights at load (glTF core has no visibility flag); the manager may instead merge them and toggle the two row nodes at runtime.",
+    "Added per-row `tie_loops` meshes (1,080 triangles, cord loops through each hole) so the close-up contact reads; still inside the 2,500-triangle non-weight budget.",
+    "Added supplementary anchor `wall_contact`.",
+    "tools/inspect_asset.py was not run or edited (it does not know batch-5 IDs); independent measurements are in checks/."
+  ]
+}

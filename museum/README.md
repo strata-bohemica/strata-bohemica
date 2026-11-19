@@ -1,14 +1,14 @@
 # Museum (Godot 4.5.1, GL Compatibility)
 
-A digital open-air museum of Bohemian prehistory. M1: one homestead from before dawn to night.
+A digital open-air museum of Bohemian prehistory. M2: a village on uneven ground with four homesteads (grinding, cooking, weaving, woodworking) working from dawn to night.
 Everything the scene does is a pure function of time; the view only applies it.
 
 ```
-core/    day clock, craft timeline, schedule, schema validation   (no nodes, testable headless)
-data/    periods, crafts, homesteads, asset catalogue              (JSON, shared with the web page)
+core/    day clock, craft timeline, craft props, schedule, terrain, schema   (no nodes, testable headless)
+data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
-view/    thin Godot adapters (pose driver, homestead view)
-app/     the main scene
+view/    thin Godot adapters: pose driver, homestead view, terrain view, village view
+app/     the main scene and the loader that assembles the village
 ```
 
 Adding a craft or a homestead means adding JSON, not code. Models are referred to by asset ID, never by path.
@@ -16,9 +16,17 @@ Adding a craft or a homestead means adding JSON, not code. Models are referred t
 ## Run
 
 ```sh
-godot --path .                                   # keys: Space pause, 1/2/3 speed, L cutaway, Home reset, right-drag orbit
-checks/museum_village/run.sh                     # core, data, boundary and view checks (headless)
+godot --path .      # Space pause, Q/W/E speed, 0 overview, 1-4 homestead, Tab next, L cutaway, right-drag orbit, wheel zoom
+checks/museum_village/run.sh                     # core, data, terrain, boundary and view checks (headless)
 ```
+
+## The village
+
+The village layout and the ground are **F/R**: no house plan or terrain model of Březnice survives. `tools/organic_layout.py`
+chose the house positions on a fictional height field (seed 11); `tools/build_village.py` levels a platform under each house and
+work yard, routes the paths over the terrain and writes `data/villages/breznice*.json`.
+A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
+node during named clips, or resting where it is put down (`core/craft_props.gd`).
 
 ## Assets
 

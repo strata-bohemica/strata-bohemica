@@ -1,0 +1,806 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "KILN-001",
+  "revision": "r001",
+  "brief": "KILN-001 r001 fired-earth hearth/oven feature \u2014 DRAFT brief in content/research/next-batch/settlement-features.md section 6 (not a frozen pack), with section 3 per-candidate notes, WOOD-001 notes (firewood dressing) and content/research/next-batch/README.md; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md (kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural generator written for this job)",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' 3D-modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, EXACT boolean for the dome mouth, Workbench stills, re-import and BVH contact checks)",
+    "Khronos glTF Blender I/O bundled with Blender 5.2.3 (GLB export/import)",
+    "4.5.1-stable (official) (headless import + probe; GPU viewport captures with the Compatibility renderer over OpenGL on Apple M1 Pro)",
+    "Python 3 + numpy (independent GLB parser source/inspect_glb.py), Pillow (contact sheet)",
+    "macOS, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "base centre on the terrain line (y=0) for every model; fire models at their ember-bed centre; firewood at stack centre",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "physical_dimensions_note": "No inspected source measures a Breznice hearth/oven superstructure. The only E bound used is the excavated area 0.2-1.31 m2 of the 11 'O-pec' features (Z22 via settlement-features.md); the base patch (~1.19 x 1.19 m, ~1.1 m2) is a design value inside that range, not a measured object.",
+  "models": [
+    {
+      "file": "models/hearth_base.glb",
+      "role": "burnt-earth patch: shallow hollow (floor y=0.010) with a fire-reddened raised rim (crest ~0.064), closed solid with a hidden skirt to y=-0.03; the attested part of the feature. Carries all five hearth anchors.",
+      "sha256": "2e12bf68e61480642433a85b1d4c949f23b7207032adbb00fcef2cbcef631de2",
+      "bytes": 366588,
+      "triangles": 526,
+      "triangle_budget": 600,
+      "budget_ok": true,
+      "godot_imported_triangles": 526,
+      "vertices_exported": 313,
+      "materials": 1,
+      "material_names": [
+        "KILN_earth"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 1.19,
+        "height": 0.0955,
+        "depth": 1.1862,
+        "min": [
+          -0.578,
+          -0.03,
+          -0.6096
+        ],
+        "max": [
+          0.6119,
+          0.0655,
+          0.5766
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "HEARTH_BASE",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "fire_center": {
+          "parent": "HEARTH_BASE",
+          "translation": [
+            0.0,
+            0.01,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "firewood_spot": {
+          "parent": "HEARTH_BASE",
+          "translation": [
+            -1.0,
+            0.0,
+            0.3
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "yaw_deg_about_plusY": 90.0
+        },
+        "pot_rest": {
+          "parent": "HEARTH_BASE",
+          "translation": [
+            0.82,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "tend_origin": {
+          "parent": "HEARTH_BASE",
+          "translation": [
+            -0.3,
+            0.0,
+            0.78
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.9832,
+            0.0,
+            0.18256
+          ],
+          "yaw_deg_about_plusY": 158.963
+        }
+      },
+      "anchor_notes": {
+        "base_center": "origin on the terrain line; tops are placed here (identity)",
+        "fire_center": "(0, 0.010, 0) hollow-floor centre; place fire_embers.glb / fire_lit.glb here",
+        "pot_rest": "(0.82, 0, 0) POT-001 r001 origin beside the fire on the terrain; measured 0.125 m clear of the dome and 0.179 m of the ring",
+        "tend_origin": "(-0.30, 0, 0.78), yaw 158.96 deg: PERSON root, front-left of the dome mouth, facing fire_center (deviation from draft (0,0,-0.8), see CHANGELOG D1)",
+        "firewood_spot": "(-1.0, 0, 0.3), yaw 90 deg: firewood_stack origin (logs run along Z)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    },
+    {
+      "file": "models/hearth_open_top.glb",
+      "role": "open-hearth alternative top: loose ring of 9 stones + 3 clay lumps seated on the rim (R). Same anchors as the base.",
+      "sha256": "c13b6fe99d3921707dc4856dbad489f5118e84c7ace8690d7911324455467420",
+      "bytes": 373092,
+      "triangles": 270,
+      "triangle_budget": 600,
+      "budget_ok": true,
+      "godot_imported_triangles": 270,
+      "vertices_exported": 564,
+      "materials": 1,
+      "material_names": [
+        "KILN_earth"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.8588,
+        "height": 0.1196,
+        "depth": 0.8898,
+        "min": [
+          -0.422,
+          0.023,
+          -0.4334
+        ],
+        "max": [
+          0.4367,
+          0.1426,
+          0.4564
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "HEARTH_OPEN_TOP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "fire_center": {
+          "parent": "HEARTH_OPEN_TOP",
+          "translation": [
+            0.0,
+            0.01,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "firewood_spot": {
+          "parent": "HEARTH_OPEN_TOP",
+          "translation": [
+            -1.0,
+            0.0,
+            0.3
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "yaw_deg_about_plusY": 90.0
+        },
+        "pot_rest": {
+          "parent": "HEARTH_OPEN_TOP",
+          "translation": [
+            0.82,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "tend_origin": {
+          "parent": "HEARTH_OPEN_TOP",
+          "translation": [
+            -0.3,
+            0.0,
+            0.78
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.9832,
+            0.0,
+            0.18256
+          ],
+          "yaw_deg_about_plusY": 158.963
+        }
+      },
+      "anchor_notes": {
+        "base_center": "origin on the terrain line; tops are placed here (identity)",
+        "fire_center": "(0, 0.010, 0) hollow-floor centre; place fire_embers.glb / fire_lit.glb here",
+        "pot_rest": "(0.82, 0, 0) POT-001 r001 origin beside the fire on the terrain; measured 0.125 m clear of the dome and 0.179 m of the ring",
+        "tend_origin": "(-0.30, 0, 0.78), yaw 158.96 deg: PERSON root, front-left of the dome mouth, facing fire_center (deviation from draft (0,0,-0.8), see CHANGELOG D1)",
+        "firewood_spot": "(-1.0, 0, 0.3), yaw 90 deg: firewood_stack origin (logs run along Z)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    },
+    {
+      "file": "models/hearth_dome_top.glb",
+      "role": "low clay dome alternative top: 0.97 m wide, 0.61 m high, ~0.10 m wall, splayed front mouth on +Z (R). Dome centre 0.10 m behind base_center so the fire sits just behind the mouth. Same anchors as the base.",
+      "sha256": "86a69b024454f98a657cf498f79268555a010a1fefd3e804738398b2df8a3750",
+      "bytes": 369384,
+      "triangles": 548,
+      "triangle_budget": 600,
+      "budget_ok": true,
+      "godot_imported_triangles": 548,
+      "vertices_exported": 396,
+      "materials": 1,
+      "material_names": [
+        "KILN_earth"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.9702,
+        "height": 0.6198,
+        "depth": 0.9125,
+        "min": [
+          -0.4706,
+          -0.0118,
+          -0.5801
+        ],
+        "max": [
+          0.4995,
+          0.608,
+          0.3323
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "HEARTH_DOME_TOP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "fire_center": {
+          "parent": "HEARTH_DOME_TOP",
+          "translation": [
+            0.0,
+            0.01,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "firewood_spot": {
+          "parent": "HEARTH_DOME_TOP",
+          "translation": [
+            -1.0,
+            0.0,
+            0.3
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.70711,
+            0.0,
+            0.70711
+          ],
+          "yaw_deg_about_plusY": 90.0
+        },
+        "pot_rest": {
+          "parent": "HEARTH_DOME_TOP",
+          "translation": [
+            0.82,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        },
+        "tend_origin": {
+          "parent": "HEARTH_DOME_TOP",
+          "translation": [
+            -0.3,
+            0.0,
+            0.78
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.9832,
+            0.0,
+            0.18256
+          ],
+          "yaw_deg_about_plusY": 158.963
+        }
+      },
+      "anchor_notes": {
+        "base_center": "origin on the terrain line; tops are placed here (identity)",
+        "fire_center": "(0, 0.010, 0) hollow-floor centre; place fire_embers.glb / fire_lit.glb here",
+        "pot_rest": "(0.82, 0, 0) POT-001 r001 origin beside the fire on the terrain; measured 0.125 m clear of the dome and 0.179 m of the ring",
+        "tend_origin": "(-0.30, 0, 0.78), yaw 158.96 deg: PERSON root, front-left of the dome mouth, facing fire_center (deviation from draft (0,0,-0.8), see CHANGELOG D1)",
+        "firewood_spot": "(-1.0, 0, 0.3), yaw 90 deg: firewood_stack origin (logs run along Z)"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    },
+    {
+      "file": "models/fire_embers.glb",
+      "role": "embers state: glowing elliptical ember bed + four charred stubs with glowing ends; place at fire_center.",
+      "sha256": "c9dfda43f5390b5fb305fcf36ad167fa0cf2062000eeb3b21267fdb37b9a5a82",
+      "bytes": 359404,
+      "triangles": 102,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "godot_imported_triangles": 102,
+      "vertices_exported": 151,
+      "materials": 2,
+      "material_names": [
+        "KILN_earth",
+        "KILN_glow"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.4261,
+        "height": 0.0774,
+        "depth": 0.517,
+        "min": [
+          -0.2007,
+          -0.006,
+          -0.2294
+        ],
+        "max": [
+          0.2254,
+          0.0714,
+          0.2875
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "FIRE_EMBERS",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        }
+      },
+      "anchor_notes": {
+        "base_center": "model origin; place on the hearth anchor named in 'role'"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    },
+    {
+      "file": "models/fire_lit.glb",
+      "role": "lit state: ember bed, four logs in a star, four opaque emissive flame tongues (max 0.39 m above fire_center); place at fire_center. No particles, no light node.",
+      "sha256": "b84b389c7d9892fceeb69e89aeb3f1da228a062d42df79fb46e65a36053058bc",
+      "bytes": 369488,
+      "triangles": 294,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "godot_imported_triangles": 294,
+      "vertices_exported": 430,
+      "materials": 2,
+      "material_names": [
+        "KILN_earth",
+        "KILN_glow"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.5692,
+        "height": 0.396,
+        "depth": 0.5669,
+        "min": [
+          -0.2826,
+          -0.006,
+          -0.2817
+        ],
+        "max": [
+          0.2866,
+          0.39,
+          0.2852
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "FIRE_LIT",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        }
+      },
+      "anchor_notes": {
+        "base_center": "model origin; place on the hearth anchor named in 'role'"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    },
+    {
+      "file": "models/firewood_stack.glb",
+      "role": "optional WOOD-001 dressing folded into this kit: 9 round logs (0.70 m) in a 4-3-2 stack + 6-stick kindling bundle; place at firewood_spot.",
+      "sha256": "125cc0121e0cf5214de30af9ee2fb79da3260258db553605e1a4aec3b58c09f5",
+      "bytes": 367148,
+      "triangles": 208,
+      "triangle_budget": 400,
+      "budget_ok": true,
+      "godot_imported_triangles": 208,
+      "vertices_exported": 402,
+      "materials": 1,
+      "material_names": [
+        "KILN_earth"
+      ],
+      "textures": [
+        {
+          "name": "kiln_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2"
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.8644,
+        "height": 0.4636,
+        "depth": 0.4472,
+        "min": [
+          -0.3791,
+          -0.0013,
+          -0.2295
+        ],
+        "max": [
+          0.4852,
+          0.4623,
+          0.2177
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "FIREWOOD_STACK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ],
+          "yaw_deg_about_plusY": 0.0
+        }
+      },
+      "anchor_notes": {
+        "base_center": "model origin; place on the hearth anchor named in 'role'"
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_modes": [
+        "OPAQUE"
+      ],
+      "closed_outward_solid": true
+    }
+  ],
+  "states": {
+    "description": "Mutually exclusive in production: one base + exactly one top (open OR dome) + optional one fire (none = cold, embers, lit) + optional firewood. Tops and fires are placed only through hearth_base anchors.",
+    "godot_instantiated_totals": {
+      "dome_cold": {
+        "triangles": 1074,
+        "visible_meshes": 2,
+        "materials": [
+          "KILN_earth"
+        ]
+      },
+      "dome_cold_with_firewood": {
+        "triangles": 1282,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth"
+        ]
+      },
+      "dome_embers": {
+        "triangles": 1176,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "dome_embers_with_firewood": {
+        "triangles": 1384,
+        "visible_meshes": 4,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "dome_lit": {
+        "triangles": 1368,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "dome_lit_with_firewood": {
+        "triangles": 1576,
+        "visible_meshes": 4,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "open_cold": {
+        "triangles": 796,
+        "visible_meshes": 2,
+        "materials": [
+          "KILN_earth"
+        ]
+      },
+      "open_cold_with_firewood": {
+        "triangles": 1004,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth"
+        ]
+      },
+      "open_embers": {
+        "triangles": 898,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "open_embers_with_firewood": {
+        "triangles": 1106,
+        "visible_meshes": 4,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "open_lit": {
+        "triangles": 1090,
+        "visible_meshes": 3,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      },
+      "open_lit_with_firewood": {
+        "triangles": 1298,
+        "visible_meshes": 4,
+        "materials": [
+          "KILN_earth",
+          "KILN_glow"
+        ]
+      }
+    },
+    "all_six_models_instantiated_once": {
+      "triangles": 1948,
+      "visible_meshes": 6
+    },
+    "repeated_instance_demo": "previews/godot_repeat_demo_ortho25_grid.png: 6 hearth sets (mixed states, 4 with POT/firewood) + 2 HOUSE + 1 PERSON; scene totals in checks/godot_shot_log.json (scene_mesh_stats)"
+  },
+  "kit_unique_materials": 2,
+  "kit_unique_material_names": [
+    "KILN_earth",
+    "KILN_glow"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "kiln_atlas",
+      "width": 512,
+      "height": 512,
+      "format": "image/png",
+      "sha256": "c134db00b23e2994fd4345593d964371cd5a198366781315d5cce061cb4bddc2",
+      "note": "same embedded atlas in every GLB; procedural (numpy) original work, source/textures/kiln_atlas.png"
+    }
+  ],
+  "gltf_extensions_used": [],
+  "double_sided_inventory": [],
+  "alpha_mode_inventory": [
+    "OPAQUE"
+  ],
+  "emissive_note": "KILN_glow uses core emissiveTexture + emissiveFactor [1,1,1] (no KHR_materials_emissive_strength); Godot imports it as emission_enabled with energy 1.0.",
+  "measured_contact": {
+    "dome_mouth_clear_width_m": {
+      "y=0.08": 0.4125,
+      "y=0.15": 0.4075,
+      "y=0.25": 0.3725,
+      "y=0.32": 0.275
+    },
+    "dome_mouth_clear_height_m": 0.3725,
+    "ring_top_max_y_m": 0.1426,
+    "ring_outer_radius_m": 0.4569,
+    "fire_lit_footprint_radius_m": 0.2866,
+    "fire_embers_footprint_radius_m": 0.2962,
+    "fire_lit_to_dome_clearance_m": 0.0576,
+    "pot_to_dome_clearance_m": 0.1252,
+    "source": "checks/contact_check.json"
+  },
+  "reference_ids": [
+    "K22",
+    "Z22",
+    "C19",
+    "S22 (WOOD-001 charcoal taxa)",
+    "MC13 (viewed; not modelled)"
+  ],
+  "fixture_hashes": {
+    "PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12",
+    "PERSON-001/asset.json": "aff4c3322facfa24140687296723183e0b5b7ea106010e5b2cffb462a83a6388",
+    "POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "POT-001/asset.json": "2361eb662a3cddc040881d136bbc74c0b7561db234dc1d22730605143ba3f114",
+    "HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "HOUSE-001/asset.json": "f439769f9cc9f2565480f7ca9ead711c4adcf1602941a168e9812bc688637a4f"
+  },
+  "parts_and_uncertainties": [
+    "E (K22/Z22 via settlement-features.md): 11 Breznice features coded 'O-pec' = burnt surface or fill, excavated 0.2-1.31 m2, preserved depth 5-25 cm; classification partly disputed by a second analyst. Only the base patch footprint is bounded by this.",
+    "R: hollow depth (~0.054 m below the rim crest), rim height and the fire-reddened/ash colour zones of the base.",
+    "R: whether anything stood above the burnt patch. The open stone/clay ring and the low clay dome are two equally provisional alternatives; neither is verified for Breznice. The dome is NOT a pottery kiln claim and has no chimney or brick look.",
+    "R: dome size (0.97 x 0.91 x 0.61 m, width x depth x height above y0), wall thickness ~0.10 m, mouth shape/size and its +Z orientation; offset of the dome 0.10 m behind base_center.",
+    "R: fire geometry, log count/arrangement, flame form and colour; fuel species not represented (S22 charcoal list: oak dominant).",
+    "R: pot_rest beside (not on) the fire; no cooking method is implied.",
+    "R/F: firewood stack form, log length and placement (WOOD-001 notes: stack form/size/placement R).",
+    "Not modelled: clay weights as spit supports (C19 does not confirm such use) and the MC13 crescent fire-dog (regional, ritual-ambiguous comparator; HEARTH-001 held).",
+    "Optional person_tending.glb motion study was not produced (see CHANGELOG); only static PERSON r001 fixture placement on tend_origin is shown."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "consulted_resources": [
+    {
+      "id": "MC13",
+      "file": "content/research/next-batch/references/MC13-firedog-gnm.jpg",
+      "author": "Wolfgang Sauber",
+      "license": "CC BY-SA 3.0",
+      "use": "viewed only as a regional comparator; no pixels, shapes or measurements copied; not modelled"
+    }
+  ],
+  "deviations": [
+    "D1 tend_origin moved from the draft (0,0,-0.8) to (-0.30,0,0.78) facing fire_center (yaw 158.96 deg): with +Z front the dome mouth faces +Z, so a tender behind the oven could not reach it; front-left placement keeps the mouth visible from the (18,18,18) village camera.",
+    "D2 added anchor firewood_spot and model firewood_stack.glb (WOOD-001 optional dressing requested by the assignment).",
+    "D3 dome centre offset 0.10 m to -Z relative to base_center (fire stays at the shared fire_center) so lit/embers states show through the mouth at village scale; anchors stay identical for both tops.",
+    "D4 optional person_tending.glb motion study not delivered.",
+    "D5 base includes a 0.03 m skirt below y=0 (bounds min y=-0.03) to hide terrain unevenness; visible top surface is above y=0."
+  ]
+}

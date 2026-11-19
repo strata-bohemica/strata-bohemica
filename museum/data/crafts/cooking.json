@@ -1,0 +1,192 @@
+{
+  "id": "cooking",
+  "schema": 2,
+  "name": {
+    "cs": "Vaření",
+    "en": "Cooking"
+  },
+  "skin": "COOK-002/person_cooking",
+  "block": {
+    "enter": "cook_enter",
+    "cycle": [
+      [
+        "tend_fire",
+        null
+      ],
+      [
+        "stir_crouch",
+        null
+      ],
+      [
+        "tend_fire",
+        null
+      ],
+      [
+        "stir_crouch",
+        null
+      ],
+      [
+        "stir_crouch",
+        null
+      ]
+    ],
+    "exit": "cook_exit"
+  },
+  "props": [
+    {
+      "id": "hearth",
+      "asset": "KILN-001/hearth_base",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "hearth_top",
+      "asset": "KILN-001/hearth_open_top",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "embers",
+      "asset": "KILN-001/fire_embers",
+      "place": {
+        "on": "skin",
+        "node": "hearth_place"
+      }
+    },
+    {
+      "id": "firewood",
+      "asset": "KILN-001/firewood_stack",
+      "place": {
+        "on": "prop:hearth_top",
+        "node": "firewood_spot"
+      }
+    },
+    {
+      "id": "pot",
+      "asset": "POT-001/model",
+      "place": {
+        "on": "skin",
+        "node": "pot_place"
+      }
+    },
+    {
+      "id": "stew",
+      "asset": "MEAL-001/pot_fill_pulse_stew",
+      "place": {
+        "on": "skin",
+        "node": "pot_place"
+      }
+    },
+    {
+      "id": "kindling",
+      "asset": "COOK-002/fire_stick",
+      "place": {
+        "on": "skin",
+        "node": "kindling_place",
+        "instances": [
+          [
+            -0.0175,
+            0.0,
+            0.0,
+            0.0
+          ],
+          [
+            0.0175,
+            0.0,
+            0.02,
+            3.0
+          ],
+          [
+            0.0,
+            0.0222,
+            -0.015,
+            -2.0
+          ]
+        ]
+      }
+    },
+    {
+      "id": "ladle",
+      "asset": "MEAL-001/ladle",
+      "grip": "grip",
+      "rest": {
+        "on": "skin",
+        "node": "ladle_rest"
+      },
+      "held": [
+        {
+          "node": "ladle_hold",
+          "clip": "cook_enter",
+          "from": 1.6
+        },
+        {
+          "node": "ladle_hold",
+          "clip": "stir_crouch"
+        },
+        {
+          "node": "ladle_hold",
+          "clip": "tend_fire"
+        },
+        {
+          "node": "ladle_hold",
+          "clip": "cook_exit",
+          "to": 0.4001
+        }
+      ]
+    },
+    {
+      "id": "stick",
+      "asset": "COOK-002/fire_stick",
+      "grip": "grip",
+      "held": [
+        {
+          "node": "stick_hold",
+          "clip": "tend_fire",
+          "from": 0.96,
+          "to": 2.176
+        }
+      ]
+    }
+  ],
+  "lights": [
+    {
+      "on": "prop:embers",
+      "color": "#FF9A4A",
+      "energy": 2.4,
+      "range": 7.0,
+      "flicker": true
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici je 11 objektů označených jako pec (propálený povrch nebo výplň), vykopaná plocha 0,2–1,3 m², dochováno 5–25 cm. Na nádobách jsou stopy vaření.",
+          "en": "At Březnice 11 features are classed as ovens (burnt surface or fill), 0.2–1.3 m² excavated, 5–25 cm preserved. Vessels carry traces of cooking."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Nástavba ohniště (kamenný kruh, otevřený vrch), klek u ohně, naběračka, hrnec stojící v žhavých uhlících a přikládání podpalu jsou rekonstrukce.",
+      "en": "The hearth superstructure (stone ring, open top), the crouch at the fire, the ladle, the pot standing in the embers and feeding kindling are reconstructed."
+    },
+    "unknown": [
+      "whether these features were used for cooking, pottery firing or drying",
+      "roofing of the hearth",
+      "vessel shape and recipe"
+    ],
+    "sources": [
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, section 3.2 and p. 10",
+      "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "COOK-002 PROVENANCE.md",
+      "KILN-001 PROVENANCE.md",
+      "content/research/next-batch/settlement-features.md, KILN-001"
+    ]
+  }
+}

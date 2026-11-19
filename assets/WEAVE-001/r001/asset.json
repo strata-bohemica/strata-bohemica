@@ -1,0 +1,866 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "WEAVE-001",
+ "revision": "r001",
+ "brief": "WEAVE-001 r001 weaving at the upright loom (art/briefs/economy-batch8/WEAVE-001.md; batch README art/briefs/economy-batch8/README.md, a proposal, not a frozen pack). Shared rules: art/briefs/economy-batch4/README.md incl. character-motion rules; contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md, kit spec 2.0.",
+ "status": "draft",
+ "author": "GitHub Copilot autonomous modelling agent for the Bronze Bohemia project (procedural Blender generators written for this job)",
+ "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session); the underlying model identity cannot be independently verified from inside the session",
+ "tools": [
+  "Blender 5.2.3 LTS (bpy generators, re-import, reopen/re-export, Workbench stills)",
+  "Khronos glTF Blender I/O bundled with Blender 5.2.3 (GLB export/import)",
+  "4.5.1-stable (official) (headless import + state/pose probes; GPU viewport captures, gl_compatibility / opengl3 on Apple M1 Pro, 4.1 Metal - 90.5)",
+  "Python 3 + numpy (independent GLB parser, animation sampler and LBS skinning evaluator), Pillow, ffmpeg (sheets, GIF, MP4)"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "scale_basis": "project_fit",
+ "scale_note": "Character scale is PERSON-001 r002 (1.70 m, R). Prop sizes (bobbin 0.24 m, beater 0.72 m) and all postures/timings are R game-fit choices. Placement uses LOOM-001 r001 weaver_origin (0.70 m in front of the loom) and cloth_face.",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "placement": {
+  "character": "root := loom.global_transform * weaver_origin (LOOM-001 r001 node; 0.70 m in front, rotated 180 deg so the character faces the loom). No other offset.",
+  "cloth_face_plane_in_character_space": "0.778 m in front of the character root (glTF z = +0.778), normal towards the character",
+  "props": "prop_root.global = hold_node.global * inverse(prop.grip.local); bobbin hold switches L/R at weave_pass u = 0.50 and 0.90 (both holds coincide there); beater only during weave_beat",
+  "godot_import_settings": "person_weaving.glb.import _subresources: animations weave_pass and weave_beat settings/loop_mode=1 (LINEAR); nodes PATH:AnimationPlayer optimizer/enabled=false (recommended, configuration B). checks/godot_person_weaving.glb.import.txt",
+  "game_sequencing": "weave_enter -> (weave_pass | weave_beat | weave_shed_change)* in any order (all start/end on READY) -> weave_exit; time follows the simulation clock"
+ },
+ "models": [
+  {
+   "file": "models/person_weaving.glb",
+   "role": "motion study: unchanged PERSON-001 r002 body/rig/skin/palette + five new in-place weaving clips + three hand hold nodes",
+   "triangles": 2052,
+   "triangles_per_material": {
+    "body": 1016,
+    "garment": 1036
+   },
+   "triangle_budget": 2500,
+   "budget_basis": "character: unchanged PERSON-001 r002 mesh (2,052); same 2,500 ceiling WORK-001 used",
+   "budget_ok": true,
+   "materials": 2,
+   "material_names": [
+    "body",
+    "garment"
+   ],
+   "textures": [
+    {
+     "name": "person_palette",
+     "width": 256,
+     "height": 256,
+     "format": "image/png",
+     "embedded": true,
+     "bytes": 1818
+    }
+   ],
+   "visible_meshes": 1,
+   "file_bytes": 438044,
+   "sha256": "eaf8f475fb1822befa5059e4420c843876892954626dc8fd1911ccc46abb44a7",
+   "export_bounds_m": {
+    "width": 0.60454,
+    "height": 1.7,
+    "depth": 0.4,
+    "min": [
+     -0.30227,
+     0.0,
+     -0.2
+    ],
+    "max": [
+     0.30227,
+     1.7,
+     0.2
+    ]
+   },
+   "root_transform": "identity (no TRS stored on the scene root ['PERSON_rig'])",
+   "anchors": {
+    "bobbin_hold_L": {
+     "parent": "hand.L",
+     "translation": [
+      -0.00822,
+      0.09738,
+      -0.08008
+     ],
+     "rotation_xyzw": [
+      0.76235,
+      0.13732,
+      -0.62845,
+      0.07088
+     ],
+     "note": "NEW, child of joint hand.L: world pose of weft_bobbin `grip` while the LEFT hand holds it (weave_pass u in [0, 0.50) and [0.90, 1.0)); weft_bobbin root = bobbin_hold_L * inverse(grip)"
+    },
+    "beater_hold": {
+     "parent": "hand.R",
+     "translation": [
+      0.02167,
+      0.088,
+      -0.00382
+     ],
+     "rotation_xyzw": [
+      0.36605,
+      -0.6036,
+      0.25981,
+      0.65892
+     ],
+     "note": "NEW, child of joint hand.R: world pose of sword_beater `grip` during weave_beat (whole loop); sword_beater root = beater_hold * inverse(grip)"
+    },
+    "bobbin_hold_R": {
+     "parent": "hand.R",
+     "translation": [
+      0.00822,
+      0.09738,
+      -0.08008
+     ],
+     "rotation_xyzw": [
+      0.76235,
+      -0.13732,
+      0.62845,
+      0.07088
+     ],
+     "note": "NEW, child of joint hand.R: world pose of weft_bobbin `grip` while the RIGHT hand holds it (weave_pass u in [0.50, 0.90)); at the two hand-overs (u=0.50 and 0.90) both holds coincide within 1e-6 m"
+    },
+    "carry_anchor": {
+     "parent": "hand.R",
+     "translation": [
+      0.2235,
+      -0.15274,
+      -0.06773
+     ],
+     "rotation_xyzw": [
+      0.04663,
+      0.08431,
+      -0.05528,
+      0.99381
+     ],
+     "note": "unchanged PERSON-001 r002 node (child of hand.R); not used by the weaving clips"
+    }
+   },
+   "animations": [
+    {
+     "name": "weave_enter",
+     "duration_s": 1.2,
+     "keys": 37,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "none (one-shot)",
+     "godot_loop_mode": "LOOP_NONE",
+     "first_pose": "PERSON-001 r002 idle t=0 (seam vs fixture clip_idle(0): {'max_bone_rotation_diff_deg': 2e-06, 'max_bone_head_diff_m': 0.0})",
+     "last_pose": "READY: trunk leant ~27 deg towards the loom, hands 8.8 cm in front of the cloth at the fell zone (left hand in the bobbin grip, right hand in the beater grip)",
+     "behaviour": "R: feet stay planted on the idle footprints; trunk leans forward and both arms come up from the idle hang onto the READY grips",
+     "godot_import_B": {
+      "loop_mode": "LOOP_NONE",
+      "keys_per_track": [
+       37,
+       37
+      ]
+     },
+     "first_vs_last_key_max_rot_deg": 97.00001,
+     "contact": {
+      "min_sole_vertex_y_m": -1e-05,
+      "max_foot_vertex_displacement_m": 5e-06,
+      "hand_centroid_to_cloth_face_plane_m": {
+       "L": {
+        "min_m": 0.0999,
+        "max_m": 0.6919
+       },
+       "R": {
+        "min_m": 0.1131,
+        "max_m": 0.6746
+       }
+      },
+      "godot_evaluated": {
+       "min_shoe_y_m": 0.0,
+       "max_foot_slip_m": 0.0,
+       "hand_L_centroid_plane_range_m": [
+        0.0999,
+        0.6919
+       ],
+       "hand_R_centroid_plane_range_m": [
+        0.1131,
+        0.6746
+       ]
+      }
+     }
+    },
+    {
+     "name": "weave_pass",
+     "duration_s": 3.0,
+     "keys": 91,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "seamless linear loop (last key = first key)",
+     "godot_loop_mode": "LOOP_LINEAR (import option; glTF has no loop flag)",
+     "first_pose": "READY",
+     "last_pose": "READY (identical)",
+     "behaviour": "R: left hand takes the bobbin to the left selvedge, inserts it in the shed 11 cm below the fell (u 0.16-0.25), pushes it to the middle (0.25-0.48); hand-over inside the shed (0.48-0.52); right hand draws it to the right selvedge (0.52-0.74) and out (0.74-0.80), carries it back in front of the cloth (0.80-0.88), hand-over 2 to the left hand (0.88-0.92), both back to READY",
+     "prop": "weft_bobbin: bobbin_hold_L for u in [0, 0.50) and [0.90, 1.0); bobbin_hold_R for u in [0.50, 0.90)",
+     "godot_import_B": {
+      "loop_mode": "LOOP_LINEAR",
+      "keys_per_track": [
+       91,
+       91
+      ]
+     },
+     "first_vs_last_key_max_rot_deg": 0.0,
+     "contact": {
+      "min_sole_vertex_y_m": -3e-05,
+      "max_foot_vertex_displacement_m": 2.7e-05,
+      "hand_centroid_to_cloth_face_plane_m": {
+       "L": {
+        "min_m": 0.0171,
+        "max_m": 0.123
+       },
+       "R": {
+        "min_m": 0.0169,
+        "max_m": 0.1248
+       }
+      },
+      "pass_windows": {
+       "L_holding_in_shed": {
+        "window_u": [
+         0.25,
+         0.5
+        ],
+        "max_abs_distance_m": 0.0259,
+        "mean_abs_distance_m": 0.0254,
+        "samples": 91
+       },
+       "handover_1_both_in_shed": {
+        "L": {
+         "window_u": [
+          0.48,
+          0.52
+         ],
+         "max_abs_distance_m": 0.0256,
+         "mean_abs_distance_m": 0.0249,
+         "samples": 15
+        },
+        "R": {
+         "window_u": [
+          0.48,
+          0.52
+         ],
+         "max_abs_distance_m": 0.0256,
+         "mean_abs_distance_m": 0.0241,
+         "samples": 15
+        }
+       },
+       "R_holding_in_shed": {
+        "window_u": [
+         0.5,
+         0.74
+        ],
+        "max_abs_distance_m": 0.0262,
+        "mean_abs_distance_m": 0.0254,
+        "samples": 87
+       },
+       "bobbin_grip_in_shed": {
+        "window_u": [
+         0.25,
+         0.74
+        ],
+        "max_abs_distance_m": 0.0143,
+        "mean_abs_distance_m": 0.0135,
+        "samples": 177
+       }
+      },
+      "held_prop_vs_warp": {
+       "max_intrusion_through_front_layer_m": 0.0,
+       "max_intrusion_through_back_layer_m": 0.0,
+       "min_clearance_below_fell_m": 0.0937
+      },
+      "godot_evaluated": {
+       "min_shoe_y_m": 0.0,
+       "max_foot_slip_m": 0.0,
+       "hand_L_centroid_plane_range_m": [
+        0.0171,
+        0.1223
+       ],
+       "hand_R_centroid_plane_range_m": [
+        0.0169,
+        0.1248
+       ],
+       "pass_hand_L_in_shed_max_abs_m": 0.0255,
+       "pass_hand_R_in_shed_max_abs_m": 0.0255,
+       "pass_bobbin_hold_in_shed_max_abs_m": 0.0135
+      }
+     }
+    },
+    {
+     "name": "weave_beat",
+     "duration_s": 2.0,
+     "keys": 61,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "seamless linear loop (last key = first key)",
+     "godot_loop_mode": "LOOP_LINEAR (import option)",
+     "first_pose": "READY",
+     "last_pose": "READY (identical)",
+     "behaviour": "R: sword beater (right hand on the grip, left fist on the blade 0.36 m along) inserted into the shed (u 0-0.14), two upward beats to 6 mm below the fell (tops at u 0.27 and 0.55), withdrawn to READY (0.72-0.86)",
+     "prop": "sword_beater: beater_hold for the whole loop",
+     "godot_import_B": {
+      "loop_mode": "LOOP_LINEAR",
+      "keys_per_track": [
+       61,
+       61
+      ]
+     },
+     "first_vs_last_key_max_rot_deg": 0.0,
+     "contact": {
+      "min_sole_vertex_y_m": -1e-05,
+      "max_foot_vertex_displacement_m": 7e-06,
+      "hand_centroid_to_cloth_face_plane_m": {
+       "L": {
+        "min_m": 0.0271,
+        "max_m": 0.1131
+       },
+       "R": {
+        "min_m": 0.0271,
+        "max_m": 0.1132
+       }
+      },
+      "beat_windows": {
+       "L_in_shed": {
+        "window_u": [
+         0.14,
+         0.72
+        ],
+        "max_abs_distance_m": 0.0275,
+        "mean_abs_distance_m": 0.0271,
+        "samples": 139
+       },
+       "R_in_shed": {
+        "window_u": [
+         0.14,
+         0.72
+        ],
+        "max_abs_distance_m": 0.0275,
+        "mean_abs_distance_m": 0.0271,
+        "samples": 139
+       },
+       "beater_grip_in_shed": {
+        "window_u": [
+         0.14,
+         0.72
+        ],
+        "max_abs_distance_m": 0.0022,
+        "mean_abs_distance_m": 0.0019,
+        "samples": 139
+       }
+      },
+      "held_prop_vs_warp": {
+       "max_intrusion_through_front_layer_m": 0.0061,
+       "max_intrusion_through_back_layer_m": 0.0084,
+       "min_clearance_below_fell_m": 0.006,
+       "blade_only_max_intrusion_through_front_layer_m": 0.0,
+       "blade_only_max_intrusion_through_back_layer_m": 0.0,
+       "note": "whole-prop values include the 12-16 mm radius grip/knob, which sits in the right fist inside the warp width"
+      },
+      "godot_evaluated": {
+       "min_shoe_y_m": 0.0,
+       "max_foot_slip_m": 1e-06,
+       "hand_L_centroid_plane_range_m": [
+        0.0271,
+        0.1131
+       ],
+       "hand_R_centroid_plane_range_m": [
+        0.0271,
+        0.1132
+       ],
+       "beat_hand_L_in_shed_max_abs_m": 0.0272,
+       "beat_hand_R_in_shed_max_abs_m": 0.0272,
+       "beat_beater_hold_in_shed_max_abs_m": 0.0019
+      }
+     }
+    },
+    {
+     "name": "weave_shed_change",
+     "duration_s": 2.0,
+     "keys": 61,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "none (one-shot, start and end on READY)",
+     "godot_loop_mode": "LOOP_NONE",
+     "first_pose": "READY",
+     "last_pose": "READY (identical)",
+     "behaviour": "R: both hands move down onto the heddle rod (x = +-0.30 m), close (u 0.28-0.34), tug the rod 10 mm forward and 12 mm up (0.38-0.62), set it back and release (0.62-0.78), return to READY. LOOM-001 r001's heddle rod is part of the static frame mesh, so the rod itself does not move (see deviations)",
+     "prop": "none",
+     "godot_import_B": {
+      "loop_mode": "LOOP_NONE",
+      "keys_per_track": [
+       61,
+       61
+      ]
+     },
+     "first_vs_last_key_max_rot_deg": 1e-05,
+     "contact": {
+      "min_sole_vertex_y_m": -4e-05,
+      "max_foot_vertex_displacement_m": 3.8e-05,
+      "hand_centroid_to_cloth_face_plane_m": {
+       "L": {
+        "min_m": 0.0999,
+        "max_m": 0.2421
+       },
+       "R": {
+        "min_m": 0.1131,
+        "max_m": 0.2421
+       }
+      },
+      "hands_vs_heddle_rod": {
+       "window_u": [
+        0.34,
+        0.72
+       ],
+       "L_min_m": -0.0126,
+       "R_min_m": -0.0126,
+       "L_max_of_min_m": -0.0061,
+       "R_max_of_min_m": -0.0061,
+       "note": "minimum signed distance of each hand's vertices to the rod surface per sample (negative = fingers wrapped into the rod); max_of_min shows the hand never leaves the rod"
+      },
+      "godot_evaluated": {
+       "min_shoe_y_m": 0.0,
+       "max_foot_slip_m": 0.0,
+       "hand_L_centroid_plane_range_m": [
+        0.0999,
+        0.2421
+       ],
+       "hand_R_centroid_plane_range_m": [
+        0.1131,
+        0.2421
+       ]
+      }
+     }
+    },
+    {
+     "name": "weave_exit",
+     "duration_s": 1.2,
+     "keys": 37,
+     "fps": 30,
+     "interpolation": "LINEAR",
+     "loop": "none (one-shot)",
+     "godot_loop_mode": "LOOP_NONE",
+     "first_pose": "READY",
+     "last_pose": "PERSON-001 r002 idle t=0 (seam {'max_bone_rotation_diff_deg': 2e-06, 'max_bone_head_diff_m': 0.0})",
+     "behaviour": "R: weave_enter in reverse time",
+     "godot_import_B": {
+      "loop_mode": "LOOP_NONE",
+      "keys_per_track": [
+       37,
+       37
+      ]
+     },
+     "first_vs_last_key_max_rot_deg": 97.00001,
+     "contact": {
+      "min_sole_vertex_y_m": -1e-05,
+      "max_foot_vertex_displacement_m": 5e-06,
+      "hand_centroid_to_cloth_face_plane_m": {
+       "L": {
+        "min_m": 0.0999,
+        "max_m": 0.6919
+       },
+       "R": {
+        "min_m": 0.1131,
+        "max_m": 0.6746
+       }
+      },
+      "godot_evaluated": {
+       "min_shoe_y_m": 0.0,
+       "max_foot_slip_m": 0.0,
+       "hand_L_centroid_plane_range_m": [
+        0.0999,
+        0.6919
+       ],
+       "hand_R_centroid_plane_range_m": [
+        0.1131,
+        0.6746
+       ]
+      }
+     }
+    }
+   ],
+   "double_sided_exceptions": [],
+   "alpha_modes": {
+    "body": "absent (= OPAQUE)",
+    "garment": "absent (= OPAQUE)"
+   },
+   "double_sided": {
+    "body": "absent (= false)",
+    "garment": "absent (= false)"
+   },
+   "extensions_used": [],
+   "blender_reimport_triangles": 2052,
+   "godot_triangles": 2052,
+   "godot_materials": {
+    "body": {
+     "cull_back": true,
+     "transparency": 0,
+     "alpha_scissor": false,
+     "texture_size": [
+      256,
+      256
+     ]
+    },
+    "garment": {
+     "cull_back": true,
+     "transparency": 0,
+     "alpha_scissor": false,
+     "texture_size": [
+      256,
+      256
+     ]
+    }
+   },
+   "reopen_reexport_identical": true,
+   "export_bounds_note": "rest/bind pose from the POSITION accessor (identical to PERSON-001 r002); animated poses differ",
+   "skeleton": {
+    "joints": 23,
+    "max_influences_per_vertex": 3,
+    "identical_to_PERSON-001_r002": {
+     "primitive_count": [
+      2,
+      2
+     ],
+     "vertex_streams_indices_materials_identical": true,
+     "inverse_bind_matrices_identical": true,
+     "joint_order_identical": true,
+     "extra_children_added": {
+      "hand.L": [
+       "bobbin_hold_L"
+      ],
+      "hand.R": [
+       "beater_hold",
+       "bobbin_hold_R"
+      ]
+     },
+     "joint_rest_trs_and_hierarchy_identical": true,
+     "palette_image_identical": true,
+     "palette_sha256": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+     "samplers_identical": true,
+     "carry_anchor_identical": true,
+     "root_node": [
+      "PERSON_rig",
+      "PERSON_rig"
+     ],
+     "fixture_sha256": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+     "fixture_clips": [
+      "carry_walk",
+      "idle",
+      "rest",
+      "walk",
+      "work"
+     ]
+    }
+   },
+   "root_motion": "none: PERSON_rig root identity and never animated; only the pelvis joint translates (local), all other joints rotate"
+  },
+  {
+   "file": "models/weft_bobbin.glb",
+   "role": "hand prop: wooden stick 0.24 m with a spindle-shaped package of undyed weft (stick-bobbin used as a simple shuttle)",
+   "triangles": 278,
+   "triangles_per_material": {
+    "WEAVE_props": 278
+   },
+   "triangle_budget": 400,
+   "budget_basis": "self-set hand-prop ceiling (brief gives none)",
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "WEAVE_props"
+   ],
+   "textures": [
+    {
+     "name": "weave_props_atlas",
+     "width": 128,
+     "height": 128,
+     "format": "image/png",
+     "embedded": true,
+     "bytes": 24227
+    }
+   ],
+   "visible_meshes": 1,
+   "file_bytes": 33560,
+   "sha256": "500b930b6d253146ae4e34c003d4fe7ce49eea7b330e3d2231c490c55d9a51cb",
+   "export_bounds_m": {
+    "width": 0.24,
+    "height": 0.032,
+    "depth": 0.03043,
+    "min": [
+     -0.12,
+     0.0,
+     -0.01522
+    ],
+    "max": [
+     0.12,
+     0.032,
+     0.01522
+    ]
+   },
+   "root_transform": "identity (no TRS stored on the scene root ['WEFT_BOBBIN'])",
+   "anchors": {
+    "grip": {
+     "parent": "WEFT_BOBBIN",
+     "translation": [
+      0.0,
+      0.016,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "prop grip point (identity rotation; prop +X = long axis). Hold-node attachment: prop_root = hold * inverse(grip)"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": {
+    "WEAVE_props": "absent (= OPAQUE)"
+   },
+   "double_sided": {
+    "WEAVE_props": "absent (= false)"
+   },
+   "extensions_used": [],
+   "blender_reimport_triangles": 278,
+   "godot_triangles": 278,
+   "godot_materials": {
+    "WEAVE_props": {
+     "cull_back": true,
+     "transparency": 0,
+     "alpha_scissor": false,
+     "texture_size": [
+      128,
+      128
+     ]
+    }
+   },
+   "reopen_reexport_identical": true
+  },
+  {
+   "file": "models/sword_beater.glb",
+   "role": "hand prop: wooden sword beater 0.72 m (blade 0.58 m x 0.052 m, thin beating edge, round grip with knob)",
+   "triangles": 272,
+   "triangles_per_material": {
+    "WEAVE_props": 272
+   },
+   "triangle_budget": 400,
+   "budget_basis": "self-set hand-prop ceiling (brief gives none)",
+   "budget_ok": true,
+   "materials": 1,
+   "material_names": [
+    "WEAVE_props"
+   ],
+   "textures": [
+    {
+     "name": "weave_props_atlas",
+     "width": 128,
+     "height": 128,
+     "format": "image/png",
+     "embedded": true,
+     "bytes": 24227
+    }
+   ],
+   "visible_meshes": 1,
+   "file_bytes": 33928,
+   "sha256": "1ddc0893caee3f733c52178d08c2d55e92b1f9505aa65a9c6605ec2172459f09",
+   "export_bounds_m": {
+    "width": 0.724,
+    "height": 0.02956,
+    "depth": 0.052,
+    "min": [
+     -0.362,
+     0.0,
+     -0.026
+    ],
+    "max": [
+     0.362,
+     0.02956,
+     0.026
+    ]
+   },
+   "root_transform": "identity (no TRS stored on the scene root ['SWORD_BEATER'])",
+   "anchors": {
+    "grip": {
+     "parent": "SWORD_BEATER",
+     "translation": [
+      0.283,
+      0.01478,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "note": "prop grip point (identity rotation; prop +X = long axis). Hold-node attachment: prop_root = hold * inverse(grip)"
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": {
+    "WEAVE_props": "absent (= OPAQUE)"
+   },
+   "double_sided": {
+    "WEAVE_props": "absent (= false)"
+   },
+   "extensions_used": [],
+   "blender_reimport_triangles": 272,
+   "godot_triangles": 272,
+   "godot_materials": {
+    "WEAVE_props": {
+     "cull_back": true,
+     "transparency": 0,
+     "alpha_scissor": false,
+     "texture_size": [
+      128,
+      128
+     ]
+    }
+   },
+   "reopen_reexport_identical": true
+  }
+ ],
+ "kit_unique_materials": 3,
+ "kit_unique_material_names": [
+  "WEAVE_props",
+  "body",
+  "garment"
+ ],
+ "kit_unique_textures": [
+  {
+   "name": "person_palette",
+   "width": 256,
+   "height": 256
+  },
+  {
+   "name": "weave_props_atlas",
+   "width": 128,
+   "height": 128
+  }
+ ],
+ "kit_triangles_all_models": 2602,
+ "instantiated_demo": {
+  "weaver_with_bobbin_godot_gpu": {
+   "visible_objects": 8,
+   "primitives": 2180,
+   "draw_calls": 8,
+   "note": "person_weaving + weft_bobbin only, ground hidden (Godot RENDER_INFO, visible pass)"
+  },
+  "weaver_with_beater_godot_gpu": {
+   "visible_objects": 9,
+   "primitives": 2324,
+   "draw_calls": 9
+  }
+ },
+ "anchors_used_from_LOOM-001": {
+  "weaver_origin": {
+   "origin": [
+    0.0,
+    0.0,
+    0.7
+   ],
+   "rotation_xyzw": [
+    0.0,
+    1.0,
+    0.0,
+    0.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "cloth_face": {
+   "origin": [
+    0.0,
+    1.4625,
+    -0.07794
+   ],
+   "rotation_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "scale": [
+    1.0,
+    1.0,
+    1.0
+   ]
+  },
+  "source": "source/inputs/loom_weaving.glb (LOOM-001 r001, unchanged copy)"
+ },
+ "contact_requirement": {
+  "brief": "Hands within 30 mm of the cloth_face plane during pass/beat",
+  "measure": "hand = centroid of the skinned vertices bound mainly to hand.X/fingers.X (114 per hand); also the held prop grip point. Windows: pass = bobbin inside the shed (left hand u 0.25-0.50, right hand 0.50-0.74, both at the hand-over 0.48-0.52); beat = beater inside the shed u 0.14-0.72",
+  "numpy_lbs_max_abs_m": {
+   "pass_L": 0.0259,
+   "pass_R": 0.0262,
+   "pass_bobbin_grip": 0.0143,
+   "beat_L": 0.0275,
+   "beat_R": 0.0275,
+   "beat_beater_grip": 0.0022
+  },
+  "godot_evaluated_max_abs_m": {
+   "pass_hand_L_in_shed_max_abs_m": 0.0255,
+   "pass_hand_R_in_shed_max_abs_m": 0.0255,
+   "pass_bobbin_hold_in_shed_max_abs_m": 0.0135,
+   "beat_hand_L_in_shed_max_abs_m": 0.0272,
+   "beat_hand_R_in_shed_max_abs_m": 0.0272,
+   "beat_beater_hold_in_shed_max_abs_m": 0.0019
+  }
+ },
+ "reference_ids": [
+  "S-CH19 (Chvojka, Menšík, Šálková & Kuna 2019, Archeologické rozhledy 71: 267–308) as summarised in content/research/economy/crafts-exchange.md §2.3 (branch docs/economy-research): weight function unresolved, classic warp-weighted suspension 'rather unlikely', base-up tying hypothesised (pp. 291–293); mass deposits are waste, not looms in situ (pp. 270, 301). Not re-read for this job.",
+  "content/research/economy/crafts-exchange.md §3 table row 'Textiles' (fibre prep -> spin -> weave R; loom with weights, function debated E; weaving indoors/winter R) and §F7 'Spinning and weaving' (upright frame with a row of clay weights; R parameters)",
+  "content/research/economy/subsistence.md F10 (wool -> textile chain; sheep presence unverified locally)",
+  "content/research/next-batch/material-culture.md §5 'LOOM-001 — upright warp-weighted loom' (R throughout; no in-situ loom at Březnice) and §4 table row LOOM-001",
+  "MC02 (Wolfgang Sauber, 'Museum Quintana - Webstuhl 1.jpg', Wikimedia Commons, CC BY-SA 3.0; content/research/next-batch/references/MC02-loom-reconstruction-quintana.jpg): modern museum reconstruction, viewed for general readability only (it shows a weft ball and a long loose stick); no pixels copied, no measurement taken",
+  "LOOM-001 r001 return (branch art/loom-001-r001, commit 54f0601): weaver_origin, cloth_face, heddle/shed rod and warp-layer geometry (source/gen_report.json key_positions_gltf, warp_back, warp_front)"
+ ],
+ "fixture_hashes": {
+  "fixture_PERSON-001-r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "fixture_PERSON-001-r002/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+  "fixture_PERSON-001-r002/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+  "fixture_PERSON-001-r002/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+  "inputs/loom_weaving.glb": "cf379b6c21a9a67d7d6dc5d3fff370b68de1613f9a0aa9a4e82c96449659fd7e",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+  "art/handoffs/bronze-bohemia-opus-v2/fixtures/PERSON-001/model.glb": "a72da131e98c532bf0db6934bd70568fc5d1083d9c3fcd8d11f4083f52cccc12"
+ },
+ "parts_and_uncertainties": [
+  "Weaving technique (two-hand bobbin pass, sword-beater beat-up towards the fell, heddle-rod tug) is R: no Březnice evidence for loom type, weaving posture or tools; S-CH19 leaves loom function unresolved",
+  "Weft bobbin (stick with wound weft) and sword beater are generic R tool forms; no regional find is modelled; wood/wool colours are design choices",
+  "READY posture leans ~27 deg forward because LOOM-001 weaver_origin is 0.70 m in front of the loom (cloth plane 0.778 m from the root); a closer weaver_origin (~0.45-0.5 m) would allow an upright stance",
+  "The heddle rod in LOOM-001 r001 is static frame geometry: weave_shed_change shows the grasp/tug but the rod and warp sheds cannot change state",
+  "Hands enter the shed through the alpha-mask warp cards (fingers pass between card threads); the cards are thin planes, so no thread deformation is shown"
+ ],
+ "own_work_license": "Unselected original project work; manager/owner decision",
+ "incorporated_resources": [
+  {
+   "resource": "PERSON-001 r002 (art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/)",
+   "use": "mesh, rig, skin, palette, carry_anchor byte-identical; r002 pose solver executed unchanged",
+   "licence": "private project material"
+  },
+  {
+   "resource": "LOOM-001 r001 loom_weaving.glb (branch art/loom-001-r001)",
+   "use": "read-only placement/contact reference and preview context; not exported in any WEAVE GLB",
+   "licence": "private project material"
+  },
+  {
+   "resource": "POT-001, HOUSE-001 opus-v2 fixtures",
+   "use": "village-angle context in Godot previews only",
+   "licence": "private project material"
+  }
+ ],
+ "deviations": [
+  "Two extra clips beyond the brief's three: weave_enter / weave_exit (idle t=0 <-> READY), so every clip starts/ends on the r002 idle pose or on the shared READY pose (WORK-001 precedent: grind_enter/grind/grind_exit).",
+  "weave_shed_change is a 2.0 s one-shot that starts and ends on READY (the brief gives only the duration); the rod tug is 10 mm forward / 12 mm up because the LOOM-001 rod is static.",
+  "The bobbin is held by two hold nodes (bobbin_hold_L, bobbin_hold_R) with documented switch times, because a left->right pass needs a hand-over; the beater uses beater_hold. The brief named only `grip` on the beater; the bobbin also has `grip`.",
+  "The five PERSON r002 clips are not carried in person_weaving.glb (like WORK-001 and the batch-8 siblings); the game keeps using PERSON r002 for idle/walk.",
+  "tools/inspect_asset.py was not run or edited (it does not know batch-8 IDs); independent measurements are in checks/."
+ ]
+}

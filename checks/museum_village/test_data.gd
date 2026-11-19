@@ -7,61 +7,85 @@ const Catalogue = preload("res://museum/assets/catalogue.gd")
 func _init() -> void:
 	var t := T.new()
 	var all := Fixture.load_all()
-	var homestead: Dictionary = all.homestead
-	var craft: Dictionary = all.craft
+	var scenes := {}      # ref -> instantiated node, kept for node lookups
+	for house_id in all.occupied:
+		var info: Dictionary = all.occupied[house_id]
+		var homestead: Dictionary = info.homestead
+		var craft: Dictionary = info.craft
+		var tag := "hs-%02d (%s)" % [house_id, craft.id]
+		t.ok(not Fixture.house_record(all.village, house_id).is_empty(), "%s: the village has a house %d" % [tag, house_id])
 
-	var refs: Array[String] = [homestead.house.model, homestead.bed.model, homestead.walker, homestead.sleeper, craft.skin]
-	for key in craft.props:
-		refs.append(craft.props[key])
-	for ref in refs:
-		t.ok(Catalogue.has_model(ref), "catalogue knows %s" % ref)
-		var path := Catalogue.path(ref)
-		t.ok(ResourceLoader.exists(path), "%s imports (%s)" % [ref, path])
+		var refs: Array[String] = [homestead.house.model, homestead.bed.model, homestead.walker, homestead.sleeper, craft.skin]
+		for prop in craft.props:
+			refs.append(prop.asset)
+		for ref in refs:
+			t.ok(Catalogue.has_model(ref), "%s: catalogue knows %s" % [tag, ref])
+			t.ok(ResourceLoader.exists(Catalogue.path(ref)), "%s: %s imports" % [tag, ref])
+			if not scenes.has(ref) and ResourceLoader.exists(Catalogue.path(ref)):
+				scenes[ref] = (load(Catalogue.path(ref)) as PackedScene).instantiate()
 
-	# clips used by the data exist on the right rigs
-	for clip in [craft.block.enter, craft.block.loop, craft.block.exit]:
-		t.ok(Catalogue.clip_lengths(craft.skin).has(clip), "craft skin has clip %s" % clip)
-	for clip in ["idle", "walk", "rest"]:
-		t.ok(Catalogue.clip_lengths(homestead.walker).has(clip), "walker has clip %s" % clip)
-	for clip in ["lie_down", "sleep_lie", "get_up"]:
-		t.ok(Catalogue.clip_lengths(homestead.sleeper).has(clip), "sleeper has clip %s" % clip)
+		# clips on the right rigs
+		var clips: Array = [craft.block.get("enter", ""), craft.block.get("exit", "")]
+		for e in craft.block.cycle:
+			clips.append(e[0])
+		for clip in clips:
+			if clip != "":
+				t.ok(Catalogue.clip_lengths(craft.skin).has(clip), "%s: skin has clip %s" % [tag, clip])
+		for clip in ["idle", "walk", "rest"]:
+			t.ok(Catalogue.clip_lengths(homestead.walker).has(clip), "%s: walker has clip %s" % [tag, clip])
+		for clip in ["lie_down", "sleep_lie", "get_up"]:
+			t.ok(Catalogue.clip_lengths(homestead.sleeper).has(clip), "%s: sleeper has clip %s" % [tag, clip])
+		for name_ in ["entry", "door_inside"]:
+			t.ok(not Catalogue.anchor(homestead.house.model, name_).is_empty(), "%s: house anchor %s present" % [tag, name_])
+		t.ok(scenes[homestead.bed.model].find_child("sleeper_origin", true, false) != null, "%s: bed has sleeper_origin" % tag)
 
-	# anchors the schedule depends on come from the house's own asset.json
-	for name_ in ["entry", "door_inside"]:
-		t.ok(not Catalogue.anchor(homestead.house.model, name_).is_empty(), "house anchor %s present" % name_)
+		# props: every node the view will bind to exists
+		var prop_ids := {}
+		var skin_scene: Node = scenes[craft.skin]
+		for prop in craft.props:
+			var node: Node = scenes[prop.asset]
+			if prop.has("place"):
+				var place: Dictionary = prop.place
+				if place.has("station"):
+					t.ok(node.find_child(str(place.station), true, false) != null, "%s: %s has station node %s" % [tag, prop.id, place.station])
+				else:
+					var host: Node = skin_scene if place.on == "skin" else scenes.get(_asset_of(craft, str(place.on).trim_prefix("prop:")), null)
+					t.ok(prop_ids.has(str(place.on).trim_prefix("prop:")) or place.on == "skin", "%s: %s is placed on something defined earlier" % [tag, prop.id])
+					t.ok(host != null and host.find_child(str(place.node), true, false) != null, "%s: %s anchor node %s exists on %s" % [tag, prop.id, place.node, place.on])
+			if prop.has("held"):
+				t.ok(prop.has("grip") and node.find_child(str(prop.grip), true, false) != null, "%s: %s has its grip node" % [tag, prop.id])
+				for rule in prop.held:
+					t.ok(skin_scene.find_child(str(rule.node), true, false) != null, "%s: %s hand node %s exists on the skin" % [tag, prop.id, rule.node])
+					t.ok(Catalogue.clip_lengths(craft.skin).has(rule.clip), "%s: %s rule clip %s exists" % [tag, prop.id, rule.clip])
+				if prop.has("rest"):
+					var host2: Node = skin_scene if prop.rest.on == "skin" else scenes.get(_asset_of(craft, str(prop.rest.on).trim_prefix("prop:")), null)
+					t.ok(host2 != null and host2.find_child(str(prop.rest.node), true, false) != null, "%s: %s rest node %s exists" % [tag, prop.id, prop.rest.node])
+			prop_ids[prop.id] = true
+		for l in craft.get("lights", []):
+			t.ok(prop_ids.has(str(l.on).trim_prefix("prop:")), "%s: light sits on a defined prop" % tag)
 
-	# nodes the view binds to exist in the imported scenes
-	var needs := {
-		craft.skin: ["handstone_hold"], craft.props.quern: ["worker_origin", "handstone_rest", "grain_patch_spot"],
-		craft.props.stone: ["handstone_grip"], homestead.bed.model: ["sleeper_origin"]}
-	for ref in needs:
-		var scene := load(Catalogue.path(ref)) as PackedScene
-		t.ok(scene != null, "can load %s" % ref)
-		if scene == null:
-			continue
-		var node := scene.instantiate()
-		for n in needs[ref]:
-			t.ok(node.find_child(n, true, false) != null, "%s has node %s" % [ref, n])
-		node.free()
-	for ref in [craft.skin, homestead.walker, homestead.sleeper]:
-		var scene := load(Catalogue.path(ref)) as PackedScene
-		var node := scene.instantiate()
-		t.ok(node.find_children("*", "AnimationPlayer", true, false).size() >= 1, "%s has an AnimationPlayer" % ref)
-		t.ok(node.find_children("*", "Skeleton3D", true, false).size() >= 1, "%s has a Skeleton3D" % ref)
-		node.free()
+		# the animation optimizer must be off for animated models (it drops keys)
+		for ref in [craft.skin, homestead.walker, homestead.sleeper]:
+			var import_text := FileAccess.get_file_as_string(Catalogue.path(ref) + ".import")
+			t.ok(import_text.contains("optimizer/enabled\": false"), "%s: %s imports with the animation optimizer off" % [tag, ref])
+			t.ok(import_text.contains("gltf/naming_version=2"), "%s: %s keeps nodes under bones (naming_version=2)" % [tag, ref])
 
-	# the animation optimizer must be off for animated models (it drops keys)
-	for ref in [craft.skin, homestead.walker, homestead.sleeper]:
-		var import_text := FileAccess.get_file_as_string(Catalogue.path(ref) + ".import")
-		t.ok(import_text.contains("optimizer/enabled\": false"), "%s imports with the animation optimizer off" % ref)
+		# every craft card carries an evidence class, sources and what is unknown
+		t.ok(str(craft.card.status) in ["E", "R", "F"], "%s: card has a status" % tag)
+		t.ok(craft.card.sources.size() >= 2, "%s: card cites at least two sources" % tag)
+		t.ok(craft.card.unknown.size() >= 1, "%s: card says what is unknown" % tag)
+		t.ok(craft.card.reconstruction.has("cs") and craft.card.reconstruction.has("en"), "%s: card separates the reconstruction (both languages)" % tag)
+		for ev in craft.card.evidence:
+			t.ok(ev["class"] in ["E", "R", "F"], "%s: evidence entry has a class" % tag)
+			t.ok(ev.text.has("cs") and ev.text.has("en"), "%s: evidence entry has both languages" % tag)
+		t.ok(homestead.name.has("cs") and homestead.name.has("en"), "%s: homestead has names" % tag)
 
-	# every craft card carries an evidence class, sources and what is unknown
-	t.ok(str(craft.card.status) in ["E", "R", "F"], "card has a status")
-	t.ok(craft.card.sources.size() >= 1, "card cites at least one source")
-	t.ok(craft.card.unknown.size() >= 1, "card says what is unknown")
-	t.ok(craft.card.has("reconstruction"), "card separates the reconstruction from the evidence")
-	for ev in craft.card.evidence:
-		t.ok(ev["class"] in ["E", "R", "F"], "evidence entry has a class")
-		t.ok(ev.text.has("cs") and ev.text.has("en"), "evidence entry has both languages")
-
+	for ref in scenes:
+		scenes[ref].free()
 	quit(t.finish("data"))
+
+func _asset_of(craft: Dictionary, prop_id: String) -> String:
+	for p in craft.props:
+		if p.id == prop_id:
+			return p.asset
+	return ""

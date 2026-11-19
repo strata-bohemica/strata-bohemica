@@ -1,0 +1,646 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "BRONZE-001",
+  "revision": "r001",
+  "brief": "BRONZE-001 r001 hafted bronze axe and knife with chop/fell motion (art/briefs/economy-batch4/BRONZE-001.md + README.md; base draft content/research/next-batch/material-culture.md §5; contract art/handoffs/bronze-bohemia-opus-v2 COMMON.md/RETURN.md, kit spec 2.0)",
+  "status": "draft",
+  "author": "GitHub Copilot autonomous modelling agent (procedural Blender generators written for this job); character body/rig/skin/palette copied unchanged from the accepted PERSON-001 r002 return",
+  "actual_agent_model": "Dispatched as the 'Opus 5.5' modeller slot (GitHub Copilot agent session, resumed after a runtime restart); the underlying model identity cannot be independently verified from inside the session",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generators, Workbench stills, re-import/reopen/contact checks)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export/import)",
+    "Godot Engine 4.5.1.stable.official.f62fdbde1 (headless import checks; GPU viewport captures, Compatibility renderer, OpenGL 4.1 Metal-90.5 on Apple M1 Pro)",
+    "Python 3.9.6 + numpy 1.26.4 (independent GLB parser) + Pillow 11.3.0 (sheet composition)",
+    "ffmpeg 9.0.2 (MP4/GIF)",
+    "macOS 26.7.1, Apple M1 Pro"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "models": [
+    {
+      "file": "models/axe_winged_hafted.glb",
+      "role": "winged bronze axe head on a knee-shaped wooden haft (R), lying on its side on the floor; haft along Z, head and edge towards +X; edge line parallel to the haft (axe, not adze)",
+      "triangles": 228,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "BRONZE001_bronze": 96,
+        "BRONZE001_wood": 132
+      },
+      "materials": 2,
+      "material_names": [
+        "BRONZE001_bronze",
+        "BRONZE001_wood"
+      ],
+      "textures": [
+        {
+          "name": "bronze001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.2127,
+        "height": 0.049,
+        "depth": 0.6647,
+        "min": [
+          -0.1064,
+          0.0,
+          -0.3323
+        ],
+        "max": [
+          0.1064,
+          0.049,
+          0.3323
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "AXE",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "edge_contact": {
+          "parent": "AXE",
+          "translation": [
+            0.10636,
+            0.0245,
+            0.30583
+          ],
+          "rotation_xyzw": [
+            0.49705,
+            0.50293,
+            0.49705,
+            0.50293
+          ]
+        },
+        "grip": {
+          "parent": "AXE",
+          "translation": [
+            -0.09164,
+            0.01864,
+            -0.19214
+          ],
+          "rotation_xyzw": [
+            0.49705,
+            0.50293,
+            0.49705,
+            0.50293
+          ]
+        },
+        "grip_secondary": {
+          "parent": "AXE",
+          "translation": [
+            -0.09164,
+            0.01759,
+            -0.28213
+          ],
+          "rotation_xyzw": [
+            0.49705,
+            0.50293,
+            0.49705,
+            0.50293
+          ]
+        }
+      },
+      "anchor_notes": {
+        "grip": "dominant (right) hand grip centre on the haft, 0.14 m from the butt; local +Y = haft axis towards the head (glTF), local +Z = edge-facing direction; attach as axe_root = person.axe_hold * inverse(grip)",
+        "grip_secondary": "second hand, 0.05 m from the butt, same orientation as grip",
+        "edge_contact": "midpoint of the convex cutting edge, same orientation as grip",
+        "base_center": "floor origin for the resting state"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/axe_head_scrap.glb",
+      "role": "broken winged head (wing/butt part + separated blade fragment) for the scrap/recycling state; bronze only, lying flat",
+      "triangles": 128,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "BRONZE001_bronze": 128
+      },
+      "materials": 1,
+      "material_names": [
+        "BRONZE001_bronze"
+      ],
+      "textures": [
+        {
+          "name": "bronze001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.2075,
+        "height": 0.043,
+        "depth": 0.1799,
+        "min": [
+          -0.1038,
+          0.0,
+          -0.0899
+        ],
+        "max": [
+          0.1038,
+          0.043,
+          0.0899
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "AXE_HEAD_SCRAP",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/knife_bronze.glb",
+      "role": "small curved bronze knife with ring-ended tang and organic (wood/bone R) handle plates, lying flat; blade towards +Z, edge towards +X",
+      "triangles": 214,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "BRONZE001_bronze": 172,
+        "BRONZE001_wood": 42
+      },
+      "materials": 2,
+      "material_names": [
+        "BRONZE001_bronze",
+        "BRONZE001_wood"
+      ],
+      "textures": [
+        {
+          "name": "bronze001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.0248,
+        "height": 0.017,
+        "depth": 0.2072,
+        "min": [
+          -0.0124,
+          0.0,
+          -0.1036
+        ],
+        "max": [
+          0.0124,
+          0.017,
+          0.1036
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "KNIFE",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "edge_contact": {
+          "parent": "KNIFE",
+          "translation": [
+            0.01049,
+            0.0085,
+            0.0486
+          ],
+          "rotation_xyzw": [
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        "grip": {
+          "parent": "KNIFE",
+          "translation": [
+            0.0016,
+            0.0085,
+            -0.0454
+          ],
+          "rotation_xyzw": [
+            0.5,
+            0.5,
+            0.5,
+            0.5
+          ]
+        }
+      },
+      "anchor_notes": {
+        "grip": "handle centre; local +Y = handle axis towards the blade, local +Z = edge-facing direction",
+        "edge_contact": "edge point at mid-blade",
+        "base_center": "floor origin"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/chopping_block.glb",
+      "role": "log stump (top 0.42 m) with two split pieces, one round billet and a few chips",
+      "triangles": 168,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "triangles_by_material": {
+        "BRONZE001_wood": 168
+      },
+      "materials": 1,
+      "material_names": [
+        "BRONZE001_wood"
+      ],
+      "textures": [
+        {
+          "name": "bronze001_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 1.1599,
+        "height": 0.42,
+        "depth": 0.824,
+        "min": [
+          -0.5249,
+          0.0,
+          -0.2246
+        ],
+        "max": [
+          0.635,
+          0.42,
+          0.5994
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "base_center": {
+          "parent": "CHOPPING_BLOCK",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "chop_target": {
+          "parent": "CHOPPING_BLOCK",
+          "translation": [
+            0.0,
+            0.42,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        "worker_origin": {
+          "parent": "CHOPPING_BLOCK",
+          "translation": [
+            0.03,
+            0.0,
+            -0.78
+          ],
+          "rotation_xyzw": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        }
+      },
+      "anchor_notes": {
+        "base_center": "floor origin = stump base centre",
+        "chop_target": "(0, 0.42, 0) stump top centre",
+        "worker_origin": "(0.03, 0, -0.78): person_chopping root during chop clips (worker faces +Z towards the block)"
+      },
+      "animations": [],
+      "double_sided_exceptions": []
+    },
+    {
+      "file": "models/person_chopping.glb",
+      "role": "PERSON-001 r002 body/rig/skin/palette byte-identical, with six new in-place clips and one new node axe_hold under hand.R",
+      "triangles": 2052,
+      "triangle_budget": null,
+      "budget_ok": null,
+      "triangles_by_material": {
+        "body": 1016,
+        "garment": 1036
+      },
+      "materials": 2,
+      "material_names": [
+        "body",
+        "garment"
+      ],
+      "textures": [
+        {
+          "name": "person_palette",
+          "width": 256,
+          "height": 256,
+          "format": "image/png",
+          "embedded": true
+        }
+      ],
+      "visible_meshes": 1,
+      "export_bounds_m": {
+        "width": 0.6045,
+        "height": 1.7,
+        "depth": 0.4,
+        "min": [
+          -0.3023,
+          0.0,
+          -0.2
+        ],
+        "max": [
+          0.3023,
+          1.7,
+          0.2
+        ]
+      },
+      "root_transform": "identity",
+      "anchors": {
+        "axe_hold": {
+          "parent": "hand.R",
+          "translation": [
+            0.03496,
+            0.06,
+            -0.00616
+          ],
+          "rotation_xyzw": [
+            -0.70442,
+            0.06163,
+            0.06163,
+            0.70442
+          ]
+        },
+        "carry_anchor": {
+          "parent": "hand.R",
+          "translation": [
+            0.2235,
+            -0.15274,
+            -0.06773
+          ],
+          "rotation_xyzw": [
+            0.04663,
+            0.08431,
+            -0.05528,
+            0.99381
+          ]
+        }
+      },
+      "anchor_notes": {
+        "axe_hold": "NEW, child of hand.R: pose of the axe grip node; axe_root = axe_hold.global * inverse(axe.grip.local)",
+        "carry_anchor": "unchanged from r002"
+      },
+      "animations": [
+        {
+          "name": "chop_enter",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "first_last_pose": "first = PERSON r002 idle t=0 (axe in right hand); last = chop t=0",
+          "in_place": true,
+          "root_node_animated": false
+        },
+        {
+          "name": "chop",
+          "duration_s": 1.5,
+          "keys_per_track": 46,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "first_last_pose": "first = last (periodic); t=0 axe raised over the head",
+          "in_place": true,
+          "root_node_animated": false
+        },
+        {
+          "name": "chop_exit",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "first_last_pose": "first = chop t=0; last = r002 idle t=0",
+          "in_place": true,
+          "root_node_animated": false
+        },
+        {
+          "name": "fell_enter",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "first_last_pose": "first = r002 idle t=0; last = fell t=0",
+          "in_place": true,
+          "root_node_animated": false
+        },
+        {
+          "name": "fell",
+          "duration_s": 1.6,
+          "keys_per_track": 49,
+          "interpolation": "LINEAR",
+          "intended_loop": "loop (Godot LOOP_LINEAR via import option)",
+          "first_last_pose": "first = last (periodic); t=0 axe drawn back over the right shoulder",
+          "in_place": true,
+          "root_node_animated": false
+        },
+        {
+          "name": "fell_exit",
+          "duration_s": 1.0,
+          "keys_per_track": 31,
+          "interpolation": "LINEAR",
+          "intended_loop": "once (LOOP_NONE)",
+          "first_last_pose": "first = fell t=0; last = r002 idle t=0",
+          "in_place": true,
+          "root_node_animated": false
+        }
+      ],
+      "double_sided_exceptions": []
+    }
+  ],
+  "kit_unique_materials": 2,
+  "kit_unique_material_names": [
+    "BRONZE001_bronze",
+    "BRONZE001_wood"
+  ],
+  "kit_unique_textures": [
+    {
+      "name": "bronze001_atlas",
+      "width": 512,
+      "height": 512,
+      "embedded_in": [
+        "axe_winged_hafted.glb",
+        "axe_head_scrap.glb",
+        "knife_bronze.glb",
+        "chopping_block.glb"
+      ],
+      "note": "one shared image; each prop GLB embeds its own identical copy so it stays self-contained"
+    }
+  ],
+  "character_materials_textures": {
+    "materials": [
+      "body",
+      "garment"
+    ],
+    "textures": [
+      {
+        "name": "person_palette",
+        "width": 256,
+        "height": 256
+      }
+    ],
+    "note": "inherited unchanged from PERSON-001 r002; not counted in the kit budget"
+  },
+  "budget_summary": {
+    "per_model_limit_triangles": 300,
+    "props_triangles": {
+      "axe_winged_hafted.glb": 228,
+      "axe_head_scrap.glb": 128,
+      "knife_bronze.glb": 214,
+      "chopping_block.glb": 168
+    },
+    "all_props_together_triangles": 738,
+    "chop_demo_instantiated": {
+      "triangles": 2448,
+      "visible_meshes": 3,
+      "materials": 4,
+      "textures": 2,
+      "textures_note": "unique images: bronze001_atlas 512^2 + person_palette 256^2; the atlas is embedded in both prop GLBs and is loaded once per GLB unless the engine deduplicates it",
+      "note": "person_chopping + axe_winged_hafted + chopping_block; axe_head_scrap replaces the axe in the scrap state (mutually exclusive)"
+    },
+    "kit_materials_limit": 2,
+    "kit_materials": 2,
+    "kit_atlas_limit": "1 x 512^2",
+    "kit_atlas": "1 x 512^2"
+  },
+  "exaggeration": {
+    "factor": 1.0,
+    "head_length_m": 0.164,
+    "edge_width_m": 0.053,
+    "haft_total_m": 0.6647,
+    "note": "no deliberate readability exaggeration; draft R/design values were head 0.16 m and edge 0.05 m (x1.03 / x1.06 from the convex-edge bulge); total axe 0.665 m within the brief's 0.6-0.7 m; knife 0.207 m (draft 0.21 m)"
+  },
+  "motion": {
+    "rig": "PERSON-001 r002, 23 bones, bind pose/inverse binds byte-identical",
+    "fps_keys": 30,
+    "import_settings_godot": "person_chopping.glb: animations/chop and animations/fell settings/loop_mode=1 (LINEAR); nodes/PATH:AnimationPlayer optimizer/enabled=false (recommended; the default optimizer drops keys: see checks/godot_check_default_optimizer.json). Transition clips stay LOOP_NONE.",
+    "contact": {
+      "chop_lowest_bronze_vs_block_top_m": -0.004,
+      "chop_bronze_into_block_max_m": 0.004,
+      "chop_haft_to_block_min_m": ">= 0.08 (resolution limit of the check)",
+      "fell_bronze_into_oak_bark_max_m": 0.004,
+      "fell_haft_to_oak_bark_min_m": 0.07858,
+      "fell_cut_height_m": 0.855,
+      "godot_chop_lowest_bronze_vs_block_top_m": -0.004,
+      "placement_chop": "block root = person root * inverse(block.worker_origin)",
+      "placement_fell_oak_winter_in_worker_frame_m": [
+        0.36145,
+        0.0,
+        0.84197
+      ],
+      "note": "the fell target is any trunk of radius ~0.2 m at 0.85 m; for VEG-001 oak_winter/summer place the oak root at worker_root * (0.36145, 0, 0.84197) (measured on the actual mesh)"
+    }
+  },
+  "reference_ids": [
+    "WM01 (art/handoffs/bronze-bohemia-v1/references)",
+    "MC08",
+    "MC09 (knife only; its flanged axe deliberately not used)",
+    "MC12",
+    "S-ZEN (melted bronze droplet)",
+    "crafts-exchange.md §2.6"
+  ],
+  "fixture_hashes": {
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_001.blend": "b2138f9094984ac041984d50f4694a1bc296a3f81847eb5d06f8d5cb492e7963",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/gen_person.py": "61b95fd808f6ed48f1beab43299ac00b6d71985a3bb9bf1496cabef5a1d32928",
+    "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/source/person_palette.png": "9f2b4fc161398577c6912e2f282bac259df02745cba90f0fd156350c6c4c22fe",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/POT-001/model.glb": "9ea20160b718577e8091c6e91134b32bbd9c6e2379285f50371b756fe35120a0",
+    "art/handoffs/bronze-bohemia-opus-v2/fixtures/HOUSE-001/model.glb": "14be154b4c679230e9f8c997b8a249d04aad6646846425f4a08a44e795ccc88a",
+    "art/returns/bronze-bohemia-opus-v2/VEG-001/r001/models/oak_winter.glb": "27c9a3455552b764890b3cd1724167370e2c60d754249c2cdcde5a6133424672",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/firewood_stack.glb": "125cc0121e0cf5214de30af9ee2fb79da3260258db553605e1a4aec3b58c09f5",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_base.glb": "2e12bf68e61480642433a85b1d4c949f23b7207032adbb00fcef2cbcef631de2",
+    "art/returns/bronze-bohemia-v3/KILN-001/r001/models/hearth_dome_top.glb": "86a69b024454f98a657cf498f79268555a010a1fefd3e804738398b2df8a3750"
+  },
+  "parts_and_uncertainties": [
+    "R: winged head type (switchable to socketed in source/bronze_common.py HEAD_TYPE), head/edge dimensions, lashing over the wings, knee-shaped haft form, wood and length",
+    "R: knife blade curve, ring-ended tang, handle material and plates",
+    "R: chopping block size/height, split pieces and chips",
+    "R: chop and fell technique, stance, timing, two-handed hammer grip; F: who chops where",
+    "E only regional: winged/socketed axe heads (WM01, MC12), Milavce knives (MC08); no bronze tool verified at Březnice (one melted droplet, S-ZEN)",
+    "Scrap state: generic break, no claim about recycling practice beyond crafts-exchange.md §2.6 (R synthesis)"
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [
+    {
+      "resource": "PERSON-001 r002 (body, rig, skin, palette, pose solver)",
+      "source": "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002 (private project material)",
+      "licence": "project-internal; no public sublicence",
+      "modification": "r002 actions removed in a copy; six new clips keyed; axe_hold node added; mesh/skin/palette unchanged"
+    }
+  ],
+  "deviations": [
+    "Draft (material-culture.md §5) asked for axe_hafted.glb/knife.glb, a separate axe_head mesh and two knife-handle options; this job follows the batch-4 brief names and <=300-tri budget: the head is a separate material primitive (BRONZE001_bronze) inside the AXE mesh, the knife has one handle option (ring-ended tang with handle plates)",
+    "Extra anchors beyond the brief: grip_secondary and edge_contact (axe), edge_contact (knife), base_center (all props), chop_target and worker_origin (block)",
+    "Extra clips beyond chop/fell: chop_enter/chop_exit and fell_enter/fell_exit (1.0 s each) so every sequence starts and ends on the r002 idle pose",
+    "Fell clip is 1.6 s (brief gives ~1.5 s only for chop)",
+    "No fell anchor is exported on the person (the contract forbids extra non-hand nodes); the oak placement is documented here and in checks/contact_check.json",
+    "Bronze surface: one 'working bronze' material; the scrap uses a greener patina cell of the same atlas (no third material)"
+  ]
+}

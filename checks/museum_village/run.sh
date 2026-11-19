@@ -15,7 +15,7 @@ export XDG_DATA_HOME="$state/data" XDG_CONFIG_HOME="$state/config" XDG_CACHE_HOM
 cd "$here"
 "$godot" --headless --path . --import --quit >/dev/null 2>&1
 tests=("$@")
-if (( ${#tests[@]} == 0 )); then tests=(core data boundary view); fi
+if (( ${#tests[@]} == 0 )); then tests=(core data terrain boundary view); fi
 status=0
 for name in "${tests[@]}"; do
   set +e
