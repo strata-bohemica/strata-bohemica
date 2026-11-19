@@ -1,0 +1,104 @@
+{
+  "example_only": false,
+  "spec_version": "1.0",
+  "asset_id": "PERSON-001",
+  "revision": "r002",
+  "status": "draft",
+  "brief": "PERSON-001 r002 — reliable character export (jobs/PERSON-001.md, prompts/PERSON-001.md, handoff pack bronze-bohemia-opus-v2, batch 2.0, metadata spec 1.0). Correct character culling and minor sole clipping; preserve rig.",
+  "author": "GitHub Copilot (autonomous AI modelling agent dispatched as the requested Opus 5.5 modeller; model identity as stated by the dispatching harness) for the Bronze Bohemia project; edits to the r001 procedural generator",
+  "tools": [
+    "Blender 5.2.3 LTS (bpy generator, Workbench preview renders, re-import check)",
+    "Khronos glTF Blender I/O v5.2.41 (GLB export)",
+    "Godot Engine 4.5.1.stable.official.f62fdbde1 (headless import/state checks; GPU viewport captures with gl_compatibility / opengl3 on Apple M1 Pro, OpenGL 4.1 Metal - 90.5)",
+    "Python 3.9.6 + NumPy 1.26.4 (independent GLB parser/skinning evaluator), Pillow 11.3.0, matplotlib 3.9.4",
+    "FFmpeg 9.0.2 (MP4 of Godot frames)"
+  ],
+  "model": "model.glb",
+  "model_sha256": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "origin": "floor point between the feet (0,0,0); root node PERSON_rig has identity transform (no TRS stored), scale 1; unchanged from r001",
+  "export_bounds_m": {"width": 0.6045, "height": 1.7, "depth": 0.4},
+  "export_bounds_note": "Rest (bind) pose geometry from the GLB POSITION accessors: x -0.3023..0.3023, y 0.000..1.700, z -0.200..0.200; identical to r001 (mesh buffers byte-identical). Animated poses differ; the pot is not exported.",
+  "physical_dimensions_m": {"width": null, "height": null, "depth": null},
+  "scale_basis": "project_fit",
+  "scale_note": "1.70 m height and all proportions are game-design (R) choices, not population measurements.",
+  "historical_status": "provisional_reconstruction",
+  "triangles": 2052,
+  "triangles_per_material": {"body": 1016, "garment": 1036},
+  "vertices_exported": 1443,
+  "materials": 2,
+  "material_details": [
+    {"name": "body", "use": "skin, hair", "base_color_texture": "person_palette (sRGB)", "metallic": 0.0, "roughness": 0.85, "doubleSided": "absent (= false)", "alphaMode": "absent (= OPAQUE)", "godot_import": "CULL_BACK, transparency disabled"},
+    {"name": "garment", "use": "tunic, sleeves, belt, leg wraps, shoes", "base_color_texture": "person_palette (sRGB)", "metallic": 0.0, "roughness": 0.9, "doubleSided": "absent (= false)", "alphaMode": "absent (= OPAQUE)", "godot_import": "CULL_BACK, transparency disabled"}
+  ],
+  "gltf_extensions": [],
+  "textures": [
+    {"name": "person_palette", "file": "source/person_palette.png (also embedded in model.glb)", "width": 256, "height": 256, "format": "PNG RGB", "role": "base colour only, sRGB", "sampler": "NEAREST mag / NEAREST_MIPMAP_NEAREST min", "non_colour_maps": "none", "note": "byte-identical to the r001 palette (SHA-256 9f2b4fc1…c22fe); 4x4 cells of 64 px"}
+  ],
+  "skeleton": {
+    "deforming_bones": 23,
+    "total_bones": 23,
+    "max_weights_per_vertex": 3,
+    "bones": ["pelvis", "spine", "chest", "neck", "head", "clavicle.L", "upper_arm.L", "forearm.L", "hand.L", "fingers.L", "clavicle.R", "upper_arm.R", "forearm.R", "hand.R", "fingers.R", "thigh.L", "shin.L", "foot.L", "toe.L", "thigh.R", "shin.R", "foot.R", "toe.R"],
+    "side_convention": ".L = character's left = +X; .R = character's right = -X",
+    "rest_pose": "A-pose, arms 10 degrees from vertical",
+    "parity_with_r001": "node names/bind TRS/hierarchy, skin joint order, inverse bind matrices, POSITION/NORMAL/TEXCOORD_0/JOINTS_0/WEIGHTS_0/index buffers and embedded image are byte-identical to the r001 fixture (checks/r001_r002_parity.json)"
+  },
+  "anchors": {
+    "carry_anchor": {
+      "parent_bone": "hand.R (character's right hand)",
+      "godot_import": "Skeleton3D/hand_R (BoneAttachment3D, bone hand.R)/carry_anchor (Node3D)",
+      "local_translation_m_gltf": [0.2235, -0.1527, -0.0677],
+      "local_rotation_xyzw_gltf": [0.0466, 0.0843, -0.0553, 0.9938],
+      "local_rotation_deg_godot": [5.855, 9.397, -5.886],
+      "unchanged_from_r001": true,
+      "pot_adapter_rule": "POT-001 transform under carry_anchor = translation(0, 0.25, 0) x inverse(pot carry_grip local transform) = translation(0, 0.02, 0) for the r001 pot (carry_grip at y 0.23). The 0.25 m lift is a GAME-FIT adapter choice, not a carrying-technique measurement.",
+      "measured_contact": "carry_walk, 32 samples, actual POT-001 r001 GLB: pot base 8.0 mm above the highest hair vertex under the base; right-hand fingertips 1.3 mm into the pot wall (3 vertices, visible light contact); pot tilt <= 1.3 deg; anchor/pot base at about (±0.002, 1.666, 0.028) m",
+      "valid_in_clips": ["carry_walk"],
+      "note": "In other clips the anchor follows the right hand and is not a meaningful pot position; the adapter must hide or detach the pot outside carry_walk."
+    }
+  },
+  "animations": [
+    {"name": "idle", "duration_s": 2.0, "fps": 30, "keys": 61, "intended_loop": "LOOP_LINEAR (frame 60 = frame 0)", "first_last_pose": "first/last key differ <= 0.055 deg (float export)", "changed_in_r002": false, "behaviour": "quiet standing, two breaths, slight weight sway and head turn"},
+    {"name": "walk", "duration_s": 1.0, "fps": 30, "keys": 31, "intended_loop": "LOOP_LINEAR (frame 30 = frame 0)", "first_last_pose": "<= 0.040 deg", "changed_in_r002": "leg rotations only (thigh/shin/foot, <= 1.70 deg) to fix toe penetration", "behaviour": "in-place treadmill walk, two steps per loop, step 0.50 m", "ground_speed_m_per_s": 1.0},
+    {"name": "carry_walk", "duration_s": 1.0, "fps": 30, "keys": 31, "intended_loop": "LOOP_LINEAR", "first_last_pose": "<= 0.078 deg", "changed_in_r002": "leg rotations only (thigh/shin/foot, <= 1.59 deg); arms, head and anchor unchanged", "behaviour": "in-place walk, pot carried on the head, steadied by the right hand; left arm swings", "ground_speed_m_per_s": 0.9},
+    {"name": "work", "duration_s": 2.0, "fps": 30, "keys": 61, "intended_loop": "LOOP_LINEAR", "first_last_pose": "<= 0.047 deg", "changed_in_r002": false, "behaviour": "generic two-handed alternating forward/back hand stroke, slightly stooped; no tool technique claimed (not the WORK-001 grinding target)"},
+    {"name": "rest", "duration_s": 2.0, "fps": 30, "keys": 61, "intended_loop": "LOOP_LINEAR", "first_last_pose": "<= 0.034 deg", "changed_in_r002": false, "behaviour": "weight on left leg, hands loosely clasped in front, head lowered, slow breath"}
+  ],
+  "animation_notes": [
+    "Root translation is stationary in every clip: no channel targets PERSON_rig; only the pelvis bone bobs/sways (unchanged from r001).",
+    "glTF has no loop flag. Godot import setting used and verified: person.glb.import _subresources animations/<clip>/settings/loop_mode = 1 for all five clips (checks/person.glb.import.recommended.txt).",
+    "Recommended additionally: nodes/PATH:AnimationPlayer/optimizer/enabled = false. With Godot's default keyframe optimizer the imported rest clip keeps only 1-44 of 61 keys per track, which puts the lowest vertex at -1.2 mm and lifts both feet up to 0.9 mm (checks/godot_check_default.json); with it disabled Godot matches the GLB exactly.",
+    "Lowest skinned vertex over each whole clip, 8 samples per key interval: walk -0.38 mm, carry_walk -0.36 mm, idle/work -0.002 mm, rest 0.0 mm (r001: -4.9 mm in walk and carry_walk). The residual is between-key interpolation; keys themselves are >= 0.",
+    "Move the character at 1.0 m/s for walk and 0.9 m/s for carry_walk (authoring rates unchanged)."
+  ],
+  "reference_ids": [],
+  "reference_note": "No pack source (A, B, C, T1) depicts people, clothing or hair; none was used for the figure. T1 (Godot 4.5 material/import docs) informed the culling and import-setting checks only.",
+  "parts_and_uncertainties": [
+    {"part": "body proportions and 1.70 m height", "status": "R", "note": "game-design choice; unchanged from r001"},
+    {"part": "tunic (knee-length, elbow sleeves, closed neck), skirt lining, belt", "status": "R", "note": "undecorated placeholder silhouette; unchanged geometry; no verified local garment cut, fibre or dye"},
+    {"part": "colours", "status": "R", "note": "unchanged r001 placeholder palette"},
+    {"part": "shoes and lower-leg wraps", "status": "R", "note": "no footwear evidence"},
+    {"part": "hair (short cap with back knot)", "status": "R", "note": "editable placeholder; no verified hairstyle"},
+    {"part": "gait heel-off pivot (toe joint) and swing clearance", "status": "R", "note": "r002 animation correction for floor contact; not a gait measurement"},
+    {"part": "head-carry with right-hand steadying and 0.25 m adapter lift", "status": "R", "note": "design/game-fit choice; not documented practice or a measured technique"},
+    {"part": "work clip hand action", "status": "R", "note": "generic repetitive motion; no tool or technique claimed"},
+    {"part": "identity, gender, family, task roles", "status": "F", "note": "assigned by the manager's fictional population data; mesh is one neutral figure"}
+  ],
+  "own_work_license": "Not selected. Original procedural model created for the Bronze Bohemia project; no project-wide licence has been selected and none is granted here. The project owner/manager decides.",
+  "incorporated_resources": [],
+  "fixtures_used_not_incorporated": [
+    {"file": "fixtures/PERSON-001 (model.glb a72da131…cc12, source/gen_person.py 7f3348ef…1534)", "use": "editable source copied and modified; r001 GLB used for parity/regression only"},
+    {"file": "fixtures/POT-001/model.glb (9ea20160…20a0)", "use": "contact/scale previews and measurements only; not in model.glb"},
+    {"file": "fixtures/HOUSE-001/model.glb (14be154b…c88a)", "use": "village-angle scale preview only; not in model.glb"}
+  ],
+  "deviations": [
+    "Godot check projects, frames and XDG dirs were created in a scratch folder outside the repository (writes to /tmp are forbidden in this environment).",
+    "The r001 non-exported pot proxy was removed from the .blend; previews use the actual POT-001 r001 GLB imported at render time.",
+    "The palette PNG moved from textures/ to source/person_palette.png (byte-identical) so the return tree matches RETURN.md; the .blend references it relatively.",
+    "Residual between-key floor penetration of 0.36-0.38 mm remains in walk/carry_walk (within the >= -1 mm target).",
+    "Right-hand fingertips intersect the actual pot wall by 1.3 mm (3 vertices); kept because changing the hand would move carry_anchor."
+  ]
+}

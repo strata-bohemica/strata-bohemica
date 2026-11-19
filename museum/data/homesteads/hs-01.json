@@ -1,0 +1,12 @@
+{
+  "id": "hs-01",
+  "schema": 1,
+  "craft": "grinding",
+  "name": {"cs": "Mlynářka", "en": "The grinder"},
+  "house": {"model": "HOUSE-002/house_002", "pos": [0.0, 0.0, 0.0], "yaw_deg": 0.0},
+  "workplace": {"pos": [2.6, 0.0, 6.0], "yaw_deg": 0.0},
+  "bed": {"model": "SLEEP-001/bed_straw", "pos": [3.0, 0.0, -1.5], "yaw_deg": 90.0},
+  "walker": "PERSON-001/model",
+  "sleeper": "SLEEP-001/person_sleep",
+  "note": "Positions are in the house frame (+Z is the door side). The workplace is F; the bed place inside the house is F/R."
+}

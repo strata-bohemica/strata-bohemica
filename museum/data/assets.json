@@ -1,0 +1,270 @@
+{
+ "PERSON-001": {
+  "source": "bronze-bohemia-opus-v2/PERSON-001",
+  "rev": "r002",
+  "models": {
+   "model": {
+    "file": "PERSON-001/r002/model.glb",
+    "animations": {
+     "carry_walk": 1,
+     "idle": 2,
+     "rest": 2,
+     "walk": 1,
+     "work": 2
+    },
+    "anchors": {}
+   }
+  }
+ },
+ "WORK-001": {
+  "source": "bronze-bohemia-opus-v2/WORK-001",
+  "rev": "r001",
+  "models": {
+   "grain_patch": {
+    "file": "WORK-001/r001/models/grain_patch.glb",
+    "animations": {},
+    "anchors": {}
+   },
+   "handstone": {
+    "file": "WORK-001/r001/models/handstone.glb",
+    "animations": {},
+    "anchors": {
+     "handstone_grip": {
+      "translation": [
+       0.0,
+       0.035,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_grinding": {
+    "file": "WORK-001/r001/models/person_grinding.glb",
+    "animations": {
+     "grind": 2,
+     "grind_enter": 1.2,
+     "grind_exit": 1.2
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.2235,
+       -0.15274,
+       -0.06773
+      ],
+      "yaw_deg": 0.0
+     },
+     "handstone_hold": {
+      "translation": [
+       0.06265,
+       0.05555,
+       -0.0558
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "quern": {
+    "file": "WORK-001/r001/models/quern.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grain_patch_spot": {
+      "translation": [
+       0.0,
+       0.0,
+       0.43
+      ],
+      "yaw_deg": 0.0
+     },
+     "grind_target": {
+      "translation": [
+       0.0,
+       0.11,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "handstone_rest": {
+      "translation": [
+       0.0,
+       0.11252,
+       -0.10996
+      ],
+      "yaw_deg": 0.0
+     },
+     "worker_origin": {
+      "translation": [
+       0.0,
+       0.0,
+       -0.55
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
+ "HOUSE-002": {
+  "source": "economy-batch5/HOUSE-002",
+  "rev": "r001",
+  "models": {
+   "house_002": {
+    "file": "HOUSE-002/r001/models/house_002.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       0.0,
+       0.0,
+       2.2
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       0.0,
+       0.0,
+       3.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       -3.4,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       1.2,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       2.75,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       4.3,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   }
+  }
+ },
+ "SLEEP-001": {
+  "source": "economy-batch8/SLEEP-001",
+  "rev": "r001",
+  "models": {
+   "bed_hide_pile": {
+    "file": "SLEEP-001/r001/models/bed_hide_pile.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "head_rest": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "lie_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "sleeper_origin": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "bed_straw": {
+    "file": "SLEEP-001/r001/models/bed_straw.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "head_rest": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "lie_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "sleeper_origin": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "bedding_rolled": {
+    "file": "SLEEP-001/r001/models/bedding_rolled.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": null,
+      "yaw_deg": 0.0
+     },
+     "carry_grip": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_sleep": {
+    "file": "SLEEP-001/r001/models/person_sleep.glb",
+    "animations": {
+     "get_up": 2,
+     "lie_down": 2,
+     "sleep_lie": 4
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": null,
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ }
+}

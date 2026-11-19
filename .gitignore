@@ -1,0 +1,6 @@
+# Godot
+.godot/
+*.translation
+# local tooling
+.runs/
+.import-state/
