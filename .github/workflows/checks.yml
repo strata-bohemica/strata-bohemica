@@ -39,6 +39,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Run the museum tests (core data terrain boundary view ui)
+        shell: bash
         run: |
           godot --version
-          time checks/museum_village/run.sh
+          start=$(date +%s)
+          checks/museum_village/run.sh
+          echo "tests took $(( $(date +%s) - start )) s"
