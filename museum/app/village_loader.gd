@@ -22,6 +22,7 @@ static func load_all() -> Dictionary:
 	errors.append_array(Schema.validate_period(period))
 	errors.append_array(Schema.validate_village(village))
 	errors.append_array(Schema.validate_terrain(terrain_data))
+	var terrain = Terrain.from_dict(terrain_data)
 	var occupied := {}
 	var pending := {}
 	for file in DirAccess.get_files_at(HOMESTEAD_DIR):
@@ -43,5 +44,45 @@ static func load_all() -> Dictionary:
 			"worker": Catalogue.clip_lengths(craft.skin),
 			"sleeper": Catalogue.clip_lengths(homestead.sleeper)}
 		var house_id := int(str(homestead.id).substr(3))
-		occupied[house_id] = {"homestead": homestead, "craft": craft, "schedule": Schedule.new(period, craft, homestead, anchors, durations), "durations": durations}
-	return {"period": period, "village": village, "terrain": Terrain.from_dict(terrain_data), "terrain_data": terrain_data, "occupied": occupied, "pending": pending, "errors": errors}
+		var resolved := _resolve(homestead, village, terrain, house_id)
+		var ground := _ground_fn(village, terrain, house_id)
+		occupied[house_id] = {"homestead": resolved, "craft": craft, "schedule": Schedule.new(period, craft, resolved, anchors, durations, ground), "durations": durations}
+	return {"period": period, "village": village, "terrain": terrain, "terrain_data": terrain_data, "occupied": occupied, "pending": pending, "errors": errors}
+
+static func _house_record(village: Dictionary, id: int) -> Dictionary:
+	for h in village.houses:
+		if int(h.id) == id:
+			return h
+	return {}
+
+## (x, z) in the house frame -> how far the ground there lies above the house floor.
+static func _ground_fn(village: Dictionary, terrain, house_id: int) -> Callable:
+	var rec := _house_record(village, house_id)
+	var basis := Basis(Vector3.UP, deg_to_rad(float(rec.yaw_deg)))
+	var origin := Vector3(rec.pos[0], 0, rec.pos[1])
+	var floor_y: float = terrain.height_at(rec.pos[0], rec.pos[1])
+	return func(x: float, z: float) -> float:
+		var w: Vector3 = basis * Vector3(x, 0, z) + origin
+		return terrain.height_at(w.x, w.z) - floor_y
+
+## A homestead whose work is out in a field gets its work place, line and commute from the village data,
+## converted from world to house-frame coordinates.
+static func _resolve(homestead: Dictionary, village: Dictionary, _terrain, house_id: int) -> Dictionary:
+	if homestead.get("site", false) != true or not village.get("sites", {}).has(str(house_id)):
+		return homestead
+	var rec := _house_record(village, house_id)
+	var inv := Basis(Vector3.UP, deg_to_rad(float(rec.yaw_deg))).inverse()
+	var origin := Vector3(rec.pos[0], 0, rec.pos[1])
+	var site: Dictionary = village.sites[str(house_id)]
+	var to_local := func(p: Array) -> Array:
+		var l: Vector3 = inv * (Vector3(p[0], 0, p[1]) - origin)
+		return [l.x, 0.0, l.z]
+	var dir_l: Vector3 = inv * Vector3(site.dir[0], 0, site.dir[1])
+	var out: Dictionary = homestead.duplicate(true)
+	var commute: Array = []
+	for q in site.commute:
+		commute.append(to_local.call(q))
+	var start: Array = to_local.call(site.start)
+	out["site"] = {"start": start, "dir": [dir_l.x, 0.0, dir_l.z], "length": site.length, "commute": commute}
+	out["workplace"] = {"pos": start, "yaw_deg": rad_to_deg(atan2(dir_l.x, dir_l.z))}
+	return out

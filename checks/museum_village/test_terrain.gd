@@ -91,7 +91,45 @@ func _init() -> void:
 		var rec := Fixture.house_record(village, id)
 		var s = info.schedule
 		var y0: float = terrain.height_at(rec.pos[0], rec.pos[1])
-		for point in s.route_out:
+		for point in s.route_in:
 			var w := Fixture.house_to_world(rec, terrain, point)
-			t.ok(absf(terrain.height_at(w.x, w.z) - y0) < 0.6, "hs-%02d: route point stays near the floor level (%.2f m off)" % [id, absf(terrain.height_at(w.x, w.z) - y0)])
+			if not info.craft.has("travel"):
+				t.ok(absf(terrain.height_at(w.x, w.z) - y0) < 0.6, "hs-%02d: route point stays near the floor level (%.2f m off)" % [id, absf(terrain.height_at(w.x, w.z) - y0)])
+			else:
+				t.ok(w.length() < radius, "hs-%02d: the way to the field stays inside the disc" % id)
+	# the way to a field follows a drawn path, goes uphill or down gently, and the line lies in a field
+	for id in all.occupied:
+		var info2: Dictionary = all.occupied[id]
+		if not info2.craft.has("travel"):
+			continue
+		var rec2 := Fixture.house_record(village, id)
+		var s2 = info2.schedule
+		var worst_gap := 0.0
+		var worst_slope := 0.0
+		var prev_w := Vector3.ZERO
+		for k in range(s2.route_in.size()):
+			var w2 := Fixture.house_to_world(rec2, terrain, s2.route_in[k])
+			if k >= 3:
+				var nearest := INF
+				for path in village.paths:
+					for q in path:
+						nearest = minf(nearest, Vector2(w2.x, w2.z).distance_to(Vector2(q[0], q[1])))
+				worst_gap = maxf(worst_gap, nearest)
+				var flat := Vector2(w2.x - prev_w.x, w2.z - prev_w.z).length()
+				if flat > 0.5:
+					worst_slope = maxf(worst_slope, rad_to_deg(atan(absf(w2.y - prev_w.y) / flat)))
+			prev_w = w2
+		t.ok(worst_gap < 1.3, "hs-%02d: the commute runs along a drawn path (max %.2f m off)" % [id, worst_gap])
+		t.ok(worst_slope < 25.0, "hs-%02d: the commute is walkable (steepest %.1f deg)" % [id, worst_slope])
+		var in_field := 0
+		for frac in [0.0, 0.25, 0.5, 0.75, 1.0]:
+			var pt: Vector3 = Fixture.house_to_world(rec2, terrain, s2.line_start + s2.line_dir * float(info2.craft.travel.length) * frac)
+			for poly in village.fields:
+				var pv := PackedVector2Array()
+				for q in poly:
+					pv.append(Vector2(q[0], q[1]))
+				if Geometry2D.is_point_in_polygon(Vector2(pt.x, pt.z), pv):
+					in_field += 1
+					break
+		t.ok(in_field >= 4, "hs-%02d: the ploughing line lies in a field (%d of 5 points)" % [id, in_field])
 	quit(t.finish("terrain"))

@@ -16,6 +16,7 @@ var lights: Array = []              # [{"light": OmniLight3D, "base": float, "fl
 var animals: Array = []             # [{"root": Node3D, "driver": PoseDriver, "def": Dictionary, "lengths": Dictionary}]
 var glow: OmniLight3D
 var workplace := Transform3D.IDENTITY
+var travels := false                # the worker moves while working (the plough): their transform follows the schedule
 var _skin_nodes: Dictionary = {}    # "node name" -> Node3D on the worker skin
 
 func build(homestead: Dictionary, craft: Dictionary) -> void:
@@ -28,7 +29,8 @@ func build(homestead: Dictionary, craft: Dictionary) -> void:
 	skins["walker"] = _skin(homestead.walker)
 	skins["worker"] = _skin(craft.skin)
 	skins["sleeper"] = _skin(homestead.sleeper)
-	skins.worker.root.transform = workplace      # the worker skin always stands at the work place; rest nodes stay valid
+	skins.worker.root.transform = workplace      # a stationary worker skin always stands at the work place; rest nodes stay valid
+	travels = craft.has("travel")
 	for prop in craft.props:
 		_build_prop(prop)
 	for l in craft.get("lights", []):
@@ -109,7 +111,9 @@ func _smoke() -> CPUParticles3D:
 func _build_animal(def: Dictionary) -> void:
 	var root := _add(def.asset)
 	var yaw := deg_to_rad(float(def.get("yaw_deg", 0.0)))
-	if def.has("on"):
+	if def.has("follow"):
+		pass
+	elif def.has("on"):
 		var anchor := _anchor_transform(str(def.on), str(def.node))
 		root.global_transform = anchor * Transform3D(Basis(Vector3.UP, yaw), Vector3.ZERO)
 	else:
@@ -126,7 +130,11 @@ func _build_prop(def: Dictionary) -> void:
 	var root := _add(def.asset)
 	var entry := {"nodes": [root], "grip_inverse": Transform3D.IDENTITY, "def": def}
 	props[def.id] = entry
-	if def.has("place"):
+	if def.has("place") and def.place.has("hitch"):
+		entry["dynamic"] = def.place.hitch          # re-placed every frame: follows another prop (a yoke on the ard's beam)
+		var own := root.find_child(str(def.place.hitch.own), true, false) as Node3D
+		entry["own_local"] = root.global_transform.affine_inverse() * own.global_transform
+	elif def.has("place"):
 		var place: Dictionary = def.place
 		if place.has("at"):
 			var at: Array = place["at"]
@@ -168,7 +176,7 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 	for name_ in skins:
 		skins[name_].root.visible = (name_ == state.skin)
 	var active: Dictionary = skins[state.skin]
-	if state.skin != "worker":
+	if state.skin != "worker" or travels:
 		active.root.transform = Transform3D(Basis(Vector3.UP, float(state.yaw)), state.pos)
 	active.driver.apply(state.clip, float(state.clip_time))
 	for id in state.props:
@@ -187,6 +195,10 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 				main.global_transform = (holder.find_child(str(entry.rest_node), true, false) as Node3D).global_transform
 			_:
 				main.visible = false
+	for id in props:                                  # props that ride on other props (second pass: the ard has moved by now)
+		var e: Dictionary = props[id]
+		if e.has("dynamic"):
+			e.nodes[0].global_transform = _anchor_transform(str(e.dynamic.on), str(e.dynamic.node)) * (e.own_local as Transform3D).affine_inverse()
 	var on: bool = state.phase in ["work", "meal"]
 	for l in lights:
 		var flicker := 1.0
@@ -196,5 +208,14 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 		if l.smoke != null:
 			l.smoke.emitting = on
 	for a in animals:
-		var pose: Dictionary = Animals.pose_at(a.def, time, a.lengths)
+		var pose: Dictionary
+		if a.def.has("follow"):                       # walks with the work; the plough oxen walk at 0.75x so the hooves match 0.6 m/s
+			var anchor := _anchor_transform(str(a.def.on), str(a.def.node))
+			a.root.global_transform = anchor * Transform3D(Basis(Vector3.UP, deg_to_rad(float(a.def.get("yaw_deg", 0.0)))), Vector3.ZERO)
+			if state.travel.moving:
+				pose = {"clip": "walk", "clip_time": fposmod(time * 0.75, float(a.lengths.get("walk", 1.0)))}
+			else:
+				pose = {"clip": "idle", "clip_time": fposmod(time, float(a.lengths.get("idle", 2.0)))}
+		else:
+			pose = Animals.pose_at(a.def, time, a.lengths)
 		a.driver.apply(pose.clip, float(pose.clip_time))

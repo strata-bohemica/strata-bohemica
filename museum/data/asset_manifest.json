@@ -77,6 +77,14 @@
         "oak_summer",
         "hazel_leafed"
       ]
+    },
+    {
+      "id": "economy-batch6/ARD-001",
+      "models": [
+        "person_ploughing",
+        "ard",
+        "yoke_pair"
+      ]
     }
   ]
 }

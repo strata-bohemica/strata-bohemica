@@ -26,8 +26,11 @@ func _init() -> void:
 
 		# clips on the right rigs
 		var clips: Array = [craft.block.get("enter", ""), craft.block.get("exit", "")]
-		for e in craft.block.cycle:
-			clips.append(e[0])
+		if craft.has("travel"):
+			clips = [craft.travel.walk, craft.travel.enter, craft.travel.exit]
+		else:
+			for e in craft.block.cycle:
+				clips.append(e[0])
 		for clip in clips:
 			if clip != "":
 				t.ok(Catalogue.clip_lengths(craft.skin).has(clip), "%s: skin has clip %s" % [tag, clip])
@@ -48,6 +51,14 @@ func _init() -> void:
 				var place: Dictionary = prop.place
 				if place.has("station"):
 					t.ok(node.find_child(str(place.station), true, false) != null, "%s: %s has station node %s" % [tag, prop.id, place.station])
+				elif place.has("hitch"):
+					var h: Dictionary = place.hitch
+					var host_ref: String = _asset_of(craft, str(h.on).trim_prefix("prop:"))
+					t.ok(prop_ids.has(str(h.on).trim_prefix("prop:")), "%s: %s hitches onto a prop defined earlier" % [tag, prop.id])
+					var hnode: Node = (load(Catalogue.path(host_ref)) as PackedScene).instantiate()
+					t.ok(hnode.find_child(str(h.node), true, false) != null, "%s: hitch node %s exists on %s" % [tag, h.node, host_ref])
+					hnode.free()
+					t.ok(node.find_child(str(h.own), true, false) != null, "%s: %s has its own hitch node %s" % [tag, prop.id, h.own])
 				elif place.has("at"):
 					t.ok(place["at"] is Array and place["at"].size() == 4, "%s: %s 'at' is [x, y, z, yaw]" % [tag, prop.id])
 				else:
@@ -65,8 +76,12 @@ func _init() -> void:
 			prop_ids[prop.id] = true
 		for a in homestead.get("animals", []):
 			t.ok(Catalogue.has_model(a.asset) and ResourceLoader.exists(Catalogue.path(a.asset)), "%s: animal %s imports" % [tag, a.asset])
-			for e in a.cycle:
-				t.ok(Catalogue.clip_lengths(a.asset).has(e[0]), "%s: %s has clip %s" % [tag, a.asset, e[0]])
+			if a.has("follow"):
+				for clip in ["walk", "idle"]:
+					t.ok(Catalogue.clip_lengths(a.asset).has(clip), "%s: following %s has clip %s" % [tag, a.asset, clip])
+			else:
+				for e in a.cycle:
+					t.ok(Catalogue.clip_lengths(a.asset).has(e[0]), "%s: %s has clip %s" % [tag, a.asset, e[0]])
 			var import_a := FileAccess.get_file_as_string(Catalogue.path(a.asset) + ".import")
 			t.ok(import_a.contains("optimizer/enabled\": false"), "%s: %s imports with the animation optimizer off" % [tag, a.asset])
 			if a.has("on"):

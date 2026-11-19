@@ -71,7 +71,7 @@ func _initialize() -> void:
 	for id in all.pending:
 		var pc := Card.build_pending(all.pending[id], "en")
 		t.ok(pc.sections[0].items[0].length() > 20, "pending house %d states why it is empty" % id)
-	t.eq(all.pending.keys().size(), 2, "two houses wait for research (plough, potter)")
+	t.eq(all.pending.keys().size(), 1, "one house still waits for research (the potter)")
 
 	# picking: pure maths
 	t.ok(absf(Picking.ray_sphere(Vector3(0, 0, 10), Vector3(0, 0, -1), Vector3.ZERO, 2.0) - 8.0) < 1e-6, "a ray hits a sphere at the near surface")

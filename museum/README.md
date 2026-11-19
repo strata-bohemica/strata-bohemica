@@ -1,10 +1,10 @@
 # Museum (Godot 4.5.1, GL Compatibility)
 
-A digital open-air museum of Bohemian prehistory. M4: click a person to read how well their craft is supported (evidence, reconstruction, what is unknown, sources), in Czech or English. Behind it, a village on uneven ground with ten homesteads (grinding, cooking, weaving, woodworking, spinning, parching, threshing, hide scraping, milking, daub treading), animals, trees and hearth smoke, working from dawn to night. The plough and the potter's house stand empty until their research and models are settled.
+A digital open-air museum of Bohemian prehistory. M6: the plougher walks a real path to a field and ploughs up and down it with two oxen; ten more homesteads work in their yards. M4: click a person to read how well their craft is supported (evidence, reconstruction, what is unknown, sources), in Czech or English. Behind it, a village on uneven ground with ten homesteads (grinding, cooking, weaving, woodworking, spinning, parching, threshing, hide scraping, milking, daub treading), animals, trees and hearth smoke, working from dawn to night. The plough and the potter's house stand empty until their research and models are settled.
 Everything the scene does is a pure function of time; the view only applies it.
 
 ```
-core/    day clock, craft timeline, craft props, animals, schedule, terrain, card, i18n, picking, schema   (no nodes, testable headless)
+core/    day clock, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema   (no nodes, testable headless)
 data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
 view/    thin Godot adapters: pose driver, homestead view, terrain view, village view
@@ -12,6 +12,9 @@ ui/      card panel and time bar (they draw what core/card.gd and the app give t
 app/     the main scene and the loader that assembles the village
 ```
 
+A person who moves while working (the plough) is a pure function of the time they have worked: `core/travel.gd` walks a line,
+turns round and walks back; the schedule keeps their place through the meal and walks them home from wherever they stopped,
+after a commute along the least-cost path from the yard to the field (`tools/build_village.py` writes it as `sites`).
 Adding a craft or a homestead means adding JSON, not code. Animals are data too: a cycle of clips whose length divides the day. Models are referred to by asset ID, never by path.
 
 ## Run
@@ -46,7 +49,8 @@ becomes a sheet along the bottom); touch: tap to select, drag to orbit, two fing
 
 ## Assets
 
-`tools/sync_assets.py FACTORY_RETURNS_DIR` copies the assets listed in `data/asset_manifest.json` into `assets/`
+`tools/refresh_assets.sh FACTORY_RETURNS_DIR` runs the whole refresh (sync, import, import settings, drop extracted PNGs, re-import).
+`tools/sync_assets.py FACTORY_RETURNS_DIR` alone copies the assets listed in `data/asset_manifest.json` into `assets/`
 and regenerates `data/assets.json`. `tools/import_settings.py` then sets the import options the models need
 (`gltf/naming_version=2`, textures kept inside the scene, animation optimizer off); the generated `.import` files are committed, the PNGs Godot would extract are not.
 

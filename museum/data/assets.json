@@ -2230,5 +2230,89 @@
     }
    }
   }
+ },
+ "ARD-001": {
+  "source": "economy-batch6/ARD-001",
+  "rev": "r001",
+  "models": {
+   "ard": {
+    "file": "ARD-001/r001/models/ard.glb",
+    "animations": {},
+    "anchors": {
+     "grip": {
+      "translation": [
+       0.0,
+       0.93,
+       -0.6
+      ],
+      "yaw_deg": 0.0
+     },
+     "yoke_hitch": {
+      "translation": [
+       0.0,
+       1.03,
+       1.4
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_ploughing": {
+    "file": "ARD-001/r001/models/person_ploughing.glb",
+    "animations": {
+     "plough_enter": 1.2,
+     "plough_exit": 1.2,
+     "plough_walk": 1.6
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.223504,
+       -0.152738,
+       -0.067734
+      ],
+      "yaw_deg": 0.0
+     },
+     "stilt_hold": {
+      "translation": [
+       0.035176,
+       0.07164,
+       -0.112368
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "yoke_pair": {
+    "file": "ARD-001/r001/models/yoke_pair.glb",
+    "animations": {},
+    "anchors": {
+     "beam_hitch": {
+      "translation": [
+       0.0,
+       1.03,
+       0.52
+      ],
+      "yaw_deg": 0.0
+     },
+     "cattle_l": {
+      "translation": [
+       0.5,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "cattle_r": {
+      "translation": [
+       -0.5,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
  }
 }

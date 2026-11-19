@@ -1,13 +1,50 @@
 {
   "id": "hs-01",
   "schema": 2,
-  "craft": null,
+  "craft": "ploughing",
   "name": {
     "cs": "Oráč",
     "en": "The plougher"
   },
-  "pending": {
-    "cs": "Čeká na pohyb pracovníka po poli (pluh se pohybuje) a na rešerši k pluhu v pozdní době bronzové.",
-    "en": "Waiting for a worker who walks along the field (the plough moves) and for research on the Late Bronze Age plough."
-  }
+  "site": true,
+  "house": {
+    "model": "HOUSE-002/house_002"
+  },
+  "workplace": {
+    "pos": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "yaw_deg": 0.0
+  },
+  "bed": {
+    "model": "SLEEP-001/bed_straw",
+    "pos": [
+      3.0,
+      0.0,
+      -1.5
+    ],
+    "yaw_deg": 90.0
+  },
+  "walker": "PERSON-001/model",
+  "sleeper": "SLEEP-001/person_sleep",
+  "day_offset": 0.005,
+  "animals": [
+    {
+      "asset": "ANIMAL-001/cattle",
+      "on": "prop:yoke",
+      "node": "cattle_l",
+      "yaw_deg": 0.0,
+      "follow": "travel"
+    },
+    {
+      "asset": "ANIMAL-001/cattle",
+      "on": "prop:yoke",
+      "node": "cattle_r",
+      "yaw_deg": 0.0,
+      "follow": "travel"
+    }
+  ],
+  "note": "The work place, the line and the commute come from museum/data/villages/breznice.json (sites), converted to the house frame by the loader. day_offset shifts this household's day (F)."
 }
