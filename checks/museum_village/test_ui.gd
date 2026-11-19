@@ -9,6 +9,27 @@ const Schema = preload("res://museum/core/schema.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const DayClock = preload("res://museum/core/day_clock.gd")
 
+func _button(pos: Vector2, pressed: bool) -> InputEventMouseButton:
+	var e := InputEventMouseButton.new()
+	e.button_index = MOUSE_BUTTON_LEFT
+	e.pressed = pressed
+	e.position = pos
+	return e
+
+func _touch(app, index: int, pos: Vector2, pressed: bool) -> void:
+	var e := InputEventScreenTouch.new()
+	e.index = index
+	e.position = pos
+	e.pressed = pressed
+	app._unhandled_input(e)
+
+func _drag(app, index: int, from: Vector2, to: Vector2) -> void:
+	var e := InputEventScreenDrag.new()
+	e.index = index
+	e.position = to
+	e.relative = to - from
+	app._unhandled_input(e)
+
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
@@ -115,23 +136,44 @@ func _initialize() -> void:
 	app.cam_target = app.village.workplace_world(target_id)
 	app.cam_dist = 14.0
 	app._refresh(0.0)
-	var click := InputEventMouseButton.new()
-	click.button_index = MOUSE_BUTTON_LEFT
-	click.pressed = true
-	click.position = app.camera.unproject_position(app.village.workplace_world(target_id) + Vector3(0, 1.0, 0))
-	app._unhandled_input(click)
+	var at_person: Vector2 = app.camera.unproject_position(app.village.workplace_world(target_id) + Vector3(0, 1.0, 0))
+	app._unhandled_input(_button(at_person, true))
+	t.eq(app.selected, 0, "a press alone does not select yet (a click is press and release without moving)")
+	app._unhandled_input(_button(at_person, false))
 	t.eq(app.selected, target_id, "a click on a person selects the homestead")
 	t.ok(app.card_panel.visible and app.card_panel.plain_text().contains(I18n.pick(app.world.occupied[target_id].homestead.name, "en")), "the card opens with its name")
 	var before: String = app.card_panel.plain_text()
 	app.toggle_language()
 	t.eq(app.lang, "cs", "the language toggles")
 	t.ok(app.card_panel.plain_text() != before and app.card_panel.plain_text().contains("Zdroje"), "the open card is redrawn in the new language")
-	var miss := InputEventMouseButton.new()
-	miss.button_index = MOUSE_BUTTON_LEFT
-	miss.pressed = true
-	miss.position = Vector2(5, 5)
-	app._unhandled_input(miss)
+	app._unhandled_input(_button(Vector2(5, 5), true))
+	app._unhandled_input(_button(Vector2(5, 5), false))
 	t.eq(app.selected, target_id, "a click on empty ground changes nothing")
+	# a drag orbits and never picks, even when it starts on a person
+	var yaw0: float = app.orbit_yaw
+	app._unhandled_input(_button(at_person, true))
+	var motion := InputEventMouseMotion.new()
+	motion.position = at_person + Vector2(40, 0)
+	motion.relative = Vector2(40, 0)
+	motion.button_mask = MOUSE_BUTTON_MASK_LEFT
+	app._unhandled_input(motion)
+	app._unhandled_input(_button(at_person + Vector2(40, 0), false))
+	t.ok(absf(app.orbit_yaw - yaw0) > 0.1, "dragging with the left button orbits the camera")
+	t.eq(app.selected, target_id, "a drag that starts on a person does not pick another")
+	app.select(0)
+	app._unhandled_input(_button(at_person, true))
+	app._unhandled_input(motion)
+	app._unhandled_input(_button(at_person, false))
+	t.eq(app.selected, 0, "a drag over a person from the overview does not select it")
+	# two fingers pinch-zoom and never click
+	var d0: float = app.cam_dist
+	_touch(app, 0, Vector2(300, 300), true)
+	_touch(app, 1, Vector2(400, 300), true)
+	_drag(app, 1, Vector2(300, 300), Vector2(500, 300))
+	t.ok(app.cam_dist < d0, "spreading two fingers zooms in (%.1f -> %.1f)" % [d0, app.cam_dist])
+	_touch(app, 0, Vector2(300, 300), false)
+	_touch(app, 1, Vector2(500, 300), false)
+	app.select(target_id)
 	var esc := InputEventKey.new()
 	esc.keycode = KEY_ESCAPE
 	esc.pressed = true
@@ -166,6 +208,30 @@ func _initialize() -> void:
 		await process_frame
 	var work: Vector3 = app.village.workplace_world(walker_id) + Vector3(0, 0.9, 0)
 	t.ok(app.cam_target.distance_to(work) < 0.8, "with follow off the camera holds the work place (%.2f m off)" % app.cam_target.distance_to(work))
+
+	# layout: the card must fit on a phone as well as on a desktop, and never cover the time bar
+	var shown_id: int = app.focus_ids[0]
+	app.select(shown_id)
+	for sz in [Vector2i(390, 844), Vector2i(1280, 720), Vector2i(1920, 1080), Vector2i(820, 1180)]:
+		root.size = sz
+		await process_frame
+		await process_frame
+		var vp: Vector2 = Vector2(sz)
+		var card_rect: Rect2 = app.card_panel.get_global_rect()
+		var bar_rect: Rect2 = app.time_bar.get_global_rect()
+		var label := "%dx%d" % [sz.x, sz.y]
+		t.eq(app.narrow, sz.x < 700, "%s: narrow layout exactly on phone-sized screens" % label)
+		t.ok(card_rect.position.x >= -0.5 and card_rect.position.y >= -0.5 and card_rect.end.x <= vp.x + 0.5 and card_rect.end.y <= vp.y + 0.5, "%s: the card lies inside the screen %s" % [label, card_rect])
+		t.ok(card_rect.end.y <= bar_rect.position.y + 0.5, "%s: the card does not cover the time bar (%.0f vs %.0f)" % [label, card_rect.end.y, bar_rect.position.y])
+		t.ok(bar_rect.end.x <= vp.x + 0.5 and bar_rect.size.x > 200.0, "%s: the time bar fits (%.0f px)" % [label, bar_rect.size.x])
+		if sz.x < 700:
+			t.ok(card_rect.size.x > vp.x * 0.9 and card_rect.position.y > vp.y * 0.3, "%s: on a phone the card is a sheet along the bottom" % label)
+			t.ok(not app.time_bar.speed_buttons[0].visible, "%s: the speed buttons make room on a phone" % label)
+		else:
+			t.ok(card_rect.size.x <= 460.0 and card_rect.end.x > vp.x - 20.0, "%s: on a wide screen the card is docked right" % label)
+			t.ok(app.time_bar.speed_buttons[0].visible, "%s: the speed buttons are shown" % label)
+	root.size = Vector2i(1280, 720)
+	await process_frame
 
 	# time controls
 	app.select(0)

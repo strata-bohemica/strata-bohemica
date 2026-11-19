@@ -13,7 +13,7 @@
 
 <p align="center"><sub>Render of the project's own models, 14 s loop. All reconstructions are provisional.</sub></p>
 
-<p align="center"><a href="https://strata-bohemica.github.io/strata-bohemica/">Explore the diorama live</a></p>
+<p align="center"><a href="https://strata-bohemica.github.io/strata-bohemica/museum/"><b>Enter the museum</b></a> (a village with ten working homesteads, in your browser) · <a href="https://strata-bohemica.github.io/strata-bohemica/">the living diorama</a></p>
 
 <img src="docs/brand/readme/divider.svg" alt="" width="100%">
 
