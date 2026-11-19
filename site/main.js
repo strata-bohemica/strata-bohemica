@@ -76,14 +76,9 @@ function buildBase() {
   layers.forEach(([c, h], i) => {
     const shape = new THREE.Shape();
     shape.absarc(0, 0, R, 0, Math.PI * 2, false);
-    if (i < 2) {                       // sunken pit goes through the two upper layers
-      const half = 2.15 / 2, hole = new THREE.Path();
-      const cx = PIT.x, cy = -PIT.z;   // shape Y becomes -Z after the rotation below
-      hole.moveTo(cx - half, cy - half);
-      hole.lineTo(cx - half, cy + half);
-      hole.lineTo(cx + half, cy + half);
-      hole.lineTo(cx + half, cy - half);
-      hole.closePath();
+    if (i < 2) {                       // the pit's soil block is a cylinder (r = 1.0 m, measured from the model): cut exactly that
+      const hole = new THREE.Path();
+      hole.absarc(PIT.x + 0.013, -(PIT.z + 0.007), 0.99, 0, Math.PI * 2, true);   // shape Y becomes -Z after the rotation below
       shape.holes.push(hole);
     }
     const geo = new THREE.ExtrudeGeometry(shape, { depth: h, bevelEnabled: false, curveSegments: 96 });
@@ -100,7 +95,7 @@ buildBase();
 
 // ---- models ------------------------------------------------------------------------
 const FILES = {
-  house: 'house_002', pit: 'store_pit_open', jar: 'store_jar_sunken', hearth: 'hearth_base',
+  house: 'house_002', pit: 'store_pit_open', hearth: 'hearth_base',
   embers: 'fire_embers', cook: 'person_cooking', loom: 'loom_weaving_base_up',
   weaver: 'person_weaving', bobbin: 'weft_bobbin', beater: 'sword_beater', wheat: 'wheat_mature',
   millet: 'millet_mature', oak: 'oak_summer', hazel: 'hazel_leafed', grass: 'grass_dry',
@@ -134,7 +129,6 @@ function place(key, pos, yawDeg = 0, scl = 1, sway = 0) {
 const HOUSE_AT = [-0.4, 0, -5.3];
 const house = place('house', HOUSE_AT, 3);
 place('pit', [PIT.x, 0, PIT.z]);
-place('jar', [PIT.x, 0, PIT.z]);
 // the cooking station is laid out exactly as COOK-002 defines it: every prop sits on a node of the cook model
 const HEARTH = new THREE.Vector3(2.4, 0, 3.0);
 const cook = place('cook', [HEARTH.x + 0.82, 0, HEARTH.z], parseFloat(Q.get('cookyaw') || '-90'));
