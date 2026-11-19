@@ -13,6 +13,8 @@
 
 <p align="center"><sub>Render of the project's own models, 14 s loop. All reconstructions are provisional.</sub></p>
 
+<p align="center"><a href="https://strata-bohemica.github.io/strata-bohemica/">Explore the diorama live</a></p>
+
 <img src="docs/brand/readme/divider.svg" alt="" width="100%">
 
 ## Status
