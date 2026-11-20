@@ -145,6 +145,7 @@ func _initialize() -> void:
 		var pv = view.homesteads[id].view
 		var ps = view.homesteads[id].schedule
 		var worst_hitch := 0.0
+		var worst_hitch_y := 0.0
 		var worst_ox := 0.0
 		var worst_skin := 0.0
 		var walked_clips := {}
@@ -157,7 +158,10 @@ func _initialize() -> void:
 				pv.apply(st, 0.0, false, pt)
 				var ard: Node3D = pv.props.ard.nodes[0]
 				var yoke: Node3D = pv.props.yoke.nodes[0]
-				worst_hitch = maxf(worst_hitch, (yoke.find_child("beam_hitch", true, false) as Node3D).global_position.distance_to((ard.find_child("yoke_hitch", true, false) as Node3D).global_position))
+				if st.travel.moving:       # in the turn clips the plough is swung aside and tipped; the team stays on its feet (SB-036)
+					var gap: Vector3 = (yoke.find_child("beam_hitch", true, false) as Node3D).global_position - (ard.find_child("yoke_hitch", true, false) as Node3D).global_position
+					worst_hitch = maxf(worst_hitch, Vector2(gap.x, gap.z).length())
+					worst_hitch_y = maxf(worst_hitch_y, absf(gap.y))
 				for a in pv.animals:
 					var seat: Node3D = yoke.find_child(str(a.def.node), true, false)
 					worst_ox = maxf(worst_ox, a.root.global_position.distance_to(seat.global_position))
@@ -169,8 +173,9 @@ func _initialize() -> void:
 				prev_world = pv.skins.worker.root.global_position
 				plough_seen += 1
 			pt += 1.9
-		t.ok(worst_hitch < 1e-3, "the yoke's hitch sits on the ard's hitch (max %.5f m)" % worst_hitch)
-		t.ok(worst_ox < 1e-3, "the oxen stand on the yoke's seats (max %.5f m)" % worst_ox)
+		t.ok(worst_hitch < 0.36, "the yoke's hitch stays at the ard's hitch while the team walks, off only by the lean to the slope at hitch height (max %.3f m across; limit 1.03 m x sin 20 degrees)" % worst_hitch)
+		t.ok(worst_hitch_y < 0.5, "the team stands on the ground ahead of the plough: the hitches differ only by the slope over the beam (max %.3f m high)" % worst_hitch_y)
+		t.ok(worst_ox < 0.02, "the oxen stand on the yoke's seats, each on the ground under it (max %.5f m)" % worst_ox)
 		t.ok(worst_skin < 1e-3, "the ploughman is drawn where the schedule puts them (max %.5f m)" % worst_skin)
 		t.ok(walked_clips.has("walk") and walked_clips.has("idle"), "the oxen walk while the team moves and stand while it turns (%s)" % [walked_clips.keys()])
 		t.ok(travelled > 40.0, "the team really moves across the field (%.0f m over the day samples)" % travelled)

@@ -15,6 +15,7 @@ app/     the main scene and the loader that assembles the village
 A person who moves while working (the plough) is a pure function of the time they have worked: `core/travel.gd` walks a line,
 turns round and walks back; the schedule keeps their place through the meal and walks them home from wherever they stopped,
 after a commute along the least-cost path from the yard to the field (`tools/build_village.py` writes it as `sites`).
+The plough team (yoke and oxen) is tied to the ploughman, not to the plough: the turn clips swing the plough aside and tip it about 58 degrees, so the team keeps its place in his frame and stands on the ground under each ox, leaning to the slope (at most 20 degrees; `HomesteadView._team_pose`, checked in `test_plough_team.gd`).
 Adding a craft or a homestead means adding JSON, not code. Animals are data too: a cycle of clips whose length divides the day. Models are referred to by asset ID, never by path.
 
 ## Run
@@ -22,7 +23,7 @@ Adding a craft or a homestead means adding JSON, not code. Animals are data too:
 ```sh
 godot --path .      # click a person for the card; M mute, Space pause, Q/W/E speed, 0/Esc overview, 1-9 homestead, Tab next,
                     # F follow, L cutaway, C language (cs/en), right-drag orbit, wheel zoom; slider scrubs the day
-checks/museum_village/run.sh                     # core, data, terrain, boundary and view checks (headless)
+checks/museum_village/run.sh                     # core, data, terrain, boundary, view and plough-team checks (headless)
 ```
 
 ## The village
