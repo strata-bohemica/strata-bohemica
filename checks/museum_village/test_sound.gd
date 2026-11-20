@@ -224,6 +224,10 @@ func _initialize() -> void:
 		sv.apply(18.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "a background tab is silent")
 	sv.in_background = false
+	root.focus_exited.emit()
+	t.ok(sv.in_background, "the window losing focus marks the view as background")
+	root.focus_entered.emit()
+	t.ok(not sv.in_background, "regaining focus clears it")
 	for k in sv.data.layers:
 		t.ok(sv.levels.has(k), "the view exposes layer %s" % k)
 

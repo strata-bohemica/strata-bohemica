@@ -45,6 +45,9 @@ func _init() -> void:
 	load_prefs()
 
 func _ready() -> void:
+	var win := get_window()
+	win.focus_exited.connect(func(): in_background = true)
+	win.focus_entered.connect(func(): in_background = false)
 	_blip_player = AudioStreamPlayer.new()
 	_blip_player.bus = "UI"
 	add_child(_blip_player)
@@ -121,7 +124,7 @@ func blip() -> void:
 		_blip_player.stream = _tone
 		_blip_player.play()
 
-## A mono 16-bit sine with a short fade at both ends, as an in-memory sample (22 kB at 22.05 kHz).
+## A mono 16-bit sine with a short fade at both ends, as an in-memory sample (11 kB for 0.25 s at 22.05 kHz).
 static func make_tone(freq: float, seconds: float, rate: int = 22050) -> AudioStreamWAV:
 	var n := int(seconds * rate)
 	var bytes := PackedByteArray()
