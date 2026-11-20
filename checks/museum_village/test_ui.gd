@@ -8,6 +8,7 @@ const Picking = preload("res://museum/core/picking.gd")
 const Schema = preload("res://museum/core/schema.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const DayClock = preload("res://museum/core/day_clock.gd")
+const TimeBar = preload("res://museum/ui/time_bar.gd")
 
 func _wheel(button: int) -> InputEventMouseButton:
 	var e := InputEventMouseButton.new()
@@ -350,6 +351,41 @@ func _initialize() -> void:
 			t.ok(app.time_bar.speed_buttons[0].visible, "%s: the speed buttons are shown" % label)
 	root.size = Vector2i(1280, 720)
 	await process_frame
+
+	# the time bar on a phone: day slider keeps a usable width, nothing overflows, the sound control has one width
+	# in both states (SB-018 review: it used to squeeze the slider to 8-20 px and overflow at 360 px in Czech)
+	var min_slider := 48.0
+	for sz in [Vector2(360, 740), Vector2(400, 800)]:
+		var widths := {}
+		for lang in I18n.LANGS:
+			for paused in [false, true]:                  # "Přehrát" is wider than "Pauza": test the worst case too
+				for muted in [false, true]:
+					var host := Control.new()
+					host.size = sz
+					root.add_child(host)
+					var bar := TimeBar.new()
+					host.add_child(bar)
+					bar.set_narrow(true)
+					bar.sync(0.4, paused, 1.0, true, true, lang, muted, 0.5)
+					await process_frame
+					await process_frame
+					var tag := "%dx%d %s paused=%s muted=%s" % [sz.x, sz.y, lang, paused, muted]
+					t.ok(bar.slider.size.x >= min_slider, "%s: the day slider keeps %.0f px (got %.0f)" % [tag, min_slider, bar.slider.size.x])
+					t.ok(bar.get_combined_minimum_size().x <= bar.size.x + 0.5, "%s: the bar needs no more than it has (%.0f of %.0f)" % [tag, bar.get_combined_minimum_size().x, bar.size.x])
+					t.ok(bar.get_global_rect().position.x >= -0.5 and bar.get_global_rect().end.x <= sz.x + 0.5, "%s: the bar lies inside the screen %s" % [tag, bar.get_global_rect()])
+					t.ok(bar.sound_button.get_global_rect().end.x <= sz.x + 0.5 and bar.sound_button.size.x > 0.0, "%s: the sound button is on screen" % tag)
+					t.ok(bar.sound_button.icon != null and bar.sound_button.text == "" and bar.sound_button.tooltip_text != "", "%s: icon button with a tooltip name" % tag)
+					t.ok(bar.sound_button.get_global_rect().size.y >= 30.0, "%s: the sound button is tall enough to tap" % tag)
+					widths[muted] = bar.sound_button.size.x
+					host.queue_free()
+					await process_frame
+		t.eq(widths[true], widths[false], "%dx%d: the sound button has the same width muted or not" % [sz.x, sz.y])
+	var wide_bar := TimeBar.new()
+	root.add_child(wide_bar)
+	wide_bar.set_narrow(false)
+	wide_bar.sync(0.4, false, 1.0, false, false, "en", true, 0.5)
+	t.ok(wide_bar.sound_button.text == "Muted" and wide_bar.sound_button.icon == null and wide_bar.volume_slider.visible, "desktop keeps the worded button and the volume slider")
+	wide_bar.free()
 
 	# time controls
 	app.select(0)

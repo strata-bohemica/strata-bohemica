@@ -18,12 +18,14 @@
  "ui.status.E": "Evidence (E)",
  "ui.status.R": "Reconstruction (R)",
  "ui.status.F": "Fiction (F)",
- "ui.help": "[Space] pause  [Q/W/E] speed  [0] overview  [1-9] homestead  [Tab] next  [F] follow  [L] cutaway  [C] language  [Esc] close",
+ "ui.help": "[Space] pause  [Q/W/E] speed  [0] overview  [1-9] homestead  [Tab] next  [F] follow  [L] cutaway  [M] mute  [C] language  [Esc] close",
  "phase.sleep": "asleep",
  "phase.wake": "waking up",
  "phase.walk_out": "walking to work",
  "phase.work": "working",
  "phase.meal": "having a meal",
  "phase.walk_home": "walking home",
- "phase.settle": "going to bed"
+ "phase.settle": "going to bed",
+ "ui.sound": "Sound",
+ "ui.muted": "Muted"
 }
