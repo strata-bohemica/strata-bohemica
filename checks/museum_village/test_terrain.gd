@@ -99,6 +99,26 @@ func _init() -> void:
 			d_start = minf(d_start, Fixture.poly_dist(fa, p))
 		t.ok(d_start > 1.5, "house %d: every work place and path start stays clear of it (%.2f m)" % [id_a, d_start])
 
+	# (SB-030) footpaths go round the houses: no path point and no path segment touches any house's walls (HOUSE-004 type A
+	# 15.0 x 5.5 m, HOUSE-005 type B 8.5 x 5.0 m, from their asset.json) grown by 0.5 m, for all houses with their real type and yaw.
+	const WALL_HALF := {"A": Vector2(7.5, 2.75), "B": Vector2(4.25, 2.5)}      # x along the ridge, y across
+	const PATH_MARGIN := 0.5
+	var by_house: Dictionary = Fixture.house_types().by_house
+	var path_points := 0
+	for path in village.paths:
+		path_points += path.size()
+	t.eq(houses.size(), 12, "path check: twelve houses")
+	t.ok(village.paths.size() >= 16, "path check: the village has its paths (%d)" % village.paths.size())
+	t.ok(path_points >= 300, "path check: the paths have points (%d)" % path_points)
+	for h in houses:
+		var walls := Fixture.footprint(h, WALL_HALF[str(by_house[str(int(h.id))])] + Vector2(PATH_MARGIN, PATH_MARGIN))
+		var crossed := 0
+		for path in village.paths:
+			for k in range(path.size() - 1):
+				if Fixture.seg_poly_dist(Vector2(path[k][0], path[k][1]), Vector2(path[k + 1][0], path[k + 1][1]), walls) <= 0.0:
+					crossed += 1
+		t.eq(crossed, 0, "house %d: no path segment enters its walls (+%.1f m)" % [int(h.id), PATH_MARGIN])
+
 	# trees stand inside the disc, off houses, fields and the stream, on gentle ground
 	t.ok(village.trees.size() >= 40, "the village has trees (%d)" % village.trees.size())
 	for tr in village.trees:
