@@ -9,6 +9,7 @@ const Catalogue = preload("res://museum/assets/catalogue.gd")
 
 const PERIOD_PATH := "res://museum/data/periods/bronze_late.json"
 const VILLAGE_PATH := "res://museum/data/villages/breznice.json"
+const FURROWS_PATH := "res://museum/data/villages/breznice-furrows.json"
 const TERRAIN_PATH := "res://museum/data/villages/breznice-terrain.json"
 const HOMESTEAD_DIR := "res://museum/data/homesteads/"
 const CRAFT_DIR := "res://museum/data/crafts/"
@@ -19,6 +20,12 @@ static func load_all() -> Dictionary:
 	var period: Dictionary = Schema.load_json(PERIOD_PATH)
 	var village: Dictionary = Schema.load_json(VILLAGE_PATH)
 	var terrain_data: Dictionary = Schema.load_json(TERRAIN_PATH)
+	var furrows = Schema.load_json(FURROWS_PATH)
+	if not furrows is Dictionary:      # a missing or broken file is one clear error here, not a crash further down
+		errors.append("furrows: cannot read %s" % FURROWS_PATH)
+		furrows = {}
+	village["furrows"] = furrows
+	errors.append_array(Schema.validate_furrows(furrows, village.fields.size()))
 	errors.append_array(Schema.validate_period(period))
 	errors.append_array(Schema.validate_village(village))
 	errors.append_array(Schema.validate_terrain(terrain_data))

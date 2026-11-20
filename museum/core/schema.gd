@@ -116,6 +116,28 @@ static func validate_village(d: Dictionary) -> PackedStringArray:
 		_need(h, ["id", "pos", "yaw_deg", "door"], "village house", errors)
 	return errors
 
+## The furrows of the fields (SB-008): one record per field, every dimension inside the range of the cited experiment.
+static func validate_furrows(d: Dictionary, field_count: int) -> PackedStringArray:
+	var errors := PackedStringArray()
+	_need(d, ["schema", "evidence", "source", "source_ranges", "fields"], "furrows", errors)
+	if not errors.is_empty():
+		return errors
+	if d.fields.size() != field_count:
+		errors.append("furrows: %d records for %d fields" % [d.fields.size(), field_count])
+		return errors
+	if str(d.source).strip_edges().is_empty():
+		errors.append("furrows: no source")
+	for i in range(d.fields.size()):
+		var f: Dictionary = d.fields[i]
+		_need(f, ["dir", "depth_m", "width_m", "spacing_m"], "furrows field %d" % i, errors)
+		if not errors.is_empty():
+			return errors
+		for key in ["depth_m", "width_m", "spacing_m"]:
+			var r: Array = d.source_ranges.get(key, [])
+			if r.size() != 2 or float(f[key]) < float(r[0]) or float(f[key]) > float(r[1]):
+				errors.append("furrows field %d: %s %s is outside the source range %s" % [i, key, f[key], r])
+	return errors
+
 static func validate_terrain(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
 	_need(d, ["schema", "size", "step_m", "x0", "z0", "heights_cm"], "terrain", errors)
