@@ -10,6 +10,7 @@ const Picking = preload("res://museum/core/picking.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
 const SoundView = preload("res://museum/view/sound_view.gd")
+const CameraRig = preload("res://museum/core/camera_rig.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -268,8 +269,7 @@ func _refresh(delta: float) -> void:
 	var kz := 1.0 - exp(-12.0 * delta) if delta > 0.0 else 1.0      # zoom follows the fingers/wheel quickly
 	cam_target = cam_target.lerp(_focus_target(), k)
 	cam_dist = lerpf(cam_dist, dist_goal, kz)
-	var dir := Vector3(sin(orbit_yaw) * cos(orbit_pitch), -sin(orbit_pitch), cos(orbit_yaw) * cos(orbit_pitch))
-	camera.position = cam_target + dir * cam_dist
+	camera.position = CameraRig.position(cam_target, orbit_yaw, orbit_pitch, cam_dist, village.terrain)     # never under the ground
 	camera.look_at(cam_target)
 	# keep the subject in the free part of the screen while the card covers the right side
 	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)

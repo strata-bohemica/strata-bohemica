@@ -14,7 +14,7 @@ A Godot 4.5.1 (GL Compatibility) digital open-air museum of Bohemian prehistory:
 Needs Godot 4.5.1 stable (standard). Set `GODOT` to the binary (or put `godot` on PATH):
 
 ```sh
-checks/museum_village/run.sh            # all: core data terrain boundary view ui
+checks/museum_village/run.sh            # all: core data terrain boundary view ui sound camera
 checks/museum_village/run.sh data ui    # selected
 ```
 

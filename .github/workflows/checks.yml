@@ -1,6 +1,6 @@
 name: Checks
 
-# The seven headless museum tests (checks/museum_village/run.sh) on every pull request and on main.
+# The eight headless museum tests (checks/museum_village/run.sh) on every pull request and on main.
 # pages.yml only builds and deploys the web export; it does not run these.
 on:
   push:
