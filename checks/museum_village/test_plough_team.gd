@@ -14,6 +14,8 @@ const TOL_BELOW := 0.02         # m: a hoof may be this far under the ground (be
 const TOL_ABOVE := 0.04         # m: the lowest hoof may be this far above it (beyond the clip's own lift)
 const MAX_TILT_DEG := 20.5
 const MAX_FIELD_SLOPE := 0.20   # rise over run of the steepest test line (11 degrees; the shipped fields are gentler, up to about 6)
+const MAX_HITCH_M := 0.03       # m: ard hitch to yoke hitch while walking on the shipped fields (the ard is aimed at the team about the grip)
+const MAX_HITCH_STEEP_M := 0.20 # m: the same on the 11 degree stress lines, where the 20 degree pitch limit of the aiming is reached (0.177 m)
 const MAX_STEP_M := 0.02        # m: change of an ox root's height over the ground within one 0.1 s sample (the ground itself changes as the team swings round)
 
 var all: Dictionary
@@ -96,9 +98,9 @@ func _centroid(poly: Array) -> Vector2:
 	return c / poly.size()
 
 ## Steps the schedule through every turn (0.1 s over each turn, 1 s margin) and over the walks (every 2 s) and measures.
-func _run(t, label: String, sched) -> Dictionary:
+func _run(t, label: String, sched, max_hitch: float = MAX_HITCH_M) -> Dictionary:
 	var day: float = float(all.period.day_length_s)
-	var stats := {"below": INF, "above": -INF, "tilt": 0.0, "step": 0.0, "turns_fwd": 0, "turns_back": 0, "samples": 0, "seat": 0.0, "at_below": "", "at_above": ""}
+	var stats := {"below": INF, "above": -INF, "tilt": 0.0, "step": 0.0, "turns_fwd": 0, "turns_back": 0, "samples": 0, "seat": 0.0, "hitch": 0.0, "at_hitch": "", "at_below": "", "at_above": ""}
 	var times: Array = []
 	var x := 0.0
 	var prev_turning := false
@@ -137,6 +139,11 @@ func _run(t, label: String, sched) -> Dictionary:
 			if above > stats.above:
 				stats.above = above
 				stats.at_above = "t=%.1f %s ox%d (hoof %.3f m vs ground)" % [tm, st.travel.stage, k, d]
+			if k == 0 and st.travel.stage == "walk":      # the plough is hitched while the team walks (not in the turn clips, see the README)
+				var gap: float = (hv.props.yoke.nodes[0].find_child("beam_hitch", true, false) as Node3D).global_position.distance_to((hv.props.ard.nodes[0].find_child("yoke_hitch", true, false) as Node3D).global_position)
+				if gap > stats.hitch:
+					stats.hitch = gap
+					stats.at_hitch = "t=%.1f" % tm
 			stats.tilt = maxf(stats.tilt, rad_to_deg(ox.root.global_transform.basis.y.angle_to(Vector3.UP)))
 			var seat: Node3D = hv.props.yoke.nodes[0].find_child(str(ox.def.node), true, false)
 			stats.seat = maxf(stats.seat, ox.root.global_position.distance_to(seat.global_position))
@@ -146,7 +153,7 @@ func _run(t, label: String, sched) -> Dictionary:
 			prev_y[k] = y
 		prev_t = tm
 		stats.samples += 1
-	print("%-26s samples %4d  turns fwd/back %d/%d  hoof vs clip floor min %+.3f (%s)  vs clip top max %+.3f (%s)  tilt %.1f  max step/0.1s %.3f  oxen-on-seat %.3f" % [label, stats.samples, stats.turns_fwd, stats.turns_back, stats.below, stats.at_below, stats.above, stats.at_above, stats.tilt, stats.step, stats.seat])
+	print("%-26s samples %4d  turns fwd/back %d/%d  hoof vs clip floor min %+.3f (%s)  vs clip top max %+.3f (%s)  tilt %.1f  max step/0.1s %.3f  oxen-on-seat %.3f  walk hitch gap %.4f" % [label, stats.samples, stats.turns_fwd, stats.turns_back, stats.below, stats.at_below, stats.above, stats.at_above, stats.tilt, stats.step, stats.seat, stats.hitch])
 	t.ok(stats.samples > 150, "%s: the turns were sampled (%d)" % [label, stats.samples])
 	t.ok(stats.turns_fwd >= 2 and stats.turns_back >= 2, "%s: both turn directions, and a second furrow (%d/%d)" % [label, stats.turns_fwd, stats.turns_back])
 	t.ok(stats.below >= -TOL_BELOW, "%s: no hoof sinks more than %.0f cm under the ground (worst %+.3f, %s)" % [label, TOL_BELOW * 100.0, stats.below, stats.at_below])
@@ -154,7 +161,33 @@ func _run(t, label: String, sched) -> Dictionary:
 	t.ok(stats.tilt <= MAX_TILT_DEG, "%s: the oxen lean to the slope within %.0f degrees (%.1f)" % [label, MAX_TILT_DEG, stats.tilt])
 	t.ok(stats.step <= MAX_STEP_M, "%s: no height jump relative to the ground between samples (%.3f m per 0.1 s)" % [label, stats.step])
 	t.ok(stats.seat < 0.15, "%s: the oxen stay on the yoke's seats (%.3f m)" % [label, stats.seat])
+	t.ok(stats.hitch < max_hitch, "%s: the plough's hitch meets the yoke's while the team walks, within %.0f cm (worst %.4f m, %s)" % [label, max_hitch * 100.0, stats.hitch, stats.at_hitch])
 	return stats
+
+## The 20 degree clamp on how far the team leans: a synthetic plane steeper than the clamp (35 degrees), where an unclamped
+## lean (or one clamped at 30) would show. Walking state of the shipped field, with the homestead's ground replaced.
+func _clamp_check(t, sched) -> void:
+	var saved: Callable = hv.ground
+	var worst := 0.0
+	for plane in [Vector2(0.70, 0.0), Vector2(0.0, 0.70), Vector2(0.5, 0.5)]:
+		hv.ground = func(x: float, z: float) -> float: return plane.x * x + plane.y * z
+		var steepest := rad_to_deg(atan(plane.length()))
+		var tm := 0.0
+		var checked := 0
+		while tm < float(all.period.day_length_s) and checked < 6:
+			var st: Dictionary = sched.state_at(tm)
+			if st.phase == "work" and st.travel.stage == "walk":
+				hv.apply(st, 0.0, false, tm)
+				for ox in hv.animals:
+					worst = maxf(worst, rad_to_deg(ox.root.global_transform.basis.y.angle_to(Vector3.UP)))
+				checked += 1
+				tm += 7.0
+			else:
+				tm += 1.0
+		t.ok(checked == 6 and steepest > 30.0, "clamp check: walking samples on a %.0f degree plane (%d)" % [steepest, checked])
+	hv.ground = saved
+	t.ok(worst <= MAX_TILT_DEG, "the lean is clamped on ground steeper than the clamp (worst %.1f, limit %.1f)" % [worst, MAX_TILT_DEG])
+	t.ok(worst >= 19.0, "the lean reaches its 20 degree clamp on a 35 degree plane (worst %.1f)" % worst)
 
 func _initialize() -> void:
 	await process_frame
@@ -170,13 +203,14 @@ func _initialize() -> void:
 	t.ok(clip_range.walk.x > -0.08 and clip_range.walk.y < 0.05, "the walk clip's own hoof range on flat ground is small (%s)" % [clip_range.walk])
 
 	_run(t, "shipped field", view.homesteads[1].schedule)
+	_clamp_check(t, view.homesteads[1].schedule)
 	var steep := _steepest()
 	var sl: float = steep[2]
 	t.ok(sl > 0.15, "a steep test line exists (slope %.2f)" % sl)
 	var at: Vector2 = steep[0]
 	var up: Vector2 = steep[1]
-	_run(t, "steepest, uphill start", _schedule_on(at, up))
-	_run(t, "steepest, downhill start", _schedule_on(at + up * 14.0, -up))
+	_run(t, "steepest, uphill start", _schedule_on(at, up), MAX_HITCH_STEEP_M)
+	_run(t, "steepest, downhill start", _schedule_on(at + up * 14.0, -up), MAX_HITCH_STEEP_M)
 	_run(t, "steepest, across the slope", _schedule_on(at, Vector2(-up.y, up.x)))
 	for i in [1, 2]:
 		var c := _centroid(all.village.fields[i])
