@@ -1,5 +1,5 @@
 {
- "_comment": "Sound (SB-018, SB-019). Bus offsets are dB relative to Master. Layers and one-shot kinds are mixed by core/soundscape.gd as pure functions of time. The ambient loops are rendered by script at start (core/ambient_synth.gd); an entry with source file plays that recording instead and falls back to its generator recipe, with a warning, when the file is missing.",
+ "_comment": "Sound (SB-018, SB-019). Bus offsets are dB relative to Master. Layers and one-shot kinds are mixed by core/soundscape.gd as pure functions of time. The ambient loops are rendered by script at start (core/ambient_synth.gd); an entry with source file plays that recording instead and falls back to its generator recipe, with a warning, when the file is missing. SB-040: the generator recipes are soft (no carrier above about 3 kHz, no bird chirp above 3.5 kHz); one_shots only emit events, they play no sound yet.",
  "default_volume": 0.5,
  "buses": [
   {"name": "Ambient", "offset_db": -6.0},
