@@ -30,6 +30,11 @@ var _icons := {}                         # muted (bool) -> speaker icon, drawn o
 const NARROW_SLIDER_MIN := 48.0
 const NARROW_SEPARATION := 4
 const NARROW_MARGIN := 8.0
+## Touch target of the sound icon on a phone (CSS px; the usual guidance is 44 pt / 48 dp): the icon button is this wide and the bar this high.
+const NARROW_TOUCH := 44.0
+const NARROW_BAR_HEIGHT := 46.0
+const WIDE_BAR_HEIGHT := 38.0
+const BOTTOM_GAP := 10.0
 
 func _init() -> void:
 	anchor_left = 0.0
@@ -38,8 +43,8 @@ func _init() -> void:
 	anchor_bottom = 1.0
 	offset_left = 12.0
 	offset_right = -12.0
-	offset_top = -48.0
-	offset_bottom = -10.0
+	offset_top = -(BOTTOM_GAP + WIDE_BAR_HEIGHT)
+	offset_bottom = -BOTTOM_GAP
 	add_theme_constant_override("separation", 8)
 	pause_button = Button.new()
 	pause_button.pressed.connect(func(): pause_toggled.emit())
@@ -87,10 +92,12 @@ func _init() -> void:
 	volume_slider.drag_ended.connect(func(_changed): volume_committed.emit())
 	add_child(volume_slider)
 
-## On a phone the speed buttons and the clock label make way for the slider.
+## On a phone the speed buttons and the clock label make way for the slider, and "Řez domem" becomes "Řez"
+## (`ui.cutaway_short`; the full name stays as the tooltip) so that 320 px wide screens fit in Czech too.
 ## The sound control shrinks to a speaker icon of the same width in both states (the words "Zvuk"/"Ztlumeno" cost
-## 46/83 px, more than the slider could spare); the slider keeps a floor width and the bar uses tighter gaps.
-## Only mute is offered here, the volume stays on the device (open choice, see museum/README.md).
+## 46/83 px, more than the slider could spare), NARROW_TOUCH px wide and the bar NARROW_BAR_HEIGHT px high so that it is
+## a real touch target; the day slider keeps a floor width and the bar uses tighter gaps.
+## Only mute is offered here: the volume stays on the device (owner decision, SB-034; see museum/README.md).
 func set_narrow(narrow: bool) -> void:
 	_narrow = narrow
 	for b in speed_buttons:
@@ -101,7 +108,15 @@ func set_narrow(narrow: bool) -> void:
 	add_theme_constant_override("separation", NARROW_SEPARATION if narrow else 8)
 	offset_left = NARROW_MARGIN if narrow else 12.0
 	offset_right = -NARROW_MARGIN if narrow else -12.0
+	offset_top = -(BOTTOM_GAP + (NARROW_BAR_HEIGHT if narrow else WIDE_BAR_HEIGHT))
+	sound_button.custom_minimum_size = Vector2(NARROW_TOUCH, NARROW_TOUCH) if narrow else Vector2.ZERO
+	_refresh_labels()
 	_refresh_sound_button()
+
+func _refresh_labels() -> void:
+	follow_button.text = I18n.tr_("ui.follow", _lang)
+	cutaway_button.text = I18n.tr_("ui.cutaway_short" if _narrow else "ui.cutaway", _lang)
+	cutaway_button.tooltip_text = I18n.tr_("ui.cutaway", _lang) if _narrow else ""
 
 func _refresh_sound_button() -> void:
 	var label := I18n.tr_("ui.muted" if _muted else "ui.sound", _lang)
@@ -153,11 +168,10 @@ func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bo
 	pause_button.text = I18n.tr_("ui.play", lang) if paused else I18n.tr_("ui.pause", lang)
 	for i in range(speed_buttons.size()):
 		speed_buttons[i].set_pressed_no_signal(int(speed) == [1, 10, 40][i])
-	follow_button.text = I18n.tr_("ui.follow", lang)
 	follow_button.set_pressed_no_signal(follow)
-	cutaway_button.text = I18n.tr_("ui.cutaway", lang)
 	cutaway_button.set_pressed_no_signal(cutaway)
 	_lang = lang
 	_muted = muted
+	_refresh_labels()
 	_refresh_sound_button()
 	volume_slider.set_value_no_signal(volume)
