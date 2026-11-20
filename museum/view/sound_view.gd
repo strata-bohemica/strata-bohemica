@@ -25,7 +25,8 @@ var day_length := 360.0              # set from the period by the app
 var volume: float
 var muted := false
 var levels: Dictionary = {}            # layer -> 0..1 at the current time (what SB-019 mixes)
-var in_background := false
+var in_background := false:               # set: going to the background silences Master at once (see set_background)
+	set = set_background
 var _master_gain := START_GAIN         # linear gain applied to Master (user volume, mute, background)
 var _duck_gain := START_GAIN           # linear gain of the scene buses (pause)
 var _last_t := NAN
@@ -44,10 +45,18 @@ func _init() -> void:
 	_apply_gains()
 	load_prefs()
 
+## A hidden browser tab pauses the project, so no frame may be left to fade the gain down: going to the background
+## sets Master to silence right away. Coming back fades in again through apply().
+func set_background(b: bool) -> void:
+	in_background = b
+	if b:
+		_master_gain = 0.0
+		_apply_gains()
+
 func _ready() -> void:
 	var win := get_window()
-	win.focus_exited.connect(func(): in_background = true)
-	win.focus_entered.connect(func(): in_background = false)
+	win.focus_exited.connect(func(): set_background(true))
+	win.focus_entered.connect(func(): set_background(false))
 	_blip_player = AudioStreamPlayer.new()
 	_blip_player.bus = "UI"
 	add_child(_blip_player)
@@ -75,7 +84,7 @@ func load_prefs() -> bool:
 		return false
 	var v: Variant = cfg.get_value("sound", "volume", volume)
 	var m: Variant = cfg.get_value("sound", "muted", muted)
-	if (typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT) and typeof(m) == TYPE_BOOL:
+	if (typeof(v) == TYPE_FLOAT or typeof(v) == TYPE_INT) and is_finite(float(v)) and typeof(m) == TYPE_BOOL:     # nan/inf: a damaged store
 		volume = clampf(float(v), 0.0, 1.0)
 		muted = m
 		return true
@@ -141,6 +150,6 @@ static func make_tone(freq: float, seconds: float, rate: int = 22050) -> AudioSt
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
-		in_background = true
+		set_background(true)
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
-		in_background = false
+		set_background(false)

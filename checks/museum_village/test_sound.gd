@@ -7,6 +7,8 @@ const Soundscape = preload("res://museum/core/soundscape.gd")
 const SoundView = preload("res://museum/view/sound_view.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
 const Schema = preload("res://museum/core/schema.gd")
+## The length of a day in these checks. The daily repeat of one-shots needs every bucket_s to divide it (checked below),
+## so the step of the windows used here must divide the period's day, and DAY must be the period's day_length_s (checked).
 const DAY := 360.0
 
 ## A copy of a script with one piece of source replaced. Returns null when the piece is not found (the mutation would be void).
@@ -90,6 +92,29 @@ func _event_failures(sc: Variant, kinds: Array, quiet := false) -> int:
 		t.ok(e.pan >= -1.0 and e.pan <= 1.0, "events: pan in range")
 	return t.failures.size()
 
+## The volume a SoundView script loads from a store holding this raw text (positive control: "0.3" is read).
+func _loaded_volume(script: GDScript, raw: String) -> float:
+	var f := FileAccess.open("user://sound.cfg", FileAccess.WRITE)
+	f.store_string("[sound]\nvolume=%s\nmuted=false\n" % raw)
+	f.close()
+	var v = script.new()
+	root.add_child(v)
+	var got: float = v.volume
+	root.remove_child(v)
+	v.free()
+	DirAccess.remove_absolute("user://sound.cfg")
+	return got
+
+func _prefs_failures(script: GDScript, default_volume: float, quiet := false) -> int:
+	var t := T.new()
+	t.quiet = quiet
+	t.ok(is_equal_approx(_loaded_volume(script, "0.3"), 0.3), "prefs: a normal stored volume is read")
+	t.ok(is_equal_approx(_loaded_volume(script, "7.0"), 1.0), "prefs: a finite too-big volume is clamped")
+	for raw in ["nan", "inf", "-inf"]:
+		var v := _loaded_volume(script, raw)
+		t.ok(is_finite(v) and v == default_volume, "prefs: stored volume=%s is rejected, the default is used (got %s)" % [raw, v])
+	return t.failures.size()
+
 ## Fade-in and pause/background behaviour of a SoundView script (the real one or a broken copy).
 func _view_failures(script: GDScript, quiet := false) -> int:
 	var t := T.new()
@@ -103,6 +128,7 @@ func _view_failures(script: GDScript, quiet := false) -> int:
 		sv.apply(10.0 + i * 0.016, true, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Ambient")) <= -80.0, "view: pause ducks Ambient")
 	sv.in_background = true
+	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "view: going to the background silences Master at once")
 	for i in 120:
 		sv.apply(20.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "view: background silences Master")
@@ -115,6 +141,8 @@ func _initialize() -> void:
 	var data: Dictionary = Schema.load_json("res://museum/data/sound.json")
 
 	# data
+	var period: Dictionary = Schema.load_json("res://museum/data/periods/bronze_late.json")
+	t.eq(float(period.day_length_s), DAY, "DAY in these checks is the period's day length (the events repeat daily only if bucket_s divides it)")
 	t.eq(data.layers, Array(Soundscape.LAYERS), "sound.json lists the layers the code mixes")
 	var bus_names := []
 	for b in data.buses:
@@ -228,6 +256,13 @@ func _initialize() -> void:
 	t.ok(sv.in_background, "the window losing focus marks the view as background")
 	root.focus_entered.emit()
 	t.ok(not sv.in_background, "regaining focus clears it")
+	for i in 120:
+		sv.apply(20.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() > 0.1, "the sound is back after focus returns")
+	root.focus_exited.emit()                          # no frame runs now (a hidden tab): silence must not wait for one
+	t.ok(sv.master_gain() == 0.0 and AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "losing focus silences Master at once, without a frame")
+	root.focus_entered.emit()
+	t.ok(sv.master_gain() == 0.0, "regaining focus does not jump back loud (it fades in)")
 	for k in sv.data.layers:
 		t.ok(sv.levels.has(k), "the view exposes layer %s" % k)
 
@@ -236,7 +271,8 @@ func _initialize() -> void:
 	t.eq(_view_failures(SoundView), 0, "the view passes its pause / fade guards")
 	for pair in [["no fade in", _mutant(sv_path, "_master_gain = move_toward(_master_gain, 0.0 if in_background else _user_gain(), step)", "_master_gain = 0.0 if in_background else _user_gain()")],
 			["no pause duck", _mutant(sv_path, "0.0 if paused else 1.0, step)", "1.0, step)")],
-			["ignores background", _mutant(sv_path, "0.0 if in_background else _user_gain()", "_user_gain()")]]:
+			["ignores background", _mutant(sv_path, "0.0 if in_background else _user_gain()", "_user_gain()")],
+			["background waits for a frame", _mutant(sv_path, "\t\t_master_gain = 0.0\n\t\t_apply_gains()", "\t\tpass")]]:
 		t.ok(pair[1] != null, "view mutation '%s' compiled" % pair[0])
 		if pair[1] != null:
 			t.ok(_view_failures(pair[1], true) > 0, "view mutation '%s' is caught" % pair[0])
@@ -276,6 +312,9 @@ func _initialize() -> void:
 	root.add_child(sv3)
 	t.ok(sv3.volume == float(data.default_volume) and not sv3.muted, "garbage in the store is ignored")
 	DirAccess.remove_absolute("user://sound.cfg")
+	t.eq(_prefs_failures(SoundView, float(data.default_volume)), 0, "non-finite volumes in the store are rejected")
+	var guard := _mutant("res://museum/view/sound_view.gd", " and is_finite(float(v))", "")
+	t.ok(guard != null and _prefs_failures(guard, float(data.default_volume), true) > 0, "mutation 'no finite check on the stored volume' is caught")
 	var sv4 = SoundView.new()
 	root.add_child(sv4)
 	t.ok(sv4.volume == float(data.default_volume) and not sv4.muted, "no store: defaults")
