@@ -468,9 +468,16 @@ func _initialize() -> void:
 	for r in loops:
 		sp[r] = _spectrum(loops[r], 20000)
 	t.ok(_band(sp.wind, 0.0, 1000.0) > 0.9, "wind: low (%s below 1 kHz)" % _band(sp.wind, 0.0, 1000.0))
-	t.ok(_band(sp.day, 1500.0, 9000.0) > 0.8, "day: leaf rustle and insects are high (%s above 1.5 kHz)" % _band(sp.day, 1500.0, 9000.0))
-	t.ok(_band(sp.night, 3800.0, 5600.0) > 0.5, "night: crickets sing at 4-5 kHz (%s)" % _band(sp.night, 3800.0, 5600.0))
-	t.ok(_band(sp.dawn, 1800.0, 6500.0) > 0.7, "dawn: birdsong 2-6 kHz (%s)" % _band(sp.dawn, 1800.0, 6500.0))
+	t.ok(_band(sp.day, 500.0, 4000.0) > 0.8, "day: leaf rustle and insects are mid-high but soft (%s at 0.5-4 kHz)" % _band(sp.day, 500.0, 4000.0))
+	t.ok(_band(sp.night, 1800.0, 3400.0) > 0.4, "night: crickets sing at 2-3 kHz (%s)" % _band(sp.night, 1800.0, 3400.0))
+	t.ok(_band(sp.dawn, 1200.0, 3800.0) > 0.6, "dawn: birdsong 1.2-3.8 kHz (%s)" % _band(sp.dawn, 1200.0, 3800.0))
+	# SB-040: soft. Little energy where the ear is most sensitive and tones are sharpest (>4 kHz); before: day 0.54, dusk 0.16, night 0.96, dawn 0.42
+	for r in ["wind", "day", "dusk", "night", "dawn"]:
+		t.ok(_band(sp[r], 4000.0, 11025.0) < (0.12 if r == "day" else 0.05), "%s: soft, hardly any energy above 4 kHz (%s)" % [r, _band(sp[r], 4000.0, 11025.0)])
+	for r in ["day", "dusk", "night"]:
+		for v in Synth.RECIPES[r].voices:
+			t.ok(float(v.f) + float(v.vib[1]) < 3200.0 and float(v.vib[1]) > 0.0, "%s: carrier %s Hz stays below 3.2 kHz and has a vibrato" % [r, v.f])
+	t.ok(float(Synth.RECIPES.dawn.birds.f_hi) * 1.25 < 4000.0 and float(Synth.RECIPES.dawn.birds.h) == 0.0, "dawn: chirps stay below 4 kHz and have no harmonic")
 	t.ok(_band(sp.dusk, 0.0, 2500.0) > 0.4 and _band(sp.dusk, 0.0, 2500.0) < _band(sp.wind, 0.0, 2500.0), "dusk: between wind and the high layers (%s below 2.5 kHz)" % _band(sp.dusk, 0.0, 2500.0))
 	t.ok(_band(sp.night, 0.0, 1000.0) < _band(sp.wind, 0.0, 1000.0), "night is not the wind layer")
 

@@ -13,6 +13,9 @@ extends RefCounted
 ## Everything here is a provisional, synthetic stand-in (SB-022 may replace any layer with a recording).
 
 const RECIPES := {
+	# SB-040: soft by design (the first listening found sharp pitches). Nothing sits in the 3-6 kHz band where hearing is most
+	# sensitive: tonal carriers are at 1.9-3.0 kHz, with a vibrato (`vib`: [rate Hz, deviation Hz]) so no tone is a pure line,
+	# pulses and chirps have raised-cosine edges, chirps have no harmonic (`h`) and the beds are low-passed lower.
 	# bed: noise -> two low-pass poles (Hz) -> high-pass (Hz), times a slow gust envelope (cycles, depth, phase per loop;
 	# scaled to run from `floor` (the quietest it gets, a share of the loudest) up to 1)
 	"wind": {
@@ -20,33 +23,33 @@ const RECIPES := {
 		"rms": 0.12,
 	},
 	"day": {
-		"bed": {"lp": [5500.0, 8000.0], "hp": 1500.0, "floor": 0.45, "gust": [[2, 0.3, 0.4], [3, 0.2, 2.0], [5, 0.1, 1.0]]},
+		"bed": {"lp": [1800.0, 2600.0], "hp": 500.0, "floor": 0.45, "gust": [[2, 0.3, 0.4], [3, 0.2, 2.0], [5, 0.1, 1.0]]},
 		"voices": [
-			{"type": "pulse", "f": 3300.0, "pr": 55.0, "duty": 0.6, "gate_cycles": 3, "gate_duty": 0.55, "phase": 0.1, "gain": 0.5},
-			{"type": "pulse", "f": 5600.0, "pr": 88.0, "duty": 0.5, "gate_cycles": 5, "gate_duty": 0.4, "phase": 0.55, "gain": 0.3},
+			{"type": "pulse", "f": 2300.0, "pr": 55.0, "duty": 0.6, "gate_cycles": 3, "gate_duty": 0.55, "phase": 0.1, "gain": 0.28, "vib": [5.0, 45.0]},
+			{"type": "pulse", "f": 3000.0, "pr": 88.0, "duty": 0.5, "gate_cycles": 5, "gate_duty": 0.4, "phase": 0.55, "gain": 0.14, "vib": [7.0, 60.0]},
 		],
-		"rms": 0.10,
+		"rms": 0.085,
 	},
 	"dusk": {
 		"bed": {"lp": [900.0, 1500.0], "hp": 120.0, "floor": 0.4, "gust": [[1, 0.3, 0.8], [2, 0.2, 3.0]]},
 		"voices": [
-			{"type": "pulse", "f": 4300.0, "pr": 28.0, "duty": 0.4, "gate_cycles": 3, "gate_duty": 0.3, "phase": 0.3, "gain": 0.45},
+			{"type": "pulse", "f": 2400.0, "pr": 28.0, "duty": 0.4, "gate_cycles": 3, "gate_duty": 0.3, "phase": 0.3, "gain": 0.25, "vib": [4.0, 50.0]},
 		],
-		"rms": 0.07,
+		"rms": 0.06,
 	},
 	"night": {
-		"bed": {"lp": [160.0, 260.0], "hp": 30.0, "floor": 0.5, "gust": [[1, 0.3, 2.2], [2, 0.15, 5.0]], "gain": 0.55},
+		"bed": {"lp": [160.0, 260.0], "hp": 30.0, "floor": 0.5, "gust": [[1, 0.3, 2.2], [2, 0.15, 5.0]], "gain": 0.7},
 		"voices": [
-			{"type": "pulse", "f": 4700.0, "pr": 38.0, "duty": 0.35, "gate_cycles": 5, "gate_duty": 0.7, "phase": 0.0, "gain": 0.6},
-			{"type": "pulse", "f": 5100.0, "pr": 41.0, "duty": 0.35, "gate_cycles": 7, "gate_duty": 0.6, "phase": 0.4, "gain": 0.45},
-			{"type": "pulse", "f": 4300.0, "pr": 33.0, "duty": 0.4, "gate_cycles": 3, "gate_duty": 0.5, "phase": 0.7, "gain": 0.35},
+			{"type": "pulse", "f": 2500.0, "pr": 38.0, "duty": 0.35, "gate_cycles": 5, "gate_duty": 0.7, "phase": 0.0, "gain": 0.3, "vib": [5.0, 55.0]},
+			{"type": "pulse", "f": 2800.0, "pr": 41.0, "duty": 0.35, "gate_cycles": 7, "gate_duty": 0.6, "phase": 0.4, "gain": 0.22, "vib": [6.0, 60.0]},
+			{"type": "pulse", "f": 2200.0, "pr": 33.0, "duty": 0.4, "gate_cycles": 3, "gate_duty": 0.5, "phase": 0.7, "gain": 0.18, "vib": [4.0, 45.0]},
 		],
-		"rms": 0.10,
+		"rms": 0.085,
 	},
 	"dawn": {
-		"bed": {"lp": [1800.0, 3000.0], "hp": 300.0, "floor": 0.7, "gust": [[1, 0.2, 1.0]], "gain": 0.22},
-		"birds": {"phrases": 14, "syllables": [3, 7], "f_lo": 2200.0, "f_hi": 5200.0},
-		"rms": 0.09,
+		"bed": {"lp": [1200.0, 2000.0], "hp": 300.0, "floor": 0.7, "gust": [[1, 0.2, 1.0]], "gain": 0.3},
+		"birds": {"phrases": 14, "syllables": [3, 7], "f_lo": 1500.0, "f_hi": 3000.0, "dur": [0.07, 0.16], "h": 0.0},
+		"rms": 0.08,
 	},
 }
 
@@ -262,6 +265,10 @@ func voice_range(vi: int, i0: int, i1: int) -> PackedFloat32Array:
 	var ph := float(v.phase) + _voice_phase(vi, 0)                  # the seed moves the phrases, so two copies differ
 	var pph := _voice_phase(vi, 1)                                  # ...and the pulse train and the carrier
 	var cph := TAU * _voice_phase(vi, 2)
+	var vib: Array = v.get("vib", [])                               # [rate Hz, deviation Hz]: whole vibrato cycles per loop keep the period
+	var vc := roundf(float(vib[0]) * seconds) if vib.size() == 2 else 0.0
+	var vidx := float(vib[1]) / maxf(float(vib[0]), 1e-9) if vib.size() == 2 else 0.0   # modulation index (radians)
+	var vph := TAU * _voice_phase(vi, 4)
 	var fn := float(n)
 	var r := PackedFloat32Array()
 	r.resize(i1 - i0)
@@ -276,8 +283,9 @@ func voice_range(vi: int, i0: int, i1: int) -> PackedFloat32Array:
 		var pulse := 0.0
 		if pp < duty:
 			pulse = sin(PI * pp / duty)
+			pulse *= pulse                                          # raised-cosine edges: no click at a pulse start
 		if gate > 0.0 and pulse > 0.0:
-			r[i - i0] = gain * gate * pulse * sin(TAU * cf * u + cph)
+			r[i - i0] = gain * gate * pulse * sin(TAU * cf * u + cph + vidx * sin(TAU * vc * u + vph))
 	return r
 
 func _plan_birds() -> void:
@@ -291,15 +299,15 @@ func _plan_birds() -> void:
 		var f0 := lerpf(float(b.f_lo), float(b.f_hi), _rand())
 		var count := lo + int(_rand() * float(hi - lo + 1))
 		var gap := lerpf(0.09, 0.2, _rand()) * float(rate)
-		var dur := lerpf(0.04, 0.12, _rand()) * float(rate)
+		var dur := lerpf(float(b.dur[0]), float(b.dur[1]), _rand()) * float(rate)
 		var rise := _rand() < 0.5
 		var amp := lerpf(0.4, 1.0, _rand())
 		for s in count:
 			var drift := 1.0 + 0.08 * float(s) * (1.0 if rise else -1.0)
 			_chirps.append({"start": int(t0 + float(s) * (gap + dur)), "dur": int(dur), "f0": f0 * drift,
-				"f1": f0 * drift * (1.25 if rise else 0.8), "amp": amp * (1.0 - 0.06 * float(s))})
+				"f1": f0 * drift * (1.25 if rise else 0.8), "amp": amp * (1.0 - 0.06 * float(s)), "h": float(b.h)})
 
-## One chirp: a sine sweep with a second harmonic under a smooth envelope (`dur` samples).
+## One chirp: a sine sweep (with a second harmonic of weight `h`, 0 in the recipes) under a smooth envelope (`dur` samples).
 static func chirp_wave(c: Dictionary, rate: int) -> PackedFloat32Array:
 	var dur: int = c.dur
 	var f0: float = c.f0
@@ -312,7 +320,7 @@ static func chirp_wave(c: Dictionary, rate: int) -> PackedFloat32Array:
 		var env := sin(PI * float(j) / float(dur))
 		env *= env
 		var ph := TAU * (f0 * t + 0.5 * k * t * t)
-		w[j] = amp * env * (sin(ph) + 0.25 * sin(2.0 * ph))
+		w[j] = amp * env * (sin(ph) + float(c.get("h", 0.0)) * sin(2.0 * ph))
 	return w
 
 ## Each chirp is added at its start; indices wrap around the end of the loop.
