@@ -11,7 +11,10 @@
 //   control  an OscillatorNode at gain 0.01 sent through the same tap point is captured as 0.0100 (the tap works)
 //   loud     volume slider at 1.0, settled (set, wait 2 s, click the same spot again): the 0.25 s UI test tone (sine 12000/32768) arrives; expected peak 0.366 * 10^(-6/20) (UI bus) = 0.183
 //   half     volume slider at 0.5 (Master -12 dB): 12 dB lower than `loud` within +-1.5 dB
-//   silent   volume slider at 0 (Master -80 dB): nothing arrives (peak < 0.0005)
+//   silent   volume slider at 0 (Master -80 dB): nothing arrives (peak < 0.0005), and the test tone really started in that window (UI source start with
+//            the tone's buffer), so a tone that never played cannot pass as "silent"
+//   quiet    the ambient (Ambient bus, SB-019) is paused out before the tone windows (Space pauses the game, which mutes Ambient, Sources and Craft, not UI):
+//            the window right before `loud` has a peak < 0.0005, so the ambient cannot add to the tone's peak. Before the pause the ambient is required to arrive (`ambient`: peak >= 0.005), so `quiet` is not vacuous
 //   graph    every AudioBufferSourceNode that played reaches the destination through gain nodes (no cycle, no orphan)
 import http from 'node:http';
 import fs from 'node:fs';
@@ -144,6 +147,18 @@ try {
   let t0Settled = 0;
   const db = (a, b) => 20 * Math.log10(a / b);
 
+  // The ambient loops play from the start (SB-019) and would add to the tone windows (0.0686 alone at volume 1.0). Space pauses the game:
+  // that mutes Ambient, Sources and Craft (not UI), so only the UI test tone arrives in the windows below.
+  // Positive control for `quiet`: the ambient really arrives at the destination before the pause (rendering the loops takes about 15 s
+  // after the click, so windows of 3 s audio time are measured until one has a peak, at most 300 s of wall time: on a loaded machine it takes longer). The peak measured is information
+  // (0.0686 alone at volume 1.0).
+  let ambientBefore = 0;
+  for (const until = Date.now() + 300000; Date.now() < until && ambientBefore < 0.005;) ambientBefore = await measure(async () => {});
+  if (ambientBefore >= 0.005) for (let i = 0; i < 3; i++) ambientBefore = Math.max(ambientBefore, await measure(async () => {}));   // steady state: the largest of 4 windows
+  check('ambient', ambientBefore >= 0.005, `ambient peak at the destination before the pause (largest of 4 windows) ${ambientBefore.toFixed(4)} (expected >= 0.005)`);
+  await page.keyboard.press('Space');
+  await page.waitForTimeout(SETTLE_MS);                              // the mutes have eased out
+
   // positive control: known tone through the same tap point
   const control = await measure(() => page.evaluate(() => {
     const c = window.__ctxs[0]; const o = c.createOscillator(), g = c.createGain();
@@ -153,13 +168,18 @@ try {
 
   // Thresholds: settled values measured on the reviewed build are 0.1835 at volume 1.0 (0.366 x UI -6 dB), 12.0 dB lower at 0.5
   // (Master -12.04 dB) and 0.00002 at 0 (Master -80 dB leaves -95 dB residue).
+  const quiet = await measure(async () => {});
+  check('quiet', quiet < 0.0005, `no ambient (paused) before the tone windows: peak ${quiet.toFixed(5)} (expected < 0.0005)`);
   const loud = await measure(setVolume(1267), () => t0Settled);
   const expected = (12000 / 32768) * Math.pow(10, -6 / 20);
   check('loud', loud > expected * 0.7 && loud < expected * 1.3, `volume 1.0 tone peak ${loud.toFixed(4)} (expected about ${expected.toFixed(4)}, +-30 %)`);
   const half = await measure(setVolume(1232), () => t0Settled);
   check('half', loud > 0 && half > 0 && Math.abs(db(loud, half) - 12) < 1.5, `volume 0.5 peak ${half.toFixed(4)}, ${loud > 0 && half > 0 ? db(loud, half).toFixed(1) : 'n/a'} dB below volume 1.0 (expected 12 +-1.5)`);
+  const toneStartsBefore = await page.evaluate(() => window.__starts.length);
   const silent = await measure(setVolume(1196), () => t0Settled);
-  check('silent', silent < 0.0005, `volume 0 peak ${silent.toFixed(5)} (expected < 0.0005)`);
+  // the tone of the settled click: a buffer source with the tone's buffer (peak 12000/32768) started in the silent window (the first click's start is counted too)
+  const toneStarts = await page.evaluate((n) => window.__starts.slice(n).filter((x) => Math.abs(x.bufferPeak - 12000 / 32768) < 0.01).length, toneStartsBefore);
+  check('silent', silent < 0.0005 && toneStarts >= 1, `volume 0 peak ${silent.toFixed(5)} (expected < 0.0005), tone started ${toneStarts} time(s) in the window (expected >= 1)`);
 
   // graph: every buffer source that started must have reached the destination (through the bus gain nodes) at that moment
   const starts = await page.evaluate(() => window.__starts);
