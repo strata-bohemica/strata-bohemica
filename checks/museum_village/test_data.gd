@@ -128,6 +128,7 @@ func _init() -> void:
 		t.ok(Catalogue.has_model("VEG-001/%s" % tr.kind), "tree kind %s is known" % tr.kind)
 	for ref in scenes:
 		scenes[ref].free()
+	t.ok(false, "TRIAL: deliberate failure to prove the check blocks a PR")
 	quit(t.finish("data"))
 
 func skin_ref_of(craft: Dictionary, prop_id: String) -> String:
