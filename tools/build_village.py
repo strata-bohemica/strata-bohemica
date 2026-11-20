@@ -34,6 +34,10 @@ def envelope(asset_id):
     return sizes.pop()
 HOUSE_TYPES = layout['house_types']
 ENVELOPE = {t: envelope(a) for t, a in HOUSE_TYPES['assets'].items()}     # A about 6.4 x 15.9 m, B about 5.9 x 9.4 m
+WALL_HALF = {'A': (7.5, 2.75), 'B': (4.25, 2.5)}   # (along the ridge, across) half size of the walls: HOUSE-004 15.0 x 5.5 m, HOUSE-005 8.5 x 5.0 m
+ROUTE_MARGIN_M = 1.5                    # the router keeps this far off the walls: grid steps cut corners and the smoothing pulls the line inward
+HUB_CLEAR_M = 2.5                       # a hub (meeting point of a cluster's paths) stays this far off any wall: the roof overhangs 0.9 m
+BLOCKED_COST = 1e4                      # added to a step into a blocked cell (not infinite: a hub or yard must stay reachable)
 HOUSE002_HALF_LEN = 5.4                 # the tree clearances below were tuned around HOUSE-002 (10.8 m long)
 YARD_LOCAL_Z = 6.0                      # work place, in the house frame, along the door normal
 YARD_R = 4.2
@@ -94,6 +98,13 @@ water = np.abs(X - stream_x(Y)) < 2.0
 gy, gx = np.gradient(H, 1.0)
 
 # ---- least-cost paths on the levelled terrain -----------------------------------------------------
+# cells inside any house's walls (plus the routing margin) are almost closed: footpaths go round the houses, never through them
+blocked = np.zeros((n, n), dtype=bool)
+for h in houses:
+    ridge, across = WALL_HALF[HOUSE_TYPES['by_house'][str(h['id'])]]
+    j = math.radians(h['yaw_deg']); u = np.array([math.cos(j), math.sin(j)]); v = np.array([-math.sin(j), math.cos(j)])
+    rel_x, rel_y = X - h['x'], Y - h['y']
+    blocked |= (np.abs(rel_x * u[0] + rel_y * u[1]) <= across + ROUTE_MARGIN_M) & (np.abs(rel_x * v[0] + rel_y * v[1]) <= ridge + ROUTE_MARGIN_M)
 ids = np.arange(n * n).reshape(n, n)
 rows, cols, vals = [], [], []
 for dj, di in [(0, 1), (1, 0), (1, 1), (1, -1)]:
@@ -105,6 +116,7 @@ for dj, di in [(0, 1), (1, 0), (1, 1), (1, -1)]:
     w = length * (1 + 60 * ((hb - ha) / length) ** 2)
     wa = water[j0:j1, i0:i1] | water[j0 + dj:j1 + dj, i0 + di:i1 + di]
     w = w + np.where(wa, 80, 0)
+    w = w + np.where(blocked[j0:j1, i0:i1] | blocked[j0 + dj:j1 + dj, i0 + di:i1 + di], BLOCKED_COST * length, 0)
     rows += [a.ravel(), b.ravel()]; cols += [b.ravel(), a.ravel()]; vals += [w.ravel(), w.ravel()]
 G = coo_matrix((np.concatenate(vals), (np.concatenate(rows), np.concatenate(cols))), shape=(n * n, n * n)).tocsr()
 node = lambda x, y: int(round(y + 80)) * n + int(round(x + 80))
@@ -122,6 +134,16 @@ hubs = {}
 for k in 'ABCD':
     mem = [h for h in houses if h['cluster'] == k]
     hubs[k] = (float(np.mean([q['x'] for q in mem])), float(np.mean([q['y'] for q in mem])))
+def wall_dist(h, x, y):
+    """Distance from (x, y) to the walls of house h (0 inside)."""
+    ridge, across = WALL_HALF[HOUSE_TYPES['by_house'][str(h['id'])]]
+    j = math.radians(h['yaw_deg']); rx, ry = x - h['x'], y - h['y']
+    return math.hypot(max(abs(rx * math.cos(j) + ry * math.sin(j)) - across, 0.0), max(abs(-rx * math.sin(j) + ry * math.cos(j)) - ridge, 0.0))
+for k, (hx, hy) in list(hubs.items()):       # a centroid can fall beside a house: take the nearest grid point that clears every wall
+    if min(wall_dist(h, hx, hy) for h in houses) < HUB_CLEAR_M:
+        hubs[k] = min(((float(x), float(y)) for x in xs for y in xs if min(wall_dist(h, x, y) for h in houses) >= HUB_CLEAR_M),
+                      key=lambda c: math.hypot(c[0] - hx, c[1] - hy))
+        print('hub', k, 'moved', round(math.hypot(hubs[k][0] - hx, hubs[k][1] - hy), 2), 'm off', round(min(wall_dist(h, hx, hy) for h in houses), 2), 'm from a wall')
 paths = []
 for h in houses:
     paths.append(route(node(*h['yard']), node(*hubs[h['cluster']])))
