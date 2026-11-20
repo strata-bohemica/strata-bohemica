@@ -220,7 +220,9 @@ func _initialize() -> void:
 	app.pan_by_pixels(Vector2(100, 0))
 	var moved: Vector3 = app.cam_target - origin
 	t.ok(moved.dot(cam_right) < -1.0, "dragging the ground right moves the camera target left (%.1f m)" % moved.dot(cam_right))
-	t.ok(absf(moved.dot(cam_fwd)) < 0.01 and absf(moved.y) < 0.001, "a sideways drag moves only sideways, on the ground")
+	t.ok(absf(moved.dot(cam_fwd)) < 0.01, "a sideways drag moves only sideways")
+	var ground_rise: float = app.village.terrain.height_at(app.cam_target.x, app.cam_target.z) - app.village.terrain.height_at(origin.x, origin.z)     # SB-035: the target height follows the ground
+	t.ok(absf(moved.y - ground_rise) < 0.001, "the target rises with the ground it moves over (%.3f m of %.3f m)" % [moved.y, ground_rise])
 	app.pan_by_pixels(Vector2(-100, 0))
 	app.pan_by_pixels(Vector2(0, 100))
 	t.ok((app.cam_target - origin).dot(cam_fwd) > 1.0, "dragging the ground down moves the target away from the viewer")
