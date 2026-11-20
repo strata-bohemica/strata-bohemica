@@ -37,6 +37,8 @@ func _init() -> void:
 	data = Schema.load_json(DATA_PATH)
 	volume = float(data.default_volume)
 	for b in data.buses:
+		# The buses come from res://default_bus_layout.tres. Adding one here is fine on desktop only: Godot 4.5.1 Web puts a bus
+		# added at run time before Master and cuts Master off from the speakers (museum/README.md, checks/web_audio).
 		if AudioServer.get_bus_index(b.name) == -1:
 			AudioServer.add_bus()
 			var i := AudioServer.bus_count - 1

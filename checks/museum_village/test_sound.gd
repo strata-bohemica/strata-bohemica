@@ -218,6 +218,20 @@ func _initialize() -> void:
 	# the view: buses, ducking, fades, persistence, one-shot window rules
 	var home := OS.get_user_data_dir()
 	DirAccess.remove_absolute("user://sound.cfg")
+	# the buses come from default_bus_layout.tres, before any SoundView exists: on the web a bus added at run time cuts Master off
+	# from the speakers (Godot 4.5.1 Web inserts it before Master), so the order and the sends are part of the contract
+	var want_names: Array = ["Master"]
+	for b in data.buses:
+		want_names.append(b.name)
+	var have_names: Array = []
+	for i in AudioServer.bus_count:
+		have_names.append(String(AudioServer.get_bus_name(i)))
+	t.eq(have_names, want_names, "the layout defines Master, then the buses of sound.json in order, before the view is created")
+	t.eq(ProjectSettings.get_setting("audio/buses/default_bus_layout"), "res://default_bus_layout.tres", "the project loads that layout")
+	for b in data.buses:
+		var li := AudioServer.get_bus_index(b.name)
+		t.ok(li != -1 and absf(AudioServer.get_bus_volume_db(li) - float(b.offset_db)) < 0.01, "layout volume of %s equals the offset in sound.json" % b.name)
+		t.eq(AudioServer.get_bus_send(li), &"Master", "layout: %s sends to Master" % b.name)
 	var sv = SoundView.new()
 	root.add_child(sv)
 	await process_frame
