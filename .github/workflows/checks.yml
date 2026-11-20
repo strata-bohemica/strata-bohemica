@@ -1,6 +1,6 @@
 name: Checks
 
-# The six headless museum tests (checks/museum_village/run.sh) on every pull request and on main.
+# The seven headless museum tests (checks/museum_village/run.sh) on every pull request and on main.
 # pages.yml only builds and deploys the web export; it does not run these.
 on:
   push:
@@ -38,7 +38,7 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
-      - name: Run the museum tests (core data terrain boundary view ui)
+      - name: Run the museum tests (core data terrain boundary view ui sound)
         shell: bash
         run: |
           godot --version

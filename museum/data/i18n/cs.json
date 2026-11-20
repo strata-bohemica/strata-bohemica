@@ -18,12 +18,14 @@
  "ui.status.E": "Doloženo (E)",
  "ui.status.R": "Rekonstrukce (R)",
  "ui.status.F": "Fikce (F)",
- "ui.help": "[Mezerník] pauza  [Q/W/E] rychlost  [0] přehled  [1-9] statek  [Tab] další  [F] sledovat  [L] řez  [C] jazyk  [Esc] zavřít",
+ "ui.help": "[Mezerník] pauza  [Q/W/E] rychlost  [0] přehled  [1-9] statek  [Tab] další  [F] sledovat  [L] řez  [M] ticho  [C] jazyk  [Esc] zavřít",
  "phase.sleep": "spí",
  "phase.wake": "vstává",
  "phase.walk_out": "jde do práce",
  "phase.work": "pracuje",
  "phase.meal": "obědvá",
  "phase.walk_home": "jde domů",
- "phase.settle": "jde spát"
+ "phase.settle": "jde spát",
+ "ui.sound": "Zvuk",
+ "ui.muted": "Ztlumeno"
 }

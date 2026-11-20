@@ -1,0 +1,15 @@
+{
+ "_comment": "Sound foundation (SB-018). Bus offsets are dB relative to Master. Layers and one-shot kinds are mixed by core/soundscape.gd as pure functions of time; no recordings are shipped yet.",
+ "default_volume": 0.5,
+ "buses": [
+  {"name": "Ambient", "offset_db": -6.0},
+  {"name": "Sources", "offset_db": 0.0},
+  {"name": "Craft", "offset_db": -3.0},
+  {"name": "UI", "offset_db": -6.0}
+ ],
+ "layers": ["dawn", "day", "dusk", "night", "wind"],
+ "one_shots": [
+  {"id": "bird", "bus": "Ambient", "bucket_s": 3.0, "base_p": 0.5, "layers": {"dawn": 1.0, "day": 0.4, "dusk": 0.5}},
+  {"id": "dog", "bus": "Sources", "bucket_s": 20.0, "base_p": 0.35, "layers": {"dusk": 1.0, "night": 0.6}}
+ ]
+}

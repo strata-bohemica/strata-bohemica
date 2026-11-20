@@ -9,6 +9,7 @@ const I18n = preload("res://museum/core/i18n.gd")
 const Picking = preload("res://museum/core/picking.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
+const SoundView = preload("res://museum/view/sound_view.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -38,6 +39,7 @@ var camera: Camera3D
 var hud: Label
 var card_panel
 var time_bar
+var sound
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
@@ -63,6 +65,9 @@ func _ready() -> void:
 	focus_ids = world.occupied.keys()
 	focus_ids.sort()
 	_build_world()
+	sound = SoundView.new()
+	sound.day_length = float(period.day_length_s)
+	add_child(sound)
 	village = VillageView.new()
 	add_child(village)
 	village.build(world.village, world.terrain, world.occupied, world.pending)
@@ -109,6 +114,9 @@ func _build_world() -> void:
 	time_bar.scrubbed.connect(scrub)
 	time_bar.follow_toggled.connect(func(): follow = not follow)
 	time_bar.cutaway_toggled.connect(func(): cutaway = not cutaway)
+	time_bar.sound_toggled.connect(toggle_mute)
+	time_bar.volume_changed.connect(func(v): sound.set_volume(v); sound.set_muted(false))
+	time_bar.volume_committed.connect(func(): sound.blip())
 	layer.add_child(time_bar)
 	add_child(layer)
 
@@ -176,6 +184,9 @@ func select(id: int) -> void:
 	else:
 		_update_card(true)
 
+func toggle_mute() -> void:
+	sound.set_muted(not sound.muted)
+
 func toggle_language() -> void:
 	lang = "cs" if lang == "en" else "en"
 	_card_phase = ""
@@ -225,6 +236,7 @@ func _process(delta: float) -> void:
 		t += delta * speed
 	_pan_keys(delta)
 	_refresh(delta)
+	sound.apply(t, paused, speed, delta)
 	_hover()
 
 ## Arrow keys move the overview, always at the same speed on screen.
@@ -275,7 +287,7 @@ func _refresh(delta: float) -> void:
 	elif hover_id != 0:
 		line += "  |  %s" % _name_of(hover_id)
 	hud.text = line if narrow else line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
-	time_bar.sync(f, paused, speed, follow, cutaway, lang)
+	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
 func _hover() -> void:
@@ -298,6 +310,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_E: speed = 40.0
 			KEY_L: cutaway = not cutaway
 			KEY_F: follow = not follow
+			KEY_M: toggle_mute()
 			KEY_C: toggle_language()
 			KEY_0, KEY_ESCAPE: select(0)
 			KEY_TAB:

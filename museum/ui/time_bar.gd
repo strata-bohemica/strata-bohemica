@@ -6,6 +6,9 @@ signal speed_chosen(speed: float)
 signal scrubbed(fraction: float)
 signal follow_toggled
 signal cutaway_toggled
+signal sound_toggled
+signal volume_changed(volume: float)
+signal volume_committed
 
 const I18n = preload("res://museum/core/i18n.gd")
 
@@ -15,6 +18,8 @@ var slider: HSlider
 var clock_label: Label
 var follow_button: Button
 var cutaway_button: Button
+var sound_button: Button
+var volume_slider: HSlider
 var dragging := false
 
 func _init() -> void:
@@ -59,15 +64,29 @@ func _init() -> void:
 	cutaway_button.toggle_mode = true
 	cutaway_button.pressed.connect(func(): cutaway_toggled.emit())
 	add_child(cutaway_button)
+	sound_button = Button.new()
+	sound_button.toggle_mode = true
+	sound_button.pressed.connect(func(): sound_toggled.emit())
+	add_child(sound_button)
+	volume_slider = HSlider.new()
+	volume_slider.min_value = 0.0
+	volume_slider.max_value = 1.0
+	volume_slider.step = 0.05
+	volume_slider.custom_minimum_size = Vector2(72, 0)
+	volume_slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	volume_slider.value_changed.connect(func(v): volume_changed.emit(v))
+	volume_slider.drag_ended.connect(func(_changed): volume_committed.emit())
+	add_child(volume_slider)
 
 ## On a phone the speed buttons and the clock label make way for the slider.
 func set_narrow(narrow: bool) -> void:
 	for b in speed_buttons:
 		b.visible = not narrow
 	clock_label.visible = not narrow
+	volume_slider.visible = not narrow       # the mute button stays
 
 ## Reflect the app's state (no signals fired).
-func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bool, lang: String) -> void:
+func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bool, lang: String, muted := false, volume := 0.5) -> void:
 	if not dragging:
 		slider.set_value_no_signal(fraction)
 	var hours := fraction * 24.0
@@ -79,3 +98,6 @@ func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bo
 	follow_button.set_pressed_no_signal(follow)
 	cutaway_button.text = I18n.tr_("ui.cutaway", lang)
 	cutaway_button.set_pressed_no_signal(cutaway)
+	sound_button.text = I18n.tr_("ui.muted" if muted else "ui.sound", lang)
+	sound_button.set_pressed_no_signal(muted)
+	volume_slider.set_value_no_signal(volume)
