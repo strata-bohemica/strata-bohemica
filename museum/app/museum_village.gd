@@ -168,7 +168,7 @@ func pan_by_pixels(delta: Vector2) -> void:
 	pan.y = 0.0
 	if pan.length() > PAN_LIMIT:
 		pan = pan.normalized() * PAN_LIMIT
-	cam_target = _focus_target()                    # direct, like the pinch
+	cam_target = _focus_target()                    # direct, like the pinch; the height follows the ground, so it moves by at most slope x step
 
 ## Zoom by a factor (<1 in, >1 out) around the current target.
 func zoom_by(factor: float) -> void:
@@ -250,7 +250,7 @@ func _pan_keys(delta: float) -> void:
 
 func _focus_target() -> Vector3:
 	if selected == 0:
-		return Vector3(0, 4, 0) + pan
+		return CameraRig.overview_target(pan, village.terrain)
 	if not world.occupied.has(selected):
 		return village.house_world(selected) + Vector3(0, 1.5, 0)
 	return (village.character_world(selected) if follow else village.workplace_world(selected)) + Vector3(0, 0.9, 0)

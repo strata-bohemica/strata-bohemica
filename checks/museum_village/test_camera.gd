@@ -8,9 +8,13 @@ const OVERVIEW_DISTS := [30.0, 60.0, 100.0, 175.0, 205.0, 300.0]
 const FOCUS_DISTS := [4.0, 8.0, 15.0, 32.0, 60.0, 120.0, 300.0]
 const CLEARANCE_FLOOR := 1.5     # metres, fixed by the card; deliberately NOT CameraRig.MARGIN, so lowering the constant cannot pass
 const BLEND_FLOOR := 2.0         # metres of fade the camera may need before it is left alone (see CameraRig.BLEND)
+const TARGET_OFFSET := 3.0       # SB-035: the overview looks 3 m above the ground
+const TARGET_MIN := 2.0
+const TARGET_MAX := 4.0
+const DRAG_DY_LIMIT := 1.0        # m per frame in a fast drag: max ground slope x about 2 m of ground per frame (measured below)
 const PITCHES := [-85, -70, -55, -38, -25, -15, -10, -6, -3]     # degrees, the app clamps to [-85, -3]
 
-## Every target the app can aim at: overview pans (PAN_LIMIT 70 m, y = 4) and every house with its focus offsets.
+## Every target the app can aim at: overview pans (PAN_LIMIT 70 m; y = 4 is deliberately kept as a stress target: far below the hills, so the lift is exercised hard) and every house with its focus offsets.
 static func targets(all: Dictionary) -> Array:
 	var out: Array = []
 	for r in [0.0, 35.0, 70.0]:
@@ -130,6 +134,82 @@ func _initialize() -> void:
 		focus_checked += 1
 	t.ok(focus_checked > 1, "default views checked: %d" % focus_checked)
 	app0.queue_free()
+	await process_frame
+
+	# SB-035: the overview looks at the ground (+ 3 m), not at a fixed height, and the target moves smoothly
+	var ov = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
+	root.add_child(ov)
+	for i in range(3):
+		await process_frame
+	ov.paused = true
+	ov.select(0)
+	var steady_worst := 0.0
+	var steady_n := 0
+	for r in range(0, 71, 5):                                    # every pannable place: 15 deg lattice inside PAN_LIMIT
+		for a in range(0, 360, 15):
+			ov.pan = Vector3(cos(deg_to_rad(a)) * r, 0.0, sin(deg_to_rad(a)) * r)
+			ov._refresh(0.0)                                     # delta 0 = no easing: the settled target
+			var above: float = ov.cam_target.y - terrain.height_at(ov.cam_target.x, ov.cam_target.z)
+			steady_worst = maxf(steady_worst, absf(above - TARGET_OFFSET))
+			steady_n += 1
+			t.ok(above >= TARGET_MIN and above <= TARGET_MAX, "overview target %.2f m above the ground at pan r=%d a=%d (want %.0f..%.0f)" % [above, r, a, TARGET_MIN, TARGET_MAX])
+	print("camera overview target: ", steady_n, " pans, worst distance from ground + ", TARGET_OFFSET, " m = ", snappedf(steady_worst, 0.001), " m")
+	# default overview aims at the village centre's ground, so the picture's centre is the village
+	ov.pan = Vector3.ZERO
+	ov._refresh(0.0)
+	t.ok(absf(ov.cam_target.x) < 1e-4 and absf(ov.cam_target.z) < 1e-4, "default overview target is over the village centre")
+	# a drag over the hills at 60 fps: the target never moves more than the ground's slope allows, and lags it only a little
+	var max_slope := 0.0
+	for ix in range(-80, 81):                                    # steepest ground slope (any direction) over the pannable disc
+		for iz in range(-80, 81):
+			var h0: float = terrain.height_at(ix * 1.0, iz * 1.0)
+			max_slope = maxf(max_slope, maxf(absf(terrain.height_at(ix + 0.25, iz) - h0), absf(terrain.height_at(ix, iz + 0.25) - h0)) / 0.25)
+	var worst_dy := 0.0
+	var worst_lag := 0.0
+	var worst_step_over := 0.0
+	var prev: Vector3 = ov.cam_target
+	var frames := 0
+	ov.pan = Vector3.ZERO
+	ov.cam_target = ov._focus_target()
+	ov.orbit_yaw = deg_to_rad(20.0)
+	for path in range(3):
+		ov.pan = Vector3(-40.0, 0.0, -30.0 + 30.0 * path)
+		ov.cam_target = ov._focus_target()
+		ov._refresh(0.0)
+		prev = ov.cam_target
+		for f in range(240):                                    # 4 s of dragging the map (a quick drag: 60% of the screen height per second)
+			ov.pan_by_pixels(Vector2(-1.0, 0.25 - 0.003 * f) * ov.get_viewport().get_visible_rect().size.y * 0.01)
+			ov._refresh(1.0 / 60.0)
+			var step: Vector3 = ov.cam_target - prev
+			var horiz := Vector2(step.x, step.z).length()
+			worst_dy = maxf(worst_dy, absf(step.y))
+			worst_step_over = maxf(worst_step_over, absf(step.y) - (max_slope * horiz + 0.02))
+			var lag: float = absf(ov.cam_target.y - terrain.height_at(ov.cam_target.x, ov.cam_target.z) - TARGET_OFFSET)
+			worst_lag = maxf(worst_lag, lag)
+			prev = ov.cam_target
+			frames += 1
+	t.ok(worst_step_over <= 0.0, "drag: target height changes at most max slope %.2f m/m x the step (+0.02 m): worst excess %.4f m" % [max_slope, worst_step_over])
+	t.ok(worst_dy < DRAG_DY_LIMIT, "drag: target height changes at most %.2f m per frame (worst %.3f)" % [DRAG_DY_LIMIT, worst_dy])
+	t.ok(worst_lag < 0.001, "drag: the target stays on ground + offset (worst %.4f m off)" % [ worst_lag])
+	print("camera drag: ", frames, " frames, max slope ", snappedf(max_slope, 0.001), ", worst height step ", snappedf(worst_dy, 0.0001), " m, worst lag ", snappedf(worst_lag, 0.001), " m")
+	# select a house and deselect: the target eases between the two heights, never jumping
+	var worst_sel := 0.0
+	for id in [1, 4, 8]:
+		ov.select(id)
+		ov._refresh(0.0)
+		ov.select(0)
+		prev = ov.cam_target
+		var gap: float = (ov._focus_target() - prev).length()
+		var cap := gap * (1.0 - exp(-4.0 / 60.0)) + 1e-4          # the first frame's share of the ease
+		for f in range(180):
+			ov._refresh(1.0 / 60.0)
+			var st: float = ov.cam_target.distance_to(prev)
+			worst_sel = maxf(worst_sel, st)
+			t.ok(st <= cap + 1e-3, "deselect %d: frame %d step %.3f <= %.3f" % [id, f, st, cap])
+			prev = ov.cam_target
+		t.ok(ov.cam_target.distance_to(ov._focus_target()) < 0.2, "deselect %d settles on the overview target (%.3f m off)" % [id, ov.cam_target.distance_to(ov._focus_target())])
+	print("camera deselect: worst per-frame step ", snappedf(worst_sel, 0.001), " m")
+	ov.queue_free()
 	await process_frame
 
 	# the real app: drag, pinch and arrow-key panning (pan_by_pixels) keep the camera above the ground after every frame
