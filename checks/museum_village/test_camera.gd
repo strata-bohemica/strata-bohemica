@@ -6,6 +6,8 @@ const CameraRig = preload("res://museum/core/camera_rig.gd")
 
 const OVERVIEW_DISTS := [30.0, 60.0, 100.0, 175.0, 205.0, 300.0]
 const FOCUS_DISTS := [4.0, 8.0, 15.0, 32.0, 60.0, 120.0, 300.0]
+const CLEARANCE_FLOOR := 1.5     # metres, fixed by the card; deliberately NOT CameraRig.MARGIN, so lowering the constant cannot pass
+const BLEND_FLOOR := 2.0         # metres of fade the camera may need before it is left alone (see CameraRig.BLEND)
 const PITCHES := [-85, -70, -55, -38, -25, -15, -10, -6, -3]     # degrees, the app clamps to [-85, -3]
 
 ## Every target the app can aim at: overview pans (PAN_LIMIT 70 m, y = 4) and every house with its focus offsets.
@@ -38,6 +40,13 @@ static func grid_min(all: Dictionary, rig: Callable) -> Dictionary:
 						worst.case = "%s yaw=%d pitch=%d dist=%.0f" % [tg.name, yaw_deg, pitch_deg, d]
 	return worst
 
+## Level ground at y = 0 with the terrain's one method, for checks that need an exactly known surface.
+class FlatGround:
+	func height_at(_x: float, _z: float) -> float:
+		return 0.0
+
+const BEND_LIMIT := 0.0005    # m; BLEND 2 measures 0.00016, BLEND 0.2 0.0016, plain maxf 0.025 (step 0.05 m, slope change 0.5)
+
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
@@ -49,14 +58,33 @@ func _initialize() -> void:
 	var control := grid_min(all, raw)
 	t.ok(control.below > 1000, "control: the raw orbit goes under the ground in %d of %d grid cases" % [control.below, control.n])
 
-	# the guard: every grid case keeps at least MARGIN above the ground
+	# the guard: every grid case keeps at least the fixed floor above the ground, and the constant itself cannot drop below it
+	t.ok(CameraRig.MARGIN >= CLEARANCE_FLOOR, "CameraRig.MARGIN %.2f >= %.1f m" % [CameraRig.MARGIN, CLEARANCE_FLOOR])
 	var lifted := grid_min(all, func(tg, yaw, pitch, d, ter): return CameraRig.position(tg, yaw, pitch, d, ter))
-	t.ok(lifted.clearance >= CameraRig.MARGIN - 1e-4, "camera clearance over %d inputs >= %.1f m (worst %.3f at %s)" % [lifted.n, CameraRig.MARGIN, lifted.clearance, lifted.case])
+	t.ok(lifted.clearance >= CLEARANCE_FLOOR - 1e-4, "camera clearance over %d inputs >= %.1f m (worst %.3f at %s)" % [lifted.n, CLEARANCE_FLOOR, lifted.clearance, lifted.case])
 	print("camera grid: ", lifted.n, " inputs, raw worst ", snappedf(control.clearance, 0.01), " m, lifted worst ", snappedf(lifted.clearance, 0.001), " m")
 
 	# the lift changes nothing where the camera is already well clear (default overview, a focus view)
 	var d_over := CameraRig.orbit_position(Vector3(0, 4, 0), deg_to_rad(20.0), deg_to_rad(-38.0), 175.0)
 	t.ok(CameraRig.position(Vector3(0, 4, 0), deg_to_rad(20.0), deg_to_rad(-38.0), 175.0, terrain).is_equal_approx(d_over), "the default overview is not moved")
+
+	# smooth (C1, not just continuous): over flat ground the camera height must bend gently where the lift begins.
+	# A plain maxf has the same height but a corner there: its second difference is the whole slope change per step.
+	var flat := FlatGround.new()
+	var worst_bend := 0.0
+	var y_prev := 0.0
+	var y_prev2 := 0.0
+	for i in range(0, 801):                                       # raw height rises 0.5 m per metre of distance, crossing the margin
+		var yp := CameraRig.position(Vector3(0, -8.0, 0), 0.0, deg_to_rad(-30.0), 0.05 * i, flat).y
+		if i >= 2:
+			worst_bend = maxf(worst_bend, absf(yp - 2.0 * y_prev + y_prev2))
+		y_prev2 = y_prev
+		y_prev = yp
+	t.ok(worst_bend < BEND_LIMIT, "lift is C1: largest second difference %.5f m < %.4f m (plain maxf gives 0.025)" % [worst_bend, BEND_LIMIT])
+	print("camera bend: largest second difference over the lift ", snappedf(worst_bend, 0.000001), " m")
+	# a camera that is clear by margin + 2 m is left exactly where it is (a wider blend would lift it)
+	var clear_raw := CameraRig.orbit_position(Vector3(0, CLEARANCE_FLOOR + BLEND_FLOOR + 0.5, 0), 0.0, deg_to_rad(-3.0), 0.0)
+	t.ok(CameraRig.position(Vector3(0, CLEARANCE_FLOOR + BLEND_FLOOR + 0.5, 0), 0.0, deg_to_rad(-3.0), 0.0, flat).is_equal_approx(clear_raw), "a camera 0.5 m beyond margin + blend is not lifted")
 
 	# smooth: sweeping each input in small steps never moves the camera more than the raw orbit would (+ the slope's share)
 	var worst_ratio := 0.0
@@ -83,6 +111,27 @@ func _initialize() -> void:
 						sweeps += 1
 	print("camera sweeps: ", sweeps, " samples, largest step / raw step = ", snappedf(worst_ratio, 0.01))
 
+	# a focus view: every house at its starting distance and default angle stays exactly on the raw orbit
+	var app0 = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
+	root.add_child(app0)
+	for i in range(3):
+		await process_frame
+	app0.paused = true
+	var focus_checked := 0
+	for id in [0] + app0.focus_ids:
+		app0.select(id)
+		app0.orbit_yaw = deg_to_rad(20.0)
+		app0.orbit_pitch = deg_to_rad(-38.0)
+		app0.cam_dist = app0.base_dist()
+		app0.cam_target = app0._focus_target()
+		app0._refresh(0.0)
+		var want: Vector3 = CameraRig.orbit_position(app0.cam_target, app0.orbit_yaw, app0.orbit_pitch, app0.cam_dist)
+		t.ok(app0.camera.position.is_equal_approx(want), "default view %d is not moved (lift %.4f m)" % [id, app0.camera.position.y - want.y])
+		focus_checked += 1
+	t.ok(focus_checked > 1, "default views checked: %d" % focus_checked)
+	app0.queue_free()
+	await process_frame
+
 	# the real app: drag, pinch and arrow-key panning (pan_by_pixels) keep the camera above the ground after every frame
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app)
@@ -94,7 +143,7 @@ func _initialize() -> void:
 		app._refresh(0.0)
 		var c: float = app.camera.position.y - terrain.height_at(app.camera.position.x, app.camera.position.z)
 		lowest[0] = minf(lowest[0], c)
-		t.ok(c >= CameraRig.MARGIN - 1e-4, "%s: clearance %.3f m" % [label, c])
+		t.ok(c >= CLEARANCE_FLOOR - 1e-4, "%s: clearance %.3f m" % [label, c])
 	app.orbit_pitch = deg_to_rad(-3.0)
 	app.dist_goal = 30.0
 	app.cam_dist = 30.0
