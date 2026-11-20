@@ -80,10 +80,21 @@ func _init() -> void:
 	for path in village.paths:
 		t.ok(path.size() >= 4, "a path has points")
 		for q in path:
-			t.ok(Vector2(q[0], q[1]).length() < radius + 0.5, "path stays inside the disc")
+			t.ok(Vector2(q[0], q[1]).length() < radius, "path stays inside the disc")
 	for poly in village.fields:
 		for q in poly:
 			t.ok(Vector2(q[0], q[1]).length() < radius, "field stays inside the disc")
+
+	# the water ends at the slab: the centreline and both ribbon edges stay inside the disc
+	var half_w: float = float(village.stream.width_m) / 2.0
+	t.ok(stream.size() >= 8, "the stream has a course (%d points)" % stream.size())
+	for k in range(stream.size()):
+		var sp := Vector2(stream[k][0], stream[k][1])
+		var s_prev := Vector2(stream[maxi(k - 1, 0)][0], stream[maxi(k - 1, 0)][1])
+		var s_next := Vector2(stream[mini(k + 1, stream.size() - 1)][0], stream[mini(k + 1, stream.size() - 1)][1])
+		var side := (s_next - s_prev).normalized().orthogonal() * half_w
+		t.ok(sp.length() < radius, "stream point %d stays inside the disc (%.1f m)" % [k, sp.length()])
+		t.ok((sp + side).length() < radius and (sp - side).length() < radius, "stream ribbon edge at point %d stays inside the disc (%.1f / %.1f m)" % [k, (sp + side).length(), (sp - side).length()])
 
 	# the routes people walk run over level ground: house-frame points to world heights
 	for id in all.occupied:
