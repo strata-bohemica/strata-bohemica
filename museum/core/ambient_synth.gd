@@ -23,14 +23,14 @@ const RECIPES := {
 		"bed": {"lp": [5500.0, 8000.0], "hp": 1500.0, "floor": 0.45, "gust": [[2, 0.3, 0.4], [3, 0.2, 2.0], [5, 0.1, 1.0]]},
 		"voices": [
 			{"type": "pulse", "f": 3300.0, "pr": 55.0, "duty": 0.6, "gate_cycles": 3, "gate_duty": 0.55, "phase": 0.1, "gain": 0.5},
-			{"type": "pulse", "f": 5600.0, "pr": 88.0, "duty": 0.5, "gate_cycles": 4, "gate_duty": 0.4, "phase": 0.55, "gain": 0.3},
+			{"type": "pulse", "f": 5600.0, "pr": 88.0, "duty": 0.5, "gate_cycles": 5, "gate_duty": 0.4, "phase": 0.55, "gain": 0.3},
 		],
 		"rms": 0.10,
 	},
 	"dusk": {
 		"bed": {"lp": [900.0, 1500.0], "hp": 120.0, "floor": 0.4, "gust": [[1, 0.3, 0.8], [2, 0.2, 3.0]]},
 		"voices": [
-			{"type": "pulse", "f": 4300.0, "pr": 28.0, "duty": 0.4, "gate_cycles": 2, "gate_duty": 0.3, "phase": 0.3, "gain": 0.45},
+			{"type": "pulse", "f": 4300.0, "pr": 28.0, "duty": 0.4, "gate_cycles": 3, "gate_duty": 0.3, "phase": 0.3, "gain": 0.45},
 		],
 		"rms": 0.07,
 	},
@@ -77,14 +77,15 @@ var _chirps: Array = []
 var _sum_sq := 0.0
 var _peak := 0.0
 var _scale := 1.0
-var fade := false                   # bake a sin window into the stream (see to_stream)
+var fade := false                   # bake a sin window into `bytes` (silent loop ends; see sound_view.gd)
 var bytes := PackedByteArray()      # the finished 16-bit stream data
 var work_samples := 0               # samples handled so far, over all stages (for progress)
 
-func _init(p_recipe: String, p_seed: int, p_rate: int = 22050, seconds: float = 8.0, p_fade: bool = false) -> void:
+## `p_spec` replaces the named recipe (tests render one voice kind on its own).
+func _init(p_recipe: String, p_seed: int, p_rate: int = 22050, seconds: float = 8.0, p_fade: bool = false, p_spec: Dictionary = {}) -> void:
 	recipe = p_recipe
 	fade = p_fade
-	_spec = RECIPES[p_recipe]
+	_spec = p_spec if not p_spec.is_empty() else RECIPES[p_recipe]
 	_seed = p_seed
 	rate = p_rate
 	var blocks := maxi(2 * XFADE_BLOCKS, int(round(seconds * rate / BLOCK)))
@@ -105,8 +106,10 @@ func _init(p_recipe: String, p_seed: int, p_rate: int = 22050, seconds: float = 
 		var hi := -INF
 		for k in blocks:
 			var e := 0.0
-			for g in bed.gust:
-				e += float(g[1]) * sin(TAU * float(g[0]) * float(k) / float(blocks) + float(g[2]))
+			var gi := 0
+			for g in bed.gust:                  # the seed moves each gust's phase (cycles stay whole), so two copies gust differently
+				e += float(g[1]) * sin(TAU * float(g[0]) * float(k) / float(blocks) + float(g[2]) + TAU * _voice_phase(100 + gi, 3))
+				gi += 1
 			_env[k] = e
 			lo = minf(lo, e)
 			hi = maxf(hi, e)
@@ -124,6 +127,13 @@ static func kind_hash(id: String) -> int:
 	for c in id.to_utf8_buffer():
 		h = (h * 31 + c) & 0xFFFFFFF
 	return h
+
+## A fraction 0..1 from the seed, the voice and a slot: whole cycles per loop stay whole, only where they start moves.
+func _voice_phase(voice: int, slot: int) -> float:
+	var h := (_seed * 2654435761 + (voice * 3 + slot + 1) * 40503 + kind_hash(recipe)) & 0xFFFFFFFF
+	h = ((h ^ (h >> 15)) * 2246822519) & 0xFFFFFFFF
+	h = (h ^ (h >> 13)) & 0xFFFFFFFF
+	return float(h & 0xFFFFFF) / 16777216.0
 
 func _pole(hz: float) -> float:
 	return 1.0 - exp(-TAU * hz / float(rate))
@@ -227,36 +237,48 @@ func _run_voices(budget: int) -> int:
 	var used := 0
 	while _pos < voices.size() * per and used < budget:
 		var vi := _pos / per
-		var v: Dictionary = voices[vi]
 		var i0 := _pos % per
 		var i1 := mini(i0 + maxi(budget - used, 1), per)
-		var seconds := float(n) / float(rate)
-		var cf := roundf(float(v.f) * seconds)                          # carrier cycles per loop
-		var pc := roundf(float(v.pr) * seconds)                         # pulses per loop
-		var gc := float(v.gate_cycles)
-		var duty := float(v.duty)
-		var gduty := float(v.gate_duty)
-		var gain := float(v.gain)
-		var ph := float(v.phase)
-		var fn := float(n)
-		for i in range(i0, i1):
-			var u := float(i) / fn
-			var gp := fposmod(u * gc + ph, 1.0)
-			var gate := 0.0
-			if gp < gduty:
-				gate = sin(PI * gp / gduty)
-				gate *= gate
-			var pp := fposmod(u * pc, 1.0)
-			var pulse := 0.0
-			if pp < duty:
-				pulse = sin(PI * pp / duty)
-			if gate > 0.0 and pulse > 0.0:
-				out[i] += gain * gate * pulse * sin(TAU * cf * u)
+		var chunk := voice_range(vi, i0, i1)
+		for k in chunk.size():
+			out[i0 + k] += chunk[k]
 		used += i1 - i0
 		_pos += i1 - i0
 	if _pos >= voices.size() * per:
 		_next(Stage.BIRDS if _spec.has("birds") else Stage.SCAN)
 	return used
+
+## Samples i0..i1-1 of voice `vi`. The indices may run past the end of the loop: the voice is periodic with the loop
+## (whole carrier, pulse and gate cycles per loop), so sample n + i equals sample i (a test relies on it).
+func voice_range(vi: int, i0: int, i1: int) -> PackedFloat32Array:
+	var v: Dictionary = _spec.voices[vi]
+	var seconds := float(n) / float(rate)
+	var cf := roundf(float(v.f) * seconds)                          # carrier cycles per loop
+	var pc := roundf(float(v.pr) * seconds)                         # pulses per loop
+	var gc := float(v.gate_cycles)
+	var duty := float(v.duty)
+	var gduty := float(v.gate_duty)
+	var gain := float(v.gain)
+	var ph := float(v.phase) + _voice_phase(vi, 0)                  # the seed moves the phrases, so two copies differ
+	var pph := _voice_phase(vi, 1)                                  # ...and the pulse train and the carrier
+	var cph := TAU * _voice_phase(vi, 2)
+	var fn := float(n)
+	var r := PackedFloat32Array()
+	r.resize(i1 - i0)
+	for i in range(i0, i1):
+		var u := float(i) / fn
+		var gp := fposmod(u * gc + ph, 1.0)
+		var gate := 0.0
+		if gp < gduty:
+			gate = sin(PI * gp / gduty)
+			gate *= gate
+		var pp := fposmod(u * pc + pph, 1.0)
+		var pulse := 0.0
+		if pp < duty:
+			pulse = sin(PI * pp / duty)
+		if gate > 0.0 and pulse > 0.0:
+			r[i - i0] = gain * gate * pulse * sin(TAU * cf * u + cph)
+	return r
 
 func _plan_birds() -> void:
 	var b: Dictionary = _spec.birds
@@ -277,23 +299,32 @@ func _plan_birds() -> void:
 			_chirps.append({"start": int(t0 + float(s) * (gap + dur)), "dur": int(dur), "f0": f0 * drift,
 				"f1": f0 * drift * (1.25 if rise else 0.8), "amp": amp * (1.0 - 0.06 * float(s))})
 
-## Each chirp: a sine sweep with a second harmonic under a smooth envelope; indices wrap around the end of the loop.
+## One chirp: a sine sweep with a second harmonic under a smooth envelope (`dur` samples).
+static func chirp_wave(c: Dictionary, rate: int) -> PackedFloat32Array:
+	var dur: int = c.dur
+	var f0: float = c.f0
+	var k: float = (float(c.f1) - f0) / (float(dur) / float(rate))
+	var amp: float = c.amp
+	var w := PackedFloat32Array()
+	w.resize(dur)
+	for j in dur:
+		var t := float(j) / float(rate)
+		var env := sin(PI * float(j) / float(dur))
+		env *= env
+		var ph := TAU * (f0 * t + 0.5 * k * t * t)
+		w[j] = amp * env * (sin(ph) + 0.25 * sin(2.0 * ph))
+	return w
+
+## Each chirp is added at its start; indices wrap around the end of the loop.
 func _run_birds(budget: int) -> int:
 	var used := 0
 	while _pos < _chirps.size() and used < budget:
 		var c: Dictionary = _chirps[_pos]
-		var dur: int = c.dur
-		var f0: float = c.f0
-		var k: float = (float(c.f1) - f0) / (float(dur) / float(rate))
+		var w := chirp_wave(c, rate)
 		var start: int = c.start
-		var amp: float = c.amp
-		for j in dur:
-			var t := float(j) / float(rate)
-			var env := sin(PI * float(j) / float(dur))
-			env *= env
-			var ph := TAU * (f0 * t + 0.5 * k * t * t)
-			out[(start + j) % n] += amp * env * (sin(ph) + 0.25 * sin(2.0 * ph))
-		used += dur
+		for j in w.size():
+			out[(start + j) % n] += w[j]
+		used += w.size()
 		_pos += 1
 	if _pos >= _chirps.size():
 		_next(Stage.SCAN)
@@ -337,17 +368,14 @@ func _run_apply(budget: int) -> int:
 
 # ---- from samples to streams and checks (static, shared by the view and the tests) -----------------------------------
 
-## A looping mono 16-bit stream (loop_mode forward over the whole buffer). With `fade`, a sin window is baked in so the
-## loop starts and ends silent: two copies half a loop apart then add to constant power (see sound_view.gd).
-static func to_stream(samples: PackedFloat32Array, p_rate: int, p_fade: bool = false) -> AudioStreamWAV:
+## A looping mono 16-bit stream from float samples (loop_mode forward over the whole buffer; no fade: a recording-like loop).
+## The faded streams the app plays are made by the synth itself (`bytes`, see `_run_apply`).
+static func to_stream(samples: PackedFloat32Array, p_rate: int) -> AudioStreamWAV:
 	var count := samples.size()
 	var data := PackedByteArray()
 	data.resize(count * 2)
 	for i in count:
-		var x := samples[i]
-		if p_fade:
-			x *= sin(PI * float(i) / float(count))
-		data.encode_s16(i * 2, clampi(int(roundf(x * 32767.0)), -32768, 32767))
+		data.encode_s16(i * 2, clampi(int(roundf(samples[i] * 32767.0)), -32768, 32767))
 	return stream_from_bytes(data, p_rate)
 
 static func stream_from_bytes(data: PackedByteArray, p_rate: int) -> AudioStreamWAV:

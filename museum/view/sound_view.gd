@@ -18,6 +18,8 @@ const PREFS_PATH := "user://sound.cfg"
 const SCENE_BUSES: Array[String] = ["Ambient", "Sources", "Craft"]      # ducked on pause; "UI" is not
 const FADE_PER_S := 3.0                                                 # gain fade speed (full range in ~0.3 s)
 const START_GAIN := 0.0                                                 # fade in from silence
+const LAYER_ON := 0.02                                                  # a layer gets players (and browser buffers) above this loudness...
+const LAYER_OFF := 0.004                                                # ...and loses them when its eased gain is below this (-48 dB)
 const MAX_ONE_SHOT_SPEED := 10.0                                        # faster than x10 the one-shots stay quiet
 const MAX_ONE_SHOT_WINDOW_S := 5.0                                      # a bigger jump in t (scrub) plays nothing
 
@@ -35,7 +37,7 @@ var _tone: AudioStreamWAV
 var bank                              # AmbientBank: the ambient layers (rendered by script, or recordings)
 var layer_gains: Dictionary = {}       # layer id -> eased linear gain 0..1 actually sent to its players
 var proximity_gain := 1.0              # ambient share left for the camera distance (1 far, less when close)
-var _players: Dictionary = {}          # layer id -> [AudioStreamPlayer] (two, half a loop apart, when the layer overlaps)
+var _players: Dictionary = {}          # layer id -> [AudioStreamPlayer] while the layer is audible (two, half a loop apart, when it overlaps)
 var _second_due: Dictionary = {}       # layer id -> seconds left until its second player starts
 var _blip_player: AudioStreamPlayer
 
@@ -50,7 +52,15 @@ func _init() -> void:
 			AudioServer.set_bus_send(i, "Master")
 	_apply_gains()
 	load_prefs()
-	bank = AmbientBank.new(data.ambient)
+	set_ambient(data.ambient)
+
+## The ambient layers from a config like `data.ambient` (tests swap in recordings; players of the old set are dropped).
+func set_ambient(cfg: Dictionary) -> void:
+	for id in _players.keys():
+		_stop_layer(id)
+	bank = AmbientBank.new(cfg)
+	data.ambient = cfg
+	layer_gains.clear()
 	for id in bank.results:
 		layer_gains[id] = 0.0
 
@@ -70,11 +80,11 @@ func _ready() -> void:
 	_blip_player.bus = "UI"
 	add_child(_blip_player)
 
-## Render the ambient loops a little each frame (the budget is in data/sound.json); a layer starts as soon as it is ready.
+## Render the ambient loops a little each frame (the budget is in data/sound.json); a layer gets players when it is ready
+## and audible (see `_mix_ambient`).
 func _process(delta: float) -> void:
 	if bank.pending() > 0:
-		for id in bank.pump(int(data.ambient.budget_us), levels):
-			_start_layer(id)
+		bank.pump(int(data.ambient.budget_us), levels)
 		if bank.pending() == 0:
 			print("ambient ready: %d layers, %d kB, rendering %d ms of work in %d ms of wall time" % [bank.results.size(), bank.total_bytes() / 1024, bank.generate_us / 1000, bank.wall_us / 1000])
 	for id in _second_due.keys():
@@ -139,6 +149,11 @@ func _mix_ambient(delta: float, cam_dist: float) -> void:
 	for id in layer_gains:
 		var target := float(levels.get(id, 0.0)) * proximity_gain
 		layer_gains[id] = Soundscape.ease_gain(layer_gains[id], target, delta, float(amb.fade_tau_s))
+		var live := _players.has(id)
+		if not live and bank.is_ready(id) and target > LAYER_ON:
+			_start_layer(id)
+		elif live and layer_gains[id] < LAYER_OFF and target < LAYER_ON:
+			_stop_layer(id)
 	_apply_layer_volumes()
 
 func _apply_layer_volumes() -> void:
@@ -147,16 +162,19 @@ func _apply_layer_volumes() -> void:
 		for p in _players[id]:
 			p.volume_db = maxf(db, -80.0)
 
-## Start the players of a layer whose stream is ready, silent (the gain eases in). Two copies of an overlapping layer
+## Start the players of a layer that is ready and audible, silent (the gain eases in). Two copies of an overlapping layer
 ## run half a loop apart: the web build restarts a looping sample from its "ended" event, which leaves a short gap
-## at every loop end, and the loop's baked-in fade hides that gap under the other copy.
+## at every loop end, and the loop's baked-in fade hides that gap under the other copy. The two copies are two renderings
+## (another seed), so the pair does not repeat every half loop. A recording (`file`) has one player.
+## Only audible layers have players: on the web every playing sample, and every loop restart, copies the whole buffer, and a
+## stream is registered (and its buffer kept) at its first play, so a layer that is never heard costs nothing there.
 func _start_layer(id: String) -> void:
 	var r: Dictionary = bank.results[id]
 	var list: Array = []
 	for k in (2 if r.overlap else 1):
 		var p := AudioStreamPlayer.new()
 		p.bus = "Ambient"
-		p.stream = r.stream
+		p.stream = r.streams[mini(k, r.streams.size() - 1)]
 		p.volume_db = -80.0
 		add_child(p)
 		list.append(p)
@@ -165,6 +183,17 @@ func _start_layer(id: String) -> void:
 	if r.overlap:
 		_second_due[id] = (float(r.stream.data.size()) / 2.0 / float(r.stream.mix_rate)) / 2.0
 	_apply_layer_volumes()
+
+## Stop and free the players of a layer that has faded out. The web engine (4.5.1) cannot give back the buffer it keeps for a
+## registered stream (`unregister_stream_as_sample` is not scriptable), so the streams stay in the bank and are reused: a layer
+## that comes back registers nothing new; only the copies made for playing are given up.
+func _stop_layer(id: String) -> void:
+	for p in _players[id]:
+		p.stop()
+		remove_child(p)
+		p.free()
+	_players.erase(id)
+	_second_due.erase(id)
 
 func _user_gain() -> float:
 	return 0.0 if muted else db_to_linear(Soundscape.master_db(volume, false))

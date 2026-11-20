@@ -15,11 +15,11 @@
   "budget_us": 3000,
   "proximity": {"near_m": 12.0, "far_m": 90.0, "floor": 0.3},
   "layers": [
-   {"id": "wind", "source": "generator", "recipe": "wind", "length_s": 8, "gain_db": 0.0, "overlap": true, "provisional": true},
-   {"id": "day", "source": "generator", "recipe": "day", "length_s": 8, "gain_db": -3.0, "overlap": true, "provisional": true},
-   {"id": "dusk", "source": "generator", "recipe": "dusk", "length_s": 8, "gain_db": -3.0, "overlap": true, "provisional": true},
-   {"id": "night", "source": "generator", "recipe": "night", "length_s": 8, "gain_db": -2.0, "overlap": true, "provisional": true},
-   {"id": "dawn", "source": "generator", "recipe": "dawn", "length_s": 8, "gain_db": -2.0, "overlap": true, "provisional": true}
+   {"id": "wind", "source": "generator", "recipe": "wind", "length_s": 6, "gain_db": 0.0, "overlap": true, "provisional": true},
+   {"id": "day", "source": "generator", "recipe": "day", "length_s": 6, "gain_db": -3.0, "overlap": true, "provisional": true},
+   {"id": "dusk", "source": "generator", "recipe": "dusk", "length_s": 6, "gain_db": -3.0, "overlap": true, "provisional": true},
+   {"id": "night", "source": "generator", "recipe": "night", "length_s": 6, "gain_db": -2.0, "overlap": true, "provisional": true},
+   {"id": "dawn", "source": "generator", "recipe": "dawn", "length_s": 6, "gain_db": -2.0, "overlap": true, "provisional": true}
   ]
  },
  "one_shots": [

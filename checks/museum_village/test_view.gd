@@ -234,4 +234,12 @@ func _initialize() -> void:
 		await process_frame
 	var want: Vector3 = app.village.character_world(app.focus_ids[1]) + Vector3(0, 0.9, 0)
 	t.ok(app.cam_target.distance_to(want) < 1.0, "camera glides to the focused homestead (%.2f m away)" % app.cam_target.distance_to(want))
+	await _release(app)
 	quit(t.finish("view"))
+
+## Free the app and let the engine's audio thread drop the stopped playbacks before quitting: they are removed on its next
+## mixing pass, and quitting first reports them as "ObjectDB instances leaked at exit".
+func _release(app: Node) -> void:
+	root.remove_child(app)
+	app.free()
+	await create_timer(0.3).timeout

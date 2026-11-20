@@ -10,9 +10,11 @@ const Synth = preload("res://museum/core/ambient_synth.gd")
 const Bank = preload("res://museum/core/ambient_bank.gd")
 const SoundView = preload("res://museum/view/sound_view.gd")
 const Schema = preload("res://museum/core/schema.gd")
+const FIX_WAV := "res://checks/museum_village/fixtures/tone.wav"
+const FIX_OGG := "res://checks/museum_village/fixtures/tone.ogg"
 const DAY := 360.0
 const RATE := 22050
-const SECONDS := 8.0
+const SECONDS := 6.0                  # the shipped loop length (data/sound.json)
 ## A seam is an ordinary place in the loop when its step is about as big as any other (1 = the rms step); a cut in smooth noise
 ## gives tens. The limits leave room for the tails of the noise distribution and are far below a cut.
 const MAX_JUMP := 5.0
@@ -96,36 +98,112 @@ func _rms_windows(s: PackedFloat32Array, from: int, count: int, win: int) -> Pac
 	return r
 
 ## Loop guards for a Synth script (the real one or a broken copy): -> failure count.
-func _loop_failures(synth_script: GDScript, recipes: Array, quiet := false) -> int:
+## Seeds: the seed of the first copy and of the second copy of a layer (see AmbientBank), plus more for the mutants (a cut is a
+## big step only where the noise happens to be away from zero).
+func _loop_failures(synth_script: GDScript, recipes: Array, quiet := false, seeds: Array = [1150, 1150 + Bank.COPY_SEED_STEP]) -> int:
 	var t := T.new()
 	t.quiet = quiet
 	for r in recipes:
-		var s: PackedFloat32Array = synth_script.new(r, 1150, RATE, SECONDS).run()
-		var rep: Dictionary = synth_script.seam_report(s)
-		t.ok(rep.jump <= MAX_JUMP, "%s: step across the seam is ordinary (%s of an rms step)" % [r, rep.jump])
-		t.ok(rep.slope_jump <= MAX_SLOPE_JUMP, "%s: slope across the seam is ordinary (%s of an rms second difference)" % [r, rep.slope_jump])
+		for sd in seeds:
+			var s: PackedFloat32Array = synth_script.new(r, sd, RATE, SECONDS).run()
+			var rep: Dictionary = synth_script.seam_report(s)
+			t.ok(rep.jump <= MAX_JUMP, "%s/%d: step across the seam is ordinary (%s of an rms step)" % [r, sd, rep.jump])
+			t.ok(rep.slope_jump <= MAX_SLOPE_JUMP, "%s/%d: slope across the seam is ordinary (%s of an rms second difference)" % [r, sd, rep.slope_jump])
 	return t.failures.size()
 
-## The fade baked into a loop (what hides the web restart gap): the stream equals the loop times sin(pi i / N) to within a
-## rounding step, so it is silent at both ends, and the two copies half a loop apart add to constant power
-## (sin^2 + cos^2 = 1; exact, whatever the content). -> failure count for a to_stream implementation.
-func _fade_failures(synth_script: GDScript, s: PackedFloat32Array, quiet := false) -> int:
+## The fade baked into a loop (what hides the web restart gap), checked on the bytes the synth makes and the bank hands to the
+## players (`_run_apply`; no other code makes them): the stream equals the loop times sin(pi i / N) to within a rounding step,
+## so it is silent at both ends, and two copies half a loop apart have windows that add to constant power (sin^2 + cos^2 = 1).
+## -> failure count for a synth implementation.
+func _fade_failures(synth_script: GDScript, recipe: String, quiet := false) -> int:
 	var t := T.new()
 	t.quiet = quiet
-	var st: AudioStreamWAV = synth_script.to_stream(s, RATE, true)
+	var sy = synth_script.new(recipe, 1150, RATE, SECONDS, true)
+	var s: PackedFloat32Array = sy.run()
+	var data: PackedByteArray = sy.bytes
 	var n := s.size()
 	var worst := 0.0
 	var power_err := 0.0
 	for i in n:
 		var w := sin(PI * float(i) / float(n))
 		var want := float(s[i]) * w * 32767.0
-		worst = maxf(worst, absf(float(st.data.decode_s16(i * 2)) - want))
+		worst = maxf(worst, absf(float(data.decode_s16(i * 2)) - want))
 		var w2 := sin(PI * float((i + n / 2) % n) / float(n))
 		power_err = maxf(power_err, absf(w * w + w2 * w2 - 1.0))
-	t.ok(worst <= 1.0, "the faded stream is the loop times the window (worst error %s steps)" % worst)
+	t.ok(worst <= 1.0, "the faded bytes are the loop times the window (worst error %s steps)" % worst)
 	t.ok(power_err < 1e-6, "two copies half a loop apart add to constant power (error %s)" % power_err)
-	t.ok(absf(st.data.decode_s16(0)) <= 1 and absf(st.data.decode_s16((n - 1) * 2)) <= 3, "a faded loop starts and ends silent")
+	t.ok(absf(data.decode_s16(0)) <= 1 and absf(data.decode_s16((n - 1) * 2)) <= 3, "a faded loop starts and ends silent")
 	return t.failures.size()
+
+## The tonal voices (pulse trains) repeat exactly with the loop: sample n + i equals sample i, for every voice of the recipe
+## (whole carrier, pulse and gate cycles per loop, so the loop end runs into its start with the phase intact). -> worst difference.
+func _voice_period_error(synth_script: GDScript, recipe: String) -> float:
+	var sy = synth_script.new(recipe, 1150, RATE, SECONDS)
+	var worst := 0.0
+	for vi in Synth.RECIPES[recipe].voices.size():
+		var a: PackedFloat32Array = sy.voice_range(vi, 0, sy.n)
+		var b: PackedFloat32Array = sy.voice_range(vi, sy.n, 2 * sy.n)
+		for i in a.size():
+			worst = maxf(worst, absf(a[i] - b[i]))
+	return worst
+
+## The bird chirps wrap around the end of the loop, so the loop is the same sound wherever the phrases sit: rotating every
+## phrase by half a loop must not change the energy of the raw birds (a chirp cut at the end would). -> [energy, rotated energy, wrapping chirps]
+func _bird_rotation(synth_script: GDScript) -> Array:
+	var energies: Array = []
+	var wrapping := 0
+	for rot in [0, 1]:
+		var sy = synth_script.new("dawn", 1150, RATE, SECONDS, false, {"birds": Synth.RECIPES.dawn.birds, "rms": 0.1})
+		for c in sy._chirps:
+			c.start = int(c.start) + rot * (sy.n / 2)
+			if (int(c.start) % sy.n) + int(c.dur) > sy.n:
+				wrapping += 1
+		while sy._stage < Synth.Stage.SCAN:
+			sy.step(3000)
+		var e := 0.0
+		for x in sy.out:
+			e += x * x
+		energies.append(e)
+	return [energies[0], energies[1], wrapping]
+
+## Envelope (rms per 50 ms) of one layer as it plays: copy A from the start, copy B half a loop later, over 32 s; and the
+## Pearson correlation of that envelope with itself `lag_s` later (over 20 s from 4 s on, where both copies run).
+func _pair_envelope(a: PackedByteArray, b: PackedByteArray) -> PackedFloat32Array:
+	var n := a.size() / 2
+	var win := RATE / 20
+	var env := PackedFloat32Array()
+	for w in 32 * 20:
+		var ss := 0.0
+		for j in win:
+			var t := w * win + j
+			var x := float(a.decode_s16(2 * (t % n)))
+			if t >= n / 2:
+				x += float(b.decode_s16(2 * ((t - n / 2) % n)))
+			ss += x * x
+		env.append(sqrt(ss / float(win)))
+	return env
+
+func _env_corr(env: PackedFloat32Array, lag_s: float) -> float:       # lag in seconds (a multiple of 50 ms)
+	var lag := int(lag_s * 20.0)
+	var i0 := 80
+	var cnt := 400
+	var ma := 0.0
+	var mb := 0.0
+	for i in cnt:
+		ma += env[i0 + i]
+		mb += env[i0 + i + lag]
+	ma /= cnt
+	mb /= cnt
+	var sab := 0.0
+	var saa := 0.0
+	var sbb := 0.0
+	for i in cnt:
+		var da := env[i0 + i] - ma
+		var db := env[i0 + i + lag] - mb
+		sab += da * db
+		saa += da * da
+		sbb += db * db
+	return sab / sqrt(saa * sbb + 1e-20)
 
 ## No dead air inside a loop: the quietest 200 ms window against the loop's rms, in dB (-inf would be silence). -> worst over recipes.
 func _quietest_db(synth_script: GDScript, recipes: Array) -> float:
@@ -164,6 +242,119 @@ func _scrub_max_step(script: GDScript) -> float:
 	root.remove_child(sv)
 	sv.free()
 	return worst
+
+
+func _ids(sv) -> Array:
+	var r: Array = sv._players.keys()
+	r.sort()
+	return r
+
+## A short config (2 s loops) for view probes.
+func _short_cfg(layers: Array) -> Dictionary:
+	var cfg: Dictionary = Schema.load_json("res://museum/data/sound.json").ambient
+	cfg.budget_us = 1 << 30
+	cfg.layers = layers
+	return cfg
+
+## The recordings as the engine imports them: no loop (the resources are cached by load(), so a probe resets them).
+func _unloop() -> void:
+	var w: AudioStreamWAV = load(FIX_WAV)
+	w.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	var o: AudioStreamOggVorbis = load(FIX_OGG)
+	o.loop = false
+
+func _view_with(script: GDScript, cfg: Dictionary, bank_script: GDScript = null):
+	DirAccess.remove_absolute("user://sound.cfg")
+	var sv = script.new()
+	sv.day_length = DAY
+	sv.set_ambient(cfg)
+	if bank_script != null:
+		_unloop()
+		sv.bank = bank_script.new(cfg)
+	root.add_child(sv)
+	return sv
+
+func _drop(sv) -> void:
+	root.remove_child(sv)
+	sv.free()
+
+## Layers coming and going: settle at noon, then jump to midnight and run 600 frames (60 fps), watching which layers get
+## and lose players and how loud each is at that moment. -> {"noon","midnight","stop_db","start_db","stopped_freed","most"}
+func _life(script: GDScript) -> Dictionary:
+	var layers: Array = []
+	for id in Soundscape.LAYERS:
+		layers.append({"id": id, "source": "generator", "recipe": id, "length_s": 2, "gain_db": 0.0, "overlap": true})
+	var sv = _view_with(script, _short_cfg(layers))
+	sv.bank.finish()
+	var res := {"noon": [], "midnight": [], "stop_db": -100.0, "start_db": -100.0, "jump_start_gain": 0.0, "stopped_freed": true, "most": 0}
+	for i in 400:
+		sv.apply(0.5 * DAY, false, 1.0, 1.0 / 60.0)
+	res.noon = _ids(sv)
+	# a jump of the time slider to midnight, then a run through a whole day at x15 (the crossfades of a visit)
+	var plan: Array = [[0.0, 0.0, 600, true]]
+	for k in 1440:
+		plan.append([fposmod(float(k) * 15.0 / 60.0, DAY), 0.0, 1, false])
+	var first := true
+	for step in plan:
+		for i in int(step[2]):
+			var before := {}
+			var nodes := {}
+			for id in sv._players:
+				before[id] = sv._players[id][0].volume_db
+				nodes[id] = sv._players[id]
+			sv.apply(float(step[0]), false, 1.0, 1.0 / 60.0)
+			for id in before:
+				if not sv._players.has(id):
+					res.stop_db = maxf(res.stop_db, before[id])
+					for p in nodes[id]:
+						if is_instance_valid(p):
+							res.stopped_freed = false
+			for id in sv._players:
+				if not before.has(id):
+					if step[3]:
+						res.jump_start_gain = maxf(res.jump_start_gain, sv.layer_gains[id])
+					else:
+						res.start_db = maxf(res.start_db, sv._players[id][0].volume_db)
+			res.most = maxi(res.most, sv._players.size())
+		if first:
+			res.midnight = _ids(sv)
+			first = false
+	_drop(sv)
+	return res
+
+## A real WAV (layer wind) and a real Ogg (layer day) as recordings, a missing one (dusk); noon, jump to the pure mix.
+func _file_probe(script: GDScript, bank_script: GDScript) -> Dictionary:
+	var gen := {"source": "generator", "length_s": 2, "overlap": true}
+	var layers: Array = [
+		{"id": "wind", "source": "file", "path": FIX_WAV, "recipe": "wind", "length_s": 2, "gain_db": -4.0},
+		{"id": "day", "source": "file", "path": FIX_OGG, "recipe": "day", "length_s": 2, "gain_db": -1.0},
+		{"id": "dusk", "source": "file", "path": "res://museum/assets/sound/missing.ogg", "recipe": "dusk", "length_s": 2, "gain_db": 0.0, "overlap": true},
+		{"id": "night", "recipe": "night", "gain_db": 0.0}, {"id": "dawn", "recipe": "dawn", "gain_db": 0.0}]
+	for i in [3, 4]:
+		layers[i].merge(gen)
+	var cfg := _short_cfg(layers)
+	_unloop()
+	var sv = _view_with(script, cfg, bank_script)
+	sv.bank.finish()
+	sv.apply(0.5 * DAY, false, 1.0, 0.0)
+	var r := {"wav_playing": false, "ogg_playing": false, "wav_players": 0, "ogg_players": 0, "wav_loops": false, "ogg_loops": false,
+		"wav_db": -99.0, "ogg_db": -99.0, "wav_want": 0.0, "ogg_want": 0.0, "missing_warning": str(sv.bank.results.dusk.warning)}
+	if sv._players.has("wind"):
+		var p: AudioStreamPlayer = sv._players.wind[0]
+		r.wav_players = sv._players.wind.size()
+		r.wav_playing = p.playing
+		r.wav_loops = p.stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and p.stream.loop_end > 0
+		r.wav_db = p.volume_db
+		r.wav_want = sv._gain_db(sv.layer_gains.wind) - 4.0
+	if sv._players.has("day"):
+		var p: AudioStreamPlayer = sv._players.day[0]
+		r.ogg_players = sv._players.day.size()
+		r.ogg_playing = p.playing
+		r.ogg_loops = p.stream.loop
+		r.ogg_db = p.volume_db
+		r.ogg_want = sv._gain_db(sv.layer_gains.day) - 1.0
+	_drop(sv)
+	return r
 
 func _initialize() -> void:
 	var t := T.new()
@@ -224,7 +415,7 @@ func _initialize() -> void:
 	for pair in [["no cross-fade of the noise (hard cut)", cut, ["wind", "dusk"]]]:
 		t.ok(pair[1] != null, "mutation '%s' compiled" % pair[0])
 		if pair[1] != null:
-			t.ok(_loop_failures(pair[1], pair[2], true) > 0, "mutation '%s' is caught" % pair[0])
+			t.ok(_loop_failures(pair[1], pair[2], true, [1150, 1151, 1152, 1153, 1154, 1155]) > 0, "mutation '%s' is caught" % pair[0])
 	# a quantitative look at the worst seams, for the record
 	for r in Synth.RECIPES:
 		var rep: Dictionary = Synth.seam_report(loops[r])
@@ -243,16 +434,33 @@ func _initialize() -> void:
 	t.ok(_quietest_db(Synth, Synth.RECIPES.keys()) > -20.0, "no dead air: the quietest 200 ms of any loop is within 20 dB of its rms (%s)" % _quietest_db(Synth, Synth.RECIPES.keys()))
 	var dead := _mutant("res://museum/core/ambient_synth.gd", "_env[k] = float(bed.floor) +", "_env[k] = 0.0 * float(bed.floor) +")
 	t.ok(dead != null and _quietest_db(dead, ["wind", "dusk"]) < -30.0, "mutation 'gusts fall to silence' is caught (%s)" % (_quietest_db(dead, ["wind", "dusk"]) if dead != null else 0.0))
-	# overlapping copies: constant power through the loop ends (hides the web restart gap)
+	# the fade baked into the bytes the players get (hides the web restart gap): production path `_run_apply`
 	for r in ["wind", "night"]:
-		t.eq(_fade_failures(Synth, loops[r]), 0, "%s: the baked-in fade and the half-loop overlap are exact" % r)
-	var nofade := _mutant("res://museum/core/ambient_synth.gd", "x *= sin(PI * float(i) / float(count))", "x *= 1.0")
-	t.ok(nofade != null and _fade_failures(nofade, loops["wind"], true) > 0, "mutation 'no fade baked in' is caught")
-	var faded: AudioStreamWAV = Synth.to_stream(loops["wind"], RATE, true)
-	t.eq(faded.loop_mode, AudioStreamWAV.LOOP_FORWARD, "the stream loops forward")
-	t.eq(faded.loop_begin, 0, "the loop starts at the first sample")
-	t.eq(faded.loop_end, loops["wind"].size(), "the loop ends at the last sample")
-	t.ok(not faded.stereo and faded.mix_rate == RATE and faded.format == AudioStreamWAV.FORMAT_16_BITS, "mono 16-bit at the loop rate")
+		t.eq(_fade_failures(Synth, r), 0, "%s: the baked-in fade and the half-loop overlap are exact" % r)
+	var nofade := _mutant("res://museum/core/ambient_synth.gd", "x *= sin(PI * float(i) / fn)", "x *= 1.0")
+	t.ok(nofade != null and _fade_failures(nofade, "wind", true) > 0, "mutation 'no fade in _run_apply' is caught")
+	var looped: AudioStreamWAV = Synth.to_stream(loops["wind"], RATE)
+	t.eq(looped.loop_mode, AudioStreamWAV.LOOP_FORWARD, "the stream loops forward")
+	t.eq(looped.loop_begin, 0, "the loop starts at the first sample")
+	t.eq(looped.loop_end, loops["wind"].size(), "the loop ends at the last sample")
+	t.ok(not looped.stereo and looped.mix_rate == RATE and looped.format == AudioStreamWAV.FORMAT_16_BITS, "mono 16-bit at the loop rate")
+
+	# tonal seams: the pulse trains repeat exactly with the loop; the bird chirps wrap around its end
+	for r in ["day", "dusk", "night"]:
+		var err := _voice_period_error(Synth, r)
+		t.ok(err < 1e-4, "%s: every voice repeats exactly with the loop (worst difference %s)" % [r, err])
+	var v_mut := {"carrier +half a cycle": ["var cf := roundf(float(v.f) * seconds)", "var cf := roundf(float(v.f) * seconds) + 0.5"],
+		"pulses +half": ["var pc := roundf(float(v.pr) * seconds)", "var pc := roundf(float(v.pr) * seconds) + 0.5"],
+		"gate +half a cycle": ["var gc := float(v.gate_cycles)", "var gc := float(v.gate_cycles) + 0.5"]}
+	for name in v_mut:
+		var m := _mutant("res://museum/core/ambient_synth.gd", v_mut[name][0], v_mut[name][1])
+		t.ok(m != null and _voice_period_error(m, "night") > 0.05, "mutation 'tonal seam: %s' is caught" % name)
+	var br := _bird_rotation(Synth)
+	t.ok(br[2] >= 2, "positive control: some chirps run across the end of the loop (%d)" % br[2])
+	t.ok(br[0] > 1.0 and absf(br[0] - br[1]) <= 1e-4 * br[0], "birds: the energy does not depend on where the phrases sit (%s vs %s)" % [br[0], br[1]])
+	var no_wrap := _mutant("res://museum/core/ambient_synth.gd", "out[(start + j) % n] += w[j]", "if start + j < n:\n\t\t\t\tout[start + j] += w[j]")
+	var brm: Array = _bird_rotation(no_wrap) if no_wrap != null else [1.0, 1.0, 0]
+	t.ok(no_wrap != null and absf(brm[0] - brm[1]) > 0.01 * brm[0], "mutation 'birds do not wrap' is caught")
 
 	# spectra: each layer sounds like what it stands for (band shares of the energy)
 	var sp := {}
@@ -285,7 +493,7 @@ func _initialize() -> void:
 			b.finish()
 			t.ok(b.results.wind.warning == "" or b.results.wind.stream == null, "bank mutation '%s' is caught" % pair[0])
 	# a present recording is used as it is (looped by the engine, no generator)
-	var file_stream := Synth.to_stream(loops["wind"], RATE, false)
+	var file_stream := Synth.to_stream(loops["wind"], RATE)
 	t.eq(ResourceSaver.save(file_stream, "user://ambient_test_loop.tres"), OK, "test recording stored")
 	var present := {"rate": RATE, "seed": 1, "layers": [{"id": "wind", "source": "file", "path": "user://ambient_test_loop.tres", "recipe": "wind", "length_s": 2}]}
 	var bank3 = Bank.new(present)
@@ -298,6 +506,66 @@ func _initialize() -> void:
 	t.eq(finished_ids.size(), ids.size(), "every configured layer renders")
 	t.ok(all_bank.total_bytes() < 4 * 1024 * 1024, "generated loops in memory: %d bytes (budget 4 MB, pck unaffected)" % all_bank.total_bytes())
 	print("ambient set: ", all_bank.total_bytes(), " bytes as 16-bit mono, render ", snappedf(all_bank.generate_us / 1000.0, 0.1), " ms native")
+
+	# overlapping layers are two renderings from two seeds, in the faded form the players get
+	var pair_cfg := {"rate": RATE, "seed": 1150, "layers": [{"id": "wind", "source": "generator", "recipe": "wind", "length_s": SECONDS, "overlap": true},
+		{"id": "day", "source": "generator", "recipe": "day", "length_s": SECONDS, "overlap": true}]}
+	var pair_bank = Bank.new(pair_cfg)
+	pair_bank.finish()
+	var pr: Dictionary = pair_bank.results.wind
+	var c0 = Synth.new("wind", 1150, RATE, SECONDS, true)
+	c0.run()
+	var c1 = Synth.new("wind", 1150 + Bank.COPY_SEED_STEP, RATE, SECONDS, true)
+	c1.run()
+	t.ok(pr.streams.size() == 2 and pr.streams[0].data == c0.bytes and pr.streams[1].data == c1.bytes, "the bank's two streams are the faded bytes of two seeds")
+	t.ok(c0.bytes != c1.bytes and pr.stream == pr.streams[0], "...and they differ")
+	var unfaded := _mutant("res://museum/core/ambient_bank.gd", "rate, j.length_s, results[j.id].overlap)", "rate, j.length_s, false)")
+	var ub = unfaded.new(pair_cfg) if unfaded != null else null
+	if ub != null:
+		ub.finish()
+	t.ok(ub != null and ub.results.wind.streams[0].data != c0.bytes, "bank mutation 'layer not faded' is caught")
+	# the period of a layer as it plays: one loop, not half a loop (which two copies of one rendering would give)
+	for id in pair_bank.results:
+		var env := _pair_envelope(pair_bank.results[id].streams[0].data, pair_bank.results[id].streams[1].data)
+		var c4 := _env_corr(env, SECONDS / 2.0)
+		var c8 := _env_corr(env, SECONDS)
+		print("period ", id, ": envelope autocorrelation at half a loop (", SECONDS / 2.0, " s) ", snappedf(c4, 0.01), ", at a loop (", SECONDS, " s) ", snappedf(c8, 0.01))
+		t.ok(absf(c4) < 0.6, "%s: the pair does not repeat after half a loop (envelope autocorrelation %s)" % [id, snappedf(c4, 0.01)])
+		t.ok(c8 > 0.9, "positive control: it repeats after the loop (%s)" % snappedf(c8, 0.01))
+	var same_seed := _mutant("res://museum/core/ambient_bank.gd", "const COPY_SEED_STEP := 7919", "const COPY_SEED_STEP := 0")
+	var sb = same_seed.new(pair_cfg) if same_seed != null else null
+	if sb != null:
+		sb.finish()
+		var env_m := _pair_envelope(sb.results.day.streams[0].data, sb.results.day.streams[1].data)
+		t.ok(_env_corr(env_m, SECONDS / 2.0) > 0.95, "mutation 'both copies from one seed' repeats every half loop and is caught (%s)" % snappedf(_env_corr(env_m, SECONDS / 2.0), 0.01))
+	else:
+		t.ok(false, "seed mutation compiled")
+
+	# recordings: a real WAV and a real Ogg (0.5 s tones, fixtures/tone.wav and tone.ogg, made with ffmpeg: `-f lavfi -i sine=frequency=440:sample_rate=22050:duration=0.5 -ac 1` with `-c:a pcm_s16le` / `-c:a libvorbis -q:a 2`; Godot cannot encode Ogg) import with the loop off:
+	# the bank switches it on, or says that it cannot
+	var wav_cfg := {"rate": RATE, "seed": 1, "layers": [{"id": "wind", "source": "file", "path": FIX_WAV, "recipe": "wind", "length_s": 2},
+		{"id": "day", "source": "file", "path": FIX_OGG, "recipe": "day", "length_s": 2}]}
+	var fb = Bank.new(wav_cfg)
+	t.ok(fb.results.wind.source == "file" and fb.results.day.source == "file" and fb.pending() == 0, "a real WAV and a real Ogg are used as they are")
+	t.ok(fb.results.wind.stream is AudioStreamWAV and fb.results.day.stream is AudioStreamOggVorbis, "...as the engine imported them")
+	t.ok(fb.results.wind.stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and fb.results.wind.stream.loop_end > 0, "the WAV loops (loop_mode forward, end %d)" % fb.results.wind.stream.loop_end)
+	t.ok(fb.results.day.stream.loop, "the Ogg loops")
+	t.ok(fb.is_ready("wind") and fb.is_ready("day") and not fb.results.wind.overlap, "recordings are ready at once and have one player")
+	var plain := AudioStreamWAV.new()                     # what a WAV import gives: no loop
+	plain.format = AudioStreamWAV.FORMAT_16_BITS
+	var pd := PackedByteArray()
+	pd.resize(400)
+	plain.data = pd
+	plain.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	t.eq(Bank.ensure_loop(plain), "set", "a non-looping WAV is switched to looping")
+	t.ok(plain.loop_mode == AudioStreamWAV.LOOP_FORWARD and plain.loop_end == 200, "...over all its frames")
+	t.eq(Bank.ensure_loop(plain), "on", "a looping stream is left alone")
+	t.eq(Bank.ensure_loop(AudioStreamGenerator.new()), "unknown", "a stream type it cannot loop is reported")
+	var no_loop := _mutant("res://museum/core/ambient_bank.gd", "r.loop = ensure_loop(stream)", "r.loop = \"on\"")
+	fb.results.day.stream.loop = false                   # the resources are cached by load(): back to the imported state
+	fb.results.wind.stream.loop_mode = AudioStreamWAV.LOOP_DISABLED
+	var nb = no_loop.new(wav_cfg) if no_loop != null else null
+	t.ok(nb != null and not nb.results.day.stream.loop, "bank mutation 'loop not switched on' is caught")
 
 	# the layer the time of day needs is rendered right after the wind
 	var order_bank = Bank.new({"rate": RATE, "seed": 1, "layers": [
@@ -329,13 +597,15 @@ func _initialize() -> void:
 	await process_frame
 	await process_frame
 	t.eq(sv.bank.pending(), 0, "the view renders its layers in the background")
-	for id in ids:
-		t.eq(sv._players[id].size(), 2, "layer %s: two players half a loop apart" % id)
-		t.ok(sv._players[id][0].bus == &"Ambient" and sv._players[id][0].stream.loop_mode == AudioStreamWAV.LOOP_FORWARD, "layer %s plays looping on the Ambient bus" % id)
 	for i in 400:
 		sv.apply(0.5 * DAY, false, 1.0, 1.0 / 60.0)                    # noon, far camera
 	t.ok(sv.layer_gains.day > 0.9 and sv.layer_gains.night < 0.05 and sv.layer_gains.dawn == 0.0, "noon: the day layer plays, night and dawn do not")
-	t.ok(sv._players.day[0].volume_db > -12.0 and sv._players.night[0].volume_db <= -60.0, "...and the players follow")
+	t.eq(_ids(sv), ["day", "wind"], "noon: only the audible layers have players")
+	for id in _ids(sv):
+		t.eq(sv._players[id].size(), 2, "layer %s: two players half a loop apart" % id)
+		t.ok(sv._players[id][0].bus == &"Ambient" and sv._players[id][0].stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and sv._players[id][0].playing, "layer %s plays looping on the Ambient bus" % id)
+		t.ok(sv._players[id][0].stream != sv._players[id][1].stream, "layer %s: the two copies are two renderings" % id)
+	t.ok(sv._players.day[0].volume_db > -12.0, "...and the players follow the gain")
 	for i in 400:
 		sv.apply(0.5 * DAY, false, 1.0, 1.0 / 60.0, 1.0, 0.0, 5.0)     # camera close to a house
 	t.ok(absf(sv.proximity_gain - 0.3) < 0.01 and sv.layer_gains.day < 0.35, "a close camera lowers the ambient (%s)" % sv.layer_gains.day)
@@ -347,6 +617,40 @@ func _initialize() -> void:
 	t.ok(sv._second_due.size() <= ids.size(), "second copies start later")
 	root.remove_child(sv)
 	sv.free()
+
+	# layers come and go with the time of day: a silent layer has no players (and, on the web, no browser buffers) and a layer
+	# that starts or stops does so at a whisper, so the crossfade has no click
+	var life := _life(SoundView)
+	print("layer lifecycle: noon ", life.noon, ", midnight ", life.midnight, ", worst level at a stop ", snappedf(life.stop_db, 0.1), " dB, at a start ", snappedf(life.start_db, 0.1), " dB, most layers at once ", life.most)
+	t.eq(life.noon, ["day", "wind"], "noon: the day layer and the wind have players, nothing else")
+	t.ok(life.midnight.has("night") and life.midnight.has("wind") and not life.midnight.has("day"), "midnight: night and wind, the day layer is gone (%s)" % [life.midnight])
+	t.ok(life.stopped_freed, "a stopped layer's players are freed")
+	t.ok(life.stop_db <= -45.0, "a layer is stopped only below -45 dB (%s)" % snappedf(life.stop_db, 0.1))
+	t.ok(life.start_db <= -30.0, "a layer that fades in during a normal run starts at -30 dB or lower (%s)" % snappedf(life.start_db, 0.1))
+	t.ok(life.jump_start_gain <= 1.0 - exp(-1.0 / 60.0 / float(amb.fade_tau_s)) + 1e-6, "after a jump of the slider it starts with one easing step at most (%s)" % snappedf(life.jump_start_gain, 0.0001))
+	t.ok(life.stop_db > -90.0 and life.start_db > -90.0, "positive control: layers did start and stop during the sweep")
+	var l1 := _mutant("res://museum/view/sound_view.gd", "elif live and layer_gains[id] < LAYER_OFF and target < LAYER_ON:", "elif false and live and layer_gains[id] < LAYER_OFF and target < LAYER_ON:")
+	var lm1 = _life(l1) if l1 != null else {"midnight": ["day"], "stop_db": 0.0, "start_db": 0.0}
+	t.ok(l1 != null and lm1.midnight.has("day"), "mutation 'layers are never stopped' is caught")
+	var l2 := _mutant("res://museum/view/sound_view.gd", "const LAYER_OFF := 0.004", "const LAYER_OFF := 0.3")
+	t.ok(l2 != null and _life(l2).stop_db > -45.0, "mutation 'layers are stopped while loud' (a click) is caught")
+	var l3 := _mutant("res://museum/view/sound_view.gd", "const LAYER_ON := 0.02", "const LAYER_ON := 0.5")
+	t.ok(l3 != null and _life(l3).start_db > -30.0, "mutation 'layers start loud' is caught")
+
+	# a recording is played: a real WAV and a real Ogg, at the right volume, looping
+	var fp := _file_probe(SoundView, null)
+	t.ok(fp.wav_playing and fp.ogg_playing, "view: a present WAV and a present Ogg layer have a playing player (%s)" % [fp])
+	t.ok(fp.wav_players == 1 and fp.ogg_players == 1, "view: a recording has one player")
+	t.ok(fp.wav_loops and fp.ogg_loops, "view: both loop (the imported flags were off)")
+	t.ok(absf(fp.wav_db - fp.wav_want) < 0.1 and absf(fp.ogg_db - fp.ogg_want) < 0.1, "view: the volume is the eased gain in dB plus gain_db (%s/%s, %s/%s)" % [fp.wav_db, fp.wav_want, fp.ogg_db, fp.ogg_want])
+	t.ok(fp.wav_db > -30.0 and fp.ogg_db > -30.0, "view: audible at noon (%s, %s dB)" % [fp.wav_db, fp.ogg_db])
+	t.ok(fp.missing_warning.contains("missing.ogg"), "view: a missing recording still warns and falls back (%s)" % fp.missing_warning)
+	var skip_files := _mutant("res://museum/view/sound_view.gd", "if not live and bank.is_ready(id) and target > LAYER_ON:", "if not live and bank.is_ready(id) and bank.results[id].source != \"file\" and target > LAYER_ON:")
+	var fpm = _file_probe(skip_files, null) if skip_files != null else {"wav_playing": true, "ogg_playing": true}
+	t.ok(skip_files != null and not fpm.wav_playing and not fpm.ogg_playing, "view mutation 'only generated layers get players' (the reviewed defect) is caught")
+	var no_loop_bank := _mutant("res://museum/core/ambient_bank.gd", "r.loop = ensure_loop(stream)", "r.loop = \"on\"")
+	var fpl = _file_probe(SoundView, no_loop_bank) if no_loop_bank != null else {"wav_loops": true, "ogg_loops": true}
+	t.ok(no_loop_bank != null and not fpl.wav_loops and not fpl.ogg_loops, "...and so is a bank that does not switch the loop on")
 
 	var worst := _scrub_max_step(SoundView)
 	var tau := float(amb.fade_tau_s)
