@@ -299,6 +299,16 @@ func _initialize() -> void:
 	t.ok(all_bank.total_bytes() < 4 * 1024 * 1024, "generated loops in memory: %d bytes (budget 4 MB, pck unaffected)" % all_bank.total_bytes())
 	print("ambient set: ", all_bank.total_bytes(), " bytes as 16-bit mono, render ", snappedf(all_bank.generate_us / 1000.0, 0.1), " ms native")
 
+	# the layer the time of day needs is rendered right after the wind
+	var order_bank = Bank.new({"rate": RATE, "seed": 1, "layers": [
+		{"id": "wind", "source": "generator", "recipe": "wind", "length_s": 2}, {"id": "day", "source": "generator", "recipe": "day", "length_s": 2},
+		{"id": "dusk", "source": "generator", "recipe": "dusk", "length_s": 2}, {"id": "night", "source": "generator", "recipe": "night", "length_s": 2}]})
+	var order: Array = []
+	while order_bank.pending() > 0:
+		order.append_array(order_bank.pump(1, {"night": 0.9, "day": 0.1}))
+	t.eq(order, ["wind", "night", "day", "dusk"], "rendering order: the wind, then what the time of day needs")
+	t.ok(order_bank.wall_us > 0, "the bank records its wall time")
+
 	# ---- pure helpers ----
 	var last := -1.0
 	for d in range(0, 200, 5):

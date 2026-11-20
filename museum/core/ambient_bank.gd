@@ -11,6 +11,8 @@ var seed_value: int
 var entries: Array
 var results := {}                  # id -> {"id","source","stream","overlap","gain_db","provisional","warning","bytes","gen_us"}
 var generate_us := 0               # total time spent rendering, over all slices
+var wall_us := 0                   # from the first slice to the last layer ready (frames in between included)
+var _wall_start_us := 0
 var _jobs: Array = []              # [{"id", "recipe", "length_s", "synth"}], the synth is made when its turn comes
 
 func _init(cfg: Dictionary) -> void:
@@ -43,9 +45,15 @@ func pending() -> int:
 	return _jobs.size()
 
 ## Render for at most `budget_us` microseconds (always at least one slice). Returns the ids finished in this call.
-func pump(budget_us: int) -> Array:
+## `wanted` (layer id -> loudness now) puts the layer that is needed most at the front of the queue, so the wind and the
+## layer of the current time of day sound first; the one being rendered is finished before another starts.
+func pump(budget_us: int, wanted: Dictionary = {}) -> Array:
 	var done: Array = []
 	var t0 := Time.get_ticks_usec()
+	if _wall_start_us == 0:
+		_wall_start_us = t0
+	if not wanted.is_empty() and _jobs.size() > 1 and _jobs[0].synth == null:
+		_jobs.sort_custom(func(a, b): return float(wanted.get(a.id, 0.0)) + (1.0 if a.id == "wind" else 0.0) > float(wanted.get(b.id, 0.0)) + (1.0 if b.id == "wind" else 0.0))
 	while not _jobs.is_empty():
 		var j: Dictionary = _jobs[0]
 		var s0 := Time.get_ticks_usec()
@@ -61,6 +69,8 @@ func pump(budget_us: int) -> Array:
 			r.bytes = r.stream.data.size()
 			done.append(j.id)
 			_jobs.pop_front()
+			if _jobs.is_empty():
+				wall_us = Time.get_ticks_usec() - _wall_start_us
 		if Time.get_ticks_usec() - t0 >= budget_us:
 			break
 	return done

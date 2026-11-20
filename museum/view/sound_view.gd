@@ -73,8 +73,10 @@ func _ready() -> void:
 ## Render the ambient loops a little each frame (the budget is in data/sound.json); a layer starts as soon as it is ready.
 func _process(delta: float) -> void:
 	if bank.pending() > 0:
-		for id in bank.pump(int(data.ambient.budget_us)):
+		for id in bank.pump(int(data.ambient.budget_us), levels):
 			_start_layer(id)
+		if bank.pending() == 0:
+			print("ambient ready: %d layers, %d kB, rendering %d ms of work in %d ms of wall time" % [bank.results.size(), bank.total_bytes() / 1024, bank.generate_us / 1000, bank.wall_us / 1000])
 	for id in _second_due.keys():
 		_second_due[id] -= delta
 		if _second_due[id] <= 0.0:
