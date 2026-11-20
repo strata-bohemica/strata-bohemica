@@ -64,7 +64,7 @@ No recordings are shipped yet; this is the frame the ambient, spatial and craft 
   (season 0 winter..1 summer and weather 0..1 are placeholders, defaults summer/clear, until SB-016/SB-015). `events(kinds, t0, t1, ...)` plans the
   random one-shots (bird call, dog bark; kinds in `data/sound.json`) from a stateless hash of (kind, time bucket of the day): same window, same events,
   independent of how the window is cut, repeating every day (this needs every `bucket_s` to divide the period's `day_length_s`, 360 s today; `test_sound.gd` checks both, and its `DAY` equals the period's day). No random generator, no state, so scrubbing the slider keeps the scene a function of time.
-- `view/sound_view.gd`: creates the buses `Ambient`, `Sources` (3D sources), `Craft`, `UI` under `Master` (offsets in `data/sound.json`), keeps volume and
+- `view/sound_view.gd`: sets the volumes of the buses `Ambient`, `Sources` (3D sources), `Craft`, `UI` under `Master` (they are defined in `../default_bus_layout.tres`, see "Sound on the web: buses and the output check"; offsets in `data/sound.json`), keeps volume and
   mute, eases gains (starts silent and fades in; default volume 0.5 = -12 dB), ducks the scene buses while paused and silences everything, immediately (no fade), when the window/tab loses focus (it fades back in on return), and emits `one_shot` for events of the elapsed frame (not when scrubbing, running backwards or faster than x10).
   `levels` holds the current layer loudness for SB-019 to mix. The choice is stored in `user://sound.cfg` (`ConfigFile`; a failed load or save is
   ignored and the session just keeps the choice). Controls: "Sound" button and a volume slider in the bottom bar, key `M`. On a phone (narrow layout) the bar shows only a mute button, a speaker icon of
@@ -95,6 +95,30 @@ Browsers may keep an `AudioContext` suspended until the user acts on the page (M
   so the code silences Master immediately on focus loss instead of fading over frames; that this silences real output in a hidden tab is unverified. Check it before SB-019 ships loops.
   Not checked either: Safari/iOS, Firefox, touch devices, real hearing of output. Any window focus loss on the desktop (not only a hidden tab) also silences the museum.
 - For the next cards: recordings must be Ogg Vorbis/WAV `AudioStream`s played as samples; do not rely on bus effects (low-pass for distance, reverb) or on `AudioStreamGenerator` on the web. Test positional sources in the web build.
+
+### Sound on the web: buses and the output check
+
+**Correction (SB-039).** From SB-018 until this fix no sound reached the speakers on the web build. The buses were created at run time with `AudioServer.add_bus()`; in Godot 4.5.1 Web
+that puts every new bus before `Master` in the browser's bus list and then connects `Master` to another bus, so `Master` was cut off from the destination and the buses
+formed a loop (the `AudioWorklet` was the only node left feeding the destination). The statements in this README and in the SB-018/SB-019 records that were based on browser measurements
+(the `AudioContext` state after load or a click, restart gaps, buffer counts, memory) describe a graph that nobody could hear; they are observations of the engine's activity, not evidence that sound arrived.
+Nothing in them was a recording of the output, and nobody listened. What the later checks establish is below.
+
+Cause, in the Godot 4.5.1 sources (<https://github.com/godotengine/godot/blob/4.5.1-stable/>):
+`servers/audio_server.cpp` `AudioServer::add_bus` (l. 859, call at l. 910) calls `add_sample_bus(p_at_pos)` with -1 for "append"; `platform/web/js/libs/library_godot_audio.js` `Bus.addAt` (l. 887-892) creates the bus,
+then `Bus.move(id, index)` (l. 871-879) removes it and does `buses.splice(toIndex - 1, 0, movedBus)`, i.e. `splice(-2, 0, ...)`, which puts it at the front of the list; `Bus.create` (l. 898-908) sends every bus to `getBus(0)`
+and `set_sample_bus_send` (l. 1482-1494) resolves the target by index, so `Master` ends up sent to a child bus. Buses built by `AudioServer.set_bus_layout` (`servers/audio_server.cpp` l. 1735-1770 calls
+`set_sample_bus_count`, which creates them in order) keep their order. `main/main.cpp` l. 3721 calls `AudioServer::load_default_bus_layout` (`servers/audio_server.cpp` l. 1623-1632), which loads the project setting `audio/buses/default_bus_layout`.
+
+Fix: the buses live in `default_bus_layout.tres` (Master, Ambient, Sources, Craft, UI; sends to Master; offsets as in `data/sound.json`, compared by `test_sound.gd`) and `project.godot` names it.
+Do not add buses at run time (`SoundView._init` still adds a missing bus, which is correct on desktop but would silence the web build again; the output check below catches that).
+
+Check of the real output: `checks/web_audio/check_output.mjs <web export dir>` loads the export in Chromium, redirects everything connected to the page's `AudioContext.destination` through an AudioWorklet that records the peak, and
+asserts (1) positive control: an oscillator at gain 0.01 sent through the same point is captured as 0.0100; (2) the 0.25 s UI test tone at volume 1.0 arrives with the peak the bus settings predict (0.366 x UI -6 dB = 0.1836, +-30 %);
+(3) at volume 0.5 it is 12 dB lower (+-1.5 dB); (4) at volume 0 nothing arrives (< 0.0005); (5) every buffer source reaches the destination when it starts. Measured on this change: before the fix peak 0.0000 and 0 of 3 sources reached the destination; after, 0.1835 / 0.0459 (12.0 dB) / 0.00002 and 3 of 3.
+Run it: `godot --headless --export-release "Web" build/web/index.html`, then in a scratch directory `npm install --no-save playwright-core` and
+`CHROMIUM_PATH=/usr/bin/chromium node /path/to/checks/web_audio/check_output.mjs /path/to/build/web` (exit 0 = all PASS; needs Node >= 18 and a Chromium; no sound card: the context runs against Chromium's silent sink;
+`HEADED=1` shows the window). It takes about a minute (software WebGL). It measures what is sent to the destination, not what a sound card or a speaker produces, and it was run in Chromium only.
 
 ### Size and CPU budget
 

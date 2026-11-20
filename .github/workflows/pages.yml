@@ -8,6 +8,8 @@ on:
       - 'museum/**'
       - 'assets/**'
       - 'project.godot'
+      - 'default_bus_layout.tres'
+      - 'checks/web_audio/**'
       - 'export_presets.cfg'
       - '.github/workflows/pages.yml'
   pull_request:                  # build only (never deploys), so a change to the build is checked before it is merged
@@ -16,6 +18,8 @@ on:
       - 'museum/**'
       - 'assets/**'
       - 'project.godot'
+      - 'default_bus_layout.tres'
+      - 'checks/web_audio/**'
       - 'export_presets.cfg'
       - '.github/workflows/pages.yml'
   workflow_dispatch:
@@ -48,6 +52,11 @@ jobs:
           godot --headless --export-release "Web" build/web/index.html
           ls -la build/web
           du -h build/web/index.pck
+      - uses: actions/upload-artifact@v4          # the raw export, for the audio output check below
+        with:
+          name: web-export
+          path: build/web
+          retention-days: 3
       - name: Assemble the site
         run: |
           mkdir -p public/diorama public/museum
@@ -60,9 +69,25 @@ jobs:
         with:
           path: public
 
+  web-audio:       # records what the web build sends to the audio output (checks/web_audio, museum/README.md); no sound card needed
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: web-export
+          path: web-export
+      - name: Output check (Chromium, headless)
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm init -y >/dev/null && npm install --no-save playwright-core@1.49.1
+          CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node "$GITHUB_WORKSPACE/checks/web_audio/check_output.mjs" "$GITHUB_WORKSPACE/web-export"
+
   deploy:
     if: github.event_name != 'pull_request'
-    needs: build
+    needs: [build, web-audio]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
