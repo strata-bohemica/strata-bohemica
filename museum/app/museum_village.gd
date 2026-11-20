@@ -237,7 +237,7 @@ func _process(delta: float) -> void:
 		t += delta * speed
 	_pan_keys(delta)
 	_refresh(delta)
-	sound.apply(t, paused, speed, delta)
+	sound.apply(t, paused, speed, delta, 1.0, 0.0, cam_dist)
 	_hover()
 
 ## Arrow keys move the overview, always at the same speed on screen.

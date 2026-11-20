@@ -11,6 +11,7 @@ signal one_shot(event: Dictionary)
 
 const Soundscape = preload("res://museum/core/soundscape.gd")
 const Schema = preload("res://museum/core/schema.gd")
+const AmbientBank = preload("res://museum/core/ambient_bank.gd")
 
 const DATA_PATH := "res://museum/data/sound.json"
 const PREFS_PATH := "user://sound.cfg"
@@ -31,6 +32,11 @@ var _master_gain := START_GAIN         # linear gain applied to Master (user vol
 var _duck_gain := START_GAIN           # linear gain of the scene buses (pause)
 var _last_t := NAN
 var _tone: AudioStreamWAV
+var bank                              # AmbientBank: the ambient layers (rendered by script, or recordings)
+var layer_gains: Dictionary = {}       # layer id -> eased linear gain 0..1 actually sent to its players
+var proximity_gain := 1.0              # ambient share left for the camera distance (1 far, less when close)
+var _players: Dictionary = {}          # layer id -> [AudioStreamPlayer] (two, half a loop apart, when the layer overlaps)
+var _second_due: Dictionary = {}       # layer id -> seconds left until its second player starts
 var _blip_player: AudioStreamPlayer
 
 func _init() -> void:
@@ -44,6 +50,9 @@ func _init() -> void:
 			AudioServer.set_bus_send(i, "Master")
 	_apply_gains()
 	load_prefs()
+	bank = AmbientBank.new(data.ambient)
+	for id in bank.results:
+		layer_gains[id] = 0.0
 
 ## A hidden browser tab pauses the project, so no frame may be left to fade the gain down: going to the background
 ## sets Master to silence right away. Coming back fades in again through apply().
@@ -60,6 +69,17 @@ func _ready() -> void:
 	_blip_player = AudioStreamPlayer.new()
 	_blip_player.bus = "UI"
 	add_child(_blip_player)
+
+## Render the ambient loops a little each frame (the budget is in data/sound.json); a layer starts as soon as it is ready.
+func _process(delta: float) -> void:
+	if bank.pending() > 0:
+		for id in bank.pump(int(data.ambient.budget_us)):
+			_start_layer(id)
+	for id in _second_due.keys():
+		_second_due[id] -= delta
+		if _second_due[id] <= 0.0:
+			_second_due.erase(id)
+			_players[id][1].play()
 
 # ---- user choice -----------------------------------------------------------------------------------------------
 
@@ -93,9 +113,11 @@ func load_prefs() -> bool:
 # ---- per frame ---------------------------------------------------------------------------------------------------
 
 ## Call every frame with the museum time. `delta` is real seconds (0 = jump straight to the target, for tests).
-func apply(t: float, paused: bool, speed: float, delta: float, season: float = 1.0, weather: float = 0.0) -> void:
+## `cam_dist` is the camera's distance from what it looks at (metres); the ambient steps back as it comes close.
+func apply(t: float, paused: bool, speed: float, delta: float, season: float = 1.0, weather: float = 0.0, cam_dist: float = INF) -> void:
 	var day := day_length
 	levels = Soundscape.layers(t, season, weather, day)
+	_mix_ambient(delta, cam_dist)
 	var step := FADE_PER_S * delta if delta > 0.0 else 1.0
 	_master_gain = move_toward(_master_gain, 0.0 if in_background else _user_gain(), step)
 	_duck_gain = move_toward(_duck_gain, 0.0 if paused else 1.0, step)
@@ -104,6 +126,43 @@ func apply(t: float, paused: bool, speed: float, delta: float, season: float = 1
 		for e in Soundscape.events(data.one_shots, _last_t, t, season, weather, day):
 			one_shot.emit(e)
 	_last_t = t
+
+## Ease every layer's gain towards its loudness (from the pure `layers`) times the camera ducking, so scrubbing the time
+## slider crossfades instead of jumping.
+func _mix_ambient(delta: float, cam_dist: float) -> void:
+	var amb: Dictionary = data.ambient
+	var px: Dictionary = amb.proximity
+	var prox_target := Soundscape.proximity(cam_dist, float(px.near_m), float(px.far_m), float(px.floor)) if is_finite(cam_dist) else 1.0
+	proximity_gain = Soundscape.ease_gain(proximity_gain, prox_target, delta, float(amb.fade_tau_s))
+	for id in layer_gains:
+		var target := float(levels.get(id, 0.0)) * proximity_gain
+		layer_gains[id] = Soundscape.ease_gain(layer_gains[id], target, delta, float(amb.fade_tau_s))
+	_apply_layer_volumes()
+
+func _apply_layer_volumes() -> void:
+	for id in _players:
+		var db := _gain_db(float(layer_gains[id])) + float(bank.results[id].gain_db)
+		for p in _players[id]:
+			p.volume_db = maxf(db, -80.0)
+
+## Start the players of a layer whose stream is ready, silent (the gain eases in). Two copies of an overlapping layer
+## run half a loop apart: the web build restarts a looping sample from its "ended" event, which leaves a short gap
+## at every loop end, and the loop's baked-in fade hides that gap under the other copy.
+func _start_layer(id: String) -> void:
+	var r: Dictionary = bank.results[id]
+	var list: Array = []
+	for k in (2 if r.overlap else 1):
+		var p := AudioStreamPlayer.new()
+		p.bus = "Ambient"
+		p.stream = r.stream
+		p.volume_db = -80.0
+		add_child(p)
+		list.append(p)
+	_players[id] = list
+	list[0].play()
+	if r.overlap:
+		_second_due[id] = (float(r.stream.data.size()) / 2.0 / float(r.stream.mix_rate)) / 2.0
+	_apply_layer_volumes()
 
 func _user_gain() -> float:
 	return 0.0 if muted else db_to_linear(Soundscape.master_db(volume, false))

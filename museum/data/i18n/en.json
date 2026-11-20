@@ -27,5 +27,6 @@
  "phase.walk_home": "walking home",
  "phase.settle": "going to bed",
  "ui.sound": "Sound",
+ "ui.sound_note": "The sound is atmosphere (F, fiction): synthetic birds, insects and wind, not a reconstruction of Bronze Age sound.",
  "ui.muted": "Muted"
 }

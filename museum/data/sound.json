@@ -1,5 +1,5 @@
 {
- "_comment": "Sound foundation (SB-018). Bus offsets are dB relative to Master. Layers and one-shot kinds are mixed by core/soundscape.gd as pure functions of time; no recordings are shipped yet.",
+ "_comment": "Sound (SB-018, SB-019). Bus offsets are dB relative to Master. Layers and one-shot kinds are mixed by core/soundscape.gd as pure functions of time. The ambient loops are rendered by script at start (core/ambient_synth.gd); an entry with source file plays that recording instead and falls back to its generator recipe, with a warning, when the file is missing.",
  "default_volume": 0.5,
  "buses": [
   {"name": "Ambient", "offset_db": -6.0},
@@ -8,6 +8,20 @@
   {"name": "UI", "offset_db": -6.0}
  ],
  "layers": ["dawn", "day", "dusk", "night", "wind"],
+ "ambient": {
+  "rate": 22050,
+  "seed": 1150,
+  "fade_tau_s": 0.4,
+  "budget_us": 3000,
+  "proximity": {"near_m": 12.0, "far_m": 90.0, "floor": 0.3},
+  "layers": [
+   {"id": "wind", "source": "generator", "recipe": "wind", "length_s": 8, "gain_db": 0.0, "overlap": true, "provisional": true},
+   {"id": "day", "source": "generator", "recipe": "day", "length_s": 8, "gain_db": -3.0, "overlap": true, "provisional": true},
+   {"id": "dusk", "source": "generator", "recipe": "dusk", "length_s": 8, "gain_db": -3.0, "overlap": true, "provisional": true},
+   {"id": "night", "source": "generator", "recipe": "night", "length_s": 8, "gain_db": -2.0, "overlap": true, "provisional": true},
+   {"id": "dawn", "source": "generator", "recipe": "dawn", "length_s": 8, "gain_db": -2.0, "overlap": true, "provisional": true}
+  ]
+ },
  "one_shots": [
   {"id": "bird", "bus": "Ambient", "bucket_s": 3.0, "base_p": 0.5, "layers": {"dawn": 1.0, "day": 0.4, "dusk": 0.5}},
   {"id": "dog", "bus": "Sources", "bucket_s": 20.0, "base_p": 0.35, "layers": {"dusk": 1.0, "night": 0.6}}
