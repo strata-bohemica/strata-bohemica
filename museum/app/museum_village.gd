@@ -65,7 +65,7 @@ func _ready() -> void:
 	_build_world()
 	village = VillageView.new()
 	add_child(village)
-	village.build(world.village, world.terrain, world.occupied)
+	village.build(world.village, world.terrain, world.occupied, world.pending)
 	t = START_FRACTION * float(period.day_length_s)
 	_fit_ui_scale()
 	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))

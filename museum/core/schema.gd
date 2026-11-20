@@ -69,7 +69,7 @@ static func validate_craft(d: Dictionary) -> PackedStringArray:
 static func validate_homestead(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
 	if d.get("craft", "x") == null:         # a house that is not staffed yet
-		_need(d, ["id", "schema", "name", "pending"], "pending homestead", errors)
+		_need(d, ["id", "schema", "name", "house", "pending"], "pending homestead", errors)
 		if d.has("pending") and not (d.pending.has("cs") and d.pending.has("en")):
 			errors.append("pending homestead '%s': the reason needs cs and en" % d.get("id", "?"))
 		return errors

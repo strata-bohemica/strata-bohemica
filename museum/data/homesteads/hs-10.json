@@ -7,7 +7,7 @@
     "en": "The thresher"
   },
   "house": {
-    "model": "HOUSE-002/house_002"
+    "model": "HOUSE-005/house_005_plain"
   },
   "workplace": {
     "pos": [
@@ -20,11 +20,12 @@
   "bed": {
     "model": "SLEEP-001/bed_straw",
     "pos": [
-      3.0,
+      -2.495,
       0.0,
-      -1.5
+      -0.89
     ],
-    "yaw_deg": 90.0
+    "yaw_deg": 0.0,
+    "note": "F: no sleeping place is known for these houses (the house brief says nothing about it). Type B (HOUSE-005): the bed lies along the back wall in the -X half, away from the door (+X half) and clear of the central hearth spot and the ridge posts."
   },
   "walker": "PERSON-001/model",
   "sleeper": "SLEEP-001/person_sleep",

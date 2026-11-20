@@ -6,6 +6,9 @@
     "cs": "Hrnčířka",
     "en": "The potter"
   },
+  "house": {
+    "model": "HOUSE-004/house_004_plain"
+  },
   "pending": {
     "cs": "Čeká na rešerši k hrnčířství v pozdní době bronzové. Dostupné modely jsou z doby starší a střední bronzové.",
     "en": "Waiting for research on Late Bronze Age pottery. The available models date from the Early and Middle Bronze Age."

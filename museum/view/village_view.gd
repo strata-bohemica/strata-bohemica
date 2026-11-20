@@ -4,9 +4,8 @@ extends Node3D
 const Catalogue = preload("res://museum/assets/catalogue.gd")
 const HomesteadView = preload("res://museum/view/homestead_view.gd")
 const TerrainView = preload("res://museum/view/terrain_view.gd")
-const HOUSE_MODEL := "HOUSE-002/house_002"
 const PICK_WORK_RADIUS := 2.6
-const PICK_HOUSE_RADIUS := 5.5
+const PICK_HOUSE_MARGIN := 1.0      # a house is clickable a metre beyond its eaves, along its whole length
 
 var terrain
 var village: Dictionary
@@ -15,9 +14,11 @@ var homesteads: Dictionary = {}      # house id -> {"view": HomesteadView, "sche
 var empty_houses: Array[Node3D] = []
 var trees: Array[Node3D] = []
 var house_roots: Dictionary = {}      # house id -> Node3D (every house, staffed or not)
+var house_boxes: Dictionary = {}      # house id -> AABB of the house model in the house frame
 
 ## occupied: house id -> {"homestead": Dictionary, "craft": Dictionary, "schedule": Schedule}
-func build(p_village: Dictionary, p_terrain, occupied: Dictionary) -> void:
+## pending: house id -> homestead not staffed yet (its house still stands, model from its house.model)
+func build(p_village: Dictionary, p_terrain, occupied: Dictionary, pending: Dictionary = {}) -> void:
 	village = p_village
 	terrain = p_terrain
 	terrain_view = TerrainView.new()
@@ -42,10 +43,27 @@ func build(p_village: Dictionary, p_terrain, occupied: Dictionary) -> void:
 			root.add_child(view)
 			view.build(info.homestead, info.craft)
 			homesteads[int(h.id)] = {"view": view, "schedule": info.schedule, "data": info.homestead, "root": root}
-		else:
-			var house := Catalogue.instantiate(HOUSE_MODEL)
+			house_boxes[int(h.id)] = _model_box(view.house, root)
+		elif pending.has(int(h.id)):
+			var house := Catalogue.instantiate(str(pending[int(h.id)].house.model))
 			root.add_child(house)
 			empty_houses.append(house)
+			house_boxes[int(h.id)] = _model_box(house, root)
+
+## Bounds of every mesh under node, in the frame of root (an ancestor).
+static func _model_box(node: Node3D, root: Node3D) -> AABB:
+	var box := AABB()
+	var first := true
+	for mi in node.find_children("*", "MeshInstance3D", true, false):
+		var xf := Transform3D.IDENTITY
+		var n: Node = mi
+		while n != root:
+			xf = (n as Node3D).transform * xf
+			n = n.get_parent()
+		var b: AABB = xf * (mi as MeshInstance3D).get_aabb()
+		box = b if first else box.merge(b)
+		first = false
+	return box
 
 func apply(t: float, night: float, cutaway: bool) -> void:
 	for id in homesteads:
@@ -75,10 +93,18 @@ func character_world(id: int) -> Vector3:
 	return workplace_world(id)
 
 ## Click targets: the work place of every occupied homestead, and every house (the nearest hit wins).
+## A house is a row of spheres along its ridge, sized from its model, so a long house is clickable end to end.
 func pick_targets() -> Array:
 	var targets: Array = []
-	for id in house_roots:
-		targets.append({"id": id, "center": house_world(id) + Vector3(0, 2.0, 0), "radius": PICK_HOUSE_RADIUS})
+	for id in house_boxes:
+		var box: AABB = house_boxes[id]
+		var r := box.size.z / 2.0 + PICK_HOUSE_MARGIN
+		var span := maxf(box.size.x - 2.0 * r, 0.0)
+		var n := 1 if span <= 0.0 else int(ceil(span / r)) + 1
+		var z := box.get_center().z
+		for i in range(n):
+			var x := box.get_center().x if n == 1 else box.position.x + r + span * i / (n - 1)
+			targets.append({"id": id, "center": (house_roots[id] as Node3D).global_transform * Vector3(x, 2.0, z), "radius": r})
 	for id in homesteads:
 		targets.append({"id": id, "center": workplace_world(id) + Vector3(0, 1.0, 0), "radius": PICK_WORK_RADIUS})
 	return targets
