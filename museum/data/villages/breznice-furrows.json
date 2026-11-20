@@ -1,0 +1,49 @@
+{
+ "schema": 1,
+ "evidence": "R",
+ "source": "Kovačík, Pavelka, Hořínková 2022, Archeologické rozhledy 74(2): 155–179 (experiment with an ard replica, Opava, Silesia, Lusatian Urnfield culture)",
+ "note": "Dimensions are those of the experiment, a regional analogy (R). No ard, furrow or tillage trace is attested at Březnice. The choice per field and the direction along the contour are F.",
+ "source_ranges": {
+  "depth_m": [
+   0.08,
+   0.12
+  ],
+  "width_m": [
+   0.04,
+   0.06
+  ],
+  "spacing_m": [
+   0.18,
+   0.35
+  ]
+ },
+ "fields": [
+  {
+   "dir": [
+    0.3511,
+    -0.9363
+   ],
+   "depth_m": 0.089,
+   "width_m": 0.059,
+   "spacing_m": 0.201
+  },
+  {
+   "dir": [
+    -0.9512,
+    0.3085
+   ],
+   "depth_m": 0.108,
+   "width_m": 0.042,
+   "spacing_m": 0.222
+  },
+  {
+   "dir": [
+    0.0512,
+    0.9987
+   ],
+   "depth_m": 0.12,
+   "width_m": 0.044,
+   "spacing_m": 0.289
+  }
+ ]
+}

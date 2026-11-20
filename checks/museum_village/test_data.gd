@@ -129,6 +129,7 @@ func _init() -> void:
 	_houses(t, all)
 	for ref in scenes:
 		scenes[ref].free()
+	_furrows(t, all)
 	quit(t.finish("data"))
 
 # SB-023: two house types. The finish of every homestead's house (plain / limewash / pattern), as decided.
@@ -268,3 +269,41 @@ func _asset_of(craft: Dictionary, prop_id: String) -> String:
 		if p.id == prop_id:
 			return p.asset
 	return ""
+
+# SB-008: furrows on the fields. Dimensions are those of the cited ard experiment (Kovačík et al. 2022: 8-12 cm deep, 4-6 cm wide,
+# 18-35 cm apart), typed in here on purpose so that editing the data cannot move the range with it. The source is cited and nothing
+# is claimed about an ard at Březnice.
+const FURROW_RANGES := {"depth_m": [0.08, 0.12], "width_m": [0.04, 0.06], "spacing_m": [0.18, 0.35]}
+
+func _furrows(t, all: Dictionary) -> void:
+	const Schema = preload("res://museum/core/schema.gd")
+	var d: Dictionary = all.village.furrows
+	var n: int = all.village.fields.size()
+	t.ok(n > 0, "the village has fields")
+	t.eq(Array(Schema.validate_furrows(d, n)), [], "the furrows file validates")
+	t.eq(d.source_ranges, FURROW_RANGES, "the recorded ranges are the experiment's")
+	t.ok(str(d.source).contains("Kovačík") and str(d.source).contains("Archeologické rozhledy 74(2): 155–179"), "the furrows cite the experiment")
+	t.eq(d.evidence, "R", "furrow dimensions are R (analogy), not E")
+	t.ok(str(d.note).contains("No ard"), "the note says that no ard is attested at Březnice")
+	for i in range(n):
+		for key in FURROW_RANGES:
+			var v := float(d.fields[i][key])
+			t.ok(v >= FURROW_RANGES[key][0] and v <= FURROW_RANGES[key][1], "field %d: %s %.3f is inside the experiment's range" % [i, key, v])
+		t.ok(absf(Vector2(d.fields[i].dir[0], d.fields[i].dir[1]).length() - 1.0) < 1e-3, "field %d: the furrow direction is a unit vector" % i)
+	var ploughing: Dictionary = Schema.load_json("res://museum/data/crafts/ploughing.json")
+	var cited := false
+	for s in ploughing.card.sources:
+		cited = cited or str(s).contains("Kováčik") or str(s).contains("Kovačík")
+	t.ok(cited, "the ploughing card cites the same experiment")
+	# guards: each broken copy must be rejected (and the intact one was accepted above)
+	var broken := {
+		"depth 18 cm": func(c): c.fields[0].depth_m = 0.18,
+		"width 2 cm": func(c): c.fields[1].width_m = 0.02,
+		"spacing 40 cm": func(c): c.fields[0].spacing_m = 0.40,
+		"no source": func(c): c.source = "",
+		"missing field": func(c): c.fields.pop_back(),
+	}
+	for name in broken:
+		var c: Dictionary = d.duplicate(true)
+		broken[name].call(c)
+		t.ok(not Schema.validate_furrows(c, n).is_empty(), "a furrow file with %s is rejected" % name)

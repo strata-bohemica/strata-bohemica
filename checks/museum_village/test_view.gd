@@ -53,6 +53,39 @@ func _initialize() -> void:
 	t.ok(total > 100 and float(up) / total > 0.99, "ground triangles face up (%d of %d)" % [up, total])
 	t.ok(ground.get_aabb().size.x > 130.0, "ground spans the disc")
 
+	# furrows (SB-008): one shader patch per field, drawn from world position; mask is 1 inside the field, 0 away from it
+	var patches: Array = view.terrain_view.get_children().filter(func(n): return n is MeshInstance3D and n.material_override is ShaderMaterial)
+	t.eq(patches.size(), all.village.fields.size(), "a furrow patch for every field")
+	for k in range(patches.size()):
+		var pa: Array = (patches[k] as MeshInstance3D).mesh.surface_get_arrays(0)
+		var pv: PackedVector3Array = pa[Mesh.ARRAY_VERTEX]
+		var pc: PackedColorArray = pa[Mesh.ARRAY_COLOR]
+		var poly := PackedVector2Array()
+		for q in all.village.fields[k]:
+			poly.append(Vector2(q[0], q[1]))
+		var inside_full := 0
+		var outside_visible := 0
+		var inside_n := 0
+		for i in range(pv.size()):
+			var inside := Geometry2D.is_point_in_polygon(Vector2(pv[i].x, pv[i].z), poly)
+			if inside:
+				inside_n += 1
+				inside_full += 1 if pc[i].a > 0.99 else 0
+			elif pc[i].a > 0.0:
+				var dmin := 1e9
+				for j in range(poly.size()):
+					dmin = minf(dmin, Vector2(pv[i].x, pv[i].z).distance_to(Geometry2D.get_closest_point_to_segment(Vector2(pv[i].x, pv[i].z), poly[j], poly[(j + 1) % poly.size()])))
+				outside_visible += 1 if dmin > 0.5 else 0
+		t.ok(inside_n > 100 and inside_full > inside_n / 2, "field %d: the mask is solid in the field (%d of %d)" % [k, inside_full, inside_n])
+		t.eq(outside_visible, 0, "field %d: no furrow shows more than 0.5 m outside the field" % k)
+		var vert_off := 0.0
+		for i in range(0, pv.size(), 7):
+			vert_off = maxf(vert_off, absf(pv[i].y - all.terrain.height_at(pv[i].x, pv[i].z) - 0.05))
+		t.ok(vert_off < 1e-3, "field %d: the patch lies 5 cm above the terrain" % k)
+		var m := (patches[k] as MeshInstance3D).material_override as ShaderMaterial
+		var fd: Dictionary = all.village.furrows.fields[k]
+		t.eq(m.get_shader_parameter("spacing"), float(fd.spacing_m), "field %d: the shader takes the data's spacing" % k)
+
 	# every homestead, through the day: one skin visible, standing where the schedule says; held props sit in the hand
 	var max_grip := 0.0
 	var held_checked := 0
