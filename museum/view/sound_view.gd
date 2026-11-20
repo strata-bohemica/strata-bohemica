@@ -40,6 +40,7 @@ var proximity_gain := 1.0              # ambient share left for the camera dista
 var _players: Dictionary = {}          # layer id -> [AudioStreamPlayer] while the layer is audible (two, half a loop apart, when it overlaps)
 var _second_due: Dictionary = {}       # layer id -> seconds left until its second player starts
 var _blip_player: AudioStreamPlayer
+var _js_visibility: JavaScriptObject   # web only: keeps the `visibilitychange` callback alive
 
 func _init() -> void:
 	data = Schema.load_json(DATA_PATH)
@@ -66,6 +67,23 @@ func set_ambient(cfg: Dictionary) -> void:
 	for id in bank.results:
 		layer_gains[id] = 0.0
 
+## The page became hidden (tab switch, minimised window, locked phone) or visible again. The web build listens for the
+## browser's `visibilitychange` itself (see `_hook_page_visibility`) because a hidden tab does not always blur the canvas
+## (measured in headless Chromium: a `visibilitychange` alone left the ambient playing, checks/web_audio/check_hidden.mjs).
+func page_visibility_changed(hidden: bool) -> void:
+	set_background(hidden)
+
+## Web only: ask the browser for `visibilitychange` events. The callback runs inside the event, so Master is silenced
+## even though a hidden tab renders no more frames.
+func _hook_page_visibility() -> void:
+	if not OS.has_feature("web"):
+		return
+	var doc: Variant = JavaScriptBridge.get_interface("document")
+	if doc == null:
+		return
+	_js_visibility = JavaScriptBridge.create_callback(func(_args): page_visibility_changed(bool(doc.hidden)))
+	doc.addEventListener("visibilitychange", _js_visibility)
+
 ## A hidden browser tab pauses the project, so no frame may be left to fade the gain down: going to the background
 ## sets Master to silence right away. Coming back fades in again through apply().
 func set_background(b: bool) -> void:
@@ -78,6 +96,7 @@ func _ready() -> void:
 	var win := get_window()
 	win.focus_exited.connect(func(): set_background(true))
 	win.focus_entered.connect(func(): set_background(false))
+	_hook_page_visibility()
 	_blip_player = AudioStreamPlayer.new()
 	_blip_player.bus = "UI"
 	add_child(_blip_player)

@@ -102,6 +102,12 @@ jobs:
           echo "::endgroup::"
           echo "web-audio: FAILED on both attempts"
           exit 1
+      - name: Hidden-tab check (Chromium, headless; report-only, SB-034)
+        continue-on-error: true       # reports; does not fail the job until it has proven stable in CI
+        run: |
+          cd "$RUNNER_TEMP/pw"
+          export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
+          node "$GITHUB_WORKSPACE/checks/web_audio/check_hidden.mjs" "$GITHUB_WORKSPACE/web-export"
 
   deploy:
     if: github.event_name != 'pull_request'
