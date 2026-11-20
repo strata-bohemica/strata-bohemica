@@ -9,7 +9,7 @@
 //
 // Checks (each prints PASS/FAIL with the measured peak, linear 0..1 full scale):
 //   control  an OscillatorNode at gain 0.01 sent through the same tap point is captured as 0.0100 (the tap works)
-//   loud     volume slider at 1.0: the 0.25 s UI test tone (sine 12000/32768) arrives; expected peak 0.366 * 10^(-6/20) (UI bus) = 0.183
+//   loud     volume slider at 1.0, settled (set, wait 2 s, click the same spot again): the 0.25 s UI test tone (sine 12000/32768) arrives; expected peak 0.366 * 10^(-6/20) (UI bus) = 0.183
 //   half     volume slider at 0.5 (Master -12 dB): 12 dB lower than `loud` within +-1.5 dB
 //   silent   volume slider at 0 (Master -80 dB): nothing arrives (peak < 0.0005)
 //   graph    every AudioBufferSourceNode that played reaches the destination through gain nodes (no cycle, no orphan)
@@ -120,13 +120,28 @@ try {
   await page.waitForTimeout(2500);                                   // gains fade in (3 per second)
   const state = await page.evaluate(() => window.__ctxs.map((c) => c.state));
   console.log('AudioContext state after the click:', state.join(','));
-  const measure = async (action) => {                                // peak at the destination from now until 3 s of audio time later
-    const t0 = await page.evaluate(() => window.__ctxs[0].currentTime);
+  const measure = async (action, startOf) => {                       // peak at the destination from the tone's start until 3 s of audio time later
+    let t0 = await page.evaluate(() => window.__ctxs[0].currentTime);
     await action();
+    if (startOf) t0 = startOf();
     await page.waitForFunction((t) => (window.__tap.log.at(-1)?.[0] ?? 0) >= t + 3, t0, { timeout: 60000, polling: 100 });
     return page.evaluate((t) => Math.max(0, ...window.__tap.log.filter(([at]) => at >= t).map(([, p]) => p)), t0);
   };
-  const setVolume = (x) => async () => { await page.mouse.move(x, 691); await page.mouse.down(); await page.mouse.up(); };   // slider release plays the tone
+  // Slider x positions at 1280x720 (bottom bar, museum/ui/time_bar.gd; y 691): 1.0, 0.5, 0.0. A one-pixel shift can miss the slider,
+  // which fails safe (no tone, `loud` FAILS). The slider release (`drag_ended`) plays the UI test tone at once, while Master
+  // eases to the new volume at SoundView.FADE_PER_S = 3 per second. A tone played during that fade has a peak that depends on frame
+  // timing, so it is never measured: the slider is set, Master is given SETTLE_MS to arrive (a fade over the whole range takes
+  // 1/3 s), and only then the SAME position is clicked again (value unchanged, no new fade, `drag_ended` replays the tone at the
+  // settled gain). The wait is a plain delay.
+  const SETTLE_MS = 2000;
+  const clickAt = async (x) => { await page.mouse.move(x, 691); await page.mouse.down(); await page.mouse.up(); };
+  const setVolume = (x) => async () => {
+    await clickAt(x);                                                // moves the slider, starts the fade (this tone is not measured)
+    await page.waitForTimeout(SETTLE_MS);                            // Master has settled
+    t0Settled = await page.evaluate(() => window.__ctxs[0].currentTime);
+    await clickAt(x);                                                // same value: the tone plays at the settled gain
+  };
+  let t0Settled = 0;
   const db = (a, b) => 20 * Math.log10(a / b);
 
   // positive control: known tone through the same tap point
@@ -136,12 +151,14 @@ try {
   }));
   check('control', Math.abs(control - 0.01) < 0.0005, `known 0.01 tone captured as ${control.toFixed(4)}`);
 
-  const loud = await measure(setVolume(1267));
+  // Thresholds: settled values measured on the reviewed build are 0.1835 at volume 1.0 (0.366 x UI -6 dB), 12.0 dB lower at 0.5
+  // (Master -12.04 dB) and 0.00002 at 0 (Master -80 dB leaves -95 dB residue).
+  const loud = await measure(setVolume(1267), () => t0Settled);
   const expected = (12000 / 32768) * Math.pow(10, -6 / 20);
-  check('loud', loud > expected * 0.7 && loud < expected * 1.3, `volume 1.0 tone peak ${loud.toFixed(4)} (expected about ${expected.toFixed(3)})`);
-  const half = await measure(setVolume(1232));
-  check('half', loud > 0 && half > 0 && Math.abs(db(loud, half) - 12) < 1.5, `volume 0.5 peak ${half.toFixed(4)}, ${loud > 0 && half > 0 ? db(loud, half).toFixed(1) : 'n/a'} dB below volume 1.0 (expected 12)`);
-  const silent = await measure(setVolume(1196));
+  check('loud', loud > expected * 0.7 && loud < expected * 1.3, `volume 1.0 tone peak ${loud.toFixed(4)} (expected about ${expected.toFixed(4)}, +-30 %)`);
+  const half = await measure(setVolume(1232), () => t0Settled);
+  check('half', loud > 0 && half > 0 && Math.abs(db(loud, half) - 12) < 1.5, `volume 0.5 peak ${half.toFixed(4)}, ${loud > 0 && half > 0 ? db(loud, half).toFixed(1) : 'n/a'} dB below volume 1.0 (expected 12 +-1.5)`);
+  const silent = await measure(setVolume(1196), () => t0Settled);
   check('silent', silent < 0.0005, `volume 0 peak ${silent.toFixed(5)} (expected < 0.0005)`);
 
   // graph: every buffer source that started must have reached the destination (through the bus gain nodes) at that moment

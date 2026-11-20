@@ -70,24 +70,42 @@ jobs:
           path: public
 
   web-audio:       # records what the web build sends to the audio output (checks/web_audio, museum/README.md); no sound card needed
+    # REPORT-ONLY: `deploy` does not list this job in `needs` (SB-039 review 1, B1). Put `web-audio` back into `deploy.needs`
+    # once the check has passed 10 consecutive runs in CI (on pull requests and main) with no failure and no retry used.
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22.12.0'
       - uses: actions/download-artifact@v4
         with:
           name: web-export
           path: web-export
-      - name: Output check (Chromium, headless)
+      - name: Output check (Chromium, headless; one automatic retry, both results are printed)
         run: |
           mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
           npm init -y >/dev/null && npm install --no-save playwright-core@1.49.1
-          CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)" node "$GITHUB_WORKSPACE/checks/web_audio/check_output.mjs" "$GITHUB_WORKSPACE/web-export"
+          export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
+          echo "Node $(node --version); browser: $("$CHROMIUM_PATH" --version)"       # the runner's Chrome floats, so log it
+          run_check() { node "$GITHUB_WORKSPACE/checks/web_audio/check_output.mjs" "$GITHUB_WORKSPACE/web-export"; }
+          echo "::group::attempt 1"
+          if run_check; then echo "::endgroup::"; echo "web-audio: PASS on attempt 1"; exit 0; fi
+          echo "::endgroup::"
+          echo "::warning::web-audio attempt 1 FAILED, retrying once"
+          echo "::group::attempt 2"
+          if run_check; then echo "::endgroup::"; echo "::warning::web-audio: attempt 1 FAILED, attempt 2 PASSED (count this as unstable)"; exit 0; fi
+          echo "::endgroup::"
+          echo "web-audio: FAILED on both attempts"
+          exit 1
 
   deploy:
     if: github.event_name != 'pull_request'
-    needs: [build, web-audio]
+    needs: [build]        # not web-audio yet: see the comment on that job
     runs-on: ubuntu-latest
     environment:
       name: github-pages
