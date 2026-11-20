@@ -12,6 +12,7 @@ const SoundView = preload("res://museum/view/sound_view.gd")
 const Schema = preload("res://museum/core/schema.gd")
 const FIX_WAV := "res://checks/museum_village/fixtures/tone.wav"
 const FIX_OGG := "res://checks/museum_village/fixtures/tone.ogg"
+const FIX_FRAMES := 11025            # tone.wav: 0.5 s at 22050 Hz
 const DAY := 360.0
 const RATE := 22050
 const SECONDS := 6.0                  # the shipped loop length (data/sound.json)
@@ -509,7 +510,10 @@ func _initialize() -> void:
 
 	# overlapping layers are two renderings from two seeds, in the faded form the players get
 	var pair_cfg := {"rate": RATE, "seed": 1150, "layers": [{"id": "wind", "source": "generator", "recipe": "wind", "length_s": SECONDS, "overlap": true},
-		{"id": "day", "source": "generator", "recipe": "day", "length_s": SECONDS, "overlap": true}]}
+		{"id": "day", "source": "generator", "recipe": "day", "length_s": SECONDS, "overlap": true},
+		{"id": "dusk", "source": "generator", "recipe": "dusk", "length_s": SECONDS, "overlap": true},
+		{"id": "night", "source": "generator", "recipe": "night", "length_s": SECONDS, "overlap": true},
+		{"id": "dawn", "source": "generator", "recipe": "dawn", "length_s": SECONDS, "overlap": true}]}
 	var pair_bank = Bank.new(pair_cfg)
 	pair_bank.finish()
 	var pr: Dictionary = pair_bank.results.wind
@@ -550,6 +554,19 @@ func _initialize() -> void:
 	t.ok(fb.results.wind.stream is AudioStreamWAV and fb.results.day.stream is AudioStreamOggVorbis, "...as the engine imported them")
 	t.ok(fb.results.wind.stream.loop_mode == AudioStreamWAV.LOOP_FORWARD and fb.results.wind.stream.loop_end > 0, "the WAV loops (loop_mode forward, end %d)" % fb.results.wind.stream.loop_end)
 	t.ok(fb.results.day.stream.loop, "the Ogg loops")
+	# the loop covers every frame of the IMPORTED stream (the fixture is 11025 frames at 22050 Hz; the importer stores it as QOA, where
+	# a per-format byte count is wrong: 81 % of the frames), and starts at the first one
+	var wavs: AudioStreamWAV = fb.results.wind.stream
+	t.eq(wavs.format, AudioStreamWAV.FORMAT_QOA, "the fixture is imported as QOA (importer default), the case the byte formula got wrong")
+	t.eq(int(round(wavs.get_length() * wavs.mix_rate)), FIX_FRAMES, "the imported WAV has %d frames" % FIX_FRAMES)
+	t.ok(wavs.loop_begin == 0 and wavs.loop_end == FIX_FRAMES, "the WAV loop runs over all frames (begin %d, end %d, frames %d)" % [wavs.loop_begin, wavs.loop_end, FIX_FRAMES])
+	var old_formula := _mutant("res://museum/core/ambient_bank.gd", "return int(round(w.get_length() * w.mix_rate))", "return w.data.size() * 2 / (2 if w.stereo else 1)")
+	wavs.loop_mode = AudioStreamWAV.LOOP_DISABLED        # cached resource: back to the imported state for the mutant
+	wavs.loop_end = 0
+	var ob = old_formula.new(wav_cfg) if old_formula != null else null
+	t.ok(ob != null and ob.results.wind.stream.loop_end != FIX_FRAMES, "bank mutation 'byte formula for the frame count' is caught (loop_end %s)" % [ob.results.wind.stream.loop_end if ob != null else "n/a"])
+	wavs.loop_mode = AudioStreamWAV.LOOP_FORWARD
+	wavs.loop_end = FIX_FRAMES
 	t.ok(fb.is_ready("wind") and fb.is_ready("day") and not fb.results.wind.overlap, "recordings are ready at once and have one player")
 	var plain := AudioStreamWAV.new()                     # what a WAV import gives: no loop
 	plain.format = AudioStreamWAV.FORMAT_16_BITS

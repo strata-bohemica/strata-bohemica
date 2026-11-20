@@ -72,12 +72,10 @@ static func ensure_loop(stream: AudioStream) -> String:
 		return "on" if was_mp3 else "set"
 	return "unknown"
 
+## Frames of an imported WAV, taken from the length the engine reports for the stream, whatever the import stored
+## (16-bit PCM, IMA ADPCM, or QOA, the importer's default `compress/mode=2`): counting bytes per format gave 81 % for QOA.
 static func _wav_frames(w: AudioStreamWAV) -> int:
-	var channels := 2 if w.stereo else 1
-	match w.format:
-		AudioStreamWAV.FORMAT_8_BITS: return w.data.size() / channels
-		AudioStreamWAV.FORMAT_16_BITS: return w.data.size() / (2 * channels)
-		_: return w.data.size() * 2 / channels                      # IMA ADPCM: two samples per byte
+	return int(round(w.get_length() * w.mix_rate))
 
 func is_ready(id: String) -> bool:
 	return results.has(id) and results[id].stream != null
