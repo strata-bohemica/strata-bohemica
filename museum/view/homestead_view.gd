@@ -6,6 +6,11 @@ extends Node3D
 const Catalogue = preload("res://museum/assets/catalogue.gd")
 const PoseDriver = preload("res://museum/view/pose_driver.gd")
 const Animals = preload("res://museum/core/animals.gd")
+const CraftProps = preload("res://museum/core/craft_props.gd")
+const MAX_TEAM_TILT_DEG := 20.0     # how far the plough team may lean to follow a slope
+const MAX_AIM_DEG := 20.0           # how far the plough may be pitched about the grip to meet the team
+const MAX_SLIDE_M := 0.25           # m: how far the plough may then slide along the beam to meet it
+const TEAM_SLOPE_BASE := 0.6        # m: the span the slope is measured over (about half an ox)
 const W := TAU / 360.0       # one cycle per 360 s; flicker uses whole multiples so the scene stays periodic
 
 var house: Node3D
@@ -18,8 +23,15 @@ var glow: OmniLight3D
 var workplace := Transform3D.IDENTITY
 var travels := false                # the worker moves while working (the plough): their transform follows the schedule
 var _skin_nodes: Dictionary = {}    # "node name" -> Node3D on the worker skin
+var ground := Callable()            # (x, z) in this frame -> ground height in this frame; the plough team stands on it
+var aim_plough := true              # off only to prove in a check that the aiming matters
+var team_follows_ground := true     # off only to prove in a check that the guard matters
+var _clip_len: Dictionary = {}      # the ploughman's clip -> length (the fade of the aiming over the enter and exit clips)
+var _team_local: Dictionary = {}    # node -> its transform in the ploughman's frame while the plough runs level (see _calibrate_team)
 
-func build(homestead: Dictionary, craft: Dictionary) -> void:
+## p_ground: (x, z) in this homestead's frame -> ground height in it (the schedule's own ground function), so a plough team can stand on it.
+func build(homestead: Dictionary, craft: Dictionary, p_ground: Callable = Callable()) -> void:
+	ground = p_ground
 	house = _add(homestead.house.model)
 	bed = _add(homestead.bed.model)
 	var origin_node := bed.find_child("sleeper_origin", true, false) as Node3D
@@ -53,6 +65,8 @@ func build(homestead: Dictionary, craft: Dictionary) -> void:
 	glow.omni_range = 9.0
 	glow.position = Catalogue.anchor(homestead.house.model, "door_inside").get("pos", Vector3(0, 1.2, 2.2)) + Vector3(0, 1.4, 0)
 	add_child(glow)
+	if travels:
+		_calibrate_team(craft, homestead)      # last: it applies a pose, which needs the whole view built
 
 func _v(a: Array) -> Vector3:
 	return Vector3(float(a[0]), float(a[1]), float(a[2]))
@@ -119,6 +133,95 @@ func _build_animal(def: Dictionary) -> void:
 	else:
 		root.transform = Transform3D(Basis(Vector3.UP, yaw), _v(def.pos))
 	animals.append({"root": root, "driver": PoseDriver.new(root), "def": def, "lengths": Catalogue.clip_lengths(def.asset)})
+
+## The plough team (yoke and oxen) is not tied to the plough's pose: in the turn clips the plough is swung aside and tipped
+## nose-down about 58 degrees, and a team that followed it would lean with it and sink into the ground (SB-036).
+## It is tied to the ploughman instead: while the plough runs level the team stands at a fixed place in his frame, which is
+## measured once here, from a synthetic walking pose, as the transform that pose gives the team through the plough.
+## _team_pose then puts that place on the ground under it.
+func _calibrate_team(craft: Dictionary, homestead: Dictionary) -> void:
+	_clip_len = Catalogue.clip_lengths(str(craft.skin))
+	var clip := str(craft.travel.walk)
+	var yaw := deg_to_rad(float(homestead.workplace.yaw_deg))
+	apply({"phase": "work", "skin": "worker", "clip": clip, "clip_time": 0.0, "pos": workplace.origin, "yaw": yaw,
+		"props": CraftProps.state(craft, clip, 0.0, true), "travel": {"moving": true, "stage": "walk"}})
+	var worker: Node3D = skins.worker.root
+	var back: Transform3D = worker.global_transform.affine_inverse()
+	var team: Array[Node3D] = []
+	for a in animals:
+		if a.def.has("follow"):
+			team.append(a.root)
+	for id in props:
+		if props[id].has("dynamic"):
+			team.append(props[id].nodes[0])
+	for n in team:
+		_team_local[n] = back * n.global_transform
+
+## World pose of a team member: its place in the ploughman's frame (his heading only), put on the ground under it and
+## leaned to the slope (at most MAX_TEAM_TILT_DEG). Smooth in time because the ground and its slope are.
+func _team_pose(n: Node3D) -> Transform3D:
+	var worker: Node3D = skins.worker.root
+	var flat: Transform3D = Transform3D(Basis(Vector3.UP, worker.rotation.y), worker.position) * (_team_local[n] as Transform3D)   # this frame
+	if team_follows_ground and ground.is_valid():
+		var p := flat.origin
+		var h: float = ground.call(p.x, p.z)
+		var fwd: Vector3 = flat.basis.z
+		var side: Vector3 = flat.basis.x
+		var slope_f: float = (ground.call(p.x + fwd.x * TEAM_SLOPE_BASE, p.z + fwd.z * TEAM_SLOPE_BASE) - ground.call(p.x - fwd.x * TEAM_SLOPE_BASE, p.z - fwd.z * TEAM_SLOPE_BASE)) / (2.0 * TEAM_SLOPE_BASE)
+		var slope_s: float = (ground.call(p.x + side.x * TEAM_SLOPE_BASE, p.z + side.z * TEAM_SLOPE_BASE) - ground.call(p.x - side.x * TEAM_SLOPE_BASE, p.z - side.z * TEAM_SLOPE_BASE)) / (2.0 * TEAM_SLOPE_BASE)
+		var up: Vector3 = (Vector3.UP - fwd * slope_f - side * slope_s).normalized()     # ground normal from the two slopes along the member's own axes
+		var angle := minf(Vector3.UP.angle_to(up), deg_to_rad(MAX_TEAM_TILT_DEG))
+		var axis := Vector3.UP.cross(up)
+		var lean := Basis() if axis.length() < 1e-6 else Basis(axis.normalized(), angle)
+		flat = Transform3D(lean * flat.basis, Vector3(p.x, h + p.y - worker.position.y, p.z))
+	return get_global_transform() * flat
+
+## The plough stays hitched to the team while it walks (SB-036). The team stands on the ground under it (_team_pose) while the ard
+## is held level in the ploughman's hands, so on a slope the two hitches miss by up to ~0.4 m. The ard is pitched about the
+## ploughman's grip (the hand on the stilt) by the shortest turn that aims its yoke hitch at the team's beam hitch, at most
+## MAX_AIM_DEG; the rest (the two distances from the grip differ by a few cm) is closed by sliding the ard along that line
+## by at most MAX_SLIDE_M, so the hands move a few cm on the stilt. Checked tight in test_view.gd.
+## The turn clips swing the ard aside and tip it, and no small correction reaches the team from there (2.4 to 3.3 m): in the turn
+## the ard is left as the clip poses it (a follow-up card). The correction fades in over the enter clip and out over the exit clip,
+## so it adds no jump of its own at the ends of the turn.
+func _aim_plough(state: Dictionary) -> void:
+	var weight := _aim_weight(state)
+	if not aim_plough or weight <= 0.0:
+		return
+	for id in props:
+		var e: Dictionary = props[id]
+		if not e.has("dynamic") or not _team_local.has(e.nodes[0]):
+			continue
+		var holder_id := str(e.dynamic.on).trim_prefix("prop:")
+		var s: Dictionary = state.props.get(holder_id, {})
+		if str(s.get("mode", "")) != "held":
+			continue
+		var ard: Node3D = props[holder_id].nodes[0]
+		var pivot: Vector3 = _worker_node(str(s.node)).global_position
+		var hitch_node := ard.find_child(str(e.dynamic.node), true, false) as Node3D
+		var target: Vector3 = (e.nodes[0].find_child(str(e.dynamic.own), true, false) as Node3D).global_position
+		var a := hitch_node.global_position - pivot
+		var b := target - pivot
+		var axis := a.cross(b)
+		if a.length() < 1e-4 or b.length() < 1e-4 or axis.length() < 1e-6:
+			continue
+		var r := Basis(axis.normalized(), minf(a.angle_to(b), deg_to_rad(MAX_AIM_DEG)) * weight)
+		var gt := ard.global_transform
+		ard.global_transform = Transform3D(r * gt.basis, pivot + r * (gt.origin - pivot))
+		var slide: Vector3 = (target - hitch_node.global_position) * weight
+		ard.global_position += slide.limit_length(MAX_SLIDE_M)
+
+## 1 while the team walks, the progress of the enter clip going in, the rest of the exit clip going out, 0 in the turn.
+func _aim_weight(state: Dictionary) -> float:
+	var len_s := float(_clip_len.get(str(state.get("clip", "")), 1.0))
+	match str(state.travel.stage):
+		"walk":
+			return 1.0
+		"enter":
+			return clampf(float(state.clip_time) / len_s, 0.0, 1.0)
+		"exit":
+			return clampf(1.0 - float(state.clip_time) / len_s, 0.0, 1.0)
+	return 0.0
 
 func _anchor_transform(on: String, node_name: String) -> Transform3D:
 	var holder: Node3D = skins.worker.root if on == "skin" else props[on.trim_prefix("prop:")].nodes[0]
@@ -198,7 +301,12 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 	for id in props:                                  # props that ride on other props (second pass: the ard has moved by now)
 		var e: Dictionary = props[id]
 		if e.has("dynamic"):
-			e.nodes[0].global_transform = _anchor_transform(str(e.dynamic.on), str(e.dynamic.node)) * (e.own_local as Transform3D).affine_inverse()
+			if _team_local.has(e.nodes[0]):
+				e.nodes[0].global_transform = _team_pose(e.nodes[0])
+			else:
+				e.nodes[0].global_transform = _anchor_transform(str(e.dynamic.on), str(e.dynamic.node)) * (e.own_local as Transform3D).affine_inverse()
+	if not _team_local.is_empty():
+		_aim_plough(state)
 	var on: bool = state.phase in ["work", "meal"]
 	for l in lights:
 		var flicker := 1.0
@@ -210,8 +318,11 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 	for a in animals:
 		var pose: Dictionary
 		if a.def.has("follow"):                       # walks with the work; the plough oxen walk at 0.75x so the hooves match 0.6 m/s
-			var anchor := _anchor_transform(str(a.def.on), str(a.def.node))
-			a.root.global_transform = anchor * Transform3D(Basis(Vector3.UP, deg_to_rad(float(a.def.get("yaw_deg", 0.0)))), Vector3.ZERO)
+			if _team_local.has(a.root):
+				a.root.global_transform = _team_pose(a.root)
+			else:
+				var anchor := _anchor_transform(str(a.def.on), str(a.def.node))
+				a.root.global_transform = anchor * Transform3D(Basis(Vector3.UP, deg_to_rad(float(a.def.get("yaw_deg", 0.0)))), Vector3.ZERO)
 			if state.travel.moving:
 				pose = {"clip": "walk", "clip_time": fposmod(time * 0.75, float(a.lengths.get("walk", 1.0)))}
 			else:

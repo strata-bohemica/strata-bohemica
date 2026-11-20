@@ -15,6 +15,9 @@ app/     the main scene and the loader that assembles the village
 A person who moves while working (the plough) is a pure function of the time they have worked: `core/travel.gd` walks a line,
 turns round and walks back; the schedule keeps their place through the meal and walks them home from wherever they stopped,
 after a commute along the least-cost path from the yard to the field (`tools/build_village.py` writes it as `sites`).
+The plough team (yoke and oxen) is tied to the ploughman, not to the plough: the turn clips swing the plough aside and tip it about 58 degrees, so the team keeps its place in his frame and stands on the ground under each ox, leaning to the slope (at most 20 degrees; `HomesteadView._team_pose`, checked in `test_plough_team.gd`).
+While the team walks the plough stays hitched: the ard is pitched about the ploughman's grip so its hitch meets the yoke's on the ground (`HomesteadView._aim_plough`; hitch to hitch under 3 cm on the shipped fields, the hand slides on the stilt by at most 0.25 m).
+Known limitation, accepted for a follow-up card: in the turn clips (exit, turn, enter; about 3.6 s of every ~27 s furrow cycle) the plough is not hitched. The clips swing it 77 degrees aside and tip it 58 degrees, with the beam tip under the ground, while the team stays 2.6 m ahead of the ploughman, so hitch to hitch is 2.4 to 3.3 m (median 2.7 m). Aiming the ard at the team there needs the hand to slide about 0.6 m and makes the ard jump (1 m in one frame at the team's swing), so it is left as the clips pose it. The fix belongs to the clips (tip the ard onto its side with the beam end at yoke height) and/or a team that walks the U-turn.
 Adding a craft or a homestead means adding JSON, not code. Animals are data too: a cycle of clips whose length divides the day. Models are referred to by asset ID, never by path.
 
 ## Run
@@ -22,7 +25,7 @@ Adding a craft or a homestead means adding JSON, not code. Animals are data too:
 ```sh
 godot --path .      # click a person for the card; M mute, Space pause, Q/W/E speed, 0/Esc overview, 1-9 homestead, Tab next,
                     # F follow, L cutaway, C language (cs/en), right-drag orbit, wheel zoom; slider scrubs the day
-checks/museum_village/run.sh                     # core, data, terrain, boundary and view checks (headless)
+checks/museum_village/run.sh                     # core, data, terrain, boundary, view and plough-team checks (headless)
 ```
 
 ## The village

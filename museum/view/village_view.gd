@@ -41,7 +41,7 @@ func build(p_village: Dictionary, p_terrain, occupied: Dictionary, pending: Dict
 			var info: Dictionary = occupied[int(h.id)]
 			var view := HomesteadView.new()
 			root.add_child(view)
-			view.build(info.homestead, info.craft)
+			view.build(info.homestead, info.craft, info.schedule.ground)
 			homesteads[int(h.id)] = {"view": view, "schedule": info.schedule, "data": info.homestead, "root": root}
 			house_boxes[int(h.id)] = _model_box(view.house, root)
 		elif pending.has(int(h.id)):
