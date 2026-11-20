@@ -11,10 +11,26 @@ func _initialize() -> void:
 	var all := Fixture.load_all()
 	var view := VillageView.new()
 	root.add_child(view)
-	view.build(all.village, all.terrain, all.occupied)
+	view.build(all.village, all.terrain, all.occupied, all.pending)
 	var day: float = float(all.period.day_length_s)
 	t.eq(view.homesteads.size(), all.occupied.size(), "a view for every occupied homestead")
 	t.eq(view.empty_houses.size(), 12 - all.occupied.size(), "the other houses stand empty (%d)" % view.empty_houses.size())
+
+	# picking (SB-023): a click straight down anywhere along a house's ridge, end to end, picks that house
+	const Picking = preload("res://museum/core/picking.gd")
+	t.eq(view.house_boxes.size(), 12, "every house has its model bounds for picking")
+	var targets: Array = view.pick_targets()
+	var homesteads_all: Dictionary = Fixture.all_homesteads()
+	for id in view.house_roots:
+		var root_n: Node3D = view.house_roots[id]
+		var half := Fixture.house_half(str(homesteads_all[id].house.model))
+		var wrong := 0
+		for k in range(11):
+			var x := (-0.95 + 0.19 * k) * half.x
+			var top: Vector3 = root_n.global_transform * Vector3(x, 30.0, 0.0)
+			if Picking.pick(targets, top, Vector3.DOWN) != id:
+				wrong += 1
+		t.eq(wrong, 0, "house %d: clicking along its whole ridge (%.1f m) picks it" % [id, half.x * 2.0])
 
 	# ground mesh: vertices sit on the terrain, triangles face up (front faces in Godot are clockwise)
 	var ground: MeshInstance3D = view.terrain_view.get_child(0)

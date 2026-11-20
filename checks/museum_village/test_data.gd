@@ -126,9 +126,139 @@ func _init() -> void:
 		t.ok(Catalogue.has_model("VEG-001/%s" % kind), "catalogue knows tree %s" % kind)
 	for tr in all.village.trees:
 		t.ok(Catalogue.has_model("VEG-001/%s" % tr.kind), "tree kind %s is known" % tr.kind)
+	_houses(t, all)
 	for ref in scenes:
 		scenes[ref].free()
 	quit(t.finish("data"))
+
+# SB-023: two house types. The finish of every homestead's house (plain / limewash / pattern), as decided.
+const FINISHES := {1: "plain", 2: "limewash", 3: "pattern", 4: "plain", 5: "limewash", 6: "plain",
+	7: "plain", 8: "pattern", 9: "limewash", 10: "plain", 11: "plain", 12: "limewash"}
+# Partition lines (house x) of each house asset: HOUSE-004 asset.json "footprint" (partitions at x = -1.5 and -4.0); HOUSE-005 has none.
+const PARTITIONS := {"HOUSE-004": [-1.5, -4.0], "HOUSE-005": []}
+const HEARTH_R := 0.95       # the pebble paving of HOUSE-004 is an ellipse of about 1.9 x 1.6 m; used for both types
+const POST_R := 0.12         # post radius (upper bound)
+const BED_CLEAR := 0.5       # a bed keeps this clear of walls, posts, partitions and the hearth
+const WALK_CLEAR := 0.3      # the walk from the bed to door_inside keeps this clear of posts (person radius 0.25)
+
+func _houses(t, all: Dictionary) -> void:
+	var types: Dictionary = Fixture.house_types()
+	var homesteads: Dictionary = Fixture.all_homesteads()
+	t.eq(homesteads.size(), 12, "twelve homesteads")
+	t.eq(types.by_house.size(), 12, "a house type for each of the twelve houses")
+	var bed_ref := ""
+	var models := {}
+	for id in homesteads:
+		var hs: Dictionary = homesteads[id]
+		var tag := "hs-%02d house" % id
+		# (b) types alternate: odd ids type A, even ids type B; the model is the type's asset with the decided finish
+		var ty := str(types.by_house.get(str(id), ""))
+		t.eq(ty, "A" if id % 2 == 1 else "B", "%s: odd houses are type A, even type B" % tag)
+		t.ok(hs.has("house") and hs.house.has("model"), "%s: the homestead names its house model" % tag)
+		if not hs.has("house"):
+			continue
+		var ref := str(hs.house.model)
+		var asset := str(types.assets.get(ty, "?"))
+		t.eq(ref, "%s/house_%s_%s" % [asset, asset.right(3), FINISHES[id]], "%s: model of type %s with the %s finish" % [tag, ty, FINISHES[id]])
+		models[ref] = true
+		# (a) the model exists, has the anchors the schedule uses, and keeps the triangle budget
+		t.ok(Catalogue.has_model(ref) and ResourceLoader.exists(Catalogue.path(ref)), "%s: catalogue knows and imports %s" % [tag, ref])
+		for name_ in ["door_inside", "entry"]:
+			t.ok(not Catalogue.anchor(ref, name_).is_empty(), "%s: %s has the anchor %s" % [tag, ref, name_])
+		var tris := int(Fixture.model_meta(ref).get("triangles", 999999))
+		t.ok(tris > 0 and tris <= 5000, "%s: %s within 5000 triangles (%d)" % [tag, ref, tris])
+		if hs.has("bed"):
+			bed_ref = str(hs.bed.model)
+	# every one of the six models is in use, keeps its textures and really has that many triangles; its bounds match asset.json
+	t.eq(models.size(), 6, "all six house models are used")
+	for ref in models:
+		var node: Node3D = Catalogue.instantiate(ref)
+		if node == null:
+			t.ok(false, "%s instantiates" % ref)
+			continue
+		var tris := 0
+		var textured := 0
+		var box := AABB()
+		var first := true
+		for mi in node.find_children("*", "MeshInstance3D", true, false):
+			var mesh: Mesh = (mi as MeshInstance3D).mesh
+			for sf in mesh.get_surface_count():
+				var arrays := mesh.surface_get_arrays(sf)
+				var idx: PackedInt32Array = arrays[Mesh.ARRAY_INDEX]
+				tris += idx.size() / 3 if idx.size() > 0 else (arrays[Mesh.ARRAY_VERTEX] as PackedVector3Array).size() / 3
+				var material := (mi as MeshInstance3D).get_active_material(sf) as BaseMaterial3D
+				if material != null and material.albedo_texture != null and material.albedo_texture.get_width() >= 256:
+					textured += 1
+			box = mi.transform * mesh.get_aabb() if first else box.merge(mi.transform * mesh.get_aabb())
+			first = false
+		t.ok(tris > 0 and tris <= 5000, "%s: imported mesh within 5000 triangles (%d)" % [ref, tris])
+		t.ok(textured >= 1, "%s: the house model has its textures (%d)" % [ref, textured])
+		t.ok(node.find_child("Roof", true, false) != null, "%s: has a separable Roof node" % ref)
+		var half := Fixture.house_half(ref)
+		t.ok(absf(box.size.x / 2.0 - half.x) < 0.05 and absf(box.size.z / 2.0 - half.y) < 0.05, "%s: asset.json bounds match the mesh (%.2f x %.2f)" % [ref, box.size.x, box.size.z])
+		node.free()
+	# (d) every bed lies inside its house, clear of walls, posts, partitions and the hearth, and the sleeper reaches the door
+	var bed: Node3D = Catalogue.instantiate(bed_ref)
+	var origin_xf: Transform3D = (bed.find_child("sleeper_origin", true, false) as Node3D).transform
+	var bed_box := AABB()
+	var bfirst := true
+	for mi in bed.find_children("*", "MeshInstance3D", true, false):
+		bed_box = mi.transform * (mi as MeshInstance3D).mesh.get_aabb() if bfirst else bed_box.merge(mi.transform * (mi as MeshInstance3D).mesh.get_aabb())
+		bfirst = false
+	bed.free()
+	var beds := 0
+	for id in homesteads:
+		var hs: Dictionary = homesteads[id]
+		if not hs.has("bed") or not hs.has("house"):
+			continue
+		beds += 1
+		var ref := str(hs.house.model)
+		var tag := "hs-%02d bed" % id
+		var meta: Dictionary = Fixture.asset_meta(ref)
+		var inner := Vector2(float(meta.construction_measured.wall_inner_half_m.x), float(meta.construction_measured.wall_inner_half_m.z))
+		var xf := Transform3D(Basis(Vector3.UP, deg_to_rad(float(hs.bed.yaw_deg))), Vector3(hs.bed.pos[0], hs.bed.pos[1], hs.bed.pos[2])) * origin_xf.affine_inverse()
+		var corners := PackedVector2Array()
+		for c in [Vector3(bed_box.position.x, 0, bed_box.position.z), Vector3(bed_box.end.x, 0, bed_box.position.z), Vector3(bed_box.end.x, 0, bed_box.end.z), Vector3(bed_box.position.x, 0, bed_box.end.z)]:
+			var w: Vector3 = xf * c
+			corners.append(Vector2(w.x, w.z))
+		var wall_clear := INF
+		for c in corners:
+			wall_clear = minf(wall_clear, minf(inner.x - absf(c.x), inner.y - absf(c.y)))
+		t.ok(wall_clear >= BED_CLEAR, "%s: inside the walls with %.2f m to spare" % [tag, wall_clear])
+		var post_clear := INF
+		for pxz in meta.construction_measured.internal_posts_xz:
+			post_clear = minf(post_clear, Fixture.poly_dist(corners, Vector2(pxz[0], pxz[1])) - POST_R)
+		t.ok(post_clear >= BED_CLEAR, "%s: clear of the posts (%.2f m)" % [tag, post_clear])
+		var hearth: Vector3 = Catalogue.anchor(ref, "hearth_spot").pos
+		var hearth_clear := Fixture.poly_dist(corners, Vector2(hearth.x, hearth.z)) - HEARTH_R
+		t.ok(hearth_clear >= BED_CLEAR, "%s: clear of the hearth (%.2f m)" % [tag, hearth_clear])
+		var part_clear := INF
+		for px in PARTITIONS[ref.split("/")[0]]:
+			var lo := INF
+			var hi := -INF
+			for c in corners:
+				lo = minf(lo, c.x)
+				hi = maxf(hi, c.x)
+			part_clear = minf(part_clear, 0.0 if (lo <= px and px <= hi) else minf(absf(lo - px), absf(hi - px)))
+		t.ok(part_clear >= BED_CLEAR, "%s: clear of the partitions (%.2f m)" % [tag, part_clear])
+		# the walk: from where the sleeper stands up (bed.pos) straight to door_inside, in one room, past posts and hearth
+		var a := Vector2(hs.bed.pos[0], hs.bed.pos[2])
+		var door: Vector3 = Catalogue.anchor(ref, "door_inside").pos
+		var b := Vector2(door.x, door.z)
+		t.ok(absf(a.x) < inner.x - 0.25 and absf(a.y) < inner.y - 0.25, "%s: the sleeper stands inside the house" % tag)
+		var crosses := false
+		for px in PARTITIONS[ref.split("/")[0]]:
+			crosses = crosses or (a.x - px) * (b.x - px) <= 0.0
+		t.ok(not crosses, "%s: bed and door are in the same room" % tag)
+		var walk_clear := INF
+		for pxz in meta.construction_measured.internal_posts_xz:
+			var p := Vector2(pxz[0], pxz[1])
+			walk_clear = minf(walk_clear, Geometry2D.get_closest_point_to_segment(p, a, b).distance_to(p) - POST_R)
+		t.ok(walk_clear >= WALK_CLEAR, "%s: the walk to the door passes the posts (%.2f m)" % [tag, walk_clear])
+		var h2 := Vector2(hearth.x, hearth.z)
+		t.ok(Geometry2D.get_closest_point_to_segment(h2, a, b).distance_to(h2) >= 0.5, "%s: the walk to the door does not cross the hearth" % tag)
+		t.ok(Fixture.seg_poly_dist(a, b, corners) > 0.0, "%s: the sleeper stands beside the bed and walks away from it, not over it" % tag)
+	t.eq(beds, 11, "every staffed homestead has a bed")
 
 func skin_ref_of(craft: Dictionary, prop_id: String) -> String:
 	return _asset_of(craft, prop_id)
