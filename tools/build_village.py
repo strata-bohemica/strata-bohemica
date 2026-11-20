@@ -24,17 +24,23 @@ DISC = layout['disc_radius_m']
 # house envelope (roof included) per type, from the model bounds the factory measured (asset.json export_bounds_m);
 # the type of every house comes from layout['house_types'] (odd ids A, even ids B)
 catalogue = json.load(open(os.path.join(ROOT, 'museum/data/assets.json')))
+def asset_meta(asset_id):
+    entry = catalogue[asset_id]
+    return json.load(open(os.path.join(ROOT, 'assets', asset_id, entry['rev'], 'asset.json')))
 def envelope(asset_id):
     """(across the ridge = house z, along the ridge = house x) in metres, symmetric about the house origin."""
-    entry = catalogue[asset_id]
-    meta = json.load(open(os.path.join(ROOT, 'assets', asset_id, entry['rev'], 'asset.json')))
+    meta = asset_meta(asset_id)
     sizes = {(round(2 * max(abs(m['export_bounds_m']['min'][2]), m['export_bounds_m']['max'][2]), 2),
               round(2 * max(abs(m['export_bounds_m']['min'][0]), m['export_bounds_m']['max'][0]), 2)) for m in meta['models']}
     assert len(sizes) == 1, (asset_id, sizes)    # every finish has the same geometry
     return sizes.pop()
+def wall_half(asset_id):
+    """(along the ridge, across) half size of the walls in metres, from asset.json construction_measured.wall_outer_m."""
+    w = asset_meta(asset_id)['construction_measured']['wall_outer_m']
+    return (w['length_x'] / 2, w['width_z'] / 2)
 HOUSE_TYPES = layout['house_types']
 ENVELOPE = {t: envelope(a) for t, a in HOUSE_TYPES['assets'].items()}     # A about 6.4 x 15.9 m, B about 5.9 x 9.4 m
-WALL_HALF = {'A': (7.5, 2.75), 'B': (4.25, 2.5)}   # (along the ridge, across) half size of the walls: HOUSE-004 15.0 x 5.5 m, HOUSE-005 8.5 x 5.0 m
+WALL_HALF = {t: wall_half(a) for t, a in HOUSE_TYPES['assets'].items()}   # (along the ridge, across), from asset.json
 ROUTE_MARGIN_M = 1.5                    # the router keeps this far off the walls: grid steps cut corners and the smoothing pulls the line inward
 HUB_CLEAR_M = 2.5                       # a hub (meeting point of a cluster's paths) stays this far off any wall: the roof overhangs 0.9 m
 BLOCKED_COST = 1e4                      # added to a step into a blocked cell (not infinite: a hub or yard must stay reachable)

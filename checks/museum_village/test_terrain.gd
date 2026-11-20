@@ -99,11 +99,15 @@ func _init() -> void:
 			d_start = minf(d_start, Fixture.poly_dist(fa, p))
 		t.ok(d_start > 1.5, "house %d: every work place and path start stays clear of it (%.2f m)" % [id_a, d_start])
 
-	# (SB-030) footpaths go round the houses: no path point and no path segment touches any house's walls (HOUSE-004 type A
-	# 15.0 x 5.5 m, HOUSE-005 type B 8.5 x 5.0 m, from their asset.json) grown by 0.5 m, for all houses with their real type and yaw.
-	const WALL_HALF := {"A": Vector2(7.5, 2.75), "B": Vector2(4.25, 2.5)}      # x along the ridge, y across
+	# (SB-030) footpaths go round the houses: no path point and no path segment touches any house's walls (HOUSE-004 type A,
+	# HOUSE-005 type B; wall_outer_m from their asset.json) grown by 0.5 m, for all houses with their real type and yaw.
 	const PATH_MARGIN := 0.5
-	var by_house: Dictionary = Fixture.house_types().by_house
+	var house_types: Dictionary = Fixture.house_types()
+	var by_house: Dictionary = house_types.by_house
+	var wall_half := {}      # type -> Vector2, x along the ridge, y across; read from asset.json, not written here
+	for type_key in house_types.assets:
+		wall_half[type_key] = Fixture.wall_half(str(house_types.assets[type_key]))
+		t.ok(wall_half[type_key].x > 0.0 and wall_half[type_key].y > 0.0, "path check: type %s walls found in asset.json (%s)" % [type_key, wall_half[type_key]])
 	var path_points := 0
 	for path in village.paths:
 		path_points += path.size()
@@ -111,7 +115,7 @@ func _init() -> void:
 	t.ok(village.paths.size() >= 16, "path check: the village has its paths (%d)" % village.paths.size())
 	t.ok(path_points >= 300, "path check: the paths have points (%d)" % path_points)
 	for h in houses:
-		var walls := Fixture.footprint(h, WALL_HALF[str(by_house[str(int(h.id))])] + Vector2(PATH_MARGIN, PATH_MARGIN))
+		var walls := Fixture.footprint(h, wall_half[str(by_house[str(int(h.id))])] + Vector2(PATH_MARGIN, PATH_MARGIN))
 		var crossed := 0
 		for path in village.paths:
 			for k in range(path.size() - 1):

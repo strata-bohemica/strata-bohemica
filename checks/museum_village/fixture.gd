@@ -33,6 +33,16 @@ static func asset_meta(ref: String) -> Dictionary:
 		return {}
 	return Schema.load_json("res://assets/%s/%s/asset.json" % [parts[0], parts[1]])
 
+## Half size of a house asset's walls (no roof) in the house frame, from the asset.json of the catalogue's revision
+## (construction_measured.wall_outer_m): x along the ridge, y across (house z).
+static func wall_half(asset_id: String) -> Vector2:
+	var rev := str(Schema.load_json("res://museum/data/assets.json").get(asset_id, {}).get("rev", ""))
+	var meta: Dictionary = Schema.load_json("res://assets/%s/%s/asset.json" % [asset_id, rev])
+	var w: Dictionary = meta.get("construction_measured", {}).get("wall_outer_m", {})
+	if w.is_empty():
+		return Vector2.ZERO
+	return Vector2(float(w.length_x), float(w.width_z)) / 2.0
+
 ## The entry for one model in its asset.json.
 static func model_meta(ref: String) -> Dictionary:
 	for m in asset_meta(ref).get("models", []):
