@@ -23,7 +23,7 @@
  "physical_dimensions_m": null,
  "not_a_breznice_plan": true,
  "footprint": "15.0 x 5.5 m outer (brief type A), ridge along X; three rooms (brief: '3 rooms of unequal size') divided by partitions at x = -1.5 and -4.0 (F): east room 9.0 m (x -1.5..7.5; brief: 'the largest (9 m) east room'), middle 2.5 m, west 3.5 m outer / 3.23 m clear (house 57: middle about 2.5 x 5.5 m, west 3 x 5.5 m, D-houses-recon.md after Pleinerova and Hrala 1988; not in the brief)",
- "footprint_source": "HOUSE-BRIEF v1 type A: Pleinerova and Hrala 1988; Sklenarova 2012, 114 (dating of the original plan doubtful; the authors consider the Migration Period)",
+ "footprint_source": "HOUSE-BRIEF v1 type A: Pleinerova and Hrala 1988; Sklenarova 2012, 114 (dating of the original plan doubtful: the excavator, Pleinerova, is not sure of it and also considers the Migration Period)",
  "models": [
   {
    "file": "models/house_004_limewash.glb",
@@ -1016,7 +1016,7 @@
   {
    "part": "footprint and plan",
    "status": "A, R/F",
-   "note": "HOUSE-BRIEF v1 type A: Pleinerova and Hrala 1988; Sklenarova 2012, 114 (dating of the original plan doubtful; the authors consider the Migration Period). Not a plan of a Breznice house; no complete house plan is verified at Breznice."
+   "note": "HOUSE-BRIEF v1 type A: Pleinerova and Hrala 1988; Sklenarova 2012, 114 (dating of the original plan doubtful: the excavator, Pleinerova, is not sure of it and also considers the Migration Period). Not a plan of a Breznice house; no complete house plan is verified at Breznice."
   },
   {
    "part": "walls: wattle and daub between posts, 0.18 m",
