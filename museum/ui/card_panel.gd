@@ -76,8 +76,8 @@ func set_layout(viewport_size: Vector2) -> void:
 		anchor_bottom = 1.0
 		offset_left = 8.0
 		offset_right = -8.0
-		offset_bottom = -56.0
-		offset_top = -56.0 - clampf(viewport_size.y * 0.5, 260.0, 560.0)
+		offset_bottom = -62.0                       # above the phone time bar (46 px high, 10 px off the edge) with a gap
+		offset_top = -62.0 - clampf(viewport_size.y * 0.5, 260.0, 560.0)
 	else:
 		anchor_left = 1.0
 		anchor_right = 1.0

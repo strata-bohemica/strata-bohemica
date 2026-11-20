@@ -5,6 +5,7 @@ extends RefCounted
 ## terrain height + MARGIN with a smooth maximum, so the lift grows gradually while dragging and never snaps.
 
 const MARGIN := 1.5     # metres of clear air under the camera (the near plane is 0.05 m, steep slopes included)
+const OVERVIEW_OFFSET := 3.0   # metres the overview looks at above the ground: about eaves height, so houses sit in the middle of the picture
 const BLEND := 2.0      # metres over which the lift fades in: the camera starts rising this far above the margin
 
 ## The raw orbit position: the target plus a vector of length dist at (yaw, pitch); pitch < 0 looks down.
@@ -21,3 +22,8 @@ static func position(target: Vector3, yaw: float, pitch: float, dist: float, ter
 	var p := orbit_position(target, yaw, pitch, dist)
 	p.y = smooth_max(p.y, terrain.height_at(p.x, p.z) + MARGIN, BLEND)
 	return p
+
+## What the overview looks at: the ground under the pan point plus OVERVIEW_OFFSET (pan is on the ground plane, y ignored).
+## A fixed height put the target 7 m inside the hill at the village centre; the viewer then looked into the slope.
+static func overview_target(pan: Vector3, terrain) -> Vector3:
+	return Vector3(pan.x, terrain.height_at(pan.x, pan.z) + OVERVIEW_OFFSET, pan.z)

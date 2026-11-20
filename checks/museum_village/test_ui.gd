@@ -220,7 +220,9 @@ func _initialize() -> void:
 	app.pan_by_pixels(Vector2(100, 0))
 	var moved: Vector3 = app.cam_target - origin
 	t.ok(moved.dot(cam_right) < -1.0, "dragging the ground right moves the camera target left (%.1f m)" % moved.dot(cam_right))
-	t.ok(absf(moved.dot(cam_fwd)) < 0.01 and absf(moved.y) < 0.001, "a sideways drag moves only sideways, on the ground")
+	t.ok(absf(moved.dot(cam_fwd)) < 0.01, "a sideways drag moves only sideways")
+	var ground_rise: float = app.village.terrain.height_at(app.cam_target.x, app.cam_target.z) - app.village.terrain.height_at(origin.x, origin.z)     # SB-035: the target height follows the ground
+	t.ok(absf(moved.y - ground_rise) < 0.001, "the target rises with the ground it moves over (%.3f m of %.3f m)" % [moved.y, ground_rise])
 	app.pan_by_pixels(Vector2(-100, 0))
 	app.pan_by_pixels(Vector2(0, 100))
 	t.ok((app.cam_target - origin).dot(cam_fwd) > 1.0, "dragging the ground down moves the target away from the viewer")
@@ -353,9 +355,11 @@ func _initialize() -> void:
 	await process_frame
 
 	# the time bar on a phone: day slider keeps a usable width, nothing overflows, the sound control has one width
-	# in both states (SB-018 review: it used to squeeze the slider to 8-20 px and overflow at 360 px in Czech)
+	# in both states (SB-018 review: it used to squeeze the slider to 8-20 px and overflow at 360 px in Czech).
+	# 320 px is the narrowest supported width (SB-034): there every layout rule is needed, so removing the slider floor,
+	# the tight gaps or the short "Řez" label fails here (at 360 px alone the bar fits without them).
 	var min_slider := 48.0
-	for sz in [Vector2(360, 740), Vector2(400, 800)]:
+	for sz in [Vector2(320, 640), Vector2(360, 740), Vector2(400, 800)]:
 		var widths := {}
 		for lang in I18n.LANGS:
 			for paused in [false, true]:                  # "Přehrát" is wider than "Pauza": test the worst case too
@@ -371,15 +375,39 @@ func _initialize() -> void:
 					await process_frame
 					var tag := "%dx%d %s paused=%s muted=%s" % [sz.x, sz.y, lang, paused, muted]
 					t.ok(bar.slider.size.x >= min_slider, "%s: the day slider keeps %.0f px (got %.0f)" % [tag, min_slider, bar.slider.size.x])
-					t.ok(bar.get_combined_minimum_size().x <= bar.size.x + 0.5, "%s: the bar needs no more than it has (%.0f of %.0f)" % [tag, bar.get_combined_minimum_size().x, bar.size.x])
+					# the real used width: the right edge of the rightmost visible control (a container never gives a control
+					# less than its minimum, so a bar that is too wide grows past the screen edge and this value shows it)
+					var used_end := 0.0
+					var used_start := INF
+					for c in bar.get_children():
+						if c.visible:
+							used_end = maxf(used_end, c.get_global_rect().end.x)
+							used_start = minf(used_start, c.get_global_rect().position.x)
+					t.ok(used_start >= -0.5 and used_end <= sz.x + 0.5, "%s: the controls lie inside the screen (%.0f..%.0f of %.0f)" % [tag, used_start, used_end, sz.x])
 					t.ok(bar.get_global_rect().position.x >= -0.5 and bar.get_global_rect().end.x <= sz.x + 0.5, "%s: the bar lies inside the screen %s" % [tag, bar.get_global_rect()])
 					t.ok(bar.sound_button.get_global_rect().end.x <= sz.x + 0.5 and bar.sound_button.size.x > 0.0, "%s: the sound button is on screen" % tag)
 					t.ok(bar.sound_button.icon != null and bar.sound_button.text == "" and bar.sound_button.tooltip_text != "", "%s: icon button with a tooltip name" % tag)
-					t.ok(bar.sound_button.get_global_rect().size.y >= 30.0, "%s: the sound button is tall enough to tap" % tag)
+					var snd: Rect2 = bar.sound_button.get_global_rect()
+					t.ok(snd.size.x >= 44.0 and snd.size.y >= 44.0, "%s: the sound button is at least 44 x 44 px to tap (%.0f x %.0f)" % [tag, snd.size.x, snd.size.y])
+					t.ok(bar.get_global_rect().end.y <= sz.y - 10.0 + 0.5 and bar.get_global_rect().size.y >= 44.0, "%s: the bar is tall enough and keeps its gap to the screen edge %s" % [tag, bar.get_global_rect()])
 					widths[muted] = bar.sound_button.size.x
 					host.queue_free()
 					await process_frame
 		t.eq(widths[true], widths[false], "%dx%d: the sound button has the same width muted or not" % [sz.x, sz.y])
+	# the floor itself: on a screen narrower than supported (300 px, Czech, paused) the bar has to overflow a little rather than
+	# squeeze the day slider (without the floor the slider gets 46 px here)
+	var tight := Control.new()
+	tight.size = Vector2(300, 640)
+	root.add_child(tight)
+	var tight_bar := TimeBar.new()
+	tight.add_child(tight_bar)
+	tight_bar.set_narrow(true)
+	tight_bar.sync(0.4, true, 1.0, true, true, "cs", false, 0.5)
+	await process_frame
+	await process_frame
+	t.ok(tight_bar.slider.size.x >= min_slider, "300 px (below the supported width): the day slider is not squeezed under %.0f px (got %.0f)" % [min_slider, tight_bar.slider.size.x])
+	tight.queue_free()
+	await process_frame
 	var wide_bar := TimeBar.new()
 	root.add_child(wide_bar)
 	wide_bar.set_narrow(false)

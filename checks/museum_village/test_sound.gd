@@ -132,6 +132,24 @@ func _view_failures(script: GDScript, quiet := false) -> int:
 	for i in 120:
 		sv.apply(20.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "view: background silences Master")
+	sv.in_background = false
+	for i in 120:
+		sv.apply(30.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() > 0.1, "positive control: the sound is up before the page is hidden")
+	sv.page_visibility_changed(true)                  # the browser's `visibilitychange` (web build): hidden, no frame runs
+	t.ok(sv.in_background and sv.master_gain() == 0.0 and AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "a hidden page silences Master at once, without a frame")
+	sv.page_visibility_changed(false)
+	t.ok(not sv.in_background and sv.master_gain() == 0.0, "a visible page again clears the background flag and fades in (no jump)")
+	for i in 120:
+		sv.apply(32.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() > 0.1, "the sound is back after the page is visible again")
+	sv.set_muted(true)
+	sv.page_visibility_changed(true)
+	sv.page_visibility_changed(false)
+	for i in 120:
+		sv.apply(34.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() == 0.0, "hide and show does not undo the user's mute")
+	sv.set_muted(false)
 	root.remove_child(sv)
 	sv.free()
 	return t.failures.size()
@@ -286,6 +304,7 @@ func _initialize() -> void:
 	for pair in [["no fade in", _mutant(sv_path, "_master_gain = move_toward(_master_gain, 0.0 if in_background else _user_gain(), step)", "_master_gain = 0.0 if in_background else _user_gain()")],
 			["no pause duck", _mutant(sv_path, "0.0 if paused else 1.0, step)", "1.0, step)")],
 			["ignores background", _mutant(sv_path, "0.0 if in_background else _user_gain()", "_user_gain()")],
+			["hidden page ignored", _mutant(sv_path, "func page_visibility_changed(hidden: bool) -> void:\n\tset_background(hidden)", "func page_visibility_changed(hidden: bool) -> void:\n\tpass")],
 			["background waits for a frame", _mutant(sv_path, "\t\t_master_gain = 0.0\n\t\t_apply_gains()", "\t\tpass")]]:
 		t.ok(pair[1] != null, "view mutation '%s' compiled" % pair[0])
 		if pair[1] != null:
