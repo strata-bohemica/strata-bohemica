@@ -1,0 +1,32 @@
+[gd_resource type="AudioBusLayout" format=3]
+
+; The buses exist from the engine's start, in this order. Do not create them at run time: Godot 4.5.1 Web inserts a bus
+; added by AudioServer.add_bus() before Master and cuts Master off from the speakers (see museum/README.md, Sound on the web).
+; Names and offsets mirror museum/data/sound.json (test_sound.gd compares them); Master is set by SoundView (silent until it fades in).
+
+[resource]
+bus/0/volume_db = -80.0
+bus/1/name = &"Ambient"
+bus/1/solo = false
+bus/1/mute = false
+bus/1/bypass_fx = false
+bus/1/volume_db = -6.0
+bus/1/send = &"Master"
+bus/2/name = &"Sources"
+bus/2/solo = false
+bus/2/mute = false
+bus/2/bypass_fx = false
+bus/2/volume_db = 0.0
+bus/2/send = &"Master"
+bus/3/name = &"Craft"
+bus/3/solo = false
+bus/3/mute = false
+bus/3/bypass_fx = false
+bus/3/volume_db = -3.0
+bus/3/send = &"Master"
+bus/4/name = &"UI"
+bus/4/solo = false
+bus/4/mute = false
+bus/4/bypass_fx = false
+bus/4/volume_db = -6.0
+bus/4/send = &"Master"

@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d03e1hekvv0jd"
-path="res://.godot/imported/house_004_limewash.glb-6851c3970777d61d346e25f32052be10.scn"
+uid="uid://70nf4y5g8lk1"
+path="res://.godot/imported/house_004_limewash.glb-96f4456586a99d00fc538a5e35dc11b7.scn"
 
 [deps]
 
-source_file="res://assets/HOUSE-004/r001/models/house_004_limewash.glb"
-dest_files=["res://.godot/imported/house_004_limewash.glb-6851c3970777d61d346e25f32052be10.scn"]
+source_file="res://assets/HOUSE-004/r002/models/house_004_limewash.glb"
+dest_files=["res://.godot/imported/house_004_limewash.glb-96f4456586a99d00fc538a5e35dc11b7.scn"]
 
 [params]
 

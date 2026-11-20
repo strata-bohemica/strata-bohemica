@@ -11,6 +11,12 @@ boot_splash/bg_color=Color(0.1176, 0.098, 0.0784, 1)
 boot_splash/image="res://museum/ui/brand/mark.png"
 boot_splash/fullsize=false
 
+[audio]
+
+; Explicit on purpose: this is also Godot's default path, so deleting the line changes nothing and no test could notice.
+; What is guarded is the file itself: test_sound.gd reads the bus names and sends from AudioServer at startup (the layout really loaded).
+buses/default_bus_layout="res://default_bus_layout.tres"
+
 [display]
 
 window/size/viewport_width=1280
