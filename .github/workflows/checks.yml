@@ -1,0 +1,47 @@
+name: Checks
+
+# The six headless museum tests (checks/museum_village/run.sh) on every pull request and on main.
+# pages.yml only builds and deploys the web export; it does not run these.
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'museum/**'
+      - 'checks/**'
+      - 'tools/**'
+      - 'assets/**'
+      - 'research/**'
+      - 'project.godot'
+      - '.github/workflows/checks.yml'
+  pull_request:
+    paths:
+      - 'museum/**'
+      - 'checks/**'
+      - 'tools/**'
+      - 'assets/**'
+      - 'research/**'
+      - 'project.godot'
+      - '.github/workflows/checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  museum-tests:
+    runs-on: ubuntu-latest
+    container: barichello/godot-ci:4.5.1     # Godot 4.5.1, the version the project is pinned to
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run the museum tests (core data terrain boundary view ui)
+        shell: bash
+        run: |
+          godot --version
+          start=$(date +%s)
+          checks/museum_village/run.sh
+          echo "tests took $(( $(date +%s) - start )) s"
