@@ -30,19 +30,25 @@ func _init() -> void:
 	var houses: Array = village.houses
 	t.eq(houses.size(), 12, "twelve houses")
 	var stream: Array = village.stream.points
+	var homesteads: Dictionary = Fixture.all_homesteads()
+	var halves := {}      # house id -> half envelope of its model (x along the ridge, y across)
+	for h in houses:
+		halves[int(h.id)] = Fixture.house_half(str(homesteads[int(h.id)].house.model))
 	for i in range(houses.size()):
 		var h: Dictionary = houses[i]
 		var p := Vector2(h.pos[0], h.pos[1])
 		var tag := "house %d" % int(h.id)
 		t.ok(p.length() + 8.0 < radius, "%s lies inside the disc with room to spare" % tag)
 		t.ok(terrain.spread_in_circle(p.x, p.y, 3.0) < 0.35, "%s stands on a level floor (spread %.2f m)" % [tag, terrain.spread_in_circle(p.x, p.y, 3.0)])
-		# the whole footprint of HOUSE-002 (ridge 10.8 m along local X, 6.4 m across) must be level
+		# the whole footprint of the house model (roof envelope, per type) must be level
 		var basis := Basis(Vector3.UP, deg_to_rad(float(h.yaw_deg)))
+		var half: Vector2 = halves[int(h.id)]
+		t.ok(half.x > 4.0 and half.y > 2.5, "%s: its model has an envelope (%.1f x %.1f m)" % [tag, half.x * 2.0, half.y * 2.0])
 		var flo := INF
 		var fhi := -INF
 		for fx in range(-8, 9):
 			for fz in range(-5, 6):
-				var q: Vector3 = basis * Vector3(fx * 0.3375, 0, fz * 0.64)
+				var q: Vector3 = basis * Vector3(fx / 8.0 * half.x, 0, fz / 5.0 * half.y)
 				var hh: float = terrain.height_at(p.x + q.x, p.y + q.z)
 				flo = minf(flo, hh)
 				fhi = maxf(fhi, hh)
@@ -58,6 +64,41 @@ func _init() -> void:
 		for j in range(i + 1, houses.size()):
 			t.ok(p.distance_to(Vector2(houses[j].pos[0], houses[j].pos[1])) > 14.0, "houses %d and %d keep their distance" % [int(h.id), int(houses[j].id)])
 
+	# (SB-023) real footprints: the envelope of each house's own model, turned by its yaw. They stay inside the disc and
+	# clear of each other, of every field and of the stream; every work place and path start stays clear of every house.
+	var feet := {}
+	for h in houses:
+		feet[int(h.id)] = Fixture.footprint(h, halves[int(h.id)])
+	var starts: Array = []     # path starts (the yards' path ends) and work places, world (x, z)
+	for path in village.paths:
+		starts.append(Vector2(path[0][0], path[0][1]))
+	for id in all.occupied:
+		var wp: Array = all.occupied[id].homestead.workplace.pos
+		var w := Fixture.house_to_world(Fixture.house_record(village, id), terrain, Vector3(wp[0], 0, wp[2]))
+		starts.append(Vector2(w.x, w.z))
+	var half_w0: float = float(village.stream.width_m) / 2.0
+	for i in range(houses.size()):
+		var id_a := int(houses[i].id)
+		var fa: PackedVector2Array = feet[id_a]
+		for c in fa:
+			t.ok(c.length() < radius - 2.0, "house %d: footprint inside the disc (%.1f m)" % [id_a, c.length()])
+		for j in range(i + 1, houses.size()):
+			var id_b := int(houses[j].id)
+			t.ok(Geometry2D.intersect_polygons(fa, feet[id_b]).is_empty(), "houses %d and %d do not overlap" % [id_a, id_b])
+		for poly in village.fields:
+			var pv := PackedVector2Array()
+			for pt in poly:
+				pv.append(Vector2(pt[0], pt[1]))
+			t.ok(Geometry2D.intersect_polygons(fa, pv).is_empty(), "house %d stays off the fields" % id_a)
+		var d_st := INF
+		for k in range(stream.size() - 1):
+			d_st = minf(d_st, Fixture.seg_poly_dist(Vector2(stream[k][0], stream[k][1]), Vector2(stream[k + 1][0], stream[k + 1][1]), fa))
+		t.ok(d_st > half_w0 + 5.0, "house %d stays clear of the stream (%.1f m from the centreline)" % [id_a, d_st])
+		var d_start := INF
+		for p in starts:
+			d_start = minf(d_start, Fixture.poly_dist(fa, p))
+		t.ok(d_start > 1.5, "house %d: every work place and path start stays clear of it (%.2f m)" % [id_a, d_start])
+
 	# trees stand inside the disc, off houses, fields and the stream, on gentle ground
 	t.ok(village.trees.size() >= 40, "the village has trees (%d)" % village.trees.size())
 	for tr in village.trees:
@@ -67,6 +108,10 @@ func _init() -> void:
 		for h in houses:
 			near_house = minf(near_house, q.distance_to(Vector2(h.pos[0], h.pos[1])))
 		t.ok(near_house > 9.5, "tree keeps clear of houses (%.1f m)" % near_house)
+		var near_roof := INF
+		for h in houses:
+			near_roof = minf(near_roof, Fixture.poly_dist(feet[int(h.id)], q))
+		t.ok(near_roof > 4.0, "tree keeps clear of the roofs, also off the ends of a long house (%.1f m)" % near_roof)
 		var d_s := INF
 		for k in range(stream.size() - 1):
 			d_s = minf(d_s, Geometry2D.get_closest_point_to_segment(q, Vector2(stream[k][0], stream[k][1]), Vector2(stream[k + 1][0], stream[k + 1][1])).distance_to(q))

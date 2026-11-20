@@ -30,6 +30,9 @@ checks/museum_village/run.sh                     # core, data, terrain, boundary
 The village layout and the ground are **F/R**: no house plan or terrain model of Březnice survives. `tools/organic_layout.py`
 chose the house positions on a fictional height field (seed 11); `tools/build_village.py` levels a platform under each house and
 work yard, routes the paths over the terrain and writes `data/villages/breznice*.json`.
+Two house types alternate (`house_types` in `data/villages/breznice-layout.json`: odd houses type A, HOUSE-004, 15 × 5.5 m, three rooms;
+even houses type B, HOUSE-005, about 8.5 × 5 m, one room), in plain, limewashed or patterned daub; both are R/F reconstructions after
+other Bohemian sites, not plans of Březnice houses.
 A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
 node during named clips, or resting where it is put down (`core/craft_props.gd`).
 

@@ -7,7 +7,7 @@
     "en": "The parcher"
   },
   "house": {
-    "model": "HOUSE-002/house_002"
+    "model": "HOUSE-004/house_004_limewash"
   },
   "workplace": {
     "pos": [
@@ -20,11 +20,12 @@
   "bed": {
     "model": "SLEEP-001/bed_straw",
     "pos": [
-      3.0,
+      5.78,
       0.0,
-      -1.5
+      -0.25
     ],
-    "yaw_deg": 90.0
+    "yaw_deg": -90.0,
+    "note": "F: no sleeping place is known for these houses (the house brief says nothing about it). Type A (HOUSE-004): the bed lies along the +X gable of the large (east) room, the sleeper's side towards the door, so the walk from the bed to door_inside stays in that room (the partitions and the hearth are out of the way)."
   },
   "walker": "PERSON-001/model",
   "sleeper": "SLEEP-001/person_sleep",

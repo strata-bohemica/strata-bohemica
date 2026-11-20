@@ -21,7 +21,20 @@ DATA = os.path.join(ROOT, 'museum/data/villages')
 layout = json.load(open(os.path.join(DATA, 'breznice-layout.json')))
 SEED = layout['seed']
 DISC = layout['disc_radius_m']
-HOUSE_DEPTH, HOUSE_LEN = 6.4, 10.8     # HOUSE-002 envelope across and along the ridge
+# house envelope (roof included) per type, from the model bounds the factory measured (asset.json export_bounds_m);
+# the type of every house comes from layout['house_types'] (odd ids A, even ids B)
+catalogue = json.load(open(os.path.join(ROOT, 'museum/data/assets.json')))
+def envelope(asset_id):
+    """(across the ridge = house z, along the ridge = house x) in metres, symmetric about the house origin."""
+    entry = catalogue[asset_id]
+    meta = json.load(open(os.path.join(ROOT, 'assets', asset_id, entry['rev'], 'asset.json')))
+    sizes = {(round(2 * max(abs(m['export_bounds_m']['min'][2]), m['export_bounds_m']['max'][2]), 2),
+              round(2 * max(abs(m['export_bounds_m']['min'][0]), m['export_bounds_m']['max'][0]), 2)) for m in meta['models']}
+    assert len(sizes) == 1, (asset_id, sizes)    # every finish has the same geometry
+    return sizes.pop()
+HOUSE_TYPES = layout['house_types']
+ENVELOPE = {t: envelope(a) for t, a in HOUSE_TYPES['assets'].items()}     # A about 6.4 x 15.9 m, B about 5.9 x 9.4 m
+HOUSE002_HALF_LEN = 5.4                 # the tree clearances below were tuned around HOUSE-002 (10.8 m long)
 YARD_LOCAL_Z = 6.0                      # work place, in the house frame, along the door normal
 YARD_R = 4.2
 FALLOFF_M = 7.0                         # width of the bank around a platform
@@ -46,26 +59,30 @@ H0 = H.copy()
 
 # ---- levelled platforms under houses and yards --------------------------------------------------
 houses = layout['houses']
+for h in houses:
+    h['depth'], h['length'] = ENVELOPE[HOUSE_TYPES['by_house'][str(h['id'])]]
 mask_all = np.zeros_like(H, dtype=bool)
-weights, targets = [], []
+weights, targets, rects = [], [], []
 for h in houses:
     j = math.radians(h['yaw_deg']); side = 1 if h['door'] == 'E' else -1
     u = np.array([math.cos(j), math.sin(j)]); v = np.array([-math.sin(j), math.cos(j)])
     nrm = side * u
     rel_x, rel_y = X - h['x'], Y - h['y']
     a = rel_x * u[0] + rel_y * u[1]; b = rel_x * v[0] + rel_y * v[1]
-    rect = (np.abs(a) <= HOUSE_DEPTH / 2 + 1.0) & (np.abs(b) <= HOUSE_LEN / 2 + 1.0)
+    rect = (np.abs(a) <= h['depth'] / 2 + 1.0) & (np.abs(b) <= h['length'] / 2 + 1.0)
     cx, cy = h['x'] + nrm[0] * YARD_LOCAL_Z, h['y'] + nrm[1] * YARD_LOCAL_Z
     circ = np.hypot(X - cx, Y - cy) <= YARD_R
     region = rect | circ
     h['platform_z'] = float(H0[region].mean())
     w = np.clip(1.0 - distance_transform_edt(~region) / FALLOFF_M, 0.0, 1.0)
     w = w * w * w * (w * (w * 6 - 15) + 10)   # smootherstep: flat on the platform, gentle bank outside
-    weights.append(w); targets.append(h['platform_z']); mask_all |= region
+    weights.append(w); targets.append(h['platform_z']); rects.append(rect); mask_all |= region
 # all platforms at once; weights squared so the nearer platform dominates but heights blend smoothly between houses (no cliffs)
 Wsum = np.maximum.reduce(weights)
 num = sum(w ** 3 * t for w, t in zip(weights, targets)); den = sum(w ** 3 for w in weights) + 1e-12
 T = num / den
+for rect, t in zip(rects, targets):    # a house's own floor wins over a neighbour's bank or yard (long type A houses come close)
+    T[rect] = t
 H = H0 * (1 - Wsum) + T * Wsum
 for h in houses:
     h['platform_z'] = round(h['platform_z'], 2)
@@ -154,6 +171,13 @@ yard_pts = []
 for h in houses:
     jj = math.radians(h['yaw_deg']); sd = 1 if h['door'] == 'E' else -1
     yard_pts.append((h['x'] + sd * math.cos(jj) * YARD_LOCAL_Z, h['y'] + sd * math.sin(jj) * YARD_LOCAL_Z))
+def roof_dist(h, x, y):
+    """Distance from (x, y) to the house's envelope rectangle (0 inside)."""
+    j = math.radians(h['yaw_deg'])
+    rx, ry = x - h['x'], y - h['y']
+    a = abs(rx * math.cos(j) + ry * math.sin(j)) - h['depth'] / 2
+    b = abs(-rx * math.sin(j) + ry * math.cos(j)) - h['length'] / 2
+    return math.hypot(max(a, 0.0), max(b, 0.0))
 stream_poly = [(float(stream_x(y)), float(y)) for y in range(-80, 81, 4)]   # full course: keeps the tree placement unchanged
 
 # the water ends at the slab: keep the 4 m ribbon inside the disc, end points found on the same stream_x course
@@ -187,6 +211,8 @@ def try_place(kind, min_gap, house_gap, count, rim_bias):
         a = trng.uniform(0, 2 * math.pi)
         x, y = r * math.cos(a), r * math.sin(a)
         if any(math.hypot(x - h['x'], y - h['y']) < house_gap for h in houses):
+            continue
+        if any(roof_dist(h, x, y) < house_gap - HOUSE002_HALF_LEN for h in houses):   # the same room off the ends of a long house
             continue
         if any(math.hypot(x - yx, y - yy) < 7.0 for yx, yy in yard_pts):
             continue
@@ -250,7 +276,7 @@ foot = np.zeros_like(H, dtype=bool)
 for h in houses:
     j = math.radians(h['yaw_deg']); u = np.array([math.cos(j), math.sin(j)]); v = np.array([-math.sin(j), math.cos(j)])
     rx, ry = X - h['x'], Y - h['y']
-    foot |= (np.abs(rx * u[0] + ry * u[1]) <= HOUSE_DEPTH / 2) & (np.abs(rx * v[0] + ry * v[1]) <= HOUSE_LEN / 2)
+    foot |= (np.abs(rx * u[0] + ry * u[1]) <= h['depth'] / 2) & (np.abs(rx * v[0] + ry * v[1]) <= h['length'] / 2)
 slope_deg = np.degrees(np.arctan(np.hypot(gx, gy)))
 bank = (~mask_all) & (distance_transform_edt(~mask_all) < FALLOFF_M)
 print('slope under house footprints max', round(float(slope_deg[foot].max()), 2), 'deg; bank around platforms: mean', round(float(slope_deg[bank].mean()), 1), 'p95', round(float(np.percentile(slope_deg[bank], 95)), 1), 'max', round(float(slope_deg[bank].max()), 1))
