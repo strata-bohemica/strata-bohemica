@@ -1,6 +1,6 @@
 # HOUSE-004 r001 (type A) — provenance
 
-> **Provisional reconstruction, not a plan of a Březnice house.** No complete house plan is verified at Březnice, and no unambiguously proven residential post house is known in South Bohemia (Chvojka 2009, 130, via the brief). Type A follows the plan of **Březno u Loun house 57**, whose dating is doubtful: the authors consider the Migration Period. `historical_status: provisional_reconstruction`.
+> **Provisional reconstruction, not a plan of a Březnice house.** No complete house plan is verified at Březnice, and no unambiguously proven residential post house is known in South Bohemia (Chvojka 2009, 130, via the brief). Type A follows the plan of **Březno u Loun house 57**, whose dating is doubtful: the excavator (Pleinerová) is not sure of it and also considers the Migration Period. `historical_status: provisional_reconstruction`.
 
 Brief: `content/research/museum-lba/HOUSE-BRIEF.md` v1 (owner decisions 2026-11-20), card `team/museum-kanban/tasks/SB-023.md` (part 1: assets only). Evidence behind the brief rows is in `D-houses-czech-sources.md` and `D-houses-recon.md`. Values not in the brief are cited to `D-houses-recon.md` (the record of Pleinerová and Hrala 1988, PDF pages) or to the manager's SB-023 phase-1 assignment (2026-11-20; not stored in the repo); quotations marked "brief" are literal text of HOUSE-BRIEF.md v1.
 
