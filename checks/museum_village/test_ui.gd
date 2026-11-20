@@ -397,4 +397,12 @@ func _initialize() -> void:
 	t.eq(app.paused, false, "the pause button toggles (was paused)")
 	app.time_bar.cutaway_toggled.emit()
 	t.eq(app.cutaway, true, "the cutaway button toggles")
+	await _release(app)
 	quit(t.finish("ui"))
+
+## Free the app and let the engine's audio thread drop the stopped playbacks before quitting: they are removed on its next
+## mixing pass, and quitting first reports them as "ObjectDB instances leaked at exit".
+func _release(app: Node) -> void:
+	root.remove_child(app)
+	app.free()
+	await create_timer(0.3).timeout

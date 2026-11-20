@@ -36,6 +36,18 @@ static func _bump(f: float, centre: float) -> float:
 static func _unit(v: float) -> float:
 	return clampf(v, 0.0, 1.0)
 
+## How much of the ambient stays when the camera is `distance` metres from what it looks at: 1 far away, `floor` when
+## close (a homestead close up: its own sources, SB-020, take over). Smooth, monotonic, pure.
+static func proximity(distance: float, near_m: float = 12.0, far_m: float = 90.0, floor_gain: float = 0.3) -> float:
+	return lerpf(floor_gain, 1.0, smoothstep(near_m, far_m, distance))
+
+## One step of a gain easing towards `target` (exponential, time constant `tau_s`); no step bigger than 1 - exp(-delta/tau).
+## `delta` 0 (tests) jumps straight to the target.
+static func ease_gain(current: float, target: float, delta: float, tau_s: float) -> float:
+	if delta <= 0.0 or tau_s <= 0.0:
+		return target
+	return current + (target - current) * (1.0 - exp(-delta / tau_s))
+
 ## Master bus volume (dB) for a user volume 0..1 and a mute switch. Quadratic so the slider feels even; silent at 0.
 static func master_db(volume: float, muted: bool) -> float:
 	var v := clampf(volume, 0.0, 1.0)

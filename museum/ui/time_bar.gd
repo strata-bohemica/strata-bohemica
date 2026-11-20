@@ -105,7 +105,7 @@ func set_narrow(narrow: bool) -> void:
 
 func _refresh_sound_button() -> void:
 	var label := I18n.tr_("ui.muted" if _muted else "ui.sound", _lang)
-	sound_button.tooltip_text = label
+	sound_button.tooltip_text = "%s\n%s" % [label, I18n.tr_("ui.sound_note", _lang)]
 	sound_button.text = "" if _narrow else label
 	sound_button.icon = _icon(_muted) if _narrow else null
 	sound_button.set_pressed_no_signal(_muted)
