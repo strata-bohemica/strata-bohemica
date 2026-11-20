@@ -35,6 +35,7 @@ func build(p_terrain, p_village: Dictionary) -> void:
 		_yards.append(Vector2(h.pos[0] + sin(th) * 6.0, h.pos[1] + cos(th) * 6.0))
 	_add_surface(_ground_mesh(), true)
 	_add_surface(_skirt_mesh(), false)
+	_add_furrows()
 	for path in village.paths:
 		_add_surface(_ribbon_mesh(path, 1.7, Color(0.36, 0.27, 0.18), 0.0, 0.85, 0.06, true), false, true)
 	var water := []
@@ -75,11 +76,7 @@ func _ground_color(x: float, z: float, h: float, n: Vector3) -> Color:
 	for k in range(_field_polys.size()):
 		if not _field_boxes[k].has_point(p):
 			continue
-		var poly: PackedVector2Array = _field_polys[k]
-		var edge := 1e9
-		for i in range(poly.size()):
-			edge = minf(edge, p.distance_to(Geometry2D.get_closest_point_to_segment(p, poly[i], poly[(i + 1) % poly.size()])))
-		var signed := edge if Geometry2D.is_point_in_polygon(p, poly) else -edge
+		var signed := _field_signed(k, p)
 		c = c.lerp(Color("#a8935a"), 0.55 * smoothstep(-1.5, 1.5, signed))
 	var d2 := INF
 	for y in _yards:
@@ -93,6 +90,71 @@ func _ground_color(x: float, z: float, h: float, n: Vector3) -> Color:
 	if sd < 196.0:
 		c = c.lerp(Color("#5e9c8a"), 0.22 * (1.0 - smoothstep(25.0, 196.0, sd)))
 	return c
+
+## Distance from p to the border of field k: positive inside, negative outside.
+func _field_signed(k: int, p: Vector2) -> float:
+	var poly: PackedVector2Array = _field_polys[k]
+	var edge := 1e9
+	for i in range(poly.size()):
+		edge = minf(edge, p.distance_to(Geometry2D.get_closest_point_to_segment(p, poly[i], poly[(i + 1) % poly.size()])))
+	return edge if Geometry2D.is_point_in_polygon(p, poly) else -edge
+
+## One draped patch per field that carries the furrows (SB-008). The furrow itself is a shader on world position
+## (view/furrows.gdshader): no instances, no texture, so nothing is added to the export. The mesh supplies the ground colour in vertex
+## rgb and the field mask in alpha, sampled every FURROW_CELL metres.
+func _add_furrows() -> void:
+	var data: Dictionary = village.get("furrows", {})
+	if data.is_empty():
+		return
+	var shader: Shader = load("res://museum/view/furrows.gdshader")
+	for k in range(_field_polys.size()):
+		var f: Dictionary = data.fields[k]
+		var mat := ShaderMaterial.new()
+		mat.shader = shader
+		var dir := Vector2(f.dir[0], f.dir[1]).normalized()
+		mat.set_shader_parameter("across", Vector2(-dir.y, dir.x))        # the furrows run along dir; this is how they repeat
+		mat.set_shader_parameter("spacing", float(f.spacing_m))
+		mat.set_shader_parameter("width", float(f.width_m))
+		mat.set_shader_parameter("depth", float(f.depth_m))
+		var inst := MeshInstance3D.new()
+		inst.mesh = _field_patch(k)
+		inst.material_override = mat
+		inst.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		add_child(inst)
+
+const FURROW_CELL := 1.0
+const FURROW_LIFT := 0.05
+
+func _field_patch(k: int) -> ArrayMesh:
+	var box := _field_boxes[k]
+	var nx := int(ceil(box.size.x / FURROW_CELL)) + 1
+	var nz := int(ceil(box.size.y / FURROW_CELL)) + 1
+	var verts := PackedVector3Array()
+	var norms := PackedVector3Array()
+	var cols := PackedColorArray()
+	var idx := PackedInt32Array()
+	for j in range(nz + 1):
+		for i in range(nx + 1):
+			var p := box.position + Vector2(i, j) * FURROW_CELL
+			var h: float = terrain.height_at(p.x, p.y)
+			var n: Vector3 = terrain.normal_at(p.x, p.y)
+			verts.append(Vector3(p.x, h + FURROW_LIFT, p.y))
+			norms.append(n)
+			# rgb = the ground's own colour here, so a field looks as before where the pattern has faded; alpha = field mask
+			var g := _ground_color(p.x, p.y, h, n)
+			cols.append(Color(g.r, g.g, g.b, smoothstep(-0.5, 1.5, _field_signed(k, p))))
+	var stride := nx + 1
+	for j in range(nz):
+		for i in range(nx):
+			var a := j * stride + i
+			var b := a + 1
+			var c := a + stride
+			var d := c + 1
+			if cols[a].a + cols[b].a + cols[c].a + cols[d].a <= 0.0:
+				continue
+			_tri(idx, verts, a, c, b, Vector3.UP)
+			_tri(idx, verts, b, c, d, Vector3.UP)
+	return _mesh(verts, norms, cols, idx)
 
 func _ground_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
