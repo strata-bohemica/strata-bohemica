@@ -137,6 +137,12 @@ const FINISHES := {1: "plain", 2: "limewash", 3: "pattern", 4: "plain", 5: "lime
 	7: "plain", 8: "pattern", 9: "limewash", 10: "plain", 11: "plain", 12: "limewash"}
 # Partition lines (house x) of each house asset: HOUSE-004 asset.json "footprint" (partitions at x = -1.5 and -4.0); HOUSE-005 has none.
 const PARTITIONS := {"HOUSE-004": [-1.5, -4.0], "HOUSE-005": []}
+# Triangle limit per house model. Type B keeps the original 5000. Type A (HOUSE-004) has 7000: manager decision of SB-033 phase 2,
+# because its r002 round-wood posts and irregular tool traces cost 6 758 triangles (1.51x r001); see assets/HOUSE-004/r002/PROVENANCE.md.
+const TRIANGLE_LIMIT := 5000
+const TRIANGLE_LIMIT_A := 7000
+static func triangle_limit(ref: String) -> int:
+	return TRIANGLE_LIMIT_A if ref.begins_with("HOUSE-004/") else TRIANGLE_LIMIT
 const HEARTH_R := 0.95       # the pebble paving of HOUSE-004 is an ellipse of about 1.9 x 1.6 m; used for both types
 const POST_R := 0.12         # post radius (upper bound)
 const BED_CLEAR := 0.5       # a bed keeps this clear of walls, posts, partitions and the hearth
@@ -167,7 +173,7 @@ func _houses(t, all: Dictionary) -> void:
 		for name_ in ["door_inside", "entry"]:
 			t.ok(not Catalogue.anchor(ref, name_).is_empty(), "%s: %s has the anchor %s" % [tag, ref, name_])
 		var tris := int(Fixture.model_meta(ref).get("triangles", 999999))
-		t.ok(tris > 0 and tris <= 5000, "%s: %s within 5000 triangles (%d)" % [tag, ref, tris])
+		t.ok(tris > 0 and tris <= triangle_limit(ref), "%s: %s within %d triangles (%d)" % [tag, ref, triangle_limit(ref), tris])
 		if hs.has("bed"):
 			bed_ref = str(hs.bed.model)
 	# every one of the six models is in use, keeps its textures and really has that many triangles; its bounds match asset.json
@@ -192,7 +198,7 @@ func _houses(t, all: Dictionary) -> void:
 					textured += 1
 			box = mi.transform * mesh.get_aabb() if first else box.merge(mi.transform * mesh.get_aabb())
 			first = false
-		t.ok(tris > 0 and tris <= 5000, "%s: imported mesh within 5000 triangles (%d)" % [ref, tris])
+		t.ok(tris > 0 and tris <= triangle_limit(ref), "%s: imported mesh within %d triangles (%d)" % [ref, triangle_limit(ref), tris])
 		t.ok(textured >= 1, "%s: the house model has its textures (%d)" % [ref, textured])
 		t.ok(node.find_child("Roof", true, false) != null, "%s: has a separable Roof node" % ref)
 		var half := Fixture.house_half(ref)

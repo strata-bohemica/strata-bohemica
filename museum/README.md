@@ -33,6 +33,8 @@ work yard, routes the paths over the terrain and writes `data/villages/breznice*
 Two house types alternate (`house_types` in `data/villages/breznice-layout.json`: odd houses type A, HOUSE-004, 15 × 5.5 m, three rooms;
 even houses type B, HOUSE-005, about 8.5 × 5 m, one room), in plain, limewashed or patterned daub; both are R/F reconstructions after
 other Bohemian sites, not plans of Březnice houses.
+The house models are revision r002 (SB-033): round-wood posts, irregular spacing and uneven daub and thatch show traces of hand work (evidence class F/R: the shapes are our reconstruction choices after other sites, not plans of Březnice houses).
+The type A model has 6 758 triangles and the check allows it 7000 (type B: 5000); details in `assets/HOUSE-004/r002/PROVENANCE.md`.
 The fields carry furrows (SB-008): `data/villages/breznice-furrows.json` (written by `tools/build_furrows.py`) gives each field a direction and a
 depth, width and spacing inside the ranges measured with a replica of Walle-type ards from Opava (Kováčik et al. 2022: 8–12 cm, 4–6 cm, 18–35 cm; evidence R, a regional
 analogy; no ard or furrow is attested at Březnice). `view/furrows.gdshader` draws them from world position on one flat patch per field: no instances,

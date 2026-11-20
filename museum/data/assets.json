@@ -115,10 +115,10 @@
  },
  "HOUSE-004": {
   "source": "museum-houses/HOUSE-004",
-  "rev": "r001",
+  "rev": "r002",
   "models": {
    "house_004_limewash": {
-    "file": "HOUSE-004/r001/models/house_004_limewash.glb",
+    "file": "HOUSE-004/r002/models/house_004_limewash.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
@@ -188,7 +188,7 @@
     }
    },
    "house_004_pattern": {
-    "file": "HOUSE-004/r001/models/house_004_pattern.glb",
+    "file": "HOUSE-004/r002/models/house_004_pattern.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
@@ -258,7 +258,7 @@
     }
    },
    "house_004_plain": {
-    "file": "HOUSE-004/r001/models/house_004_plain.glb",
+    "file": "HOUSE-004/r002/models/house_004_plain.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
@@ -331,10 +331,10 @@
  },
  "HOUSE-005": {
   "source": "museum-houses/HOUSE-005",
-  "rev": "r001",
+  "rev": "r002",
   "models": {
    "house_005_limewash": {
-    "file": "HOUSE-005/r001/models/house_005_limewash.glb",
+    "file": "HOUSE-005/r002/models/house_005_limewash.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
@@ -404,7 +404,7 @@
     }
    },
    "house_005_pattern": {
-    "file": "HOUSE-005/r001/models/house_005_pattern.glb",
+    "file": "HOUSE-005/r002/models/house_005_pattern.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
@@ -474,7 +474,7 @@
     }
    },
    "house_005_plain": {
-    "file": "HOUSE-005/r001/models/house_005_plain.glb",
+    "file": "HOUSE-005/r002/models/house_005_plain.glb",
     "animations": {},
     "anchors": {
      "door_inside": {

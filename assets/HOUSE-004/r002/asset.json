@@ -1,0 +1,1304 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "HOUSE-004",
+ "revision": "r002",
+ "status": "draft",
+ "supersedes": "r001",
+ "card": "team/museum-kanban/tasks/SB-033.md (phase 2: models)",
+ "house_type": "A",
+ "label": "PROVISIONAL RECONSTRUCTION - TYPE A after Březno u Loun house 57 (dating doubtful) - NOT A PLAN OF A BŘEZNICE HOUSE",
+ "brief": "content/research/museum-lba/HOUSE-BRIEF.md v1 (owner decisions 2026-11-20); research content/research/museum-lba/E-house-tool-traces.md (SB-033 phase 1); cards team/museum-kanban/tasks/SB-023.md (r001) and SB-033.md (r002); contract art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md",
+ "author": "Claude (AI modelling agent) for the Strata Bohemica museum",
+ "actual_agent_model": "Claude Sonnet 5.5 (as stated in the session system prompt; not independently verified)",
+ "tools": [
+  "bpy 5.0.1 from PyPI via uv, Python 3.11 (generator, glTF 2.0 exporter, Workbench stills)",
+  "Godot 4.5.1-stable Linux (headless import with the museum import settings; windowed Compatibility/OpenGL village-angle views, Mesa OpenGL 4.6 on Intel UHD 620)",
+  "Python 3 + numpy + Pillow (independent GLB parser, spatial checks, textures, sheets)"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "origin": "floor centre of the house footprint (y=0), root transforms identity",
+ "scale_basis": "project_fit",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "not_a_breznice_plan": true,
+ "footprint": "15.0 x 5.5 m outer (brief type A), ridge along X; three rooms (brief: '3 rooms of unequal size') divided by partitions at x = -1.5 and -4.0 (F): east room 9.0 m (x -1.5..7.5; brief: 'the largest (9 m) east room'), middle 2.5 m, west 3.5 m outer / 3.23 m clear (house 57: middle about 2.5 x 5.5 m, west 3 x 5.5 m, D-houses-recon.md after Pleinerová and Hrala 1988; not in the brief)",
+ "footprint_source": "HOUSE-BRIEF v1 type A: Pleinerová and Hrala 1988; Sklenářová 2012, 114 (dating of the original plan doubtful: the excavator, Pleinerová, is not sure of it and also considers the Migration Period)",
+ "models": [
+  {
+   "file": "models/house_004_limewash.glb",
+   "finish": "limewash",
+   "finish_description": "whitened coat with uneven brush strokes, fourteen flaked areas per 16 m texture strip, each at its own place, showing the daub, hairline cracks, run-down streaks, grime at the foot (trial finish, F)",
+   "finish_status": "F",
+   "role": "complete house: Wall, Frame, Roof, DoorRecess mesh nodes + anchor nodes; Roof node separable (hide it for the roof-off/interior state). Same geometry in all three finishes; only the Daub base-colour texture differs. Vertex colours (COLOR_0) carry patina and tone variation on all meshes.",
+   "r001": {
+    "sha256": "1882616e46d51be8d852d509344df7cd4fccf5c33de740d8877c60da85889225",
+    "bytes": 329040,
+    "triangles": 4464,
+    "godot_imported_bytes_estimate": 209667
+   },
+   "sha256": "9b58f3767f8cca2b94c5d38a268d011ce748295b0220e824e884099d13549701",
+   "bytes": 590084,
+   "triangles": 6758,
+   "triangle_budget": 7000,
+   "triangle_budget_source": "manager SB-033 phase 2: decision; the museum limit in checks/museum_village/test_data.gd is adjusted at takeover (A 7000); not from the card",
+   "triangle_ratio_vs_r001": 1.514,
+   "budget_ok": true,
+   "triangles_by_mesh": {
+    "Wall": 972,
+    "DoorRecess": 28,
+    "Frame": 4078,
+    "Roof": 1680
+   },
+   "godot_imported_triangles": 6758,
+   "godot_triangles_roof_hidden": 5078,
+   "godot_imported_bytes_estimate": 435025,
+   "materials": 4,
+   "material_details": [
+    {
+     "name": "Daub",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.949999988079071,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Timber",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8500000238418579,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Stone",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8999999761581421,
+     "baseColorTexture": false
+    },
+    {
+     "name": "Thatch",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.9200000166893005,
+     "baseColorTexture": true
+    }
+   ],
+   "textures": [
+    {
+     "name": "daub_limewash_basecolor",
+     "width": 2048,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "b4df697f31ae7008654107a24b24086f20b1234c8b40dc9aa545b3227e0c4cbe"
+    },
+    {
+     "name": "timber_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "9a476aabd60f3ce3a08213dc791a64d184865ae0bd7a55fbaee60741b7985bf3"
+    },
+    {
+     "name": "thatch_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "b03c94b9f71b799dec0b8a177a061032bb7ad7de63388c13d23a8060ccf03f4f"
+    }
+   ],
+   "texture_budget_px": "daub 2048 x 512 (one strip, 1 048 576 px = the pixel count of 1024 x 1024, longest side 2048 on purpose, see CHECKS); timber and thatch 512 x 512",
+   "visible_meshes": 4,
+   "mesh_nodes": [
+    "DoorRecess",
+    "Frame",
+    "Roof",
+    "Wall"
+   ],
+   "root_transforms_identity": {
+    "DoorRecess": true,
+    "Frame": true,
+    "Roof": true,
+    "Wall": true
+   },
+   "export_bounds_m": {
+    "depth_z": 6.3865,
+    "height_y": 5.4459,
+    "max": [
+     7.9452,
+     5.3912,
+     3.1931
+    ],
+    "max_horizontal_radius_from_origin": 8.5357,
+    "min": [
+     -7.9483,
+     -0.0547,
+     -3.1935
+    ],
+    "width_x": 15.8935
+   },
+   "anchors": {
+    "door_inside": {
+     "translation": [
+      3.0,
+      0.0,
+      2.2
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "entry": {
+     "translation": [
+      3.0,
+      0.0,
+      3.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "hearth_spot": {
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "interior_center": {
+     "translation": [
+      2.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "label_anchor": {
+     "translation": [
+      0.0,
+      5.74,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "store_spot_1": {
+     "translation": [
+      2.8,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_2": {
+     "translation": [
+      4.35,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_3": {
+     "translation": [
+      5.9,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    }
+   },
+   "anchor_clearances_m": {
+    "door_inside": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.675,
+     "wall_clearance_m": 0.618
+    },
+    "entry": {
+     "inside_inner_walls": false,
+     "outside_front_wall_in_front_of_door": true,
+     "post_surface_clearance_m": 0.551,
+     "wall_clearance_m": 0.581
+    },
+    "hearth_spot": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.355,
+     "wall_clearance_m": 1.428
+    },
+    "interior_center": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.827,
+     "wall_clearance_m": 2.566
+    },
+    "label_anchor": {
+     "above_ridge_m": 0.349
+    },
+    "store_spot_1": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.871,
+     "wall_clearance_m": 0.819
+    },
+    "store_spot_2": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.873,
+     "wall_clearance_m": 0.82
+    },
+    "store_spot_3": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.854,
+     "wall_clearance_m": 0.816
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": [
+    "OPAQUE"
+   ],
+   "gltf_extensions": [],
+   "no_windows_ray_check": true
+  },
+  {
+   "file": "models/house_004_pattern.glb",
+   "finish": "pattern",
+   "finish_description": "hand-painted white geometric frieze (two wavering border lines, zig-zag, hatched triangles, dot row; y 0.7-1.85 m; uneven stroke width, spacing and gaps) on a darker grey-brown ground, all walls (trial finish; the existence of white geometric painted plaster is attested by fragments from the Knovíz settlement Praha-Bubeneč (Sklenářová 2012, 115; Filip 1940 not read); the motif drawn here and its placement on the house are unknown and are F)",
+   "finish_status": "F",
+   "role": "complete house: Wall, Frame, Roof, DoorRecess mesh nodes + anchor nodes; Roof node separable (hide it for the roof-off/interior state). Same geometry in all three finishes; only the Daub base-colour texture differs. Vertex colours (COLOR_0) carry patina and tone variation on all meshes.",
+   "r001": {
+    "sha256": "3446d92dee11e025d1bcd124e885a6961c5748553f91c9e9c031e185e431256d",
+    "bytes": 367276,
+    "triangles": 4464,
+    "godot_imported_bytes_estimate": 246894
+   },
+   "sha256": "8750d93bdba3db5bb796ae4a811e417f607797ef64da455a2929c77bb2cdb473",
+   "bytes": 585228,
+   "triangles": 6758,
+   "triangle_budget": 7000,
+   "triangle_budget_source": "manager SB-033 phase 2: decision; the museum limit in checks/museum_village/test_data.gd is adjusted at takeover (A 7000); not from the card",
+   "triangle_ratio_vs_r001": 1.514,
+   "budget_ok": true,
+   "triangles_by_mesh": {
+    "Wall": 972,
+    "DoorRecess": 28,
+    "Frame": 4078,
+    "Roof": 1680
+   },
+   "godot_imported_triangles": 6758,
+   "godot_triangles_roof_hidden": 5078,
+   "godot_imported_bytes_estimate": 438997,
+   "materials": 4,
+   "material_details": [
+    {
+     "name": "Daub",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.949999988079071,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Timber",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8500000238418579,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Stone",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8999999761581421,
+     "baseColorTexture": false
+    },
+    {
+     "name": "Thatch",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.9200000166893005,
+     "baseColorTexture": true
+    }
+   ],
+   "textures": [
+    {
+     "name": "daub_pattern_basecolor",
+     "width": 2048,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "5304ebed9bfc577e85ec12849c6822f56c3330f694373140ea300ee89dbe8689"
+    },
+    {
+     "name": "timber_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "9a476aabd60f3ce3a08213dc791a64d184865ae0bd7a55fbaee60741b7985bf3"
+    },
+    {
+     "name": "thatch_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "b03c94b9f71b799dec0b8a177a061032bb7ad7de63388c13d23a8060ccf03f4f"
+    }
+   ],
+   "texture_budget_px": "daub 2048 x 512 (one strip, 1 048 576 px = the pixel count of 1024 x 1024, longest side 2048 on purpose, see CHECKS); timber and thatch 512 x 512",
+   "visible_meshes": 4,
+   "mesh_nodes": [
+    "DoorRecess",
+    "Frame",
+    "Roof",
+    "Wall"
+   ],
+   "root_transforms_identity": {
+    "DoorRecess": true,
+    "Frame": true,
+    "Roof": true,
+    "Wall": true
+   },
+   "export_bounds_m": {
+    "depth_z": 6.3865,
+    "height_y": 5.4459,
+    "max": [
+     7.9452,
+     5.3912,
+     3.1931
+    ],
+    "max_horizontal_radius_from_origin": 8.5357,
+    "min": [
+     -7.9483,
+     -0.0547,
+     -3.1935
+    ],
+    "width_x": 15.8935
+   },
+   "anchors": {
+    "door_inside": {
+     "translation": [
+      3.0,
+      0.0,
+      2.2
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "entry": {
+     "translation": [
+      3.0,
+      0.0,
+      3.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "hearth_spot": {
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "interior_center": {
+     "translation": [
+      2.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "label_anchor": {
+     "translation": [
+      0.0,
+      5.74,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "store_spot_1": {
+     "translation": [
+      2.8,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_2": {
+     "translation": [
+      4.35,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_3": {
+     "translation": [
+      5.9,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    }
+   },
+   "anchor_clearances_m": {
+    "door_inside": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.675,
+     "wall_clearance_m": 0.618
+    },
+    "entry": {
+     "inside_inner_walls": false,
+     "outside_front_wall_in_front_of_door": true,
+     "post_surface_clearance_m": 0.551,
+     "wall_clearance_m": 0.581
+    },
+    "hearth_spot": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.355,
+     "wall_clearance_m": 1.428
+    },
+    "interior_center": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.827,
+     "wall_clearance_m": 2.566
+    },
+    "label_anchor": {
+     "above_ridge_m": 0.349
+    },
+    "store_spot_1": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.871,
+     "wall_clearance_m": 0.819
+    },
+    "store_spot_2": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.873,
+     "wall_clearance_m": 0.82
+    },
+    "store_spot_3": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.854,
+     "wall_clearance_m": 0.816
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": [
+    "OPAQUE"
+   ],
+   "gltf_extensions": [],
+   "no_windows_ray_check": true
+  },
+  {
+   "file": "models/house_004_plain.glb",
+   "finish": "plain",
+   "finish_description": "hand-smoothed ochre daub (brief: 'daub partly smoothed', assumed A) with sweeps, hairline cracks, repair patches and eight chipped spots per 16 m strip (own place and shape each) with faint rod impressions (F look; rods after Sklenářová 2012, 43, 115); darker foot band 0.3 m",
+   "finish_status": "A/F",
+   "role": "complete house: Wall, Frame, Roof, DoorRecess mesh nodes + anchor nodes; Roof node separable (hide it for the roof-off/interior state). Same geometry in all three finishes; only the Daub base-colour texture differs. Vertex colours (COLOR_0) carry patina and tone variation on all meshes.",
+   "r001": {
+    "sha256": "f5a3dc00364316b260d47bd15d8f62903ad1352b5ee4ef4bec921519660c973f",
+    "bytes": 359544,
+    "triangles": 4464,
+    "godot_imported_bytes_estimate": 240165
+   },
+   "sha256": "fd5cdb6ccc3436438a6081c8b2e0bcf25d2b131e823be59fea143f635b08e107",
+   "bytes": 599456,
+   "triangles": 6758,
+   "triangle_budget": 7000,
+   "triangle_budget_source": "manager SB-033 phase 2: decision; the museum limit in checks/museum_village/test_data.gd is adjusted at takeover (A 7000); not from the card",
+   "triangle_ratio_vs_r001": 1.514,
+   "budget_ok": true,
+   "triangles_by_mesh": {
+    "Wall": 972,
+    "DoorRecess": 28,
+    "Frame": 4078,
+    "Roof": 1680
+   },
+   "godot_imported_triangles": 6758,
+   "godot_triangles_roof_hidden": 5078,
+   "godot_imported_bytes_estimate": 458053,
+   "materials": 4,
+   "material_details": [
+    {
+     "name": "Daub",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.949999988079071,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Timber",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8500000238418579,
+     "baseColorTexture": true
+    },
+    {
+     "name": "Stone",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.8999999761581421,
+     "baseColorTexture": false
+    },
+    {
+     "name": "Thatch",
+     "doubleSided": false,
+     "alphaMode": "OPAQUE",
+     "metallicFactor": 0,
+     "roughnessFactor": 0.9200000166893005,
+     "baseColorTexture": true
+    }
+   ],
+   "textures": [
+    {
+     "name": "daub_plain_basecolor",
+     "width": 2048,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "52b29c5b081488b2423a4d1eb5e54c7b5479a7ccddaa8d996ed585c0b201cfad"
+    },
+    {
+     "name": "timber_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "9a476aabd60f3ce3a08213dc791a64d184865ae0bd7a55fbaee60741b7985bf3"
+    },
+    {
+     "name": "thatch_basecolor",
+     "width": 512,
+     "height": 512,
+     "format": "image/jpeg",
+     "embedded": true,
+     "origin": "procedural (seeded numpy noise, Pillow JPEG), own work; includes baked relief shading and tool-mark scallops",
+     "sha256": "b03c94b9f71b799dec0b8a177a061032bb7ad7de63388c13d23a8060ccf03f4f"
+    }
+   ],
+   "texture_budget_px": "daub 2048 x 512 (one strip, 1 048 576 px = the pixel count of 1024 x 1024, longest side 2048 on purpose, see CHECKS); timber and thatch 512 x 512",
+   "visible_meshes": 4,
+   "mesh_nodes": [
+    "DoorRecess",
+    "Frame",
+    "Roof",
+    "Wall"
+   ],
+   "root_transforms_identity": {
+    "DoorRecess": true,
+    "Frame": true,
+    "Roof": true,
+    "Wall": true
+   },
+   "export_bounds_m": {
+    "depth_z": 6.3865,
+    "height_y": 5.4459,
+    "max": [
+     7.9452,
+     5.3912,
+     3.1931
+    ],
+    "max_horizontal_radius_from_origin": 8.5357,
+    "min": [
+     -7.9483,
+     -0.0547,
+     -3.1935
+    ],
+    "width_x": 15.8935
+   },
+   "anchors": {
+    "door_inside": {
+     "translation": [
+      3.0,
+      0.0,
+      2.2
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "entry": {
+     "translation": [
+      3.0,
+      0.0,
+      3.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "hearth_spot": {
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "interior_center": {
+     "translation": [
+      2.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "label_anchor": {
+     "translation": [
+      0.0,
+      5.74,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ],
+     "yaw_deg_about_plusY": 0.0
+    },
+    "store_spot_1": {
+     "translation": [
+      2.8,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_2": {
+     "translation": [
+      4.35,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    },
+    "store_spot_3": {
+     "translation": [
+      5.9,
+      0.0,
+      -1.75
+     ],
+     "rotation_xyzw": [
+      0.0,
+      -1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": -180.0
+    }
+   },
+   "anchor_clearances_m": {
+    "door_inside": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.675,
+     "wall_clearance_m": 0.618
+    },
+    "entry": {
+     "inside_inner_walls": false,
+     "outside_front_wall_in_front_of_door": true,
+     "post_surface_clearance_m": 0.551,
+     "wall_clearance_m": 0.581
+    },
+    "hearth_spot": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.355,
+     "wall_clearance_m": 1.428
+    },
+    "interior_center": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 1.827,
+     "wall_clearance_m": 2.566
+    },
+    "label_anchor": {
+     "above_ridge_m": 0.349
+    },
+    "store_spot_1": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.871,
+     "wall_clearance_m": 0.819
+    },
+    "store_spot_2": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.873,
+     "wall_clearance_m": 0.82
+    },
+    "store_spot_3": {
+     "inside_inner_walls": true,
+     "post_surface_clearance_m": 0.854,
+     "wall_clearance_m": 0.816
+    }
+   },
+   "animations": [],
+   "double_sided_exceptions": [],
+   "alpha_modes": [
+    "OPAQUE"
+   ],
+   "gltf_extensions": [],
+   "no_windows_ray_check": true
+  }
+ ],
+ "shared_geometry_across_finishes": true,
+ "kit_unique_materials": [
+  "Daub",
+  "Stone",
+  "Thatch",
+  "Timber"
+ ],
+ "kit_unique_textures": [
+  "daub_limewash_basecolor 2048x512 b4df697f31ae7008654107a24b24086f20b1234c8b40dc9aa545b3227e0c4cbe",
+  "daub_pattern_basecolor 2048x512 5304ebed9bfc577e85ec12849c6822f56c3330f694373140ea300ee89dbe8689",
+  "daub_plain_basecolor 2048x512 52b29c5b081488b2423a4d1eb5e54c7b5479a7ccddaa8d996ed585c0b201cfad",
+  "thatch_basecolor 512x512 b03c94b9f71b799dec0b8a177a061032bb7ad7de63388c13d23a8060ccf03f4f",
+  "timber_basecolor 512x512 9a476aabd60f3ce3a08213dc791a64d184865ae0bd7a55fbaee60741b7985bf3"
+ ],
+ "kit_gltf_extensions": [],
+ "kit_double_sided_true": [],
+ "kit_alpha_modes": [
+  "OPAQUE"
+ ],
+ "construction_measured": {
+  "wall_outer_m": {
+   "length_x": 15.0,
+   "width_z": 5.5
+  },
+  "wall_inner_half_m": {
+   "x": 7.365,
+   "z": 2.64
+  },
+  "wall_thickness_m": 0.18,
+  "roof": {
+   "eave_lowest_y": 1.686,
+   "envelope_x": 15.894,
+   "envelope_z": 6.387,
+   "ridge_top_y": 5.391,
+   "underside_at_outer_long_wall_y": [
+    2.17,
+    2.195
+   ],
+   "underside_at_ridge_line_y": [
+    4.95,
+    4.95
+   ],
+   "underside_pitch_deg_measured": 45.17
+  },
+  "floor_standing_posts": 36,
+  "internal_posts_xz": [
+   [
+    -3.993,
+    0.003
+   ],
+   [
+    -4.0,
+    1.403
+   ],
+   [
+    -4.001,
+    -1.402
+   ],
+   [
+    -1.49,
+    1.417
+   ],
+   [
+    -1.488,
+    0.002
+   ],
+   [
+    -1.49,
+    -1.386
+   ],
+   [
+    3.976,
+    0.056
+   ]
+  ],
+  "roof_underside_above_hearth_y": 4.95,
+  "first_timber_above_hearth_y": 4.78,
+  "person_scale": {
+   "door_clear_height_m": 1.75,
+   "door_clear_width_m": 0.844,
+   "footprint_to_person_ratio_x": 8.82,
+   "head_clearance_at_entry_m": 0.135,
+   "person_height_m": 1.7,
+   "person_must_stoop_at_door": false,
+   "ridge_to_person_ratio": 3.17,
+   "roof_underside_above_entry_y": 1.835
+  },
+  "kiln_hearth_base_at_hearth_spot": {
+   "base_center": {
+    "pos": [
+     0.0,
+     0.0
+    ],
+    "post_surface_clearance_m": 1.355,
+    "wall_clearance_m": 1.428
+   },
+   "fire_center": {
+    "pos": [
+     0.0,
+     0.0
+    ],
+    "post_surface_clearance_m": 1.355,
+    "wall_clearance_m": 1.428
+   },
+   "firewood_spot": {
+    "pos": [
+     -1.0,
+     0.3
+    ],
+    "post_surface_clearance_m": 0.439,
+    "wall_clearance_m": 0.439
+   },
+   "pot_rest": {
+    "pos": [
+     0.82,
+     0.0
+    ],
+    "post_surface_clearance_m": 2.175,
+    "wall_clearance_m": 2.248
+   },
+   "tend_origin": {
+    "pos": [
+     -0.3,
+     0.78
+    ],
+    "post_surface_clearance_m": 1.243,
+    "wall_clearance_m": 1.206
+   }
+  },
+  "door": {
+   "x_centre": 3.0,
+   "clear_width_m": 0.844,
+   "clear_height_m": 1.75
+  }
+ },
+ "chosen_values_F": {
+  "roof_form": "gabled, ridge along X, thatch slab with a turf ridge roll (as HOUSE-002); a hipped roof would be equally possible",
+  "roof_pitch_underside_deg": 45.0,
+  "roof_pitch_thatch_top_deg_measured": 43.72,
+  "eave_height_m": 2.2,
+  "ridge_underside_y_m": 4.95,
+  "ridge_top_y_m": 5.34,
+  "overhang_m": 0.45,
+  "thatch_thickness_m": [
+   0.24,
+   0.38
+  ],
+  "door": "one opening in the long +Z wall, centre x = 3.00 m, clear 0.85 x 1.75 m, no door leaf; width within 0.8-0.9 m set by the SB-023 phase-1 assignment by the manager (2026-11-20) (not the brief: door width unknown, U); height 1.75 m (r001: 1.60 m) is an optional r002 change so that a 1.70 m person does not stoop at the door (F; easy to revert: COMMON.door_height)",
+  "hearth": "on the axis (brief) 7.5 m from the east (+X) end (house 57 pit 243, D-houses-recon.md after Pleinerová and Hrala 1988, PDF pp. 55-56) = (0,0,0), pebble paving ellipse 1.9 x 1.6 m (46 pebbles, Stone material); the paving size is F",
+  "post_spacing": "long-wall posts nominally every 1.50 m, each shifted by a seeded +-0.13 m (spacing 1.24-1.76 m); corner posts fixed",
+  "partitions": "daub panels 0.14 m on posts, up to the tie beams (y 2.2), open above; 1.0 m passage at z 0.2..1.2, clear height 1.85 m under a head panel",
+  "ridge_post_row": "central row of ridge posts: internal posts at x = -4.0, -1.5, 4.0 plus the gable centre posts (F; house 57 is not three-aisled, see deviations)",
+  "anchors": "all anchor positions are F (placement suggestions)",
+  "finishes": "plain / limewash / pattern as described per model"
+ },
+ "parts_and_uncertainties": [
+  {
+   "part": "footprint and plan",
+   "status": "A, R/F",
+   "note": "HOUSE-BRIEF v1 type A: Pleinerová and Hrala 1988; Sklenářová 2012, 114 (dating of the original plan doubtful: the excavator, Pleinerová, is not sure of it and also considers the Migration Period). Not a plan of a Březnice house; no complete house plan is verified at Březnice."
+  },
+  {
+   "part": "walls: wattle and daub between posts, 0.18 m",
+   "status": "A",
+   "note": "Jiráň 2008, 171; Pleinerová and Hrala 1988 (little daub at Březno u Loun: perhaps only parts plastered)"
+  },
+  {
+   "part": "roof: thatch",
+   "status": "A",
+   "note": "by analogy; no direct Bohemian evidence (Sklenářová 2012, 66-67). Pitch, eave and ridge heights U in the brief; chosen values F (chosen_values_F)."
+  },
+  {
+   "part": "no windows",
+   "status": "decision",
+   "note": "owner decision; no evidence in Bohemia (Sklenářová 2012, 71). Verified by ray check (spatial_check.json no_windows)."
+  },
+  {
+   "part": "door",
+   "status": "U/F",
+   "note": "one door; width and position unknown (Sklenářová 2012, 71); chosen values F"
+  },
+  {
+   "part": "smoke",
+   "status": "U",
+   "note": "no chimney or smoke hole; smoke leaves through the thatch"
+  },
+  {
+   "part": "daub finishes",
+   "status": "trial, E/F",
+   "note": "E for the existence of painted plaster (Praha-Bubeneč fragments; Březno u Loun black-grey and reddish plaster); R/F for colour, motif and placement"
+  },
+  {
+   "part": "floor",
+   "status": "not modelled",
+   "note": "no floor mesh (terrain shows through), as HOUSE-002"
+  },
+  {
+   "part": "tool traces / irregularity: round timber default",
+   "status": "E (Bohemia, soil traces) -> A once applied; R/F look",
+   "note": "house posts and beams are round, unhewn or at most lightly hewn timber with a waney edge kept; the soil traces give nothing on bark or surface (E-house-tool-traces.md sections 2.2, 3 row 'Split versus hewn')",
+   "source": "Sklenářová 2012, 134, 149"
+  },
+  {
+   "part": "tool traces / irregularity: axe facets and stop marks on a minority of posts",
+   "status": "A (Must Farm, England); size and count R/F",
+   "note": "6 posts carry a shallow facet zone with a step (stop mark) at each end; two of them are the door jambs, hewn over their full height on the face toward the opening, and the lintel has one facet on its top; facet size, count and place are our choice (sections 3 'Axe facets', 4)",
+   "source": "Must Farm PXA II, 206, 217-218"
+  },
+  {
+   "part": "tool traces / irregularity: split (D-section) post",
+   "status": "R/F (lake-site analogy A for the use of split timber)",
+   "note": "one internal ridge post per house is a D-section post (minority, our choice, not a Bohemian norm; hidden inside the house, visible only with the roof off)",
+   "source": "Billamboz and Schöbel, 209, 215-216"
+  },
+  {
+   "part": "tool traces / irregularity: taper, slight bend and lean, uneven diameter and cut heights",
+   "status": "A; amounts R/F",
+   "note": "selected round timber stays fairly uniform (Must Farm piles 'very regular') but is never a perfect cylinder; the numbers (diameter 16-25 cm, lean up to 5 cm, bow up to 3 cm) are ours",
+   "source": "Must Farm PXA II, 206; Sklenářová 2012, 149-150"
+  },
+  {
+   "part": "tool traces / irregularity: uneven post spacing",
+   "status": "A; amounts R/F",
+   "note": "wall-post spacing varies by +-0.13 m around the r001 nominal; the sources say 'uneven' without numbers (Must Farm gives 1.2-3.3 m for a round building in England)",
+   "source": "Must Farm PXA II, 206"
+  },
+  {
+   "part": "tool traces / irregularity: post butts",
+   "status": "E (Turnov flat bases, soil traces) / A",
+   "note": "posts end with a blunt, slightly uneven butt at or just below the floor line; no pointed posts (pencil points belong to driven stakes only)",
+   "source": "Sklenářová 2012, 20, 134"
+  },
+  {
+   "part": "tool traces / irregularity: axe-chopped ends, branch stubs, burls",
+   "status": "R/F",
+   "note": "ends are cut obliquely, some posts keep one or two short branch stubs or a burl; no source discusses knots (section 3 row 'Knots and branch stubs')",
+   "source": "- (R/F)"
+  },
+  {
+   "part": "tool traces / irregularity: lapped plates and ridge beam, withy lashings",
+   "status": "A (simple joints, twisted withies) / X; placement R/F",
+   "note": "wall plates and the ridge beam are two lapped pieces tied with twisted-withy collars with loose ends; rafters are lashed to the ridge beam on part of the pairs; no mortise-and-tenon detail (section 3 rows 'Joints', 'Lashings')",
+   "source": "Must Farm PXA II, 218, 221; Lobisser 2018 (X); Sklenářová 2012, 51, 53, 55"
+  },
+  {
+   "part": "tool traces / irregularity: daub surface",
+   "status": "E for the existence of smoothed, coloured daub and rod impressions; look R/F",
+   "note": "hand-smoothed lumpy daub (thinner than nominal by 0-0.075 m, never thicker), sweeps, hairline cracks, repair patches, eight chipped spots per 16 m strip, each with its own place and shape, with faint rod impressions of uneven pitch; no planed or perfectly flat plaster",
+   "source": "Sklenářová 2012, 43, 115; Pleinerová and Hrala 1988, PDF 49"
+  },
+  {
+   "part": "tool traces / irregularity: limewash and pattern finishes",
+   "status": "trial (brief); E for painted plaster, R/F for look",
+   "note": "unchanged in intent: limewash with flaking and cracks; the white geometric frieze is hand-painted (wavering lines, uneven strokes, gaps); where the pattern sat on a house is unknown",
+   "source": "Sklenářová 2012, 115 (Praha-Bubeneč); HOUSE-BRIEF v1 'Surface'"
+  },
+  {
+   "part": "tool traces / irregularity: thatch irregularity",
+   "status": "R/F (Lobisser X for bundle fixing)",
+   "note": "eave bundle ends step by 0.25-0.6 m runs (drop up to 0.085 m), thickness varies with a metre-scale field, ridge roll sags and varies in width, 4 fresh repair patches (low ragged mounds whose outline is irregular and whose edge takes the tint of the surrounding thatch), straw tone varies, silvering and moss in the texture; thatch only, as decided",
+   "source": "Lobisser 2018, 'Assembly of the roof truss' (X)"
+  },
+  {
+   "part": "tool traces / irregularity: weathering and patina",
+   "status": "R/F (optional in section 3)",
+   "note": "darker, damper post feet and roof eaves, silvered straw, soot toward the ridge, tone patches in vertex colours",
+   "source": "-"
+  },
+  {
+   "part": "tool traces / irregularity: no sawn, planed or perfectly regular surfaces",
+   "status": "R/F (section 4 last bullet)",
+   "note": "no plane-smoothed faces (Lobisser: 'we cannot prove that planes were common tools'; leaving them out is our choice), no octagonal posts, no uniform rods or patterns",
+   "source": "Lobisser 2018"
+  }
+ ],
+ "irregularity_r002": {
+  "doc": "content/research/museum-lba/E-house-tool-traces.md (sections 3, 4, 5)",
+  "seed": 2304,
+  "deterministic": "all random draws from numpy Generators seeded from the type seed; two consecutive builds give byte-identical GLBs (checks/rebuild_determinism.txt)",
+  "bounds_F": {
+   "post_spacing_jitter_m": 0.13,
+   "post_diameter_range_m": [
+    0.16,
+    0.25
+   ],
+   "post_lean_m": 0.05,
+   "post_bend_m": 0.03,
+   "post_top_jitter_m": 0.03,
+   "facet_share": 0.2,
+   "rafter_jitter_m": 0.09,
+   "tie_beam_jitter_m": 0.12,
+   "wall_amp_outer_m": 0.075,
+   "wall_amp_inner_m": 0.02,
+   "wall_refine_edge_m": 1.8,
+   "wall_refine_edge_inner_m": 2.6
+  },
+  "counts": {
+   "frame_members": 134,
+   "facet_zones": 7,
+   "posts_with_facets": 6,
+   "roof_patches": 4
+  },
+  "frame_triangles_by_kind": {
+   "bark": 1184,
+   "bark_post": 1562,
+   "lash": 504
+  },
+  "split_ridge_post_x": 3.987,
+  "footprint_kept": "Wall outer extents are unchanged by construction (daub is displaced only inwards, the foot line stays on the plan): construction_measured.wall_outer_m",
+  "anchors_kept": "all eight anchor nodes at their r001 coordinates (anchors / anchor_clearances_m); clearances re-measured",
+  "not_modelled": "sawn or planed boards, plane-smoothed faces, pointed post butts above ground, mortise-and-tenon detail, windows, any Bohemian joint detail (not documented)"
+ },
+ "budget_vs_r001": {
+  "triangles_per_model": {
+   "r001": 4464,
+   "r002": 6758,
+   "ratio": 1.514
+  },
+  "triangles_by_mesh": {
+   "r001": {
+    "Wall": 128,
+    "DoorRecess": 28,
+    "Frame": 2836,
+    "Roof": 1472
+   },
+   "r002": {
+    "Wall": 972,
+    "DoorRecess": 28,
+    "Frame": 4078,
+    "Roof": 1680
+   }
+  },
+  "glb_bytes": {
+   "r001": {
+    "limewash": 329040,
+    "pattern": 367276,
+    "plain": 359544
+   },
+   "r002": {
+    "limewash": 590084,
+    "pattern": 585228,
+    "plain": 599456
+   }
+  },
+  "godot_imported_bytes_this_type": {
+   "r001": 696726,
+   "r002": 1332075
+  },
+  "godot_imported_bytes_all_six": {
+   "r001": 1190890,
+   "r002": 2372542,
+   "delta": 1181652
+  },
+  "triangle_target_note": "the factor 1.5 was the manager's assignment for r002; the card SB-033 says only 'bez zbytečného nárůstu' (no factor). This type (A): 6758 triangles (1.51x r001), accepted by the manager (SB-033 phase 2 decision); the museum limit is raised from 5000 to 7000 for HOUSE-004 at takeover.",
+  "note": "pck equivalent = .godot/imported bytes of the three models of each type as the museum import settings produce them (scene + extracted textures). The museum pck was 8 676 496 B = state of main after SB-008 (merge f141daa, measured by CI); the card SB-033 gives 8 658 052 B (an earlier live value). Not re-measured here."
+ },
+ "own_work_license": "Unselected original project work; manager/owner decision",
+ "incorporated_resources": [],
+ "fixtures_used_not_incorporated": [
+  "PERSON-001 r002 model.glb (scale checks and previews)",
+  "KILN-001 r001 asset.json hearth_base anchors (clearance check only)"
+ ],
+ "reference_ids": [
+  "E-house-tool-traces (content/research/museum-lba/E-house-tool-traces.md, SB-033 phase 1, PR 465): sections 2-5; underlying sources Sklenářová 2012, 20, 42, 43, 51, 53, 55, 59, 115, 134, 144, 149-150; Billamboz and Schöbel, 209, 213, 215-216; Must Farm PXA II, 144, 206, 210, 212, 217-218, 221; Lobisser 2018 (EXARC); Pleinerová and Hrala 1988, PDF 48-49, 170; Hilts 2024 (all read by the phase-1 agent, not by this return)",
+  "HOUSE-BRIEF v1 (content/research/museum-lba/HOUSE-BRIEF.md, owner decisions 2026-11-20), rows Type, Footprint A, Walls, Surface, Roof, Windows, Door, Smoke, Floor",
+  "SB-023 phase-1 assignment by the manager (2026-11-20) (hearth central for type B, recorded as F; door width range 0.8-0.9 m); text not stored in the repo",
+  "Pleinerová and Hrala 1988, house 57, PDF pp. 55-56, 167-170, via content/research/museum-lba/D-houses-recon.md",
+  "Sklenářová 2012, 66-67, 71, 114, 115 (via HOUSE-BRIEF v1 and D-houses-czech-sources.md)",
+  "Jiráň 2008, 169-171; Chvojka 2009, 129-130 (via HOUSE-BRIEF v1)",
+  "Soudsky 1966 (Praha-Čakovice, middle row of roof-beam posts partly preserved), via Pleinerová and Hrala 1988, PDF p. 168 and D-houses-VERIFICATION.md",
+  "HOUSE-002 r001 (art/returns/economy-batch5/HOUSE-002/r001: mesh split, anchors, roof and texture recipe; same project)"
+ ],
+ "fixture_hashes_note": "snapshot of the inputs at generation time, including the SB-033 card; when the manager edits the card, rerunning source/write_asset.py changes this block only",
+ "fixture_hashes": {
+  "content/research/museum-lba/HOUSE-BRIEF.md": "ffa30889b38cc62914ad69661eb5a6191bf5afa6455699f8e0df7d10755e68de",
+  "team/museum-kanban/tasks/SB-023.md": "4cd03dd9c9354b797d19fa412ac77404878aa8c4d6a56df59364e9c65803ee46",
+  "content/research/museum-lba/D-houses-recon.md": "9613941311956af4b6176adacad418ce0b5438c5a24afb39d142069aa4d3b139",
+  "content/research/museum-lba/D-houses-czech-sources.md": "62d199687e261a87c315527d8ef871a9306dc0e7ba1a135d727a69fab84d1926",
+  "content/research/museum-lba/D-houses-VERIFICATION.md": "5f7ae0128f21c8acd1ebbaa8fa74ca97eb35463b8c3daaa55b0e48492e415e67",
+  "content/research/museum-lba/E-house-tool-traces.md": "87bcddb1c697f9b1d41fc14d5de53eb64500752d977e5d12cb92078aff1e9297",
+  "team/museum-kanban/tasks/SB-033.md": "cb663e57b1178b6124f18d20c7422a7c821270b962c6799c22b67643198ca7ba",
+  "art/returns/museum-houses/HOUSE-004/r001/asset.json": "c0b7209fa8f5a8fb4d2158dcbfa189cf40c06bc3703c4de6ccffe6f65e54b1c1",
+  "art/returns/museum-houses/HOUSE-004/r001/models/house_004_plain.glb": "f5a3dc00364316b260d47bd15d8f62903ad1352b5ee4ef4bec921519660c973f",
+  "art/returns/museum-houses/HOUSE-005/r001/models/house_005_plain.glb": "82ce5372bd6be4b7358d8b655cee22e40d2dad8c9a50247516ae63b56c05fdcb",
+  "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c",
+  "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+  "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+  "art/returns/economy-batch5/HOUSE-002/r001/source/gen_house002.py": "c87f7450052bfe9b0f869feaa331387c97fddb630fe047e67516fddac1b50d87",
+  "art/returns/economy-batch5/HOUSE-002/r001/source/inspect_glb.py": "d71981fbb8ade5bbd7bf5ca144ec264ad38c5a2e8afaeb39c9860647fea82eed",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "art/returns/bronze-bohemia-v3/KILN-001/r001/asset.json": "92eee8ad1f10cfd570016f542479211e0e7816b8da87297bcc9fc58d1786b2c4"
+ },
+ "godot_imported_size_estimate": {
+  "note": "throwaway Godot 4.5.1 project with the museum import settings (lossy WebP q0.95, no mipmaps, textures extracted per GLB); bytes of .godot/imported/* per model",
+  "per_model_bytes": {
+   "house_004_limewash": 435025,
+   "house_004_pattern": 438997,
+   "house_004_plain": 458053,
+   "house_005_limewash": 337830,
+   "house_005_pattern": 341802,
+   "house_005_plain": 360835
+  },
+  "all_six_models_bytes": 2372542,
+  "all_six_if_identical_textures_were_shared_bytes": 1632484
+ },
+ "deviations": [
+  "Textures embedded as JPEG (core glTF image/jpeg, no extension) instead of PNG to keep each GLB small; the museum re-encodes them as lossy WebP on import.",
+  "Three GLBs per type (one per finish) with identical geometry; the timber and thatch images are identical bytes in all six GLBs, but each GLB embeds its own copy (GLB is self-contained).",
+  "No .blend saved: the generator is the native source (bpy from PyPI); rerun it to get the scene.",
+  "Anchor 'door_inside' kept (extra, as HOUSE-002).",
+  "Door clear height 1.75 m (r001: 1.60 m; HOUSE-002 r001: 1.50 m): an optional r002 change (F), so that a 1.70 m PERSON-001 does not stoop at the door; the partition passages are 1.85 m clear (r001: 1.70 m). The thatch eave is now uneven (bundle ends drop by up to 0.085 m): the lowest eave point is measured in checks/spatial_check.json roof.eave_lowest_y.",
+  "Vertex colours (COLOR_0) are exported on all meshes (patina, damp at the post feet, tone patches); the museum import keeps them as vertex colours multiplied with the albedo texture. The timber texture is an atlas of three column bands (round surface, hewn facet, lashing) addressed by UV.",
+  "Post, rafter and tie-beam positions differ from r001 by seeded jitter (bounds in irregularity_r002.bounds_F); rafter pairs 16 (r001: 18, hidden under the thatch). Anchors are unchanged.",
+  "Type A has a 4th material 'Stone' (untextured, base colour only) for the pebble hearth paving, part of the Frame mesh.",
+  "Central ridge-post row (internal posts at x = -4.0, -1.5, 4.0 and the gable centre posts) is an F choice that conflicts with the model source: the authors state house 57 is not three-aisled (except perhaps the unclear west end; D-houses-recon.md, Pleinerová and Hrala 1988, PDF pp. 167-170). Only the Knovíz plan of Praha-Čakovice had a partly preserved middle row of roof-beam posts (Soudsky 1966, via Pleinerová and Hrala 1988, PDF p. 168; D-houses-VERIFICATION.md).",
+  "Door in the east (hearth) room at x = 3.0 is an F choice that departs from the source hint: house 57 has doubled posts at the partition and no posts on the north side of the middle room, both read as a possible entrance to the middle room (D-houses-recon.md, PDF pp. 55-56, 167).",
+  "West room 3.5 m outer / 3.23 m clear against house 57's 3 x 5.5 m west room (D-houses-recon.md; the brief gives only the 9 m east room and the 15 m total): the partition lines are F."
+ ]
+}
