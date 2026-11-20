@@ -113,17 +113,17 @@
    }
   }
  },
- "HOUSE-002": {
-  "source": "economy-batch5/HOUSE-002",
+ "HOUSE-004": {
+  "source": "museum-houses/HOUSE-004",
   "rev": "r001",
   "models": {
-   "house_002": {
-    "file": "HOUSE-002/r001/models/house_002.glb",
+   "house_004_limewash": {
+    "file": "HOUSE-004/r001/models/house_004_limewash.glb",
     "animations": {},
     "anchors": {
      "door_inside": {
       "translation": [
-       0.0,
+       3.0,
        0.0,
        2.2
       ],
@@ -131,7 +131,7 @@
      },
      "entry": {
       "translation": [
-       0.0,
+       3.0,
        0.0,
        3.05
       ],
@@ -139,7 +139,223 @@
      },
      "hearth_spot": {
       "translation": [
-       -3.4,
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       2.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.74,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       2.8,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       4.35,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       5.9,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   },
+   "house_004_pattern": {
+    "file": "HOUSE-004/r001/models/house_004_pattern.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       3.0,
+       0.0,
+       2.2
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       3.0,
+       0.0,
+       3.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       2.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.74,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       2.8,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       4.35,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       5.9,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   },
+   "house_004_plain": {
+    "file": "HOUSE-004/r001/models/house_004_plain.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       3.0,
+       0.0,
+       2.2
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       3.0,
+       0.0,
+       3.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       2.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.74,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       2.8,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       4.35,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       5.9,
+       0.0,
+       -1.75
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   }
+  }
+ },
+ "HOUSE-005": {
+  "source": "museum-houses/HOUSE-005",
+  "rev": "r001",
+  "models": {
+   "house_005_limewash": {
+    "file": "HOUSE-005/r001/models/house_005_limewash.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       2.1,
+       0.0,
+       1.95
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       2.1,
+       0.0,
+       2.8
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       0.0,
        0.0,
        0.0
       ],
@@ -156,32 +372,172 @@
      "label_anchor": {
       "translation": [
        0.0,
-       5.0,
+       5.49,
        0.0
       ],
       "yaw_deg": 0.0
      },
      "store_spot_1": {
       "translation": [
-       1.2,
+       -0.4,
        0.0,
-       -1.75
+       -1.55
       ],
       "yaw_deg": -180.0
      },
      "store_spot_2": {
       "translation": [
-       2.75,
+       1.15,
        0.0,
-       -1.75
+       -1.55
       ],
       "yaw_deg": -180.0
      },
      "store_spot_3": {
       "translation": [
-       4.3,
+       2.7,
        0.0,
-       -1.75
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   },
+   "house_005_pattern": {
+    "file": "HOUSE-005/r001/models/house_005_pattern.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       2.1,
+       0.0,
+       1.95
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       2.1,
+       0.0,
+       2.8
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.49,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       -0.4,
+       0.0,
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       1.15,
+       0.0,
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       2.7,
+       0.0,
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     }
+    }
+   },
+   "house_005_plain": {
+    "file": "HOUSE-005/r001/models/house_005_plain.glb",
+    "animations": {},
+    "anchors": {
+     "door_inside": {
+      "translation": [
+       2.1,
+       0.0,
+       1.95
+      ],
+      "yaw_deg": 0.0
+     },
+     "entry": {
+      "translation": [
+       2.1,
+       0.0,
+       2.8
+      ],
+      "yaw_deg": 0.0
+     },
+     "hearth_spot": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "interior_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "translation": [
+       0.0,
+       5.49,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "store_spot_1": {
+      "translation": [
+       -0.4,
+       0.0,
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_2": {
+      "translation": [
+       1.15,
+       0.0,
+       -1.55
+      ],
+      "yaw_deg": -180.0
+     },
+     "store_spot_3": {
+      "translation": [
+       2.7,
+       0.0,
+       -1.55
       ],
       "yaw_deg": -180.0
      }
