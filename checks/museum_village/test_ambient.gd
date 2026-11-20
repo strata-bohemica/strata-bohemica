@@ -167,6 +167,75 @@ func _bird_rotation(synth_script: GDScript) -> Array:
 		energies.append(e)
 	return [energies[0], energies[1], wrapping]
 
+## Share of the energy above 4 kHz of a whole loop (mean over four 16384-sample windows, not one).
+func _hf_share(loop: PackedFloat32Array) -> float:
+	var sum := 0.0
+	for k in 4:
+		sum += _band(_spectrum(loop, k * 32768), 4000.0, 11025.0)
+	return sum / 4.0
+
+## The first voice of the night recipe alone, as a loop: with its vibrato or without (`vib` removed).
+func _night_voice(synth_script: GDScript, with_vib: bool) -> PackedFloat32Array:
+	var v: Dictionary = Synth.RECIPES.night.voices[0].duplicate()
+	if not with_vib:
+		v.erase("vib")
+	var sy = synth_script.new("night", 1150, RATE, SECONDS, false, {"voices": [v], "rms": 0.1})
+	return sy.voice_range(0, 0, sy.n)
+
+## How much the vibrato changes the voice (rms of the difference over rms of the voice). The vibrato is part of the sound.
+func _vib_effect(synth_script: GDScript) -> float:
+	var a := _night_voice(synth_script, true)
+	var b := _night_voice(synth_script, false)
+	var d := 0.0
+	var e := 0.0
+	for i in a.size():
+		d += (a[i] - b[i]) * (a[i] - b[i])
+		e += a[i] * a[i]
+	return sqrt(d / maxf(e, 1e-20))
+
+## Smoothness of the pulse train's envelope: a night voice with a carrier of 0 Hz is its envelope (gain * gate * pulse * constant).
+## -> largest second difference over the largest value. A pulse that starts and ends softly (raised cosine) is far smoother than a sine arch with a kink at its edges.
+func _edge_kink(synth_script: GDScript) -> float:
+	var v: Dictionary = Synth.RECIPES.night.voices[0].duplicate()
+	v.erase("vib")
+	v.f = 0.0
+	var sy = synth_script.new("night", 1150, RATE, SECONDS, false, {"voices": [v], "rms": 0.1})
+	var x: PackedFloat32Array = sy.voice_range(0, 0, sy.n)
+	var mx := 1e-9
+	var d2 := 0.0
+	for i in range(1, x.size() - 1):
+		mx = maxf(mx, absf(x[i]))
+		d2 = maxf(d2, absf(x[i + 1] - 2.0 * x[i] + x[i - 1]))
+	return d2 / mx
+
+## The real chirp plan of the dawn recipe for a seed: [lowest, highest frequency of any f0/f1, chirp count, share of chirps within 5 % of the highest].
+func _chirp_range(synth_script: GDScript, sd: int) -> Array:
+	var sy = synth_script.new("dawn", sd, RATE, SECONDS)
+	var lo := 1e9
+	var hi := 0.0
+	for c in sy._chirps:
+		lo = minf(lo, minf(float(c.f0), float(c.f1)))
+		hi = maxf(hi, maxf(float(c.f0), float(c.f1)))
+	var near := 0
+	for c in sy._chirps:
+		if maxf(float(c.f0), float(c.f1)) > 0.95 * hi:
+			near += 1
+	return [lo, hi, sy._chirps.size(), float(near) / float(maxi(sy._chirps.size(), 1))]
+
+## Worst difference between a rendered chirp and the plain sweep sin(phase) (times envelope and amplitude), with the chirp's harmonic weight `h` set.
+func _chirp_harmonic(synth_script: GDScript, h: float) -> float:
+	var c := {"start": 0, "dur": 2000, "f0": 2000.0, "f1": 2600.0, "amp": 0.8, "h": h}
+	var w: PackedFloat32Array = synth_script.chirp_wave(c, RATE)
+	var k := (2600.0 - 2000.0) / (2000.0 / float(RATE))
+	var worst := 0.0
+	for j in w.size():
+		var tt := float(j) / float(RATE)
+		var env := sin(PI * float(j) / 2000.0)
+		env *= env
+		var ph := TAU * (2000.0 * tt + 0.5 * k * tt * tt)
+		worst = maxf(worst, absf(w[j] - 0.8 * env * sin(ph)))
+	return worst
+
 ## Envelope (rms per 50 ms) of one layer as it plays: copy A from the start, copy B half a loop later, over 32 s; and the
 ## Pearson correlation of that envelope with itself `lag_s` later (over 20 s from 4 s on, where both copies run).
 func _pair_envelope(a: PackedByteArray, b: PackedByteArray) -> PackedFloat32Array:
@@ -459,7 +528,7 @@ func _initialize() -> void:
 	var br := _bird_rotation(Synth)
 	t.ok(br[2] >= 2, "positive control: some chirps run across the end of the loop (%d)" % br[2])
 	t.ok(br[0] > 1.0 and absf(br[0] - br[1]) <= 1e-4 * br[0], "birds: the energy does not depend on where the phrases sit (%s vs %s)" % [br[0], br[1]])
-	var no_wrap := _mutant("res://museum/core/ambient_synth.gd", "out[(start + j) % n] += w[j]", "if start + j < n:\n\t\t\t\tout[start + j] += w[j]")
+	var no_wrap := _mutant("res://museum/core/ambient_synth.gd", "\t\t\tif k == n:\n\t\t\t\tk = 0", "\t\t\tif k == n:\n\t\t\t\tbreak")
 	var brm: Array = _bird_rotation(no_wrap) if no_wrap != null else [1.0, 1.0, 0]
 	t.ok(no_wrap != null and absf(brm[0] - brm[1]) > 0.01 * brm[0], "mutation 'birds do not wrap' is caught")
 
@@ -471,13 +540,36 @@ func _initialize() -> void:
 	t.ok(_band(sp.day, 500.0, 4000.0) > 0.8, "day: leaf rustle and insects are mid-high but soft (%s at 0.5-4 kHz)" % _band(sp.day, 500.0, 4000.0))
 	t.ok(_band(sp.night, 1800.0, 3400.0) > 0.4, "night: crickets sing at 2-3 kHz (%s)" % _band(sp.night, 1800.0, 3400.0))
 	t.ok(_band(sp.dawn, 1200.0, 3800.0) > 0.6, "dawn: birdsong 1.2-3.8 kHz (%s)" % _band(sp.dawn, 1200.0, 3800.0))
-	# SB-040: soft. Little energy where the ear is most sensitive and tones are sharpest (>4 kHz); before: day 0.54, dusk 0.16, night 0.96, dawn 0.42
-	for r in ["wind", "day", "dusk", "night", "dawn"]:
-		t.ok(_band(sp[r], 4000.0, 11025.0) < (0.12 if r == "day" else 0.05), "%s: soft, hardly any energy above 4 kHz (%s)" % [r, _band(sp[r], 4000.0, 11025.0)])
+	# SB-040: soft. Little energy where the ear is most sensitive and tones are sharpest (>4 kHz); before: day 0.54, dusk 0.16, night 0.96, dawn 0.42.
+	# Whole loops of BOTH copies (seed of the first copy and of the second, which plays too: see AmbientBank), not one window.
+	for sd in [1150, 1150 + Bank.COPY_SEED_STEP]:
+		for r in ["wind", "day", "dusk", "night", "dawn"]:
+			var share := _hf_share(Synth.new(r, sd, RATE, SECONDS).run())
+			t.ok(share < (0.12 if r == "day" else 0.05), "%s/%d: soft, hardly any energy above 4 kHz (%s)" % [r, sd, share])
 	for r in ["day", "dusk", "night"]:
 		for v in Synth.RECIPES[r].voices:
 			t.ok(float(v.f) + float(v.vib[1]) < 3200.0 and float(v.vib[1]) > 0.0, "%s: carrier %s Hz stays below 3.2 kHz and has a vibrato" % [r, v.f])
-	t.ok(float(Synth.RECIPES.dawn.birds.f_hi) * 1.25 < 4000.0 and float(Synth.RECIPES.dawn.birds.h) == 0.0, "dawn: chirps stay below 4 kHz and have no harmonic")
+	# the dawn chirps as planned (the real `_chirps`, both copy seeds): nothing above f_max, but not all at one pitch
+	var f_max := float(Synth.RECIPES.dawn.birds.f_max)
+	t.ok(f_max <= 3500.0 and float(Synth.RECIPES.dawn.birds.h) == 0.0, "dawn recipe: chirps are capped at 3.5 kHz and have no harmonic")
+	for sd in [1150, 1150 + Bank.COPY_SEED_STEP]:
+		var cr := _chirp_range(Synth, sd)
+		t.ok(cr[1] <= f_max + 1e-3 and cr[2] >= 40, "dawn/%d: no chirp f0 or f1 above %s Hz (highest %s of %d chirps)" % [sd, f_max, cr[1], cr[2]])
+		t.ok(cr[1] > 2500.0 and cr[0] < 1800.0 and cr[3] < 0.3, "dawn/%d: it is still a range of pitches (%s to %s Hz; %s of the chirps near the top)" % [sd, cr[0], cr[1], cr[3]])
+	var uncapped := _mutant("res://museum/core/ambient_synth.gd", "float(b.f_max) / top", "float(b.f_hi)")
+	t.ok(uncapped != null and _chirp_range(uncapped, 1150)[1] > 4000.0, "mutation 'chirps not capped' is caught (%s Hz)" % (_chirp_range(uncapped, 1150)[1] if uncapped != null else 0.0))
+	# the synthesis, not only the recipe numbers
+	var ve := _vib_effect(Synth)
+	t.ok(ve > 0.3, "the vibrato changes the voice (%s of its rms)" % ve)
+	var no_vib := _mutant("res://museum/core/ambient_synth.gd", " + vidx * sin(TAU * vc * u + vph))", ")")
+	t.ok(no_vib != null and _vib_effect(no_vib) < 0.01, "mutation 'vibrato removed from the synthesis' is caught")
+	var es := _edge_kink(Synth)
+	t.ok(es < 0.001, "pulses start and end softly: the envelope has no kink (%s)" % es)
+	var hard := _mutant("res://museum/core/ambient_synth.gd", "pulse *= pulse ", "pulse *= 1.0 ")
+	t.ok(hard != null and _edge_kink(hard) > 5.0 * es, "mutation 'hard pulse edges' is caught (%s)" % (_edge_kink(hard) if hard != null else 0.0))
+	t.ok(_chirp_harmonic(Synth, 0.0) < 1e-6 and _chirp_harmonic(Synth, 0.25) > 0.05, "a chirp is a plain sweep when h is 0 and has the harmonic when h is set")
+	var hard_h := _mutant("res://museum/core/ambient_synth.gd", "h * sin(2.0 * ph) if h != 0.0 else sin(ph)", "0.25 * sin(2.0 * ph)")
+	t.ok(hard_h != null and _chirp_harmonic(hard_h, 0.0) > 0.05, "mutation 'a harmonic hard-coded into the chirps' is caught")
 	t.ok(_band(sp.dusk, 0.0, 2500.0) > 0.4 and _band(sp.dusk, 0.0, 2500.0) < _band(sp.wind, 0.0, 2500.0), "dusk: between wind and the high layers (%s below 2.5 kHz)" % _band(sp.dusk, 0.0, 2500.0))
 	t.ok(_band(sp.night, 0.0, 1000.0) < _band(sp.wind, 0.0, 1000.0), "night is not the wind layer")
 

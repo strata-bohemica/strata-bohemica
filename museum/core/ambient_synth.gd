@@ -14,8 +14,8 @@ extends RefCounted
 
 const RECIPES := {
 	# SB-040: soft by design (the first listening found sharp pitches). Nothing sits in the 3-6 kHz band where hearing is most
-	# sensitive: tonal carriers are at 1.9-3.0 kHz, with a vibrato (`vib`: [rate Hz, deviation Hz]) so no tone is a pure line,
-	# pulses and chirps have raised-cosine edges, chirps have no harmonic (`h`) and the beds are low-passed lower.
+	# sensitive: tonal carriers are at 2.2-3.0 kHz (3.06 kHz at the top of a vibrato), with a vibrato (`vib`: [rate Hz, deviation Hz]) so no tone is a pure line,
+	# pulses and chirps have raised-cosine edges, no chirp starts or ends above `birds.f_max` (3.5 kHz; the start pitch of a phrase is lowered so its drift and sweep fit, the lowest chirp frequency is about 0.4 of f_lo), chirps have no harmonic (`h`) and the beds are low-passed lower.
 	# bed: noise -> two low-pass poles (Hz) -> high-pass (Hz), times a slow gust envelope (cycles, depth, phase per loop;
 	# scaled to run from `floor` (the quietest it gets, a share of the loudest) up to 1)
 	"wind": {
@@ -48,7 +48,7 @@ const RECIPES := {
 	},
 	"dawn": {
 		"bed": {"lp": [1200.0, 2000.0], "hp": 300.0, "floor": 0.7, "gust": [[1, 0.2, 1.0]], "gain": 0.3},
-		"birds": {"phrases": 14, "syllables": [3, 7], "f_lo": 1500.0, "f_hi": 3000.0, "dur": [0.07, 0.16], "h": 0.0},
+		"birds": {"phrases": 14, "syllables": [3, 7], "f_lo": 1500.0, "f_hi": 3000.0, "f_max": 3500.0, "dur": [0.07, 0.16], "h": 0.0},
 		"rms": 0.08,
 	},
 }
@@ -296,12 +296,17 @@ func _plan_birds() -> void:
 	var hi := int(b.syllables[1])
 	for p in phrases:
 		var t0 := _rand() * float(n)
-		var f0 := lerpf(float(b.f_lo), float(b.f_hi), _rand())
+		var u0 := _rand()                                            # where in the pitch range this phrase starts
 		var count := lo + int(_rand() * float(hi - lo + 1))
 		var gap := lerpf(0.09, 0.2, _rand()) * float(rate)
 		var dur := lerpf(float(b.dur[0]), float(b.dur[1]), _rand()) * float(rate)
 		var rise := _rand() < 0.5
 		var amp := lerpf(0.4, 1.0, _rand())
+		# The syllables drift up (or down) by 8 % each and a rising one sweeps up by a quarter: the highest frequency of the phrase
+		# is the start pitch times `top`. `f_max` caps it by lowering the start range of this phrase (so the contour of the phrase
+		# stays and the phrases do not pile up at one pitch): no chirp f0 or f1 is ever above `f_max`.
+		var top := (1.0 + 0.08 * float(count - 1)) * 1.25 if rise else 1.0
+		var f0 := lerpf(float(b.f_lo), maxf(float(b.f_lo), minf(float(b.f_hi), float(b.f_max) / top)), u0)
 		for s in count:
 			var drift := 1.0 + 0.08 * float(s) * (1.0 if rise else -1.0)
 			_chirps.append({"start": int(t0 + float(s) * (gap + dur)), "dur": int(dur), "f0": f0 * drift,
@@ -313,6 +318,7 @@ static func chirp_wave(c: Dictionary, rate: int) -> PackedFloat32Array:
 	var f0: float = c.f0
 	var k: float = (float(c.f1) - f0) / (float(dur) / float(rate))
 	var amp: float = c.amp
+	var h: float = c.get("h", 0.0)                       # read once: a Dictionary lookup per sample is slow
 	var w := PackedFloat32Array()
 	w.resize(dur)
 	for j in dur:
@@ -320,19 +326,25 @@ static func chirp_wave(c: Dictionary, rate: int) -> PackedFloat32Array:
 		var env := sin(PI * float(j) / float(dur))
 		env *= env
 		var ph := TAU * (f0 * t + 0.5 * k * t * t)
-		w[j] = amp * env * (sin(ph) + float(c.get("h", 0.0)) * sin(2.0 * ph))
+		w[j] = amp * env * (sin(ph) + h * sin(2.0 * ph) if h != 0.0 else sin(ph))
 	return w
 
 ## Each chirp is added at its start; indices wrap around the end of the loop.
 func _run_birds(budget: int) -> int:
 	var used := 0
-	while _pos < _chirps.size() and used < budget:
+	while _pos < _chirps.size():
 		var c: Dictionary = _chirps[_pos]
+		var len: int = c.dur
+		if used > 0 and used + len > budget:         # a chirp is rendered whole: do not start one that overshoots this slice
+			break
 		var w := chirp_wave(c, rate)
-		var start: int = c.start
-		for j in w.size():
-			out[(start + j) % n] += w[j]
-		used += w.size()
+		var k: int = int(c.start) % n
+		for j in len:
+			out[k] += w[j]
+			k += 1
+			if k == n:
+				k = 0
+		used += len
 		_pos += 1
 	if _pos >= _chirps.size():
 		_next(Stage.SCAN)
