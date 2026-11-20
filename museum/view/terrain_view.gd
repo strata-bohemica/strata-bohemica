@@ -100,8 +100,8 @@ func _field_signed(k: int, p: Vector2) -> float:
 	return edge if Geometry2D.is_point_in_polygon(p, poly) else -edge
 
 ## One draped patch per field that carries the furrows (SB-008). The furrow itself is a shader on world position
-## (view/furrows.gdshader): no instances, no texture, so nothing is added to the export. The mesh only supplies the field mask in
-## vertex alpha, sampled every FURROW_CELL metres.
+## (view/furrows.gdshader): no instances, no texture, so nothing is added to the export. The mesh supplies the ground colour in vertex
+## rgb and the field mask in alpha, sampled every FURROW_CELL metres.
 func _add_furrows() -> void:
 	var data: Dictionary = village.get("furrows", {})
 	if data.is_empty():
@@ -136,9 +136,13 @@ func _field_patch(k: int) -> ArrayMesh:
 	for j in range(nz + 1):
 		for i in range(nx + 1):
 			var p := box.position + Vector2(i, j) * FURROW_CELL
-			verts.append(Vector3(p.x, terrain.height_at(p.x, p.y) + FURROW_LIFT, p.y))
-			norms.append(Vector3.UP)
-			cols.append(Color(1, 1, 1, smoothstep(-0.5, 1.5, _field_signed(k, p))))
+			var h: float = terrain.height_at(p.x, p.y)
+			var n: Vector3 = terrain.normal_at(p.x, p.y)
+			verts.append(Vector3(p.x, h + FURROW_LIFT, p.y))
+			norms.append(n)
+			# rgb = the ground's own colour here, so a field looks as before where the pattern has faded; alpha = field mask
+			var g := _ground_color(p.x, p.y, h, n)
+			cols.append(Color(g.r, g.g, g.b, smoothstep(-0.5, 1.5, _field_signed(k, p))))
 	var stride := nx + 1
 	for j in range(nz):
 		for i in range(nx):

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Writes museum/data/villages/breznice-furrows.json: how the furrows on each field are drawn (SB-008). Standard library only.
 
-The dimensions come from one experiment with a replica ard (Kovačík, Pavelka, Hořínková 2022); their ranges are in the file
+The dimensions come from experiments with a replica of Walle-type ards from Opava (Kováčik, Pavelka, Hořínková 2022); their ranges are in the file
 as `source_ranges` and every field's value must lie inside them (checks/museum_village/test_data.gd). Nothing here says that
 an ard was used at Březnice: the card says the opposite. Which furrow each field gets, and the direction, are F choices:
 the direction runs along the contour (the same rule the plough site uses), the dimension is drawn from the range with a fixed seed.
@@ -40,7 +40,7 @@ for poly in village['fields']:
 out = {
     'schema': 1,
     'evidence': 'R',
-    'source': 'Kovačík, Pavelka, Hořínková 2022, Archeologické rozhledy 74(2): 155–179 (experiment with an ard replica, Opava, Silesia, Lusatian Urnfield culture)',
+    'source': 'Kováčik, Pavelka, Hořínková 2022, Archeologické rozhledy 74(2): 155–179 (replica of Walle-type ards from Opava, Silesia, Lusatian Urnfield culture)',
     'note': 'Dimensions are those of the experiment, a regional analogy (R). No ard, furrow or tillage trace is attested at Březnice. The choice per field and the direction along the contour are F.',
     'source_ranges': RANGES,
     'fields': fields,

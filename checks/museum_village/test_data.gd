@@ -270,7 +270,7 @@ func _asset_of(craft: Dictionary, prop_id: String) -> String:
 			return p.asset
 	return ""
 
-# SB-008: furrows on the fields. Dimensions are those of the cited ard experiment (Kovačík et al. 2022: 8-12 cm deep, 4-6 cm wide,
+# SB-008: furrows on the fields. Dimensions are those of the cited ard experiment (Kováčik et al. 2022: 8-12 cm deep, 4-6 cm wide,
 # 18-35 cm apart), typed in here on purpose so that editing the data cannot move the range with it. The source is cited and nothing
 # is claimed about an ard at Březnice.
 const FURROW_RANGES := {"depth_m": [0.08, 0.12], "width_m": [0.04, 0.06], "spacing_m": [0.18, 0.35]}
@@ -279,10 +279,15 @@ func _furrows(t, all: Dictionary) -> void:
 	const Schema = preload("res://museum/core/schema.gd")
 	var d: Dictionary = all.village.furrows
 	var n: int = all.village.fields.size()
+	if not d.has("fields"):      # file missing or unreadable: say so now instead of failing on the first d.fields
+		t.ok(false, "the furrows file is missing or unreadable (%s)" % str(all.errors))
+		return
 	t.ok(n > 0, "the village has fields")
 	t.eq(Array(Schema.validate_furrows(d, n)), [], "the furrows file validates")
 	t.eq(d.source_ranges, FURROW_RANGES, "the recorded ranges are the experiment's")
-	t.ok(str(d.source).contains("Kovačík") and str(d.source).contains("Archeologické rozhledy 74(2): 155–179"), "the furrows cite the experiment")
+	t.ok(str(d.source).contains("Kováčik") and str(d.source).contains("Archeologické rozhledy 74(2): 155–179"), "the furrows cite the experiment")
+	t.ok(not str(d.source).contains("Kovačík"), "the first author is spelled Kováčik, not Kovačík")
+	t.ok(str(d.source).contains("replica of Walle-type ards from Opava") and not str(d.source).contains("experiment"), "the source says what the article says: a replica of the Opava ards, no experiment placed at Opava")
 	t.eq(d.evidence, "R", "furrow dimensions are R (analogy), not E")
 	t.ok(str(d.note).contains("No ard"), "the note says that no ard is attested at Březnice")
 	for i in range(n):
@@ -293,7 +298,7 @@ func _furrows(t, all: Dictionary) -> void:
 	var ploughing: Dictionary = Schema.load_json("res://museum/data/crafts/ploughing.json")
 	var cited := false
 	for s in ploughing.card.sources:
-		cited = cited or str(s).contains("Kováčik") or str(s).contains("Kovačík")
+		cited = cited or str(s).contains("Kováčik") or str(s).contains("Kováčik")
 	t.ok(cited, "the ploughing card cites the same experiment")
 	# guards: each broken copy must be rejected (and the intact one was accepted above)
 	var broken := {
