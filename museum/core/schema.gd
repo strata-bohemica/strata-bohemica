@@ -129,9 +129,26 @@ static func validate_furrows(d: Dictionary, field_count: int) -> PackedStringArr
 		errors.append("furrows: no source")
 	for i in range(d.fields.size()):
 		var f: Dictionary = d.fields[i]
-		_need(f, ["dir", "depth_m", "width_m", "spacing_m"], "furrows field %d" % i, errors)
+		_need(f, ["dir", "depth_m", "width_m", "spacing_m", "seed", "spacing_jitter", "depth_jitter", "width_jitter", "wave", "phase", "gap", "end_wobble", "clods"], "furrows field %d" % i, errors)
 		if not errors.is_empty():
 			return errors
+		if f.wave.size() != 2 or f.phase.size() != 2 or not f.clods.has("density") or not f.clods.has("size_m"):
+			return PackedStringArray(["furrows field %d: wave needs 2 entries [amplitude m, wavelength m, phase], phase 2, clods density and size_m" % i])
+		for w in f.wave:
+			if w.size() != 3 or float(w[0]) < 0.0 or float(w[1]) < 1.0:
+				return PackedStringArray(["furrows field %d: a wave is [amplitude >= 0 m, wavelength >= 1 m, phase]" % i])
+		# the irregularity moves each dimension by up to its jitter: the extremes, not only the nominal value, stay inside the source range (SB-037)
+		var jit := {"depth_m": f.depth_jitter, "width_m": f.width_jitter, "spacing_m": f.spacing_jitter}
+		for key in jit:
+			var j := float(jit[key])
+			var r: Array = d.source_ranges.get(key, [])
+			if j < 0.0 or j >= 0.5:
+				errors.append("furrows field %d: %s jitter %s is not in [0, 0.5)" % [i, key, j])
+			elif r.size() == 2:
+				var lo := float(f[key]) * (1.0 - j) if key != "spacing_m" else float(f[key]) / (1.0 + j)
+				var hi := float(f[key]) * (1.0 + j) if key != "spacing_m" else float(f[key]) / (1.0 - j)
+				if lo < float(r[0]) - 1e-9 or hi > float(r[1]) + 1e-9:
+					errors.append("furrows field %d: %s %s with jitter %s reaches %.4f..%.4f, outside the source range %s" % [i, key, f[key], j, lo, hi, r])
 		for key in ["depth_m", "width_m", "spacing_m"]:
 			var r: Array = d.source_ranges.get(key, [])
 			if r.size() != 2 or float(f[key]) < float(r[0]) or float(f[key]) > float(r[1]):

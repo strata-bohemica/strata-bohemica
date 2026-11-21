@@ -7,6 +7,8 @@ const RINGS := 72
 const STRATA := [   # [bottom y, colour] from the base upwards; the top band runs up to the terrain surface
 	[-4.0, Color("#3b2f27")], [-3.0, Color("#8a6a2f")], [-2.4, Color("#4f7a6b")], [-2.2, Color("#a5532f")], [-0.8, Color("#6b5238")], [0.5, Color("#8a6b4b")]]
 
+const FurrowWave = preload("res://museum/core/furrow_wave.gd")
+
 var terrain
 var village: Dictionary
 var radius := 70.0
@@ -113,9 +115,13 @@ func _add_furrows() -> void:
 		mat.shader = shader
 		var dir := Vector2(f.dir[0], f.dir[1]).normalized()
 		mat.set_shader_parameter("across", Vector2(-dir.y, dir.x))        # the furrows run along dir; this is how they repeat
+		mat.set_shader_parameter("along", dir)
 		mat.set_shader_parameter("spacing", float(f.spacing_m))
 		mat.set_shader_parameter("width", float(f.width_m))
 		mat.set_shader_parameter("depth", float(f.depth_m))
+		var irr := FurrowWave.params(f)                                    # SB-037: the irregularity, from the field's record
+		for key in irr:
+			mat.set_shader_parameter(key, irr[key])
 		var inst := MeshInstance3D.new()
 		inst.mesh = _field_patch(k)
 		inst.material_override = mat

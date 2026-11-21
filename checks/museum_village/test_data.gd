@@ -301,6 +301,7 @@ func _furrows(t, all: Dictionary) -> void:
 			var v := float(d.fields[i][key])
 			t.ok(v >= FURROW_RANGES[key][0] and v <= FURROW_RANGES[key][1], "field %d: %s %.3f is inside the experiment's range" % [i, key, v])
 		t.ok(absf(Vector2(d.fields[i].dir[0], d.fields[i].dir[1]).length() - 1.0) < 1e-3, "field %d: the furrow direction is a unit vector" % i)
+	_furrow_irregularity(t, d, n)
 	var ploughing: Dictionary = Schema.load_json("res://museum/data/crafts/ploughing.json")
 	var cited := false
 	for s in ploughing.card.sources:
@@ -313,8 +314,108 @@ func _furrows(t, all: Dictionary) -> void:
 		"spacing 40 cm": func(c): c.fields[0].spacing_m = 0.40,
 		"no source": func(c): c.source = "",
 		"missing field": func(c): c.fields.pop_back(),
+		"spacing jitter 30 %": func(c): c.fields[0].spacing_jitter = 0.30,
+		"depth jitter 25 %": func(c): c.fields[1].depth_jitter = 0.25,
+		"no wave": func(c): c.fields[0].erase("wave"),
+		"one wave": func(c): c.fields[2].wave.pop_back(),
 	}
 	for name in broken:
 		var c: Dictionary = d.duplicate(true)
 		broken[name].call(c)
 		t.ok(not Schema.validate_furrows(c, n).is_empty(), "a furrow file with %s is rejected" % name)
+
+# SB-037: the furrows are irregular (hand and ox, not a ruler), provably, and the irregularity stays inside the source's limits.
+# The path, spacing and depth are walked with core/furrow_wave.gd, the CPU copy of the shader's formulas (the view test checks the shader
+# still carries them). Thresholds: a path std below 4 cm is a ruler to the eye (a groove is 4-6 cm wide), above 20 cm it would wander
+# nearly a spacing and the neighbours would cross.
+const PATH_STD_MIN := 0.04
+const PATH_STD_MAX := 0.20
+
+func _furrow_stats(f: Dictionary) -> Dictionary:
+	const FurrowWave = preload("res://museum/core/furrow_wave.gd")
+	var p := FurrowWave.params(f)
+	var sp := float(f.spacing_m)
+	var stds := []
+	var sp_min := 1e9
+	var sp_max := 0.0
+	var sp_all := []
+	var d_min := 1e9
+	var d_max := 0.0
+	var d_all := []
+	var w_min := 1e9
+	var w_max := 0.0
+	var fold := 1e9
+	for idx in [-9, 0, 9]:          # a few furrows, 60 m long each
+		var offs := []
+		for i in range(241):
+			offs.append(FurrowWave.path_offset_m(p, sp, idx, i * 0.25))
+		stds.append(_std(offs))
+	for ti in range(60):
+		var tt := ti * 1.7
+		var prev := FurrowWave.path_offset_m(p, sp, 0, tt)
+		for idx in range(1, 41):
+			var cur := FurrowWave.path_offset_m(p, sp, idx, tt)
+			var gap := sp + cur - prev
+			sp_min = minf(sp_min, gap)
+			sp_max = maxf(sp_max, gap)
+			sp_all.append(gap)
+			prev = cur
+			var s0 := float(idx)
+			var dp := float(f.depth_m) * FurrowWave.depth_factor(p, tt, s0)
+			d_min = minf(d_min, dp)
+			d_max = maxf(d_max, dp)
+			d_all.append(dp)
+			var wd := float(f.width_m) * FurrowWave.width_factor(p, tt, s0)
+			w_min = minf(w_min, wd)
+			w_max = maxf(w_max, wd)
+	return {"path_std": stds, "sp_min": sp_min, "sp_max": sp_max, "sp_cv": _std(sp_all) / _mean(sp_all), "d_min": d_min, "d_max": d_max, "d_cv": _std(d_all) / _mean(d_all), "w_min": w_min, "w_max": w_max}
+
+func _mean(a: Array) -> float:
+	var s := 0.0
+	for v in a:
+		s += float(v)
+	return s / a.size()
+
+func _std(a: Array) -> float:
+	var m := _mean(a)
+	var s := 0.0
+	for v in a:
+		s += (float(v) - m) * (float(v) - m)
+	return sqrt(s / a.size())
+
+func _furrow_irregularity(t, d: Dictionary, n: int) -> void:
+	const FurrowWave = preload("res://museum/core/furrow_wave.gd")
+	t.ok(str(d.irregularity).begins_with("F:") and str(d.irregularity).contains("nothing about the irregularity of a field is attested"), "the irregularity is marked as our choice (F), nothing attested")
+	var firsts := []
+	var seeds := {}
+	for i in range(n):
+		var f: Dictionary = d.fields[i]
+		var st := _furrow_stats(f)
+		for k in range(st.path_std.size()):
+			t.ok(st.path_std[k] > PATH_STD_MIN and st.path_std[k] < PATH_STD_MAX, "field %d furrow %d: the path wavers by a std of %.1f cm (inside %.0f-%.0f cm)" % [i, k, st.path_std[k] * 100.0, PATH_STD_MIN * 100.0, PATH_STD_MAX * 100.0])
+		t.ok(st.sp_min >= FURROW_RANGES.spacing_m[0] and st.sp_max <= FURROW_RANGES.spacing_m[1], "field %d: every spacing between neighbours (%.1f-%.1f cm) is inside the source's 18-35 cm" % [i, st.sp_min * 100.0, st.sp_max * 100.0])
+		t.ok(st.sp_cv > 0.03 and st.sp_cv < 0.15, "field %d: the spacing varies (coefficient of variation %.3f)" % [i, st.sp_cv])
+		t.ok(st.d_min >= FURROW_RANGES.depth_m[0] and st.d_max <= FURROW_RANGES.depth_m[1], "field %d: every depth (%.1f-%.1f cm) is inside the source's 8-12 cm" % [i, st.d_min * 100.0, st.d_max * 100.0])
+		t.ok(st.d_cv > 0.02, "field %d: the depth varies (coefficient of variation %.3f)" % [i, st.d_cv])
+		t.ok(st.w_min >= FURROW_RANGES.width_m[0] and st.w_max <= FURROW_RANGES.width_m[1], "field %d: every width (%.2f-%.2f cm) is inside the source's 4-6 cm" % [i, st.w_min * 100.0, st.w_max * 100.0])
+		t.ok(FurrowWave.max_spacing_jitter(FurrowWave.params(f)) <= float(f.spacing_jitter) + 1e-6, "field %d: the waves cannot fold neighbouring furrows over each other" % i)
+		t.ok(float(f.clods.density) > 0.0 and float(f.clods.density) <= 0.5 and float(f.gap) >= 0.0 and float(f.gap) <= 0.8 and float(f.end_wobble) >= 0.0 and float(f.end_wobble) <= 0.4, "field %d: clods, gap and end wobble are present and modest" % i)
+		# deterministic: the same record gives the same path
+		t.eq(FurrowWave.path_offset_m(FurrowWave.params(f), float(f.spacing_m), 3, 12.5), FurrowWave.path_offset_m(FurrowWave.params(f.duplicate(true)), float(f.spacing_m), 3, 12.5), "field %d: the same record gives the same path" % i)
+		seeds[int(f.seed)] = true
+		var series := []
+		for k in range(40):
+			series.append(FurrowWave.path_offset_m(FurrowWave.params(f), float(f.spacing_m), 0, k * 0.5))
+		firsts.append(series)
+		# positive control: the same field without waves is a ruler and the metric says so
+		var flat: Dictionary = f.duplicate(true)
+		flat.wave = [[0.0, 10.0, 0.0], [0.0, 4.0, 0.0]]
+		var fst := _furrow_stats(flat)
+		t.ok(fst.path_std[0] < 1e-6, "field %d: without the waves the path is straight (std %.6f), so the test above can fail" % [i, fst.path_std[0]])
+	t.eq(seeds.size(), n, "every field has its own seed")
+	for a in range(n):
+		for b in range(a + 1, n):
+			var diff := 0.0
+			for k in range(40):
+				diff += absf(firsts[a][k] - firsts[b][k])
+			t.ok(diff / 40.0 > 0.01, "fields %d and %d wander differently (mean path difference %.1f cm)" % [a, b, diff / 40.0 * 100.0])

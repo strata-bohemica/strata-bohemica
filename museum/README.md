@@ -41,7 +41,13 @@ The type A model has 6 758 triangles and the check allows it 7000 (type B: 5000)
 The fields carry furrows (SB-008): `data/villages/breznice-furrows.json` (written by `tools/build_furrows.py`) gives each field a direction and a
 depth, width and spacing inside the ranges measured with a replica of Walle-type ards from Opava (Kováčik et al. 2022: 8–12 cm, 4–6 cm, 18–35 cm; evidence R, a regional
 analogy; no ard or furrow is attested at Březnice). `view/furrows.gdshader` draws them from world position on one flat patch per field: no instances,
-no texture, and they fade out when the groove is narrower than ~1.5-3 screen pixels, so they show only when you zoom in (within about 15 m). The patch carries the ground's own colour, so a field looks the same as before wherever the pattern has faded.
+no texture. Since SB-037 they are not ruler-straight: each furrow's path wavers in two slow waves (about 10 m and 4 m long, a few cm high), the spacing, depth and width
+drift around the nominal value (jitter +-12 %, +-10 %, +-10 %, chosen so that the extremes still lie inside the 18–35, 8–12 and 4–6 cm ranges), some furrows have a shallow stretch,
+they start and stop unevenly at the field edge, and a few clods lie in the field. The numbers are per field in the data (written by `tools/build_furrows.py` from a per-field seed)
+and are our choice for a hand-and-ox look (evidence class F): the source gives dimensions, not how irregular a field was, and no ard or furrow is attested at Březnice.
+The profile is band-limited (blurred by the pixel footprint) and fades out when the period itself nears 2.5 screen pixels, so it reads to about 30 m at the default pitch (measured in a software-rendered web build: 34–35 m against 12–17 m before) and about 12 m at a low pitch
+(beyond that the shader does no work). The patch carries the ground's own colour, so a field looks the same as before wherever the pattern has faded.
+`core/furrow_wave.gd` is the CPU copy of the shader's formulas that the tests walk.
 A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
 node during named clips, or resting where it is put down (`core/craft_props.gd`).
 
