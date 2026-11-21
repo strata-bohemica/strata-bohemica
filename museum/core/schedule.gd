@@ -3,7 +3,7 @@ extends RefCounted
 ## Positions are in the homestead frame (the house's local frame: +Z is the door side).
 ##
 ## ActorState: {phase, skin, clip, clip_time, pos: Vector3, yaw: float (radians), props: {prop_id: {mode, node}},
-##              travel: {moving, stage}}
+##              travel: {moving, stage}, team: {pos, yaw, moving, hitch} (crafts with travel only)}
 ## skins: "walker" (idle/walk), "worker" (the craft's own rig), "sleeper" (lie down / sleep / get up).
 ##
 ## A craft with "travel" (the plough) moves while it works. Its position is a function of the time it has actually worked
@@ -14,6 +14,8 @@ const DayClock = preload("res://museum/core/day_clock.gd")
 const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
 const CraftProps = preload("res://museum/core/craft_props.gd")
 const Travel = preload("res://museum/core/travel.gd")
+const TEAM_HITCH_RAMP_S := 0.35 # s: the team is let out of the plough's hitch (and into it) this smoothly at the ends of each work segment
+const TEAM_TURN_S := 3.0        # s per half turn when the team goes back to the line start after work (F, our choice)
 
 var clock
 var period: Dictionary
@@ -34,6 +36,8 @@ var ground: Callable            # (x, z) -> y offset of the ground at that house
 var _commute: Array[Vector3] = []
 var _worked_before: Array = []  # per segment: worked seconds accumulated before it
 var _worked_after: Array = []
+var _first_work := 0            # segment index of the first and the last work segment of the day
+var _last_work := 0
 
 ## p_homestead may carry "site": {"start": [x,0,z], "dir": [x,0,z], "length": m, "commute": [[x,0,z], ...]} in the house frame.
 func _init(p_period: Dictionary, p_craft: Dictionary, p_homestead: Dictionary, p_anchors: Dictionary, p_durations: Dictionary, p_ground: Callable = Callable()) -> void:
@@ -77,9 +81,15 @@ func _block_len(name_: String) -> float:
 ## For every segment, how many seconds of real work came before it that day (enter and exit windows do not count).
 func _accumulate_worked() -> void:
 	var acc := 0.0
-	for seg in period.segments:
+	var first := true
+	for i in period.segments.size():
+		var seg: Dictionary = period.segments[i]
 		_worked_before.append(acc)
 		if seg.id == "work":
+			if first:
+				_first_work = i
+				first = false
+			_last_work = i
 			var len_: float = (float(seg["to"]) - float(seg["from"])) * clock.day_length
 			acc += maxf(0.0, len_ - _block_len("enter") - _block_len("exit"))
 		_worked_after.append(acc)
@@ -124,7 +134,61 @@ func state_at(t_clock: float) -> Dictionary:
 	state["props"] = CraftProps.state(craft, state.clip, state.clip_time, state.skin == "worker")
 	if not state.has("travel"):
 		state["travel"] = {"moving": false, "stage": ""}
+	if not travel.is_empty():
+		state["team"] = _team_at(t_clock + day_offset_s, state)
 	return state
+
+## The frame of the plough team (yoke and oxen, which stand in it as they stand in the ploughman's frame while he works):
+## the ploughman's own while he works or eats, so the team ploughs with him; at the line start before the day's work;
+## and after the day's work it goes back to the line start (turn to face it, walk, turn to face along the line), so the
+## next morning's work starts where the team already stands and the oxen never jump (SB-042).
+func _team_at(t: float, state: Dictionary) -> Dictionary:
+	var idx := segment_index_at(t)
+	if idx < _first_work:
+		var at := _travel_at(0.0)
+		return {"pos": at.pos, "yaw": at.yaw, "moving": false, "hitch": 0.0}
+	if idx <= _last_work:
+		return {"pos": state.pos, "yaw": state.yaw, "moving": bool(state.travel.moving), "hitch": _hitch_weight(idx, t)}
+	var u: float = (clock.fraction(t) - float(period.segments[_last_work]["to"])) * clock.day_length
+	return _team_going_home(maxf(u, 0.0))
+
+## u: seconds since the last work of the day ended.
+func _team_going_home(u: float) -> Dictionary:
+	var end := _travel_at(float(_worked_after[_last_work]))
+	var s_end: float = end.ev.s
+	var yaw0: float = end.yaw
+	var yaw_dir := line_yaw + PI                    # walking back to the line start
+	var to_dir := wrapf(yaw_dir - yaw0, -PI, PI) if s_end > 0.05 else 0.0
+	var t_a := TEAM_TURN_S * absf(to_dir) / PI
+	var t_walk := s_end / float(travel.speed) if s_end > 0.05 else 0.0
+	var yaw_walk := yaw0 + to_dir
+	var to_line := wrapf(line_yaw - yaw_walk, -PI, PI)
+	var t_c := TEAM_TURN_S * absf(to_line) / PI
+	var s := s_end
+	var yaw := yaw0
+	var moving := false
+	if u < t_a:
+		yaw = yaw0 + to_dir * smoothstep(0.0, 1.0, u / t_a)
+	elif u < t_a + t_walk:
+		s = s_end - float(travel.speed) * (u - t_a)
+		yaw = yaw_walk
+		moving = true
+	else:
+		s = 0.0 if t_walk > 0.0 else s_end
+		var k := (u - t_a - t_walk) / t_c if t_c > 0.0 else 1.0
+		yaw = yaw_walk + to_line * smoothstep(0.0, 1.0, k)
+	return {"pos": _on_ground(line_start + line_dir * s), "yaw": yaw, "moving": moving, "hitch": 0.0}
+
+## How much the team gives way to close the plough's hitch (the view shifts the team by this fraction of what the hitch needs):
+## 1 inside a work segment, 0 outside it, with a smooth ramp at both ends so the team does not jump when the plough (and the
+## ploughman's work pose) appears or goes: the clips leave the hand a few dm from where the walk holds it (SB-041).
+func _hitch_weight(idx: int, t: float) -> float:
+	var seg: Dictionary = period.segments[idx]
+	if seg.id != "work":
+		return 0.0
+	var seg_len: float = (float(seg["to"]) - float(seg["from"])) * clock.day_length
+	var local: float = (clock.fraction(t) - float(seg["from"])) * clock.day_length
+	return smoothstep(0.0, TEAM_HITCH_RAMP_S, local) * smoothstep(0.0, TEAM_HITCH_RAMP_S, seg_len - local)
 
 func _state_at(t: float) -> Dictionary:
 	var idx := segment_index_at(t)
