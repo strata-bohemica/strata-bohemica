@@ -46,6 +46,7 @@ void fragment() {
 	ALPHA = COLOR.a * 0.92;
 	float a = dot(wpos.xz, across) - across_o;
 	float f0 = fwidth(a) / spacing;             // furrow periods per pixel (taken outside the branches)
+	float fclod = length(fwidth(wpos.xz / clod.y));   // clod cells per pixel; a derivative needs uniform control flow, so it is taken here too, not inside the branches
 	if (f0 <= FADE_GONE * 1.1) {                // beyond that no furrow can show (a heading of 0.28 stretches the period by 4 % at most): no table reads, no clods
 		float tf = clamp((dot(wpos.xz, along) - tex_info.x) * tex_info.y, 0.0, tex_info.z - 1.001);
 		int i = int(tf);
@@ -98,7 +99,7 @@ void fragment() {
 				q += dot(q, q.yzx + 33.33);
 				vec3 r = fract((q.xxy + q.yzz) * q.zyx);
 				vec2 d = fract(p) - (0.3 + 0.4 * r.xy);
-				float bump = step(1.0 - clod.x, r.z) * (1.0 - smoothstep(0.0, 0.3, length(d))) * (1.0 - smoothstep(0.2, 0.5, length(fwidth(p))));
+				float bump = step(1.0 - clod.x, r.z) * (1.0 - smoothstep(0.0, 0.3, length(d))) * (1.0 - smoothstep(0.2, 0.5, fclod));
 				cl = bump;
 				n.xz += d * bump * 1.2;
 			}
