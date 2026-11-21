@@ -301,6 +301,7 @@ func _furrows(t, all: Dictionary) -> void:
 			var v := float(d.fields[i][key])
 			t.ok(v >= FURROW_RANGES[key][0] and v <= FURROW_RANGES[key][1], "field %d: %s %.3f is inside the experiment's range" % [i, key, v])
 		t.ok(absf(Vector2(d.fields[i].dir[0], d.fields[i].dir[1]).length() - 1.0) < 1e-3, "field %d: the furrow direction is a unit vector" % i)
+	_furrow_irregularity(t, d, n, all)
 	var ploughing: Dictionary = Schema.load_json("res://museum/data/crafts/ploughing.json")
 	var cited := false
 	for s in ploughing.card.sources:
@@ -313,8 +314,195 @@ func _furrows(t, all: Dictionary) -> void:
 		"spacing 40 cm": func(c): c.fields[0].spacing_m = 0.40,
 		"no source": func(c): c.source = "",
 		"missing field": func(c): c.fields.pop_back(),
+		"spacing 30 cm (outside the note's 24-28)": func(c): c.fields[0].spacing_m = 0.30,
+		"correlation 0.95": func(c): c.fields[1].rho = 0.95,
+		"arc 5 %": func(c): c.fields[0].arc = 0.05,
+		"turn-in 12 degrees": func(c): c.fields[2].turn_deg = 12.0,
+		"deep patches in every furrow": func(c): c.fields[2].patch_p = 0.9,
+		"no wander wavelength": func(c): c.fields[0].erase("wander_lambda_m"),
+		"clods 30 %": func(c): c.fields[1].clods.cover = 0.3,
 	}
 	for name in broken:
 		var c: Dictionary = d.duplicate(true)
 		broken[name].call(c)
 		t.ok(not Schema.validate_furrows(c, n).is_empty(), "a furrow file with %s is rejected" % name)
+
+# SB-037: the furrows are irregular (hand and ox, not a ruler), provably, and the irregularity stays inside the limits of the research
+# note E-furrow-irregularity.md. The tests walk the table that core/furrow_field.gd builds, which is exactly what the shader draws.
+# Limits are typed here on purpose, so that editing the model cannot move them with it.
+const FF = preload("res://museum/core/furrow_field.gd")
+const PERP_MIN := 0.18          # perpendicular distance between neighbours, m
+const GAP_LAT := [0.187, 0.35]  # lateral gap clamp, m
+const HEADING := 0.28
+const PATCH_BUDGET := 0.02
+
+func _polys(all: Dictionary) -> Array:
+	var out := []
+	for poly in all.village.fields:
+		var pv := PackedVector2Array()
+		for q in poly:
+			pv.append(Vector2(q[0], q[1]))
+		out.append(pv)
+	return out
+
+func _mean(a: Array) -> float:
+	var s := 0.0
+	for v in a:
+		s += float(v)
+	return s / maxf(a.size(), 1)
+
+func _std(a: Array) -> float:
+	var m := _mean(a)
+	var s := 0.0
+	for v in a:
+		s += (float(v) - m) * (float(v) - m)
+	return sqrt(s / maxf(a.size(), 1))
+
+## Smallest and largest perpendicular distance from the points of each row to the polyline of the row before it, m.
+func _perp(b: Dictionary) -> Vector2:
+	var lo := 1e9
+	var hi := 0.0
+	var n: int = b.n
+	for r in range(1, int(b.rows)):
+		for i in range(0, n, 2):
+			var px := i * FF.DS
+			var py: float = FF.at(b, r, i, 0) + r * b.spacing
+			var best := 1e9
+			for j in range(maxi(0, i - 10), mini(n - 1, i + 10)):
+				var ax := j * FF.DS
+				var ay: float = FF.at(b, r - 1, j, 0) + (r - 1) * b.spacing
+				var vx := FF.DS
+				var vy: float = FF.at(b, r - 1, j + 1, 0) + (r - 1) * b.spacing - ay
+				var u := clampf(((px - ax) * vx + (py - ay) * vy) / (vx * vx + vy * vy), 0.0, 1.0)
+				best = minf(best, Vector2(px - ax - u * vx, py - ay - u * vy).length())
+			lo = minf(lo, best)
+			hi = maxf(hi, best)
+	return Vector2(lo, hi)
+
+func _lateral(b: Dictionary) -> Vector2:
+	var lo := 1e9
+	var hi := 0.0
+	for r in range(1, int(b.rows)):
+		for i in range(int(b.n)):
+			var g: float = b.spacing + FF.at(b, r, i, 0) - FF.at(b, r - 1, i, 0)
+			lo = minf(lo, g)
+			hi = maxf(hi, g)
+	return Vector2(lo, hi)
+
+func _heading(b: Dictionary) -> float:
+	var m := 0.0
+	for r in range(int(b.rows)):
+		for i in range(int(b.n) - 1):
+			m = maxf(m, absf(FF.at(b, r, i + 1, 0) - FF.at(b, r, i, 0)) / FF.DS)
+	return m
+
+## Sd of the wander (offset minus the shared shape) over the furrows from k = lo to hi of the field, mid-field only; `drift` adds k * drift (the control).
+func _wander_sd(b: Dictionary, k_lo: int, k_hi: int, drift: float = 0.0) -> float:
+	var vals := []
+	for k in range(k_lo, k_hi):
+		for i in range(int(b.n) / 3, int(b.n) * 2 / 3, 3):
+			vals.append(FF.at(b, k + int(b.margin), i, 0) - b.y[i] + k * drift)
+	return _std(vals)
+
+func _furrow_irregularity(t, d: Dictionary, n: int, all: Dictionary) -> void:
+	t.ok(str(d.irregularity).begins_with("F:") and str(d.irregularity).contains("nothing about the irregularity of a field is attested") and str(d.irregularity).contains("E-furrow-irregularity"), "the irregularity is marked as our choice (F), cites the research note, nothing attested")
+	t.eq(d.gap_clamp_m, GAP_LAT, "the recorded gap clamp is the note's 18.7-35 cm")
+	t.eq(float(d.heading_tan_max), HEADING, "the recorded heading bound is the note's 0.28")
+	var polys := _polys(all)
+	var seeds := {}
+	var end_offs := []
+	var patch_fields := 0
+	var gap_fields := 0
+	var firsts := []
+	for i in range(n):
+		var f: Dictionary = d.fields[i]
+		var b := FF.build(f, polys[i])
+		var tag := "field %d" % i
+		seeds[int(f.seed)] = true
+		# spacing: perpendicular >= 18 cm, lateral inside the clamp, never above 35 cm
+		var pg := _perp(b)
+		t.ok(pg.x >= PERP_MIN - 1e-4 and pg.y <= GAP_LAT[1] + 1e-4, "%s: the perpendicular distance between neighbours (%.2f-%.2f cm) stays inside 18-35 cm" % [tag, pg.x * 100.0, pg.y * 100.0])
+		var lg := _lateral(b)
+		t.ok(lg.x >= GAP_LAT[0] - 1e-4 and lg.y <= GAP_LAT[1] + 1e-4, "%s: the lateral gap (%.2f-%.2f cm) stays inside the clamp 18.7-35 cm" % [tag, lg.x * 100.0, lg.y * 100.0])
+		var hd := _heading(b)
+		t.ok(hd <= HEADING + 1e-4 and hd > 0.01, "%s: the heading of every furrow (tan %.3f) stays under 0.28 and the furrows are not parallel to the axis" % [tag, hd])
+		# stationary wander: the same sd for the first and the last furrows, and not zero; it is the wander, not the field, that makes the spread
+		var k_all := int(b.rows) - 2 * int(b.margin) - 1
+		var third := k_all / 3
+		var sd_a := _wander_sd(b, 0, third)
+		var sd_b := _wander_sd(b, k_all - third, k_all)
+		var sd_all := _wander_sd(b, 0, k_all)
+		t.ok(sd_all > 0.01 and sd_all < 2.0 * b.sigma_w, "%s: the furrows wander (sd %.1f cm; the model's sigma_w %.1f cm)" % [tag, sd_all * 100.0, b.sigma_w * 100.0])
+		t.ok(sd_b < 1.8 * sd_a + 0.01 and sd_a < 1.8 * sd_b + 0.01, "%s: the wander does not grow across the field (sd %.1f cm in the first third, %.1f cm in the last)" % [tag, sd_a * 100.0, sd_b * 100.0])
+		# positive controls: the unclamped build breaks the gap limit, a drifting copy breaks the stationarity test
+		t.ok(_wander_sd(b, k_all - third, k_all, 0.01) > 1.8 * sd_a + 0.01, "%s: a field that drifts by 1 cm per furrow fails the stationarity test, so the test can fail" % tag)
+		# determinism
+		t.eq(FF.build(f.duplicate(true), polys[i]).data, b.data, "%s: the same record gives the same table" % tag)
+		# depth, width, patches, gaps
+		var live := 0
+		var patch_n := 0
+		var gaps_n := 0
+		var worst := {"d_lo": 1e9, "d_hi": 0.0, "w_lo": 1e9, "w_hi": 0.0, "pd": 0.0, "pw": 0.0}
+		var depths := []
+		for r in range(int(b.rows)):
+			var row_live := 0
+			var row_patch := 0
+			var s_t: float = b.spans[2 * r]
+			var e_t: float = b.spans[2 * r + 1]
+			for k in range(int(b.n)):
+				var dp := FF.at(b, r, k, 1)
+				var wd := FF.at(b, r, k, 2)
+				var tt: float = b.t0 + k * FF.DS
+				if b.patch[r * int(b.n) + k] == 1:
+					row_patch += 1
+					worst.pd = maxf(worst.pd, dp)
+					worst.pw = maxf(worst.pw, wd)
+				else:
+					worst.w_lo = minf(worst.w_lo, wd)
+					worst.w_hi = maxf(worst.w_hi, wd)
+					worst.d_hi = maxf(worst.d_hi, dp)
+					if b.live[r * int(b.n) + k] >= 1.0:       # the taper at a start, an end and a lifted gap is not a depth
+						row_live += 1
+						worst.d_lo = minf(worst.d_lo, dp)
+						depths.append(dp)
+					elif dp <= 0.0 and tt > s_t + 0.5 and tt < e_t - 0.5:
+						gaps_n += 1
+			patch_n += row_patch
+			t.ok(row_patch * FF.DS <= PATCH_BUDGET * maxf(e_t - s_t, 0.0) + FF.DS, "%s row %d: the deep patch (%.2f m) is within 2 %% of the furrow (%.1f m)" % [tag, r, row_patch * FF.DS, e_t - s_t]) if row_patch > 0 else null
+			live += row_live
+			end_offs.append(b.start_off[r])
+			end_offs.append(b.end_off[r])
+		t.ok(worst.d_lo >= 0.08 - 1e-6 and worst.d_hi <= 0.12 + 1e-6, "%s: every normal depth (%.2f-%.2f cm) is inside 8-12 cm" % [tag, worst.d_lo * 100.0, worst.d_hi * 100.0])
+		t.ok(worst.w_lo >= 0.04 - 1e-6 and worst.w_hi <= 0.06 + 1e-6, "%s: every normal width (%.2f-%.2f cm) is inside 4-6 cm" % [tag, worst.w_lo * 100.0, worst.w_hi * 100.0])
+		t.ok(worst.pd <= 0.18 + 1e-6 and worst.pw <= 0.08 + 1e-6, "%s: deep patches reach at most %.1f cm deep, %.1f cm wide (limits 18, 8)" % [tag, worst.pd * 100.0, worst.pw * 100.0])
+		t.ok(live > 1000 and _std(depths) > 0.002, "%s: the depth varies (sd %.2f cm over %d samples)" % [tag, _std(depths) * 100.0, live])
+		patch_fields += 1 if patch_n > 0 else 0
+		gap_fields += 1 if gaps_n > 0 else 0
+		var series := []
+		for k in range(0, int(b.n), 4):
+			series.append(FF.at(b, int(b.margin) + 5, k, 0))
+		firsts.append(series)
+		# unclamped control
+		var raw := _lateral(FF.build(f, polys[i], {"clamp": false}))
+		var ws := 0.0                  # the wander alone (clamp off): its slope is limited to 0.05
+		var rb := FF.build(f, polys[i], {"clamp": false})
+		for r in range(int(rb.rows)):
+			for k in range(int(rb.n) - 1):
+				ws = maxf(ws, absf((FF.at(rb, r, k + 1, 0) - rb.y[k + 1]) - (FF.at(rb, r, k, 0) - rb.y[k])) / FF.DS)
+		t.ok(ws <= 0.05 + 1e-4 and ws > 0.005, "%s: the wander slope (%.3f) is limited to 0.05" % [tag, ws])
+		if i == 0:
+			t.ok(raw.x < GAP_LAT[0] - 1e-3 or raw.y > GAP_LAT[1] + 1e-3, "without the clamp the lateral gap (%.1f-%.1f cm) leaves 18.7-35 cm, so the clamp test can fail" % [raw.x * 100.0, raw.y * 100.0])
+	t.eq(seeds.size(), n, "every field has its own seed")
+	t.ok(patch_fields >= 1, "a deep patch occurs in the village (the limits above were exercised)")
+	t.ok(gap_fields >= 1, "a lifted gap occurs in the village")
+	t.ok(_std(end_offs) > 0.3 and _std(end_offs) < 0.7 and absf(_mean(end_offs)) < 0.1, "start and end offsets: sd %.2f m, mean %.2f m" % [_std(end_offs), _mean(end_offs)])
+	var emax := 0.0
+	for e in end_offs:
+		emax = maxf(emax, absf(e))
+	t.ok(emax <= 1.0 + 1e-6, "no furrow starts or ends more than 1 m from the mean end line (max %.2f m)" % emax)
+	for a in range(n):
+		for c in range(a + 1, n):
+			var diff := 0.0
+			for k in range(mini(firsts[a].size(), firsts[c].size())):
+				diff += absf(firsts[a][k] - firsts[c][k])
+			t.ok(diff / firsts[a].size() > 0.005, "fields %d and %d differ (mean path difference %.1f cm)" % [a, c, diff / firsts[a].size() * 100.0])

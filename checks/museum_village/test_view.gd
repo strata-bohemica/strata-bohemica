@@ -97,6 +97,22 @@ func _initialize() -> void:
 	var shader_src := FileAccess.get_file_as_string("res://museum/view/furrows.gdshader")
 	t.ok(shader_src.contains("ALBEDO = COLOR.rgb * mix(vec3(1.0), shade_mul") and not shader_src.contains("source_color"), "the furrow shader only darkens the ground colour")
 
+	# SB-037: the shader reads the table that core/furrow_field.gd builds from the record (no formula is copied), and does no table
+	# reads where the pattern has faded
+	for frag in ["texelFetch(furrow_tex", "inversesqrt(1.0 + slope * slope)", "if (vis > 0.0)", "if (f0 <= FADE_GONE * 1.1)", "uniform sampler2D furrow_tex : filter_nearest"]:
+		t.ok(shader_src.contains(frag), "the furrow shader carries: %s" % frag.left(40))
+	var FF = preload("res://museum/core/furrow_field.gd")
+	for k in range(patches.size()):
+		var mk := (patches[k] as MeshInstance3D).material_override as ShaderMaterial
+		var tb: Dictionary = FF.build(all.village.furrows.fields[k], view.terrain_view._field_polys[k])
+		var tex := mk.get_shader_parameter("furrow_tex") as ImageTexture
+		t.ok(tex != null and tex.get_width() == int(tb.n) and tex.get_height() == int(tb.rows), "field %d: the shader has the furrow table (%d x %d)" % [k, tb.n, tb.rows])
+		t.eq(tex.get_image().get_data(), (tb.data as PackedFloat32Array).to_byte_array(), "field %d: the texture is the table, texel for texel" % k)
+		var want := FF.uniforms(tb)
+		for key in want:
+			t.eq(mk.get_shader_parameter(key), want[key], "field %d: the shader takes %s from the table" % [k, key])
+		t.ok(mk.get_shader_parameter("along") != null and absf(mk.get_shader_parameter("across").dot(mk.get_shader_parameter("along"))) < 1e-4, "field %d: along is perpendicular to across" % k)
+
 	# every homestead, through the day: one skin visible, standing where the schedule says; held props sit in the hand
 	var max_grip := 0.0
 	var max_grip_ard := 0.0

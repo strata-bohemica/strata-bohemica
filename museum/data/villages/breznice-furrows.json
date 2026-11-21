@@ -17,33 +17,99 @@
    0.35
   ]
  },
+ "irregularity": "F: stationary wander of each furrow, a shared gentle arc and end turn-in, depth, width, U/V profile, deep patches, lifted gaps, uneven ends and clods follow research note E-furrow-irregularity (SB-037); every amplitude and share is our choice, nothing about the irregularity of a field is attested, nor any ard at Březnice",
+ "deep_patch": {
+  "depth_m": [
+   0.12,
+   0.18
+  ],
+  "width_max_m": 0.08,
+  "max_share": 0.02,
+  "length_m": [
+   0.3,
+   1.0
+  ]
+ },
+ "gap_clamp_m": [
+  0.187,
+  0.35
+ ],
+ "heading_tan_max": 0.28,
  "fields": [
   {
    "dir": [
     0.3511,
     -0.9363
    ],
-   "depth_m": 0.089,
-   "width_m": 0.059,
-   "spacing_m": 0.201
+   "seed": 37000,
+   "spacing_m": 0.259,
+   "depth_m": 0.1005,
+   "width_m": 0.05013,
+   "wet": 0.95,
+   "rho": 0.739,
+   "wander_lambda_m": 13.4,
+   "arc": 0.0112,
+   "turn_deg": 5.63,
+   "turn_len_m": 3.76,
+   "lambda_m": 8.66,
+   "u_share": 0.48,
+   "patch_p": 0.143,
+   "interrupt_per_10m": 0.86,
+   "interrupt_gap_m": 0.59,
+   "clods": {
+    "cover": 0.022,
+    "size_m": 0.196
+   }
   },
   {
    "dir": [
     -0.9512,
     0.3085
    ],
-   "depth_m": 0.108,
-   "width_m": 0.042,
-   "spacing_m": 0.222
+   "seed": 37001,
+   "spacing_m": 0.242,
+   "depth_m": 0.1009,
+   "width_m": 0.05023,
+   "wet": 0.0,
+   "rho": 0.735,
+   "wander_lambda_m": 15.4,
+   "arc": 0.0245,
+   "turn_deg": 5.71,
+   "turn_len_m": 2.13,
+   "lambda_m": 9.96,
+   "u_share": 0.57,
+   "patch_p": 0.13,
+   "interrupt_per_10m": 0.94,
+   "interrupt_gap_m": 0.79,
+   "clods": {
+    "cover": 0.035,
+    "size_m": 0.162
+   }
   },
   {
    "dir": [
     0.0512,
     0.9987
    ],
-   "depth_m": 0.12,
-   "width_m": 0.044,
-   "spacing_m": 0.289
+   "seed": 37002,
+   "spacing_m": 0.259,
+   "depth_m": 0.0966,
+   "width_m": 0.04915,
+   "wet": 0.0,
+   "rho": 0.758,
+   "wander_lambda_m": 12.03,
+   "arc": -0.0117,
+   "turn_deg": 5.52,
+   "turn_len_m": 3.06,
+   "lambda_m": 5.3,
+   "u_share": 0.34,
+   "patch_p": 0.102,
+   "interrupt_per_10m": 0.79,
+   "interrupt_gap_m": 0.37,
+   "clods": {
+    "cover": 0.076,
+    "size_m": 0.183
+   }
   }
  ]
 }
