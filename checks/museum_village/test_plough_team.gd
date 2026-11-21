@@ -16,6 +16,9 @@ const MAX_TILT_DEG := 20.5
 const MAX_FIELD_SLOPE := 0.20   # rise over run of the steepest test line (11 degrees; the shipped fields are gentler, up to about 6)
 const MAX_HITCH_M := 0.03       # m: ard hitch to yoke hitch while walking on the shipped fields (the ard is aimed at the team about the grip)
 const MAX_HITCH_STEEP_M := 0.20 # m: the same on the 11 degree stress lines, where the 20 degree pitch limit of the aiming is reached (0.177 m)
+const FRAME_S := 1.0 / 60.0
+const MAX_FRAME_STEP_M := 0.15  # m: any team member in one 1/60 s frame; the swing round the ploughman in the turn is the fastest thing (0.135 m)
+const MAX_START_STEP_M := 0.02  # m: the same at the first frame of work (the oxen were 5.93 m off)
 const MAX_STEP_M := 0.02        # m: change of an ox root's height over the ground within one 0.1 s sample (the ground itself changes as the team swings round)
 
 var all: Dictionary
@@ -164,6 +167,61 @@ func _run(t, label: String, sched, max_hitch: float = MAX_HITCH_M) -> Dictionary
 	t.ok(stats.hitch < max_hitch, "%s: the plough's hitch meets the yoke's while the team walks, within %.0f cm (worst %.4f m, %s)" % [label, max_hitch * 100.0, stats.hitch, stats.at_hitch])
 	return stats
 
+## SB-042: the oxen never jump, through the night and at the start of work every day. Plays the schedule continuously at 1/60 s
+## over two days (the team stood where the ploughman last worked all night and jumped ~5.9 m at the start of work each day).
+func _continuity(t, view_info: Dictionary) -> void:
+	var sched = view_info.schedule
+	var day: float = float(all.period.day_length_s)
+	var frames := int(2.0 * day / FRAME_S)
+	var prev := []
+	var prev_phase := ""
+	var worst := 0.0
+	var worst_at := 0.0
+	var start_worst := 0.0
+	var starts := 0
+	var rest_gap := INF
+	for i in frames:
+		var tm := float(i) * FRAME_S
+		var st: Dictionary = sched.state_at(tm)
+		hv.apply(st, 0.0, false, tm)
+		var now := []
+		for ox in hv.animals:
+			now.append(ox.root.global_position)
+		now.append(hv.props.yoke.nodes[0].global_position)
+		if not prev.is_empty():
+			var step := 0.0
+			for k in now.size():
+				step = maxf(step, (now[k] as Vector3).distance_to(prev[k]))
+			if step > worst:
+				worst = step
+				worst_at = tm
+			if st.phase == "work" and prev_phase != "work":
+				starts += 1
+				start_worst = maxf(start_worst, step)
+		if st.phase == "walk_out" and rest_gap == INF:
+			rest_gap = hv.to_local(hv.animals[0].root.global_position).distance_to(sched.line_start)
+		prev = now
+		prev_phase = st.phase
+	print("continuity, two days at 1/60 s: max team step %.4f m (t=%.2f), at work start %.4f m (%d starts)" % [worst, worst_at, start_worst, starts])
+	t.ok(starts == 4, "continuity: four work starts in two days (%d)" % starts)
+	t.ok(worst <= MAX_FRAME_STEP_M, "continuity: no team member moves more than %.2f m in one 1/60 s frame, day, night and day boundary included (worst %.4f m at t=%.2f)" % [MAX_FRAME_STEP_M, worst, worst_at])
+	t.ok(start_worst <= MAX_START_STEP_M, "continuity: the oxen do not jump at the start of work (%.4f m, limit %.2f)" % [start_worst, MAX_START_STEP_M])
+	t.ok(rest_gap < 3.5, "continuity: before the day's work the first ox stands at the line start (%.2f m from it)" % rest_gap)
+	# positive control: the old behaviour (the team posed from the worker skin, which stops updating after work) does jump, and the check sees it
+	hv.team_from_schedule = false
+	var old_worst := 0.0
+	var old_prev: Vector3 = Vector3.INF
+	var coarse := 0.25
+	for i in int(2.0 * day / coarse):
+		var tm := float(i) * coarse
+		hv.apply(sched.state_at(tm), 0.0, false, tm)
+		var p: Vector3 = hv.animals[0].root.global_position
+		if old_prev != Vector3.INF:
+			old_worst = maxf(old_worst, p.distance_to(old_prev))
+		old_prev = p
+	hv.team_from_schedule = true
+	t.ok(old_worst > 5.0, "positive control: with the team posed from the stale worker skin the check sees the jump (%.2f m in 0.25 s)" % old_worst)
+
 ## The 20 degree clamp on how far the team leans: a synthetic plane steeper than the clamp (35 degrees), where an unclamped
 ## lean (or one clamped at 30) would show. Walking state of the shipped field, with the homestead's ground replaced.
 func _clamp_check(t, sched) -> void:
@@ -202,6 +260,7 @@ func _initialize() -> void:
 	t.ok(absf(bone_to_sole - 0.27) < 0.02, "hoof bone sits 0.27 m over the sole at rest (%.3f)" % bone_to_sole)
 	t.ok(clip_range.walk.x > -0.08 and clip_range.walk.y < 0.05, "the walk clip's own hoof range on flat ground is small (%s)" % [clip_range.walk])
 
+	_continuity(t, view.homesteads[1])
 	_run(t, "shipped field", view.homesteads[1].schedule)
 	_clamp_check(t, view.homesteads[1].schedule)
 	var steep := _steepest()

@@ -26,8 +26,10 @@ var _skin_nodes: Dictionary = {}    # "node name" -> Node3D on the worker skin
 var ground := Callable()            # (x, z) in this frame -> ground height in this frame; the plough team stands on it
 var aim_plough := true              # off only to prove in a check that the aiming matters
 var team_follows_ground := true     # off only to prove in a check that the guard matters
+var team_from_schedule := true      # off only to prove in a check that the guard matters: the team then stands where the ploughman last worked (the old behaviour)
 var _clip_len: Dictionary = {}      # the ploughman's clip -> length (the fade of the aiming over the enter and exit clips)
 var _team_local: Dictionary = {}    # node -> its transform in the ploughman's frame while the plough runs level (see _calibrate_team)
+var _team_frame := Transform3D.IDENTITY   # the frame the team stands in, this frame: the schedule's state.team (position on the ground, heading only)
 
 ## p_ground: (x, z) in this homestead's frame -> ground height in it (the schedule's own ground function), so a plough team can stand on it.
 func build(homestead: Dictionary, craft: Dictionary, p_ground: Callable = Callable()) -> void:
@@ -157,11 +159,14 @@ func _calibrate_team(craft: Dictionary, homestead: Dictionary) -> void:
 	for n in team:
 		_team_local[n] = back * n.global_transform
 
-## World pose of a team member: its place in the ploughman's frame (his heading only), put on the ground under it and
-## leaned to the slope (at most MAX_TEAM_TILT_DEG). Smooth in time because the ground and its slope are.
+## World pose of a team member: its place in the team's frame (the ploughman's while he works; the schedule moves it between
+## the work), put on the ground under it and leaned to the slope (at most MAX_TEAM_TILT_DEG). Smooth in time because the
+## frame, the ground and its slope are. The worker skin's own transform is not used: it stops being updated when the
+## ploughman stops working, and the team stood where work ended all night (SB-042).
 func _team_pose(n: Node3D) -> Transform3D:
 	var worker: Node3D = skins.worker.root
-	var flat: Transform3D = Transform3D(Basis(Vector3.UP, worker.rotation.y), worker.position) * (_team_local[n] as Transform3D)   # this frame
+	var frame := _team_frame if team_from_schedule else Transform3D(Basis(Vector3.UP, worker.rotation.y), worker.position)
+	var flat: Transform3D = frame * (_team_local[n] as Transform3D)   # this frame
 	if team_follows_ground and ground.is_valid():
 		var p := flat.origin
 		var h: float = ground.call(p.x, p.z)
@@ -173,7 +178,7 @@ func _team_pose(n: Node3D) -> Transform3D:
 		var angle := minf(Vector3.UP.angle_to(up), deg_to_rad(MAX_TEAM_TILT_DEG))
 		var axis := Vector3.UP.cross(up)
 		var lean := Basis() if axis.length() < 1e-6 else Basis(axis.normalized(), angle)
-		flat = Transform3D(lean * flat.basis, Vector3(p.x, h + p.y - worker.position.y, p.z))
+		flat = Transform3D(lean * flat.basis, Vector3(p.x, h + p.y - frame.origin.y, p.z))
 	return get_global_transform() * flat
 
 ## The plough stays hitched to the team while it walks (SB-036). The team stands on the ground under it (_team_pose) while the ard
@@ -298,6 +303,8 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 				main.global_transform = (holder.find_child(str(entry.rest_node), true, false) as Node3D).global_transform
 			_:
 				main.visible = false
+	if not _team_local.is_empty() and state.has("team"):
+		_team_frame = Transform3D(Basis(Vector3.UP, float(state.team.yaw)), state.team.pos)
 	for id in props:                                  # props that ride on other props (second pass: the ard has moved by now)
 		var e: Dictionary = props[id]
 		if e.has("dynamic"):
@@ -323,7 +330,7 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 			else:
 				var anchor := _anchor_transform(str(a.def.on), str(a.def.node))
 				a.root.global_transform = anchor * Transform3D(Basis(Vector3.UP, deg_to_rad(float(a.def.get("yaw_deg", 0.0)))), Vector3.ZERO)
-			if state.travel.moving:
+			if bool(state.get("team", state.travel).moving):
 				pose = {"clip": "walk", "clip_time": fposmod(time * 0.75, float(a.lengths.get("walk", 1.0)))}
 			else:
 				pose = {"clip": "idle", "clip_time": fposmod(time, float(a.lengths.get("idle", 2.0)))}
