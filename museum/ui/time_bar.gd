@@ -93,7 +93,8 @@ func _init() -> void:
 	add_child(volume_slider)
 
 ## On a phone the speed buttons and the clock label make way for the slider, and "Řez domem" becomes "Řez"
-## (`ui.cutaway_short`; the full name stays as the tooltip) so that 320 px wide screens fit in Czech too.
+## (`ui.cutaway_short`; the full name stays as the tooltip) only where the full name does not fit (see `_cutaway_fits`),
+## so that 320 px wide screens fit in Czech too.
 ## The sound control shrinks to a speaker icon of the same width in both states (the words "Zvuk"/"Ztlumeno" cost
 ## 46/83 px, more than the slider could spare), NARROW_TOUCH px wide and the bar NARROW_BAR_HEIGHT px high so that it is
 ## a real touch target; the day slider keeps a floor width and the bar uses tighter gaps.
@@ -115,8 +116,19 @@ func set_narrow(narrow: bool) -> void:
 
 func _refresh_labels() -> void:
 	follow_button.text = I18n.tr_("ui.follow", _lang)
-	cutaway_button.text = I18n.tr_("ui.cutaway_short" if _narrow else "ui.cutaway", _lang)
-	cutaway_button.tooltip_text = I18n.tr_("ui.cutaway", _lang) if _narrow else ""
+	var short := _narrow and not _cutaway_fits()
+	cutaway_button.text = I18n.tr_("ui.cutaway_short" if short else "ui.cutaway", _lang)
+	cutaway_button.tooltip_text = I18n.tr_("ui.cutaway", _lang) if short else ""
+
+## Whether the bar still fits its parent (minus the phone margins) with the full cutaway name. The width the bar
+## needs is its current minimum corrected by the difference between the full and the shown label, so the answer does
+## not depend on which label is shown now (no flicker at the threshold).
+func _cutaway_fits() -> bool:
+	var font := cutaway_button.get_theme_font("font")
+	var font_size := cutaway_button.get_theme_font_size("font_size")
+	var full := font.get_string_size(I18n.tr_("ui.cutaway", _lang), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	var shown := font.get_string_size(cutaway_button.text, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+	return get_combined_minimum_size().x + (full - shown) <= get_parent_area_size().x - 2.0 * NARROW_MARGIN
 
 func _refresh_sound_button() -> void:
 	var label := I18n.tr_("ui.muted" if _muted else "ui.sound", _lang)

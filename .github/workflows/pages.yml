@@ -102,8 +102,11 @@ jobs:
           echo "::endgroup::"
           echo "web-audio: FAILED on both attempts"
           exit 1
-      - name: Hidden-tab check (Chromium, headless; report-only, SB-034)
-        continue-on-error: true       # reports; does not fail the job until it has proven stable in CI
+      - name: Hidden-tab check (Chromium, headless; SB-034, SB-043)
+        # Runs even when the output check above failed (not when the run was cancelled), and a failure turns the job red. The job
+        # stays report-only the way the whole `web-audio` job is: `deploy` does not need it and it is not a required status check
+        # (main requires only `museum-tests`), so a red job is visible without blocking the deploy or a merge.
+        if: ${{ !cancelled() }}
         run: |
           cd "$RUNNER_TEMP/pw"
           export CHROMIUM_PATH="$(command -v google-chrome || command -v chromium)"
