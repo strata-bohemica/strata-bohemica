@@ -32,6 +32,15 @@ const { srv, port } = await serve(dir);
 const browser = await launch(chromium);
 const results = [];
 const check = (name, ok, detail) => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'} ${name}: ${detail}`); };
+// Every window is evaluated and reported (SB-043): a failed check does not stop the run, a thrown error becomes a FAIL line of its phase and the next phase
+// still runs, and a window with no audio readings (the tap log stalled) is a FAIL with peak NaN after 15 s, never a 60 s Playwright timeout.
+// A last-resort watchdog ends the process with FAILED if the whole run hangs (a healthy run takes about 3 minutes).
+const WATCHDOG_MS = Number(process.env.CHECK_HIDDEN_WATCHDOG_MS ?? 540000);
+const watchdog = setTimeout(() => { console.log(`FAIL watchdog: the run took longer than ${WATCHDOG_MS / 1000} s`); console.log('FAILED'); process.exit(1); }, WATCHDOG_MS);
+watchdog.unref();
+const phase = async (name, fn) => {
+  try { await fn(); } catch (e) { check(name, false, `phase stopped by an error: ${String(e).split('\n')[0].slice(0, 200)}`); }
+};
 
 // the long (ambient loop) buffer sources that are playing: started and not yet ended. A loop is doubled when one buffer has two of them at once
 // (the engine copies the buffer at every play, so two sources are told apart by their content: length and 32 samples from the middle; the two copies of
@@ -58,7 +67,8 @@ try {
   await page.waitForTimeout(2500);
   const now = () => page.evaluate(() => window.__ctxs[0].currentTime);
   const peakBetween = async (t0, t1) => {                            // peak at the destination over audio time t0..t1 (the log may arrive late after a freeze)
-    await page.waitForFunction((t) => (window.__tap.log.at(-1)?.[0] ?? 0) >= t, t1, { timeout: 60000, polling: 100 });
+    try { await page.waitForFunction((t) => (window.__tap.log.at(-1)?.[0] ?? 0) >= t, t1, { timeout: 15000, polling: 100 }); }
+    catch { return NaN; }                                            // no readings up to t1: every comparison with NaN fails, so the window is reported FAIL
     return page.evaluate(([a, b]) => Math.max(0, ...window.__tap.log.filter(([at]) => at >= a && at <= b).map(([, p]) => p)), [t0, t1]);
   };
   const window3 = async () => { const t0 = await now(); return peakBetween(t0, t0 + 3); };
@@ -93,6 +103,7 @@ try {
 
   // visible: the ambient arrives (rendering the loops takes about 15 s after the click)
   let visible = 0;
+  await phase('visible', async () => {
   for (const until = Date.now() + 300000; Date.now() < until && visible < 0.005;) visible = await window3();
   for (let i = 0; i < 3; i++) visible = Math.max(visible, await window3());
   check('ambient', visible >= 0.005, `visible: ambient peak ${visible.toFixed(4)} (expected >= 0.005)`);
@@ -103,8 +114,9 @@ try {
   check('loops control', (await doubled()) >= 1, 'a deliberately doubled 10 s loop (two sources, a copy of the same content) is counted (the detector works)');
   await page.evaluate(() => { try { window.__dup.forEach((d) => d.stop()); } catch {} });
   await page.waitForTimeout(500);
+  });
 
-  for (const mode of ['visibility', 'blur', 'both']) {
+  for (const mode of ['visibility', 'blur', 'both']) await phase(mode, async () => {
     await hide(mode);
     await page.waitForTimeout(1500);                                 // Master would have faded out over 0.5 s at the latest
     const hidden = await window3();
@@ -116,9 +128,10 @@ try {
     check(`resume ${mode}`, back >= visible * 0.5, `shown again: peak ${back.toFixed(4)} (visible ${visible.toFixed(4)}, expected >= 0.5x: no stuck mute)`);
     const dup = await doubled();
     check(`loops ${mode}`, dup === 0 && (await playing()) > 0, `after the resume ${await playing()} loop source(s) playing, ${dup} loop(s) played twice`);
-  }
+  });
 
   // the user's mute survives hide and show; unmuting afterwards brings the sound back
+  await phase('muted', async () => {
   await page.keyboard.press('m');
   await page.waitForTimeout(1500);
   const mutedPeak = await window3();
@@ -131,15 +144,18 @@ try {
   let unmuted = 0;
   for (let i = 0; i < 3; i++) unmuted = Math.max(unmuted, await window3());
   check('unmuted', unmuted >= visible * 0.5, `unmuted again: peak ${unmuted.toFixed(4)} (expected >= 0.5x visible ${visible.toFixed(4)})`);
+  });
 
   // frozen (DevTools lifecycle state): main-thread JS stops. The window of audio time is read after the thaw (the tap worklet queues its readings).
+  await phase('frozen', async () => {
   const cdp = await page.context().newCDPSession(page);
   const frozenPeak = async (hideFirst) => {
     if (hideFirst) { await hide('visibility'); await page.waitForTimeout(1500); }
     const t0 = await now();
-    await cdp.send('Page.setWebLifecycleState', { state: 'frozen' });
-    await new Promise((r) => setTimeout(r, 4000));
-    await cdp.send('Page.setWebLifecycleState', { state: 'active' });
+    try {
+      await cdp.send('Page.setWebLifecycleState', { state: 'frozen' });
+      await new Promise((r) => setTimeout(r, 4000));
+    } finally { await cdp.send('Page.setWebLifecycleState', { state: 'active' }); }     // never leave the page frozen
     const t1 = await now();
     const peak = await peakBetween(t0 + 0.5, t1 - 0.3);
     const span = t1 - t0;
@@ -147,17 +163,26 @@ try {
     await page.waitForTimeout(2500);
     return { peak, span };
   };
+  await phase('frozen control', async () => {
   const ctl = await frozenPeak(false);
   check('frozen control', ctl.peak >= 0.005, `frozen but not hidden: ambient peak ${ctl.peak.toFixed(4)} over ${ctl.span.toFixed(1)} s of audio time (expected >= 0.005: the audio thread plays on without the page)`);
+  });
+  await phase('frozen hidden', async () => {
   const fr = await frozenPeak(true);
   check('frozen hidden', fr.peak < 0.0005, `hidden, then frozen: peak ${fr.peak.toFixed(5)} over ${fr.span.toFixed(1)} s of audio time (expected < 0.0005)`);
+  });
+  await phase('resume frozen', async () => {
   // a freeze lets loops end with nobody to restart them; after the thaw the restarts come in a burst, so the count is read once things settled
   await page.waitForTimeout(8000);
   let after = 0;
   for (let i = 0; i < 3; i++) after = Math.max(after, await window3());
   const dupThawed = await doubled();
   check('resume frozen', after >= visible * 0.5 && dupThawed === 0, `thawed and shown, 8 s later: peak ${after.toFixed(4)}, ${await playing()} loop source(s) playing, ${dupThawed} loop(s) played twice`);
-  exit = results.every(Boolean) ? 0 : 1;
+  });
+  });
+  exit = results.length > 0 && results.every(Boolean) ? 0 : 1;
+} catch (e) {
+  console.log(`FAIL setup: ${String(e).split('\n')[0].slice(0, 200)}`);
 } finally {
   await browser.close();
   srv.close();

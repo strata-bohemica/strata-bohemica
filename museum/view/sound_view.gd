@@ -28,8 +28,12 @@ var day_length := 360.0              # set from the period by the app
 var volume: float
 var muted := false
 var levels: Dictionary = {}            # layer -> 0..1 at the current time (what SB-019 mixes)
-var in_background := false:               # set: going to the background silences Master at once (see set_background)
-	set = set_background
+var focus_lost := false                # the window / canvas has no focus (any focus loss, not only a hidden tab)
+var page_hidden := false               # the browser reports the page hidden (`visibilitychange`; web only)
+## Silent in the background: ANY focus loss OR a hidden page mutes; the sound returns only when both are clear
+## (a hidden page shown again while another window still has the focus stays silent). Read-only; set the two flags.
+var in_background: bool:
+	get: return focus_lost or page_hidden
 var _master_gain := START_GAIN         # linear gain applied to Master (user volume, mute, background)
 var _duck_gain := START_GAIN           # linear gain of the scene buses (pause)
 var _last_t := NAN
@@ -40,7 +44,10 @@ var proximity_gain := 1.0              # ambient share left for the camera dista
 var _players: Dictionary = {}          # layer id -> [AudioStreamPlayer] while the layer is audible (two, half a loop apart, when it overlaps)
 var _second_due: Dictionary = {}       # layer id -> seconds left until its second player starts
 var _blip_player: AudioStreamPlayer
-var _js_visibility: JavaScriptObject   # web only: keeps the `visibilitychange` callback alive
+var _page_doc: Variant                 # the page's `document` (web) while the listener is attached
+var _js_visibility: Variant            # web only: keeps the `visibilitychange` callback alive (a JavaScriptObject)
+var _on_focus_out: Callable
+var _on_focus_in: Callable
 
 func _init() -> void:
 	data = Schema.load_json(DATA_PATH)
@@ -71,7 +78,22 @@ func set_ambient(cfg: Dictionary) -> void:
 ## browser's `visibilitychange` itself (see `_hook_page_visibility`) because a hidden tab does not always blur the canvas
 ## (measured in headless Chromium: a `visibilitychange` alone left the ambient playing, checks/web_audio/check_hidden.mjs).
 func page_visibility_changed(hidden: bool) -> void:
-	set_background(hidden)
+	set_page_hidden(hidden)
+
+func set_page_hidden(hidden: bool) -> void:
+	page_hidden = hidden
+	_silence_if_background()
+
+func set_focus_lost(lost: bool) -> void:
+	focus_lost = lost
+	_silence_if_background()
+
+## A hidden browser tab pauses the project, so no frame may be left to fade the gain down: going to the background
+## sets Master to silence right away. Coming back (both flags clear) fades in again through apply().
+func _silence_if_background() -> void:
+	if in_background:
+		_master_gain = 0.0
+		_apply_gains()
 
 ## Web only: ask the browser for `visibilitychange` events. The callback runs inside the event, so Master is silenced
 ## even though a hidden tab renders no more frames.
@@ -79,27 +101,43 @@ func _hook_page_visibility() -> void:
 	if not OS.has_feature("web"):
 		return
 	var doc: Variant = JavaScriptBridge.get_interface("document")
-	if doc == null:
-		return
-	_js_visibility = JavaScriptBridge.create_callback(func(_args): page_visibility_changed(bool(doc.hidden)))
+	if doc != null:
+		attach_page_events(doc, JavaScriptBridge.create_callback)
+
+## Listen on `doc` (anything with addEventListener / removeEventListener / hidden); `wrap` turns a Callable into the
+## listener object the document accepts (the engine's `create_callback` on the web, identity in the desktop tests).
+func attach_page_events(doc: Variant, wrap: Callable) -> void:
+	detach_page_events()
+	_page_doc = doc
+	_js_visibility = wrap.call(func(_args): page_visibility_changed(bool(doc.hidden)))
 	doc.addEventListener("visibilitychange", _js_visibility)
 
-## A hidden browser tab pauses the project, so no frame may be left to fade the gain down: going to the background
-## sets Master to silence right away. Coming back fades in again through apply().
-func set_background(b: bool) -> void:
-	in_background = b
-	if b:
-		_master_gain = 0.0
-		_apply_gains()
+func detach_page_events() -> void:
+	if _page_doc != null:
+		_page_doc.removeEventListener("visibilitychange", _js_visibility)
+	_page_doc = null
+	_js_visibility = null
 
 func _ready() -> void:
 	var win := get_window()
-	win.focus_exited.connect(func(): set_background(true))
-	win.focus_entered.connect(func(): set_background(false))
+	_on_focus_out = func(): set_focus_lost(true)
+	_on_focus_in = func(): set_focus_lost(false)
+	win.focus_exited.connect(_on_focus_out)
+	win.focus_entered.connect(_on_focus_in)
 	_hook_page_visibility()
 	_blip_player = AudioStreamPlayer.new()
 	_blip_player.bus = "UI"
 	add_child(_blip_player)
+
+## The listeners belong to the page / window, which outlive this node: take them off when it leaves the tree.
+func _exit_tree() -> void:
+	detach_page_events()
+	var win := get_window()
+	if win != null and _on_focus_out.is_valid():
+		if win.focus_exited.is_connected(_on_focus_out):
+			win.focus_exited.disconnect(_on_focus_out)
+		if win.focus_entered.is_connected(_on_focus_in):
+			win.focus_entered.disconnect(_on_focus_in)
 
 ## Render the ambient loops a little each frame (the budget is in data/sound.json); a layer gets players when it is ready
 ## and audible (see `_mix_ambient`).
@@ -261,6 +299,6 @@ static func make_tone(freq: float, seconds: float, rate: int = 22050) -> AudioSt
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_APPLICATION_FOCUS_OUT or what == NOTIFICATION_WM_WINDOW_FOCUS_OUT:
-		set_background(true)
+		set_focus_lost(true)
 	elif what == NOTIFICATION_APPLICATION_FOCUS_IN or what == NOTIFICATION_WM_WINDOW_FOCUS_IN:
-		set_background(false)
+		set_focus_lost(false)

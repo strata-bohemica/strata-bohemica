@@ -115,6 +115,19 @@ func _prefs_failures(script: GDScript, default_volume: float, quiet := false) ->
 		t.ok(is_finite(v) and v == default_volume, "prefs: stored volume=%s is rejected, the default is used (got %s)" % [raw, v])
 	return t.failures.size()
 
+## A stand-in for the browser's `document`: the view listens through addEventListener and must take the listener off again.
+class FakeDoc:
+	var hidden := false
+	var listeners: Array = []
+	func addEventListener(_name: String, cb: Callable) -> void:
+		listeners.append(cb)
+	func removeEventListener(_name: String, cb: Callable) -> void:
+		listeners.erase(cb)
+	func fire(h: bool) -> void:
+		hidden = h
+		for cb in listeners.duplicate():
+			cb.call([])
+
 ## Fade-in and pause/background behaviour of a SoundView script (the real one or a broken copy).
 func _view_failures(script: GDScript, quiet := false) -> int:
 	var t := T.new()
@@ -127,12 +140,12 @@ func _view_failures(script: GDScript, quiet := false) -> int:
 	for i in 120:
 		sv.apply(10.0 + i * 0.016, true, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Ambient")) <= -80.0, "view: pause ducks Ambient")
-	sv.in_background = true
+	sv.set_focus_lost(true)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "view: going to the background silences Master at once")
 	for i in 120:
 		sv.apply(20.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "view: background silences Master")
-	sv.in_background = false
+	sv.set_focus_lost(false)
 	for i in 120:
 		sv.apply(30.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(sv.master_gain() > 0.1, "positive control: the sound is up before the page is hidden")
@@ -143,6 +156,27 @@ func _view_failures(script: GDScript, quiet := false) -> int:
 	for i in 120:
 		sv.apply(32.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(sv.master_gain() > 0.1, "the sound is back after the page is visible again")
+	# focus and visibility are two flags: ANY focus loss or a hidden page mutes, the sound returns only when both are clear
+	t.ok(sv.master_gain() > 0.1, "positive control: the sound is up before focus and visibility interact")
+	root.focus_exited.emit()
+	sv.page_visibility_changed(true)
+	sv.page_visibility_changed(false)                  # shown again, but the window has no focus
+	t.ok(sv.in_background and sv.focus_lost and not sv.page_hidden, "shown again without focus: still background")
+	for i in 120:
+		sv.apply(33.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() == 0.0 and AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "shown again without focus: stays silent")
+	root.focus_entered.emit()
+	t.ok(not sv.in_background, "focus and page visible: no longer background")
+	sv.page_visibility_changed(true)
+	root.focus_exited.emit()
+	root.focus_entered.emit()                          # focus back while the page is still hidden
+	for i in 120:
+		sv.apply(33.5 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.in_background and sv.master_gain() == 0.0, "focus back on a hidden page: stays silent")
+	sv.page_visibility_changed(false)
+	for i in 120:
+		sv.apply(33.8 + i * 0.016, false, 1.0, 1.0 / 60.0)
+	t.ok(sv.master_gain() > 0.1, "both clear: the sound is back")
 	sv.set_muted(true)
 	sv.page_visibility_changed(true)
 	sv.page_visibility_changed(false)
@@ -152,6 +186,28 @@ func _view_failures(script: GDScript, quiet := false) -> int:
 	sv.set_muted(false)
 	root.remove_child(sv)
 	sv.free()
+	# the page's `visibilitychange` listener: attached, working, and taken off when the view leaves the tree
+	var focus_conns: int = root.focus_exited.get_connections().size()
+	var sv2 = script.new()
+	var doc := FakeDoc.new()
+	root.add_child(sv2)
+	var hooks_before: int = root.focus_exited.get_connections().size()
+	sv2.attach_page_events(doc, func(cb): return cb)
+	t.eq(doc.listeners.size(), 1, "page events: one visibilitychange listener is attached")
+	doc.fire(true)
+	t.ok(sv2.page_hidden and sv2.in_background and sv2.master_gain() == 0.0, "page events: the browser's event reaches the view (hidden)")
+	doc.fire(false)
+	t.ok(not sv2.page_hidden, "page events: and again (visible)")
+	sv2.attach_page_events(doc, func(cb): return cb)
+	t.eq(doc.listeners.size(), 1, "page events: attaching again does not stack a second listener")
+	root.remove_child(sv2)
+	t.eq(doc.listeners.size(), 0, "page events: the listener is removed when the view leaves the tree")
+	t.eq(root.focus_exited.get_connections().size(), hooks_before - 1, "page events: the focus hooks are removed too")
+	doc.fire(true)
+	t.ok(not sv2.page_hidden, "page events: a removed view hears nothing")
+	sv2.free()
+	doc.listeners.clear()                              # the listener closure holds the doc: break that cycle so nothing leaks
+	t.eq(root.focus_exited.get_connections().size(), focus_conns, "page events: no focus hook is left behind")
 	return t.failures.size()
 
 func _initialize() -> void:
@@ -279,11 +335,11 @@ func _initialize() -> void:
 	for i in 120:
 		sv.apply(16.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(absf(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Ambient")) - (-6.0)) < 0.01, "resuming restores Ambient to its offset")
-	sv.in_background = true
+	sv.set_focus_lost(true)
 	for i in 120:
 		sv.apply(18.0 + i * 0.016, false, 1.0, 1.0 / 60.0)
 	t.ok(AudioServer.get_bus_volume_db(AudioServer.get_bus_index("Master")) <= -80.0, "a background tab is silent")
-	sv.in_background = false
+	sv.set_focus_lost(false)
 	root.focus_exited.emit()
 	t.ok(sv.in_background, "the window losing focus marks the view as background")
 	root.focus_entered.emit()
@@ -304,8 +360,13 @@ func _initialize() -> void:
 	for pair in [["no fade in", _mutant(sv_path, "_master_gain = move_toward(_master_gain, 0.0 if in_background else _user_gain(), step)", "_master_gain = 0.0 if in_background else _user_gain()")],
 			["no pause duck", _mutant(sv_path, "0.0 if paused else 1.0, step)", "1.0, step)")],
 			["ignores background", _mutant(sv_path, "0.0 if in_background else _user_gain()", "_user_gain()")],
-			["hidden page ignored", _mutant(sv_path, "func page_visibility_changed(hidden: bool) -> void:\n\tset_background(hidden)", "func page_visibility_changed(hidden: bool) -> void:\n\tpass")],
-			["background waits for a frame", _mutant(sv_path, "\t\t_master_gain = 0.0\n\t\t_apply_gains()", "\t\tpass")]]:
+			["hidden page ignored", _mutant(sv_path, "func page_visibility_changed(hidden: bool) -> void:\n\tset_page_hidden(hidden)", "func page_visibility_changed(hidden: bool) -> void:\n\tpass")],
+			["background waits for a frame", _mutant(sv_path, "\t\t_master_gain = 0.0\n\t\t_apply_gains()", "\t\tpass")],
+			["visible page clears the focus loss", _mutant(sv_path, "func set_page_hidden(hidden: bool) -> void:\n\tpage_hidden = hidden", "func set_page_hidden(hidden: bool) -> void:\n\tpage_hidden = hidden\n\tif not hidden:\n\t\tfocus_lost = false")],
+			["listener never attached", _mutant(sv_path, "\tdoc.addEventListener(\"visibilitychange\", _js_visibility)", "\tpass")],
+			["listener never removed", _mutant(sv_path, "\t\t_page_doc.removeEventListener(\"visibilitychange\", _js_visibility)", "\t\tpass")],
+			["no cleanup on exit", _mutant(sv_path, "func _exit_tree() -> void:\n\tdetach_page_events()", "func _exit_tree() -> void:\n\treturn")],
+			["focus back clears the hidden page", _mutant(sv_path, "func set_focus_lost(lost: bool) -> void:\n\tfocus_lost = lost", "func set_focus_lost(lost: bool) -> void:\n\tfocus_lost = lost\n\tif not lost:\n\t\tpage_hidden = false")]]:
 		t.ok(pair[1] != null, "view mutation '%s' compiled" % pair[0])
 		if pair[1] != null:
 			t.ok(_view_failures(pair[1], true) > 0, "view mutation '%s' is caught" % pair[0])

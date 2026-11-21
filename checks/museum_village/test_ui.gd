@@ -359,7 +359,7 @@ func _initialize() -> void:
 	# 320 px is the narrowest supported width (SB-034): there every layout rule is needed, so removing the slider floor,
 	# the tight gaps or the short "Řez" label fails here (at 360 px alone the bar fits without them).
 	var min_slider := 48.0
-	for sz in [Vector2(320, 640), Vector2(360, 740), Vector2(400, 800)]:
+	for sz in [Vector2(320, 640), Vector2(360, 740), Vector2(400, 800), Vector2(600, 900)]:
 		var widths := {}
 		for lang in I18n.LANGS:
 			for paused in [false, true]:                  # "Přehrát" is wider than "Pauza": test the worst case too
@@ -390,6 +390,27 @@ func _initialize() -> void:
 					var snd: Rect2 = bar.sound_button.get_global_rect()
 					t.ok(snd.size.x >= 44.0 and snd.size.y >= 44.0, "%s: the sound button is at least 44 x 44 px to tap (%.0f x %.0f)" % [tag, snd.size.x, snd.size.y])
 					t.ok(bar.get_global_rect().end.y <= sz.y - 10.0 + 0.5 and bar.get_global_rect().size.y >= 44.0, "%s: the bar is tall enough and keeps its gap to the screen edge %s" % [tag, bar.get_global_rect()])
+					# the short "Řez" only where the full name does not fit: shown short => the full name really overflows here;
+					# shown full => it fits (the inside-the-screen check above) and there is no tooltip repeating it
+					var full_name: String = I18n.tr_("ui.cutaway", lang)
+					var short_name: String = I18n.tr_("ui.cutaway_short", lang)
+					var shown_short: bool = bar.cutaway_button.text == short_name and short_name != full_name
+					t.ok(bar.cutaway_button.text in [full_name, short_name], "%s: the cutaway button shows one of its two names" % tag)
+					t.eq(bar.cutaway_button.tooltip_text != "", shown_short, "%s: the full name is a tooltip exactly when the short one is shown" % tag)
+					if short_name != full_name:
+						bar.cutaway_button.text = full_name
+						await process_frame
+						await process_frame
+						var full_end := 0.0
+						for c in bar.get_children():
+							if c.visible:
+								full_end = maxf(full_end, c.get_global_rect().end.x)
+						if shown_short:
+							t.ok(full_end > sz.x - TimeBar.NARROW_MARGIN + 0.5, "%s: the short label is needed (the full name would reach %.0f of %.0f)" % [tag, full_end, sz.x])
+						else:
+							t.ok(full_end <= sz.x - TimeBar.NARROW_MARGIN + 0.5, "%s: the full name fits, so the short label is not used (%.0f of %.0f)" % [tag, full_end, sz.x])
+					if sz.x >= 600.0:
+						t.ok(not shown_short, "%s: at 600 px the full cutaway name is shown" % tag)
 					widths[muted] = bar.sound_button.size.x
 					host.queue_free()
 					await process_frame
