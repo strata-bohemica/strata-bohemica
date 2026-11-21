@@ -17,41 +17,48 @@
    0.35
   ]
  },
- "irregularity": "F: waver of the path, drift of spacing, depth and width (each +-jitter around the nominal, extremes inside source_ranges), a shallow stretch, uneven ends and clods are our choice for a hand-and-ox look; nothing about the irregularity of a field is attested, nor any ard at Březnice",
+ "irregularity": "F: stationary wander of each furrow, a shared gentle arc and end turn-in, depth, width, U/V profile, deep patches, lifted gaps, uneven ends and clods follow research note E-furrow-irregularity (SB-037); every amplitude and share is our choice, nothing about the irregularity of a field is attested, nor any ard at Březnice",
+ "deep_patch": {
+  "depth_m": [
+   0.12,
+   0.18
+  ],
+  "width_max_m": 0.08,
+  "max_share": 0.02,
+  "length_m": [
+   0.3,
+   1.0
+  ]
+ },
+ "gap_clamp_m": [
+  0.187,
+  0.35
+ ],
+ "heading_tan_max": 0.28,
  "fields": [
   {
    "dir": [
     0.3511,
     -0.9363
    ],
-   "depth_m": 0.094,
-   "width_m": 0.054,
-   "spacing_m": 0.216,
    "seed": 37000,
-   "spacing_jitter": 0.12,
-   "depth_jitter": 0.1,
-   "width_jitter": 0.1,
-   "wave": [
-    [
-     0.113,
-     11.74,
-     1.117
-    ],
-    [
-     0.049,
-     3.67,
-     3.559
-    ]
-   ],
-   "phase": [
-    5.406,
-    0.494
-   ],
-   "gap": 0.5,
-   "end_wobble": 0.3,
+   "spacing_m": 0.259,
+   "depth_m": 0.1005,
+   "width_m": 0.05013,
+   "wet": 0.95,
+   "rho": 0.739,
+   "wander_lambda_m": 13.4,
+   "arc": 0.0112,
+   "turn_deg": 5.63,
+   "turn_len_m": 3.76,
+   "lambda_m": 8.66,
+   "u_share": 0.48,
+   "patch_p": 0.143,
+   "interrupt_per_10m": 0.86,
+   "interrupt_gap_m": 0.59,
    "clods": {
-    "density": 0.12,
-    "size_m": 0.18
+    "cover": 0.022,
+    "size_m": 0.196
    }
   },
   {
@@ -59,34 +66,24 @@
     -0.9512,
     0.3085
    ],
-   "depth_m": 0.103,
-   "width_m": 0.046,
-   "spacing_m": 0.229,
    "seed": 37001,
-   "spacing_jitter": 0.12,
-   "depth_jitter": 0.1,
-   "width_jitter": 0.1,
-   "wave": [
-    [
-     0.093,
-     11.97,
-     5.644
-    ],
-    [
-     0.035,
-     4.82,
-     4.827
-    ]
-   ],
-   "phase": [
-    2.885,
-    0.695
-   ],
-   "gap": 0.5,
-   "end_wobble": 0.3,
+   "spacing_m": 0.242,
+   "depth_m": 0.1009,
+   "width_m": 0.05023,
+   "wet": 0.0,
+   "rho": 0.735,
+   "wander_lambda_m": 15.4,
+   "arc": 0.0245,
+   "turn_deg": 5.71,
+   "turn_len_m": 2.13,
+   "lambda_m": 9.96,
+   "u_share": 0.57,
+   "patch_p": 0.13,
+   "interrupt_per_10m": 0.94,
+   "interrupt_gap_m": 0.79,
    "clods": {
-    "density": 0.12,
-    "size_m": 0.18
+    "cover": 0.035,
+    "size_m": 0.162
    }
   },
   {
@@ -94,34 +91,24 @@
     0.0512,
     0.9987
    ],
-   "depth_m": 0.109,
-   "width_m": 0.047,
-   "spacing_m": 0.273,
    "seed": 37002,
-   "spacing_jitter": 0.12,
-   "depth_jitter": 0.1,
-   "width_jitter": 0.1,
-   "wave": [
-    [
-     0.113,
-     9.81,
-     3.722
-    ],
-    [
-     0.038,
-     3.81,
-     4.219
-    ]
-   ],
-   "phase": [
-    0.636,
-    5.804
-   ],
-   "gap": 0.5,
-   "end_wobble": 0.3,
+   "spacing_m": 0.259,
+   "depth_m": 0.0966,
+   "width_m": 0.04915,
+   "wet": 0.0,
+   "rho": 0.758,
+   "wander_lambda_m": 12.03,
+   "arc": -0.0117,
+   "turn_deg": 5.52,
+   "turn_len_m": 3.06,
+   "lambda_m": 5.3,
+   "u_share": 0.34,
+   "patch_p": 0.102,
+   "interrupt_per_10m": 0.79,
+   "interrupt_gap_m": 0.37,
    "clods": {
-    "density": 0.12,
-    "size_m": 0.18
+    "cover": 0.076,
+    "size_m": 0.183
    }
   }
  ]

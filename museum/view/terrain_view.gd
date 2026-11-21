@@ -7,7 +7,7 @@ const RINGS := 72
 const STRATA := [   # [bottom y, colour] from the base upwards; the top band runs up to the terrain surface
 	[-4.0, Color("#3b2f27")], [-3.0, Color("#8a6a2f")], [-2.4, Color("#4f7a6b")], [-2.2, Color("#a5532f")], [-0.8, Color("#6b5238")], [0.5, Color("#8a6b4b")]]
 
-const FurrowWave = preload("res://museum/core/furrow_wave.gd")
+const FurrowField = preload("res://museum/core/furrow_field.gd")
 
 var terrain
 var village: Dictionary
@@ -102,7 +102,7 @@ func _field_signed(k: int, p: Vector2) -> float:
 	return edge if Geometry2D.is_point_in_polygon(p, poly) else -edge
 
 ## One draped patch per field that carries the furrows (SB-008). The furrow itself is a shader on world position
-## (view/furrows.gdshader): no instances, no texture, so nothing is added to the export. The mesh supplies the ground colour in vertex
+## (view/furrows.gdshader): no instances; its table of furrows is made at start-up from the data (core/furrow_field.gd), so nothing is added to the export. The mesh supplies the ground colour in vertex
 ## rgb and the field mask in alpha, sampled every FURROW_CELL metres.
 func _add_furrows() -> void:
 	var data: Dictionary = village.get("furrows", {})
@@ -117,11 +117,12 @@ func _add_furrows() -> void:
 		mat.set_shader_parameter("across", Vector2(-dir.y, dir.x))        # the furrows run along dir; this is how they repeat
 		mat.set_shader_parameter("along", dir)
 		mat.set_shader_parameter("spacing", float(f.spacing_m))
-		mat.set_shader_parameter("width", float(f.width_m))
-		mat.set_shader_parameter("depth", float(f.depth_m))
-		var irr := FurrowWave.params(f)                                    # SB-037: the irregularity, from the field's record
-		for key in irr:
-			mat.set_shader_parameter(key, irr[key])
+		var table: Dictionary = FurrowField.build(f, _field_polys[k])     # SB-037: every furrow of the field, from its record
+		mat.set_shader_parameter("furrow_tex", FurrowField.texture(table))
+		var info := FurrowField.uniforms(table)
+		for key in info:
+			mat.set_shader_parameter(key, info[key])
+		mat.set_shader_parameter("clod", Vector2(float(f.clods.cover) / 0.283, float(f.clods.size_m)))   # a bump covers about 0.28 of its cell's candidate share
 		var inst := MeshInstance3D.new()
 		inst.mesh = _field_patch(k)
 		inst.material_override = mat

@@ -6,10 +6,9 @@ as `source_ranges` and every field's value must lie inside them (checks/museum_v
 an ard was used at Březnice: the card says the opposite. Which furrow each field gets, and the direction, are F choices:
 the direction runs along the contour (the same rule the plough site uses), the dimension is drawn from the range with a fixed seed.
 
-SB-037: the furrows are not ruler-straight. Each field also gets an irregularity record (path waver, spacing/depth/width drift,
-a shallow stretch, uneven ends, clods), derived from a per-field seed. Class F, our choice: the source gives dimensions, not how irregular a
-field was. The jitter is applied around the nominal value, so the nominal is drawn from a range shrunk by the jitter and the extremes
-still lie inside the source ranges. Formulas: museum/core/furrow_wave.gd (CPU) and museum/view/furrows.gdshader (GPU).
+SB-037: the furrows are not ruler-straight. The model of the research note E-furrow-irregularity.md (stationary wander around a shared arc, clamped
+gaps, depth/width/profile noise, deep patches, gaps, uneven ends, clods) lives in museum/core/furrow_field.gd; this script draws each field's
+parameters from a per-field seed, inside the ranges of the note. Class F, our choice: the source gives dimensions, not how irregular a field was.
 
 usage: python3 tools/build_furrows.py
 """
@@ -28,11 +27,8 @@ def height(x, z):
     return H[r * n + c] / 100.0
 
 RANGES = {'depth_m': [0.08, 0.12], 'width_m': [0.04, 0.06], 'spacing_m': [0.18, 0.35]}
-# SB-037 irregularity, our choice (F). Tune here and rerun; the tests keep every extreme inside RANGES.
-JITTER = {'spacing_jitter': 0.12, 'depth_jitter': 0.10, 'width_jitter': 0.10}      # fraction of the nominal, +-
-WAVES = [(0.09, 0.14, 9.0, 14.0), (0.03, 0.05, 3.2, 5.0)]                          # (amp min, amp max m, wavelength min, max m): slow, wide waves
-GAP, END_WOBBLE, CLODS = 0.5, 0.30, {'density': 0.12, 'size_m': 0.18}
-SHRINK = {'depth_m': 'depth_jitter', 'width_m': 'width_jitter', 'spacing_m': 'spacing_jitter'}
+# SB-037, research note E-furrow-irregularity.md section 3.2 (every value class F, ours; drawn per field from its seed within the note's range).
+# The model itself (stationary wander, shared arc, clamps) is museum/core/furrow_field.gd; here only the per-field parameters are drawn.
 rng = random.Random(8)
 fields = []
 for poly in village['fields']:
@@ -43,18 +39,26 @@ for poly in village['fields']:
     d = (-gz, gx) if math.hypot(gx, gz) > 1e-6 else (1.0, 0.0)     # along the contour
     norm = math.hypot(*d)
     f = {'dir': [round(d[0] / norm, 4), round(d[1] / norm, 4)]}
-    for k, (lo, hi) in RANGES.items():
-        j = JITTER[SHRINK[k]]
-        f[k] = round(rng.uniform(math.ceil(lo * (1 + j) * 1000) / 1000, math.floor(hi / (1 + j) * 1000) / 1000), 3)
+    ts = [(p[0] * f['dir'][0] + p[1] * f['dir'][1]) for p in poly]
+    length = max(ts) - min(ts)
     seed = 37000 + len(fields)                       # per field, so the fields differ and a rebuild gives the same file
     r = random.Random(seed)
     f['seed'] = seed
-    f.update(JITTER)
-    f['wave'] = [[round(r.uniform(a0, a1), 3), round(r.uniform(l0, l1), 2), round(r.uniform(0, 2 * math.pi), 3)] for a0, a1, l0, l1 in WAVES]
-    f['phase'] = [round(r.uniform(0, 2 * math.pi), 3) for _ in range(2)]
-    f['gap'] = GAP
-    f['end_wobble'] = END_WOBBLE
-    f['clods'] = dict(CLODS)
+    f['spacing_m'] = round(r.uniform(0.24, 0.28), 3)                       # P
+    f['depth_m'] = round(r.uniform(0.095, 0.105), 4)                       # D0, dry field
+    f['width_m'] = round(0.05 + 0.25 * (f['depth_m'] - 0.10), 5)           # 5 + 0.25 (D - 10) cm
+    f['wet'] = round(r.uniform(0.3, 1.0), 2) if r.random() < 0.34 else 0.0  # wet share: deeper, wider
+    f['rho'] = round(r.uniform(0.70, 0.85), 3)
+    f['wander_lambda_m'] = round(r.uniform(10, 16), 2)
+    f['arc'] = round(r.choice([-1, 1]) * r.uniform(0.010, 0.025), 4)       # signed kappa, fraction of the furrow length
+    f['turn_deg'] = round(r.uniform(3, 7), 2)
+    f['turn_len_m'] = round(min(r.uniform(2, 5), length / 4), 2)
+    f['lambda_m'] = round(r.uniform(4, 12), 2)                             # depth and width noise
+    f['u_share'] = round(r.uniform(0.3, 0.7), 2)
+    f['patch_p'] = round(r.uniform(0.0, 0.3), 3)                           # deep patch per furrow
+    f['interrupt_per_10m'] = round(r.uniform(0.0, 1.0), 2)
+    f['interrupt_gap_m'] = round(r.uniform(0.2, 0.8), 2)
+    f['clods'] = {'cover': round(r.uniform(0.02, 0.08), 3), 'size_m': round(r.uniform(0.10, 0.25), 3)}
     fields.append(f)
 
 out = {
@@ -63,7 +67,10 @@ out = {
     'source': 'Kováčik, Pavelka, Hořínková 2022, Archeologické rozhledy 74(2): 155–179 (replica of Walle-type ards from Opava, Silesia, Lusatian Urnfield culture)',
     'note': 'Dimensions are those of the experiment, a regional analogy (R). No ard, furrow or tillage trace is attested at Březnice. The choice per field and the direction along the contour are F.',
     'source_ranges': RANGES,
-    'irregularity': 'F: waver of the path, drift of spacing, depth and width (each +-jitter around the nominal, extremes inside source_ranges), a shallow stretch, uneven ends and clods are our choice for a hand-and-ox look; nothing about the irregularity of a field is attested, nor any ard at Březnice',
+    'irregularity': 'F: stationary wander of each furrow, a shared gentle arc and end turn-in, depth, width, U/V profile, deep patches, lifted gaps, uneven ends and clods follow research note E-furrow-irregularity (SB-037); every amplitude and share is our choice, nothing about the irregularity of a field is attested, nor any ard at Březnice',
+    'deep_patch': {'depth_m': [0.12, 0.18], 'width_max_m': 0.08, 'max_share': 0.02, 'length_m': [0.3, 1.0]},
+    'gap_clamp_m': [0.187, 0.35],
+    'heading_tan_max': 0.28,
     'fields': fields,
 }
 with open(os.path.join(DATA, 'breznice-furrows.json'), 'w', encoding='utf-8') as fh:

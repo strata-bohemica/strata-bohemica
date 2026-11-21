@@ -41,13 +41,20 @@ The type A model has 6 758 triangles and the check allows it 7000 (type B: 5000)
 The fields carry furrows (SB-008): `data/villages/breznice-furrows.json` (written by `tools/build_furrows.py`) gives each field a direction and a
 depth, width and spacing inside the ranges measured with a replica of Walle-type ards from Opava (Kováčik et al. 2022: 8–12 cm, 4–6 cm, 18–35 cm; evidence R, a regional
 analogy; no ard or furrow is attested at Březnice). `view/furrows.gdshader` draws them from world position on one flat patch per field: no instances,
-no texture. Since SB-037 they are not ruler-straight: each furrow's path wavers in two slow waves (about 10 m and 4 m long, a few cm high), the spacing, depth and width
-drift around the nominal value (jitter +-12 %, +-10 %, +-10 %, chosen so that the extremes still lie inside the 18–35, 8–12 and 4–6 cm ranges), some furrows have a shallow stretch,
-they start and stop unevenly at the field edge, and a few clods lie in the field. The numbers are per field in the data (written by `tools/build_furrows.py` from a per-field seed)
-and are our choice for a hand-and-ox look (evidence class F): the source gives dimensions, not how irregular a field was, and no ard or furrow is attested at Březnice.
-The profile is band-limited (blurred by the pixel footprint) and fades out when the period itself nears 2.5 screen pixels, so it reads to about 30 m at the default pitch (measured in a software-rendered web build: 34–35 m against 12–17 m before) and about 12 m at a low pitch
-(beyond that the shader does no work). The patch carries the ground's own colour, so a field looks the same as before wherever the pattern has faded.
-`core/furrow_wave.gd` is the CPU copy of the shader's formulas that the tests walk.
+no texture file and no instances. Since SB-037 they are not ruler-straight, following the research note E-furrow-irregularity.md (studio research, 2026-11-21).
+`core/furrow_field.gd` builds, at start-up and from the field's record alone, a table of every furrow (lateral position, depth, width, U or V profile, where it exists)
+and the shader reads it. What is in it, and what the evidence is:
+- Class F (our choice, no source gives an amplitude): a gentle arc shared by all furrows of a field (1.0–2.5 % of the furrow length, sign per field) and a turn-in over the last 2–5 m toward the side where ploughing progresses
+  (Nielsen 1986, Iron Age Denmark, describes slightly curved furrows and turns near the end; the existence of the effect is E there and an analogy here, the sizes are ours);
+  per-furrow wander with sd about 4.5 cm, wavelength about 12 m, correlated with the neighbour (rho 0.7–0.85) but stationary, so it does not grow across the field; slope limit 0.05;
+  start and end offsets (sd 0.5 m, at most 1 m), lifted gaps (about 0.3 per 10 m, 0.2–0.8 m long), clods (2–8 % of the area).
+- Hard limits kept by the generator and tested (checks/museum_village/test_data.gd): the lateral gap to the previous furrow is clamped to 18.7–35 cm, so the perpendicular distance is at least 18 cm
+  (the experiment's 18–35 cm, Kováčik et al. 2022, class X for the range, R for applying it here); every furrow's heading stays under tan 0.28; normal depth 8–12 cm and width 4–6 cm
+  (the experiment's means); deep patches (12–18 cm deep, up to 8 cm wide, which the experiment also reports) are rare, short and at most 2 % of a furrow's length.
+- Not documented in any source read: the sd, wavelength, correlation, patch and gap rates; no ard or furrow is attested at Březnice, and the source furrows come from human-drawn replica ards, not oxen.
+`tools/build_furrows.py` draws each field's parameters (inside the ranges of the note) from a per-field seed into `data/villages/breznice-furrows.json`; the model is code, the table is deterministic.
+The profile is band-limited (blurred by the pixel footprint) and fades out when the period itself nears 2.5 screen pixels; beyond that the shader does no work. Measured in a software-rendered web build (1280x720, FOV 40): the furrows read to about 39 m at the default pitch (11.9-17.1 m before SB-037) and to about 13 m at a low pitch.
+The patch carries the ground's own colour, so a field looks the same as before wherever the pattern has faded.
 A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
 node during named clips, or resting where it is put down (`core/craft_props.gd`).
 
