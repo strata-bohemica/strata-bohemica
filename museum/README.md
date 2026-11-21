@@ -41,7 +41,7 @@ The type A model has 6 758 triangles and the check allows it 7000 (type B: 5000)
 The fields carry furrows (SB-008): `data/villages/breznice-furrows.json` (written by `tools/build_furrows.py`) gives each field a direction and a
 depth, width and spacing inside the ranges measured with a replica of Walle-type ards from Opava (Kováčik et al. 2022: 8–12 cm, 4–6 cm, 18–35 cm; evidence R, a regional
 analogy; no ard or furrow is attested at Březnice). `view/furrows.gdshader` draws them from world position on one flat patch per field: no instances,
-no texture file and no instances. Since SB-037 they are not ruler-straight, following the research note E-furrow-irregularity.md (studio research, 2026-11-21).
+no texture file and no instances. Since SB-037 they are not ruler-straight, following the research note E-furrow-irregularity.md (studio research, 2026-11-21; it lives in the private studio repo, `content/research/museum-lba/`, and is deliberately not copied into `research/` here: data cite it by name only, not as a `research/` path, and the build is its own record, `core/furrow_field.gd`).
 `core/furrow_field.gd` builds, at start-up and from the field's record alone, a table of every furrow (lateral position, depth, width, U or V profile, where it exists)
 and the shader reads it. What is in it, and what the evidence is:
 - Class F (our choice, no source gives an amplitude): a gentle arc shared by all furrows of a field (1.0–2.5 % of the furrow length, sign per field) and a turn-in over the last 2–5 m toward the side where ploughing progresses

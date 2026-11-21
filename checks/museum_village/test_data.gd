@@ -434,6 +434,19 @@ func _furrow_irregularity(t, d: Dictionary, n: int, all: Dictionary) -> void:
 		var sd_all := _wander_sd(b, 0, k_all)
 		t.ok(sd_all > 0.01 and sd_all < 2.0 * b.sigma_w, "%s: the furrows wander (sd %.1f cm; the model's sigma_w %.1f cm)" % [tag, sd_all * 100.0, b.sigma_w * 100.0])
 		t.ok(sd_b < 1.8 * sd_a + 0.01 and sd_a < 1.8 * sd_b + 0.01, "%s: the wander does not grow across the field (sd %.1f cm in the first third, %.1f cm in the last)" % [tag, sd_a * 100.0, sd_b * 100.0])
+		# the clamp pulls every furrow back to its neighbour's gap and so hides a wander that accumulates (a weak random walk, w_k = w_(k-1) + 0.4 sigma n_k, passes the
+		# test above); so the wander is also tested before the clamp, where nothing hides it: its sd at both ends of the field stays near the model's sigma_w
+		# (a ratio of the two thirds is too noisy with 70-100 slowly correlated furrows, an absolute bound is not), and the neighbour gap has the sd 0.11 P the model is built for
+		var bu := FF.build(f, polys[i], {"clamp": false})
+		var u_a := _wander_sd(bu, 0, third)
+		var u_b := _wander_sd(bu, k_all - third, k_all)
+		t.ok(u_a > 0.5 * b.sigma_w and u_a < 1.4 * b.sigma_w and u_b > 0.5 * b.sigma_w and u_b < 1.4 * b.sigma_w, "%s: the wander before the clamp stays near the model's sigma_w (%.1f cm) at both ends of the field (sd %.1f cm in the first third, %.1f cm in the last)" % [tag, b.sigma_w * 100.0, u_a * 100.0, u_b * 100.0])
+		var gaps_u := []
+		for rr in range(1, int(bu.rows)):
+			for ii in range(0, int(bu.n), 3):
+				gaps_u.append(FF.at(bu, rr, ii, 0) - FF.at(bu, rr - 1, ii, 0))
+		var gap_sd := _std(gaps_u)
+		t.ok(gap_sd > 0.85 * 0.11 * float(f.spacing_m) and gap_sd < 1.15 * 0.11 * float(f.spacing_m), "%s: the neighbour gap before the clamp has the sd 0.11 P (%.2f cm; P %.0f cm)" % [tag, gap_sd * 100.0, float(f.spacing_m) * 100.0])
 		# positive controls: the unclamped build breaks the gap limit, a drifting copy breaks the stationarity test
 		t.ok(_wander_sd(b, k_all - third, k_all, 0.01) > 1.8 * sd_a + 0.01, "%s: a field that drifts by 1 cm per furrow fails the stationarity test, so the test can fail" % tag)
 		# determinism
