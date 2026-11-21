@@ -140,10 +140,9 @@ func _initialize() -> void:
 					var hold: Node3D = hv.skins.worker.root.find_child(ps.node, true, false)
 					var grip: Node3D = entry.nodes[0].find_child(str(entry.def.grip), true, false)
 					var hand_off := grip.global_position.distance_to(hold.global_position)
-					if pid == "ard":       # the ploughman's hand slides on the stilt by at most the aiming's slide (SB-036); everything else is exact
+					max_grip = maxf(max_grip, hand_off)
+					if pid == "ard":       # the plough turns about the grip, which stays on the hand (SB-041); counted on its own as well
 						max_grip_ard = maxf(max_grip_ard, hand_off)
-					else:
-						max_grip = maxf(max_grip, hand_off)
 					held_checked += 1
 					checked_nodes["%d/%s" % [id, pid]] = true
 					t.ok(entry.nodes[0].visible, "hs-%02d: held %s is visible" % [id, pid])
@@ -156,7 +155,7 @@ func _initialize() -> void:
 			time += 3.1
 	t.ok(held_checked > 100, "checked held props many times (%d)" % held_checked)
 	t.ok(max_grip < 1e-3, "a held prop's grip coincides with the hand node (max %.5f m)" % max_grip)
-	t.ok(max_grip_ard < 0.26, "the plough's grip is within the aiming's slide of the hand (max %.3f m, limit 0.25 m)" % max_grip_ard)
+	t.ok(max_grip_ard < 1e-3, "the plough's grip stays on the ploughman's hand, aimed at the team or not (max %.5f m)" % max_grip_ard)
 	t.ok(checked_nodes.size() >= 6, "every held prop of every craft was seen in a hand (%d)" % checked_nodes.size())
 
 	# the plough team: the yoke sits on the ard's beam, the oxen on the yoke, and everything moves with the ploughman
@@ -180,10 +179,10 @@ func _initialize() -> void:
 				pv.apply(st, 0.0, false, pt)
 				var ard: Node3D = pv.props.ard.nodes[0]
 				var yoke: Node3D = pv.props.yoke.nodes[0]
-				if st.travel.moving:       # in the turn clips the plough is swung aside and tipped and is not hitched (SB-036, README)
+				if float(st.team.hitch) > 0.999:       # fully in the hitch: the whole cycle but the ends of a work segment (SB-041)
 					worst_hitch = maxf(worst_hitch, (yoke.find_child("beam_hitch", true, false) as Node3D).global_position.distance_to((ard.find_child("yoke_hitch", true, false) as Node3D).global_position))
-					var stilt := pv.skins.worker.root.find_child("stilt_hold", true, false) as Node3D
-					worst_grip = maxf(worst_grip, stilt.global_position.distance_to((ard.find_child("grip", true, false) as Node3D).global_position))
+				var stilt := pv.skins.worker.root.find_child("stilt_hold", true, false) as Node3D
+				worst_grip = maxf(worst_grip, stilt.global_position.distance_to((ard.find_child("grip", true, false) as Node3D).global_position))
 				for a in pv.animals:
 					var seat: Node3D = yoke.find_child(str(a.def.node), true, false)
 					worst_ox = maxf(worst_ox, a.root.global_position.distance_to(seat.global_position))
@@ -195,8 +194,8 @@ func _initialize() -> void:
 				prev_world = pv.skins.worker.root.global_position
 				plough_seen += 1
 			pt += 1.9
-		t.ok(worst_hitch < 0.03, "the yoke's hitch sits on the ard's hitch while the team walks, to 3 cm (the plough is pitched about the grip to meet the team on the ground; max %.4f m)" % worst_hitch)
-		t.ok(worst_grip < 0.26, "the ploughman's hand stays on the plough while it is aimed at the team (max %.3f m, slide limit 0.25 m)" % worst_grip)
+		t.ok(worst_hitch < 0.03, "the yoke's hitch sits on the ard's hitch to 3 cm through the cycle, the turn included (the plough turns about the grip, the team gives way; max %.4f m)" % worst_hitch)
+		t.ok(worst_grip < 1e-3, "the ploughman's hand stays on the plough's grip in every clip (max %.5f m)" % worst_grip)
 		t.ok(worst_ox < 0.02, "the oxen stand on the yoke's seats, each on the ground under it (max %.5f m)" % worst_ox)
 		t.ok(worst_skin < 1e-3, "the ploughman is drawn where the schedule puts them (max %.5f m)" % worst_skin)
 		t.ok(walked_clips.has("walk") and walked_clips.has("idle"), "the oxen walk while the team moves and stand while it turns (%s)" % [walked_clips.keys()])
