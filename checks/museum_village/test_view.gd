@@ -97,6 +97,19 @@ func _initialize() -> void:
 	var shader_src := FileAccess.get_file_as_string("res://museum/view/furrows.gdshader")
 	t.ok(shader_src.contains("ALBEDO = COLOR.rgb * mix(vec3(1.0), shade_mul") and not shader_src.contains("source_color"), "the furrow shader only darkens the ground colour")
 
+	# SB-037: the shader carries the same formulas as core/furrow_wave.gd (the data tests walk those), takes its uniforms from the record,
+	# and does no profile work where the pattern has faded
+	for frag in ["warp_amp.x * sin(warp_k.x * t + warp_c.x * s0 + phase.x) + warp_amp.y * sin(warp_k.y * t + warp_c.y * s0 + phase.y)",
+			"vary.x * (0.6 * sin(1.19 * t + 1.9 * s0 + phase.z) + 0.4 * sin(2.99 * t + 3.1 * s0 + phase.w))",
+			"vary.y * sin(0.82 * t + 2.3 * s0 + phase.z)", "if (vis > 0.0)", "if (f0 <= FADE_GONE * 1.15)"]:
+		t.ok(shader_src.contains(frag), "the furrow shader carries: %s" % frag.left(40))
+	for k in range(patches.size()):
+		var mk := (patches[k] as MeshInstance3D).material_override as ShaderMaterial
+		var want: Dictionary = preload("res://museum/core/furrow_wave.gd").params(all.village.furrows.fields[k])
+		for key in want:
+			t.eq(mk.get_shader_parameter(key), want[key], "field %d: the shader takes %s from the record" % [k, key])
+		t.ok(mk.get_shader_parameter("along") != null and absf(mk.get_shader_parameter("across").dot(mk.get_shader_parameter("along"))) < 1e-4, "field %d: along is perpendicular to across" % k)
+
 	# every homestead, through the day: one skin visible, standing where the schedule says; held props sit in the hand
 	var max_grip := 0.0
 	var max_grip_ard := 0.0
