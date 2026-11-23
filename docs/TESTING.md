@@ -2,7 +2,7 @@
 
 ## Co je potřeba
 
-- Godot 4.5.1 stable (standard). Kontroly běží headless, bez okna.
+- Godot 4.5.1 stable. Kontroly běží headless, bez okna.
 - Cesta k enginu: proměnná `GODOT`, jinak `.runs/tools/Godot_v4.5.1-stable_linux.x86_64`
   v repozitáři, jinak `godot` v `PATH`.
 
@@ -18,7 +18,7 @@ checks/museum_village/run.sh data ui    # vybrané kontroly
 - Skript nejdřív dvakrát spustí import projektu (první průchod rozbalí textury
   modelů, druhý je použije ve scénách), pak spustí každou kontrolu s limitem 120 s.
 - Uživatelské adresáře Godotu jsou dočasné a po doběhu se smažou.
-- Výstup je třeba přečíst: při selhání kontroly skript vypíše `exit N from test_<jméno>`
+- Při selhání kontroly skript vypíše `exit N from test_<jméno>`
   na chybový výstup a skončí nenulovým kódem.
 
 ## Kontroly v CI
