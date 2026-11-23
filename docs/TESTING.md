@@ -25,8 +25,11 @@ checks/museum_village/run.sh data ui    # vybrané kontroly
 
 - `museum-tests` (`.github/workflows/checks.yml`): v kontejneru
   `barichello/godot-ci:4.5.1` spustí celé `checks/museum_village/run.sh`. Běží na
-  pull requestech a na `main`, pokud se změnily cesty `museum/`, `checks/`, `tools/`,
-  `assets/`, `research/`, `project.godot` nebo samotné workflow.
+  každém pull requestu (bez filtru cest, je to povinná kontrola) a na push do `main`
+  jen při změně cest `museum/`, `checks/`, `tools/`, `assets/`, `research/`,
+  `project.godot` nebo `.github/workflows/checks.yml`; jde spustit i ručně
+  (`workflow_dispatch`).
 - `build` (`.github/workflows/pages.yml`): webový export Godotu ("Web"). Na pull
-  requestech se jen sestaví, nasazuje se pouze mimo pull requesty.
+  requestech se jen sestaví, a to jen při změně cest webového buildu; nasazuje se
+  pouze mimo pull requesty.
 - Podle komentáře ve `pages.yml` je pro `main` povinná jen kontrola `museum-tests`.
