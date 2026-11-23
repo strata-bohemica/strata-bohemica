@@ -1447,6 +1447,42 @@
    }
   }
  },
+ "LOOMWEIGHT-001": {
+  "source": "bronze-bohemia-v3/LOOMWEIGHT-001",
+  "rev": "r002",
+  "models": {
+   "loomweight": {
+    "file": "LOOMWEIGHT-001/r002/models/loomweight.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "cord_hole": {
+      "translation": [
+       0.001305,
+       0.1124,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "top_center": {
+      "translation": [
+       0.0018,
+       0.155,
+       -0.001
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
+ },
  "BRONZE-001": {
   "source": "economy-batch4/BRONZE-001",
   "rev": "r001",

@@ -13,6 +13,12 @@
     "economy-batch5/MEAL-001",
     "economy-batch8/WEAVE-001",
     "economy-batch5/LOOM-001",
+    {
+      "id": "bronze-bohemia-v3/LOOMWEIGHT-001",
+      "models": [
+        "loomweight"
+      ]
+    },
     "economy-batch4/BRONZE-001",
     {
       "id": "economy-batch5/SPIN-001",

@@ -85,16 +85,34 @@
       {
         "class": "E",
         "text": {
-          "cs": "Na Březnici se našlo téměř 500 hliněných závaží a jejich zlomků, všechna vypálená a jehlancovitá nebo tvaru velmi blízkého. Otvory jsou obroušené téměř jen dole, proto autoři soudí, že většina visela podstavou nahoru. Klasické zavěšení na osnovu svislého stavu považují za málo pravděpodobné; podstavce pod rožně nevylučují, ale nic na ně neukazuje.",
-          "en": "Almost 500 clay weights and fragments were found at Březnice, all fired and pyramidal or very close to it. Their holes are worn almost only at the bottom, so the authors think most hung base-up. They consider the classic hanging from the warp of an upright loom unlikely; they do not rule out spit supports, but nothing points to them."
+          "cs": "Na Březnici se našlo téměř 500 hliněných závaží a jejich zlomků, všechna vypálená a jehlancovitá nebo tvaru velmi blízkého. Otvory jsou obroušené téměř jen dole.",
+          "en": "Almost 500 clay weights and fragments were found at Březnice, all fired and pyramidal or very close to it. Their holes are worn almost only at the bottom."
+        }
+      },
+      {
+        "class": "E",
+        "text": {
+          "cs": "Jednotlivý kus: závaží A 26 664 z objektu 1/05. Autoři u něj zaznamenali otěr otvoru „v dolní třetině (z obou stran)“. Jak velký otěr je, neuvádějí.",
+          "en": "A single piece: weight A 26 664 from feature 1/05. The authors recorded wear of its hole \"in the lower third (on both sides)\". They do not give the size of the wear."
+        }
+      },
+      {
+        "class": "E",
+        "text": {
+          "cs": "Výklad autorů, ne pozorování: podle otěru soudí, že většina závaží visela podstavou nahoru. Klasické zavěšení na osnovu svislého stavu považují za málo pravděpodobné; zavěšení na provlečené tyčce podle nich nelze zcela vyloučit. Podstavce pod rožně nevylučují, ale nic na ně neukazuje.",
+          "en": "The authors' interpretation, not an observation: from the wear they think most weights hung base-up. They consider the classic hanging from the warp of an upright loom unlikely; hanging on a rod passed through the hole cannot, in their view, be entirely ruled out. They do not rule out spit supports, but nothing points to them."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Typ stavu (svislý se závažími), zavěšení závaží podstavou nahoru, provlékání útku na tyčce a přirážení útku mečem nahoru jsou rekonstrukce. Tkaní shora a přirážení nahoru odpovídá obvyklému stavu se závažími, ne nálezu z Březnice.",
-      "en": "The loom type (upright, warp-weighted), the weights hung base-up, passing the weft on a stick and beating it upwards with a sword are reconstructed. Weaving from the top and beating upwards follow the usual warp-weighted loom, not a find from Březnice."
+      "cs": "Typ stavu (svislý se závažími), zavěšení závaží podstavou nahoru, provlékání útku na tyčce a přirážení útku mečem nahoru jsou rekonstrukce. Tkaní shora a přirážení nahoru odpovídá obvyklému stavu se závažími, ne nálezu z Březnice. Předení příze je samostatná ukázka v usedlosti Předoucí.",
+      "en": "The loom type (upright, warp-weighted), the weights hung base-up, passing the weft on a stick and beating it upwards with a sword are reconstructed. Weaving from the top and beating upwards follow the usual warp-weighted loom, not a find from Březnice. Spinning the yarn is a separate exhibit, at the spinner's homestead."
     },
     "unknown": [
+      {
+        "cs": "k čemu sloužila velká část závaží (autoři otázku nechávají otevřenou)",
+        "en": "what a large part of the weights was used for (the authors leave the question open)"
+      },
       {
         "cs": "zda se stav vůbec používal",
         "en": "whether a loom was used at all"
@@ -106,12 +124,17 @@
       {
         "cs": "kdo tkal",
         "en": "who wove"
+      },
+      {
+        "cs": "jak velký a hluboký byl otěr otvoru u závaží A 26 664",
+        "en": "how large and deep the hole wear on weight A 26 664 was"
       }
     ],
     "sources": [
-      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308, pp. 279, 291–292, 301",
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308, pp. 275 (tab. 2), 279, 291–292, 301",
       "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, pp. 4, 8",
       "Grömer 2016, The Art of Prehistoric Textile Making, pp. 107, 110–111, 117–118",
+      "LOOMWEIGHT-001 PROVENANCE.md",
       "LOOM-001 PROVENANCE.md",
       "WEAVE-001 PROVENANCE.md"
     ]
