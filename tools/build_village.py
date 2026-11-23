@@ -289,7 +289,7 @@ for h in houses:
     out_houses.append(dict(id=h['id'], cluster=h['cluster'], craft=h['craft'], label=h['label'],
         pos=W(h['x'], h['y']), y=round(h['platform_z'], 2),
         yaw_deg=round((90 + h['yaw_deg']) if side > 0 else (-90 + h['yaw_deg']), 1), door=h['door']))
-village = dict(id='breznice', schema=1, disc_radius_m=DISC, note='Layout and terrain are F/R: no house plan or terrain model of Březnice exists. World coordinates, x east, z south.',
+village = dict(id='breznice', schema=1, disc_radius_m=DISC, note='Layout and terrain are F/R: no house plan or terrain model of Březnice exists. The N–S long axis of the houses is F, inferred from the N–S long pits (Chvojka et al. 2019, 269–270), not an attested house orientation. The village is denser than Březnice: 12 houses on about 1.5 ha, against about 13 ha and at most about 20 houses standing at once there (Šálková et al. 2022). World coordinates, x east, z south.',
     houses=out_houses, paths=[[W(x, y) for x, y in p] for p in paths], fields=[[W(x, y) for x, y in poly] for poly in fields],
     stream=dict(points=[W(float(stream_x(y)), y) for y in stream_ys], width_m=STREAM_W),
     clay_pit=W(*layout['clay_pit']), water_access=W(*layout['water_access']), sites=sites,

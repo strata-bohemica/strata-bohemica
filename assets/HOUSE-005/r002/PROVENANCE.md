@@ -9,7 +9,7 @@ Brief: `content/research/museum-lba/HOUSE-BRIEF.md` v1 (owner decisions 2026-11-
 | Item | Class | Basis |
 |---|---|---|
 | Above-ground, post-built, rectangular house | A (choice) | brief row "Type": Jiráň 2008, 169–171; Chvojka 2009, 130 |
-| Footprint about 8.5 × 5 m, three rows of posts; rooms not stated | A, R/F | brief row "Footprint B": Beneš 1995 via Jiráň 2008, 169–171. Beneš 1995 not read at source. |
+| Footprint about 8.5 × 5 m, three rows of posts; rooms not stated | A, R/F | brief row "Footprint B": Beneš 1995 via Jiráň 2008, 169–171 (Sklenářová 2012, 114 cites Liptice as Beneš 1987). Beneš 1995 not read at source. |
 | Post rows: two wall rows (long-wall posts at about 1.4 m nominal spacing (r002: each shifted by a seeded ±0.13 m)) and a central ridge-post row (gable centre posts plus internal posts at x = ±2.1) | row count A (brief); positions **F** | own layout |
 | Interior not divided | **F** | brief: "rooms not stated"; an undivided room is the simplest reading |
 | Hearth central at the origin, no paving | **F** | design choice from the manager's SB-023 phase-1 assignment (2026-11-20; not stored in the repo); HOUSE-BRIEF.md places no hearth for type B. No tie beam over the hearth |
