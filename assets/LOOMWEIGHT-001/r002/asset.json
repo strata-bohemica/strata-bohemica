@@ -1,0 +1,416 @@
+{
+  "example_only": false,
+  "spec_version": "2.0",
+  "asset_id": "LOOMWEIGHT-001",
+  "revision": "r002",
+  "previous_revision": "r001 (unchanged beside this folder; its fragment and deposit GLBs are not superseded by r002)",
+  "brief": "BREZ-007 (team/museum-kanban/tasks/BREZ-007.md): detail revision of the single clay weight for a close-up of the hole. Basis: accepted BREZ-006 modelling sheet team/evidence/breznice/BREZ-006/README.md (specimen A 26 664, obj. 1/05, S-CH19 Fig. 4: 1; owner accepted the specimen on 2026-11-23 and decided: raise the hole, add wear of the lower hole edge, neutral name 'závaží'). Contract followed: art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md, kit spec 2.0.",
+  "status": "draft",
+  "author": "Claude Code agent (BREZ-007 modelling part), procedural generator derived from r001 source",
+  "actual_agent_model": "Claude Code session reporting model id claude-opus-5-5; the commit trailer requested by the dispatcher names Claude Sonnet 5.5. Not independently verifiable from inside the session.",
+  "tools": [
+    "Blender 5.0.1 as the bpy Python module from PyPI (uv, Python 3.11): generator, re-import/contact checks, Workbench stills",
+    "Khronos glTF Blender I/O bundled with that bpy (version in checks/glb_inspect.json asset.generator)",
+    "Godot Engine 4.5.1-stable (official) (headless import probe; GPU viewport captures, gl_compatibility / opengl3 on Mesa Intel(R) UHD Graphics 620 (KBL GT2), API 4.6 (Core Profile) Mesa 26.2.5-arch1.1)",
+    "Python 3 + numpy (independent GLB parser, hole/wear ray casts) + Pillow (captions, side-by-side composites)"
+  ],
+  "units": "metres",
+  "up_axis": "+Y",
+  "model_front": "+Z",
+  "scale_basis": "project_fit",
+  "scale_note": "Unchanged from r001: height 0.155 m is a chosen design value inside the reported S-CH19 mode (151-160 mm), not the 160 mm of specimen A 26 664; widths, bulge, rounding, lean/twist and colours are R. r002 changes only the hole: centre at 0.275 of the height below the top (O: BREZ-006 reading of the A 26 664 drawing, 0.27-0.28), 12 facets (R), and wear of the lower third of both mouths (M extent; width/depth R).",
+  "historical_status": "provisional_reconstruction",
+  "physical_dimensions_m": null,
+  "design_dimensions_m": {
+    "height": 0.155,
+    "nominal_base_width_x_depth": [
+      0.098,
+      0.09
+    ],
+    "nominal_top_width_x_depth": [
+      0.049,
+      0.045
+    ],
+    "qualification": "Chosen design values, not measurements of a specimen. Height is selected inside the reported S-CH19 distribution (usually 0.14-0.17 m; mode 0.151-0.160 m, 13 of 39); widths are R (inside the brief's ±15% of ~0.09/~0.045 m).",
+    "source": "S-CH19 (Chvojka, Menšík, Šálková & Kuna 2019, Archeologické rozhledy 71(2): 267-308) §3.1, as summarised in content/research/next-batch/material-culture.md Key fact 1",
+    "applies_to": [
+      "models/loomweight.glb",
+      "models/loomweight_marked.glb"
+    ],
+    "hole_centre_y": 0.1124,
+    "hole_centre_from_top_fraction": 0.275,
+    "hole_diameter": 0.016,
+    "wear_max_radial_widening_at_face": 0.003,
+    "wear_fade_depth_into_bore": 0.006
+  },
+  "metadata_notes": {
+    "mass_kg_reported": "Most frequent S-CH19 reconstructed-mass class is 1600-1800 g: 20 of 45 weights (a plurality, not a majority); reported range ~1230-2353 g. Metadata note only, not physics; not a property of this model.",
+    "implied_mass_from_export": "819 cm3 exported body -> R sanity check only at an assumed 1.8-2.0 g/cm3; not an archaeological measurement; the 2149 g of A 26 664 is an authors' estimate for 100 % and is not used.",
+    "perforation": "S-CH19: weights are usually perforated with a single opening (mostly 11-20 mm); one documented exception from feature 12/06 has a double opening on one side. The single through-hole in this kit is an R design choice, not a universal claim.",
+    "function": "Unresolved in the source (S-CH19 pp. 291-292, 301): loom weight vs spit support; the authors read lower-hole wear as base-up tying for most pieces. r002 shows no cord, rod or loom.",
+    "wear": "S-CH19 Table 2, A 26 664: wear 'v dolní třetině (z obou stran)' (M, this specimen). Modelled as a widened, rounded lower third of both mouths. Extent along the opening = M; radial width (<=3 mm) and depth (6 mm) = R. The offset line under the hole on the drawing (BREZ-006: 0.5-0.6 cm, O, convention not explained by the authors) was NOT used for the size. No colour, gloss, firing or clay-residue change on the piece (not reported for A 26 664).",
+    "name": "Owner decision 2026-11-23: neutral in-game name 'závaží' (not 'tkalcovské závaží'). File names keep the r001 'loomweight' prefix as asset identifiers."
+  },
+  "models": [
+    {
+      "file": "models/loomweight.glb",
+      "role": "single pyramidal fired-clay weight, standing base-down; base centre on the floor at the origin; broad faces (with the through-hole) face +Z/-Z; r002: hole raised, lower hole edge worn at both mouths",
+      "triangles": 256,
+      "triangle_budget": 300,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "LOOMWEIGHT_clay"
+      ],
+      "textures": [
+        {
+          "name": "loomweight_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 191403
+        }
+      ],
+      "visible_meshes": 1,
+      "unique_meshes": 1,
+      "file_bytes": 201848,
+      "export_bounds_m": {
+        "width": 0.09595,
+        "height": 0.155,
+        "depth": 0.08752,
+        "min": [
+          -0.04809,
+          0.0,
+          -0.04396
+        ],
+        "max": [
+          0.04785,
+          0.155,
+          0.04356
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "LOOMWEIGHT",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "floor contact point / placement origin (0,0,0)"
+        },
+        "cord_hole": {
+          "parent": "LOOMWEIGHT",
+          "translation": [
+            0.001305,
+            0.1124,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the through-hole; hole axis = local +Z (front-back), identity rotation; diameter 0.016 m (12-sided) at y = 0.1124 m (0.275 of the height below the top); the lower third of each mouth is widened by wear"
+        },
+        "top_center": {
+          "parent": "LOOMWEIGHT",
+          "translation": [
+            0.0018,
+            0.155,
+            -0.001
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the flat top surface (offset by the modelled hand-made lean)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_mode": "OPAQUE",
+      "closed_manifold": true,
+      "godot_triangles": 256,
+      "godot_cull_back": true,
+      "blender_reimport_triangles": 256,
+      "volume_cm3": 819.31,
+      "implied_mass_kg_at_1p8_to_2p0_g_cm3": [
+        1.475,
+        1.639
+      ],
+      "volume_centroid_m": [
+        0.00076,
+        0.06109,
+        -0.00033
+      ],
+      "hole_and_wear_measured": {
+        "cord_hole_y_m": 0.1124,
+        "hole_centre_from_top_fraction": 0.2748,
+        "opening_radius_at_face_mm": {
+          "front_+z": {
+            "lower_third_min_max": [
+              8.0,
+              10.0
+            ],
+            "rest_min_max": [
+              7.7,
+              8.1
+            ],
+            "straight_down": 9.7,
+            "straight_up": 7.8
+          },
+          "back_-z": {
+            "lower_third_min_max": [
+              8.0,
+              9.9
+            ],
+            "rest_min_max": [
+              7.7,
+              8.1
+            ],
+            "straight_down": 9.5,
+            "straight_up": 7.8
+          }
+        },
+        "source": "checks/hole_wear.json (ray casts on the exported GLB)"
+      }
+    },
+    {
+      "file": "models/loomweight_marked.glb",
+      "role": "same body plus one central fingertip dimple on the top (Ø 12 mm, 1.5 mm deep)",
+      "triangles": 306,
+      "triangle_budget": 330,
+      "budget_ok": true,
+      "materials": 1,
+      "material_names": [
+        "LOOMWEIGHT_clay"
+      ],
+      "textures": [
+        {
+          "name": "loomweight_atlas",
+          "width": 512,
+          "height": 512,
+          "format": "image/png",
+          "embedded": true,
+          "bytes": 191403
+        }
+      ],
+      "visible_meshes": 1,
+      "unique_meshes": 1,
+      "file_bytes": 203452,
+      "export_bounds_m": {
+        "width": 0.09595,
+        "height": 0.155,
+        "depth": 0.08752,
+        "min": [
+          -0.04809,
+          0.0,
+          -0.04396
+        ],
+        "max": [
+          0.04785,
+          0.155,
+          0.04356
+        ]
+      },
+      "anchors": {
+        "base_center": {
+          "parent": "LOOMWEIGHT_MARKED",
+          "translation": [
+            0.0,
+            0.0,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "floor contact point / placement origin (0,0,0)"
+        },
+        "cord_hole": {
+          "parent": "LOOMWEIGHT_MARKED",
+          "translation": [
+            0.001305,
+            0.1124,
+            0.0
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the through-hole; hole axis = local +Z (front-back), identity rotation; diameter 0.016 m (12-sided) at y = 0.1124 m (0.275 of the height below the top); the lower third of each mouth is widened by wear"
+        },
+        "mark_center": {
+          "parent": "LOOMWEIGHT_MARKED",
+          "translation": [
+            0.0018,
+            0.1535,
+            -0.001
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "lowest point of the fingertip dimple (top_center - 0.0015 m in y)"
+        },
+        "top_center": {
+          "parent": "LOOMWEIGHT_MARKED",
+          "translation": [
+            0.0018,
+            0.155,
+            -0.001
+          ],
+          "rotation_xyzw": [
+            0,
+            0,
+            0,
+            1
+          ],
+          "note": "centre of the flat top surface (offset by the modelled hand-made lean)"
+        }
+      },
+      "animations": [],
+      "double_sided_exceptions": [],
+      "alpha_mode": "OPAQUE",
+      "closed_manifold": true,
+      "godot_triangles": 306,
+      "godot_cull_back": true,
+      "blender_reimport_triangles": 306,
+      "volume_cm3": 819.23,
+      "implied_mass_kg_at_1p8_to_2p0_g_cm3": [
+        1.475,
+        1.638
+      ],
+      "volume_centroid_m": [
+        0.00076,
+        0.06108,
+        -0.00033
+      ],
+      "hole_and_wear_measured": {
+        "cord_hole_y_m": 0.1124,
+        "hole_centre_from_top_fraction": 0.2748,
+        "opening_radius_at_face_mm": {
+          "front_+z": {
+            "lower_third_min_max": [
+              8.0,
+              10.0
+            ],
+            "rest_min_max": [
+              7.7,
+              8.1
+            ],
+            "straight_down": 9.7,
+            "straight_up": 7.8
+          },
+          "back_-z": {
+            "lower_third_min_max": [
+              8.0,
+              9.9
+            ],
+            "rest_min_max": [
+              7.7,
+              8.1
+            ],
+            "straight_down": 9.5,
+            "straight_up": 7.8
+          }
+        },
+        "source": "checks/hole_wear.json (ray casts on the exported GLB)"
+      }
+    }
+  ],
+  "kit_unique_materials": 1,
+  "kit_unique_textures": [
+    {
+      "name": "loomweight_atlas",
+      "width": 512,
+      "height": 512,
+      "format": "image/png",
+      "note": "one shared base-colour atlas, embedded once per GLB (self-contained files); four 256 px cells: exterior, overburnt red, grey core, heavily fire-clouded exterior"
+    }
+  ],
+  "kit_totals": {
+    "triangles_all_models": 562,
+    "glb_bytes_total": 405300,
+    "note": "r002 contains only the two single weights; the r001 fragment and deposit stay valid as r001 assets (they keep the r001 hole at y = 0.10 m)."
+  },
+  "budget_vs_r001": {
+    "models/loomweight.glb": {
+      "r001_triangles": 176,
+      "r002_triangles": 256,
+      "r001_file_bytes": 199392,
+      "r002_file_bytes": 201848,
+      "budget": 300
+    },
+    "models/loomweight_marked.glb": {
+      "r001_triangles": 226,
+      "r002_triangles": 306,
+      "r001_file_bytes": 200996,
+      "r002_file_bytes": 203452,
+      "budget": 330
+    }
+  },
+  "reuse_demo_row24": {
+    "what": "24 instances of loomweight.glb in a row at 0.12 m pitch (demo only, not a loom claim)",
+    "godot_scene_instances": {
+      "mesh_instances": 24,
+      "multimesh_instances": 24,
+      "multimesh_triangles": 6144,
+      "scene_instances": 24,
+      "triangles": 6144
+    }
+  },
+  "reference_ids": [
+    "S-CH19 (via BREZ-006: Tab. 2 p. 275, Fig. 4: 1 p. 276, pp. 279, 291-292, 301)",
+    "BREZ-006 modelling sheet"
+  ],
+  "input_hashes": {
+    "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+    "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+    "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/models/loomweight.glb": "5c13e7effeee7d9216d5155f426217870eb7685626d6758b09a7b96c9a9127d0",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/models/loomweight_marked.glb": "f103f40d3114a94c2060b87cd71353922d1753b2cf4bfb107628ce093a0c7e3c",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/source/gen_loomweight.py": "e3ba373d9b54c35ae1e0a4bd65eb37bfbde01f7d84d818d4bb27fc0051a37504",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/source/textures/loomweight_atlas.png": "e5c6ba1ecd2c713e4bbd77c047be2936f7c219e7f388da95fc0946a79686169d",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/PROVENANCE.md": "e238e7162adab1517fe29386dcdde1d50d4e184a86f87d3a27bdefa4be79b97f",
+    "art/returns/bronze-bohemia-v3/LOOMWEIGHT-001/r001/asset.json": "a25724f192478aefb8b91c3e5fa63684dca7424dcc8c80f989d3dc6592ea06a6",
+    "team/evidence/breznice/BREZ-006/README.md": "8465127a36bc39f945de20dcb820d246dfe448f32b9f63e833ec95b1e5b7e9c4",
+    "team/museum-kanban/tasks/BREZ-006.md": "9ce2ecec57be6bab666b3bf63906989b80e889cee9fd6f997a213438c0803427",
+    "team/museum-kanban/tasks/BREZ-007.md": "b549f927cf884113dbff7e96a959ca15b55d2ebb24e79f0968afc9f4196d1d10"
+  },
+  "parts_and_uncertainties": [
+    "Hole centre 0.275 of the height below the top: O (BREZ-006 reading of the A 26 664 drawing: ~4.4 of 16.0 cm, 0.27-0.28); inside the S-CH19 frame for the whole find (upper third to half height, mostly the upper/middle-third boundary; M).",
+    "Hole diameter 0.016 m round: unchanged R from r001. A 26 664 drawing gives a slightly vertical oval ~12.5 x 14 mm (O); not adopted (no decision).",
+    "Wear: lower third of the opening at both mouths = M (A 26 664, Tab. 2). Width <=3 mm, depth 6 mm, profile = R.",
+    "Body height 0.155 m and widths: unchanged r001 design values; A 26 664 is 160 mm high (M) and widest ~11.8 x 11.0 cm a quarter of the height above the base (O) — not adopted (no decision).",
+    "Top mark: the marked variant keeps the r001 single central dimple; A 26 664 has 4 dimples (M) — not adopted.",
+    "Colours, firing, gloss, clay residue: r001 atlas unchanged; nothing specific to A 26 664 is claimed.",
+    "Suspension mode and loom use: not established; nothing in the model implies a loom."
+  ],
+  "own_work_license": "Unselected original project work; manager/owner decision",
+  "incorporated_resources": [],
+  "deviations": [
+    "r002 regenerates only loomweight.glb and loomweight_marked.glb (the card BREZ-007 names these two as inputs). Fragment and deposit are not regenerated; they stay r001 with the r001 hole height.",
+    "Built with the bpy 5.0.1 module (uv) on Linux instead of Blender 5.2.3 used for r001 (Blender is not installed on this machine; precedent HOUSE-004 r002). The atlas is regenerated from the unchanged recipe and seed; pixel equality with r001 is in checks/atlas_vs_r001.json.",
+    "Village views (ortho 25/16), PERSON/POT/HOUSE scale stills and the 24-row GPU render-info probe were not redone: the body size is unchanged and the change is a hole detail; see CHECKS.md.",
+    "GPU captures were taken at the window size the compositor gave (logged in checks/godot_shot_log.json), not forced to 1280x800.",
+    "tools/inspect_asset.py was not run (does not know batch-3 IDs); independent measurements are in checks/."
+  ]
+}
