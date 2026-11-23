@@ -19,7 +19,7 @@
 
 ## Status
 
-Early development. The museum (a Godot 4.5 project in [`museum/`](museum/), also built for the browser) shows a Late Bronze Age village after Březnice u Bechyně: twelve craftspeople work in front of their houses and go to sleep in the evening; the potter's hand-forming of a clay bowl is shown as an experimental variant, without firing. Click a person or house for the evidence card; research notes are in [`research/`](research/). The living diorama above is the earlier single-homestead render.
+Early development. The museum (a Godot 4.5 project in [`museum/`](museum/), also built for the browser) shows a Late Bronze Age village after Březnice u Bechyně: twelve craftspeople work in front of their houses and go to sleep in the evening; the potter's hand-forming of a clay bowl is shown as an experimental variant, without firing. Click a person or house for the evidence card; research notes are in [`research/`](research/). The living diorama above is the earlier single-homestead render. What is done, what is being considered and what is out of scope: [ROADMAP.md](ROADMAP.md).
 
 ## Licence
 

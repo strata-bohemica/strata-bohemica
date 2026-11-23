@@ -13,6 +13,8 @@
  "ui.cutaway": "Řez domem",
  "ui.cutaway_short": "Řez",
  "ui.pause": "Pauza",
+ "ui.paused": "pozastaveno",
+ "ui.speed": "Rychlost (klepnutím změníš: x1, x10, x40)",
  "ui.play": "Přehrát",
  "ui.language": "EN",
  "ui.hint": "Kliknutím na postavu zobrazíš podrobnosti. Tažení otáčí, pravé tlačítko nebo šipky posouvají, kolečko přibližuje.",

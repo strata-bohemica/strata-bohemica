@@ -15,6 +15,7 @@ var body: RichTextLabel
 var lang_button: Button
 var close_button: Button
 var detail_button: Button
+var scroll: ScrollContainer    # the card's text; the wheel and, on a touch screen, a finger dragging the text scroll it
 var current: Dictionary = {}
 var lang := "en"
 var viewer: Control            # a figure shown over the whole screen; any click or Esc closes it
@@ -22,6 +23,11 @@ var viewer_image: TextureRect
 var viewer_layer: CanvasLayer  # its own layer above the app's UI layer, so no click on it reaches the time bar below
 
 const VIEWER_LAYER := 10       # above the app's CanvasLayer (layer 1) that holds the card, the object viewer and the time bar
+const NARROW_TOUCH := 44.0     # touch target of the language and close buttons on a phone (as the time bar's, see time_bar.gd)
+
+var _drag_from := 0.0          # a finger dragging the text: the scroll offset when it touched, and how far it has moved
+var _drag_accum := 0.0
+var _drag_beyond := false
 
 func _init() -> void:
 	visible = false
@@ -66,11 +72,14 @@ func _init() -> void:
 	detail_button.custom_minimum_size = Vector2(0, 44)       # a touch target on a phone
 	detail_button.pressed.connect(func(): detail_requested.emit())
 	box.add_child(detail_button)
-	var scroll := ScrollContainer.new()
+	scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.scroll_deadzone = 8                         # px a finger moves before the text follows (a tap on a link stays a tap)
+	scroll.gui_input.connect(_on_scroll_input)
 	box.add_child(scroll)
 	body = RichTextLabel.new()
+	body.mouse_filter = Control.MOUSE_FILTER_PASS      # a touch on the text also reaches the scroll container (links still work)
 	body.bbcode_enabled = true
 	body.fit_content = true
 	body.scroll_active = false
@@ -126,6 +135,41 @@ func set_layout(viewport_size: Vector2) -> void:
 		offset_right = -12.0
 		offset_top = 12.0
 		offset_bottom = -64.0
+	var touch := Vector2(NARROW_TOUCH, NARROW_TOUCH) if narrow else Vector2.ZERO     # the desktop keeps its compact header
+	lang_button.custom_minimum_size = touch
+	close_button.custom_minimum_size = touch
+
+## A card of another homestead starts at its top, not where the previous one was left (SB-059 D2).
+func scroll_to_top() -> void:
+	scroll.scroll_vertical = 0
+	_drag_beyond = false
+
+## One finger dragging the card's text scrolls it (SB-059 D5). The engine's own drag scrolling in ScrollContainer works
+## only from the mouse events emulated from touch and only where DisplayServer reports a touch screen; it is replaced
+## here by the touch events themselves, and the emulated mouse events are taken, so the text never scrolls twice.
+## Everything is accepted, so a drag over the card never reaches the camera.
+func _on_scroll_input(event: InputEvent) -> void:
+	if event is InputEventScreenTouch:
+		if event.index == 0:
+			_drag_from = scroll.scroll_vertical
+			_drag_accum = 0.0
+			_drag_beyond = false
+		scroll.accept_event()
+	elif event is InputEventScreenDrag:
+		if event.index == 0:
+			_drag_accum -= event.relative.y
+			if _drag_beyond or absf(_drag_accum) > scroll.scroll_deadzone:
+				_drag_beyond = true
+				scroll.scroll_vertical = int(roundf(_drag_from + _drag_accum))
+		scroll.accept_event()
+	elif (event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT or event is InputEventMouseMotion) \
+			and event.device == InputEvent.DEVICE_ID_EMULATION:
+		scroll.accept_event()
+
+## The mouse wheel over the card is the card's, also once the text cannot scroll further (SB-059 D1): it never zooms the camera.
+func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN, MOUSE_BUTTON_WHEEL_LEFT, MOUSE_BUTTON_WHEEL_RIGHT]:
+		accept_event()
 
 func show_card(card: Dictionary, p_lang: String) -> void:
 	current = card
@@ -149,6 +193,7 @@ func _notification(what: int) -> void:
 
 func hide_card() -> void:
 	close_figure()
+	scroll_to_top()
 	visible = false
 	current = {}
 

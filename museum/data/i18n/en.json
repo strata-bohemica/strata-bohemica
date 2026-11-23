@@ -13,6 +13,8 @@
  "ui.cutaway": "Cutaway",
  "ui.cutaway_short": "Cutaway",
  "ui.pause": "Pause",
+ "ui.paused": "paused",
+ "ui.speed": "Speed (tap to change: x1, x10, x40)",
  "ui.play": "Play",
  "ui.language": "CS",
  "ui.hint": "Click a person for details. Drag orbits, right-drag or arrows move, wheel zooms.",
