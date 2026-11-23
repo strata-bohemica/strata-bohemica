@@ -631,8 +631,10 @@ func _pottery(t, all: Dictionary) -> void:
 		classes[ev["class"]] = true
 	t.ok(classes.has("E") and classes.has("R"), "pottery: the card separates local evidence (E) from analogy and project values (R)")
 	var text := JSON.stringify(card)
-	for needle in ["46 ze 133", "46 of 133", "2–11", "214 × 91", "projektová hodnota", "project value", "11 objektů", "11 features", "Chvojka a kol. 2021", "Chvojka et al. 2021", "nevypálená", "unfired"]:
+	for needle in ["46 ze 133 mís v datech (37 z nich bez určeného typu)", "46 of the 133 bowls in the data (37 of them with no type determined)", "2–11", "214 × 91", "projektová hodnota", "project value", "11 objektů", "11 features", "Chvojka a kol. 2021", "Chvojka et al. 2021", "nevypálená", "unfired"]:
 		t.ok(text.contains(needle), "pottery: the card says '%s'" % needle)
+	for needle in ["typově určených", "typed bowls"]:      # 133 = all bowls in DTB1; only 96 have a determined type (37 are M0)
+		t.ok(not text.contains(needle), "pottery: the card does not call the 133 bowls typed ('%s')" % needle)
 	for needle in ["\\bkruh", "\\bwheel", "hněvotín", "hnevotin"]:      # no potter's wheel, no Hněvotín (scope of SB-057); "okruh" (sphere) is fine
 		t.ok(RegEx.create_from_string(needle).search(text.to_lower()) == null, "pottery: the card says nothing about '%s'" % needle)
 	t.eq(card.unknown.size(), 4, "pottery: technique, firing, local profile and size are unknown")
