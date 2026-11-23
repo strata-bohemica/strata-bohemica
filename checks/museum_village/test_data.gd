@@ -130,7 +130,24 @@ func _init() -> void:
 	for ref in scenes:
 		scenes[ref].free()
 	_furrows(t, all)
+	_grinding_card(t)
 	quit(t.finish("data"))
+
+# SB-054: the grinding card says, in both languages, that the gesture follows experiments elsewhere and the pace is only
+# illustrative (BREZ-002: no local evidence of the gesture; the clip is slower than the filmed experiments ST21 and D19), and cites both.
+func _grinding_card(t) -> void:
+	const Schema = preload("res://museum/core/schema.gd")
+	var card: Dictionary = Schema.load_json("res://museum/data/crafts/grinding.json").card
+	t.ok(str(card.reconstruction.cs).contains("Způsob mletí na Březnici doložen není"), "grinding (cs): the gesture is not attested at Březnice")
+	t.ok(str(card.reconstruction.en).contains("How grain was ground at Březnice is not attested"), "grinding (en): the gesture is not attested at Březnice")
+	t.ok(str(card.reconstruction.cs).contains("Tempo animace je jen ukázkové"), "grinding (cs): the pace is only illustrative")
+	t.ok(str(card.reconstruction.en).contains("pace of the animation is only illustrative"), "grinding (en): the pace is only illustrative")
+	var cites := {"Struška et al. 2021": false, "Dietrich et al. 2019": false}
+	for s in card.sources:
+		for k in cites:
+			cites[k] = cites[k] or str(s).begins_with(k)
+	for k in cites:
+		t.ok(cites[k], "grinding: the card cites the gesture experiment %s" % k)
 
 # SB-023: two house types. The finish of every homestead's house (plain / limewash / pattern), as decided.
 const FINISHES := {1: "plain", 2: "limewash", 3: "pattern", 4: "plain", 5: "limewash", 6: "plain",
