@@ -581,21 +581,26 @@ func _finger(e: InputEvent) -> void:
 	Input.flush_buffered_events()
 	await process_frame
 
-## One finger presses at `from`, moves by `by` in `steps` equal steps and lifts.
-func _swipe(from: Vector2, by: Vector2, steps := 10) -> void:
-	var e := InputEventScreenTouch.new()
-	e.position = from
-	e.pressed = true
-	await _finger(e)
+## One finger (touch index `index`) presses at `from`, moves by `by` in `steps` equal steps and lifts.
+func _swipe(from: Vector2, by: Vector2, steps := 10, index := 0) -> void:
+	await _finger_at(index, from, true)
 	for k in steps:
-		var d := InputEventScreenDrag.new()
-		d.position = from + by * float(k + 1) / steps
-		d.relative = by / steps
-		await _finger(d)
-	e = InputEventScreenTouch.new()
-	e.position = from + by
-	e.pressed = false
+		await _finger_move(index, from + by * float(k + 1) / steps, by / steps)
+	await _finger_at(index, from + by, false)
+
+func _finger_at(index: int, at: Vector2, pressed: bool) -> void:
+	var e := InputEventScreenTouch.new()
+	e.index = index
+	e.position = at
+	e.pressed = pressed
 	await _finger(e)
+
+func _finger_move(index: int, to: Vector2, by: Vector2) -> void:
+	var d := InputEventScreenDrag.new()
+	d.index = index
+	d.position = to
+	d.relative = by
+	await _finger(d)
 
 func _tap(at: Vector2) -> void:
 	for pressed in [true, false]:
@@ -685,6 +690,34 @@ func _sb059(t, app) -> void:
 	var at: int = scroll.scroll_vertical
 	await _swipe(text_at, Vector2(0, 5), 1)
 	t.eq(scroll.scroll_vertical, at, "D5: a finger moving less than the dead zone (%d px) does not scroll" % scroll.scroll_deadzone)
+
+	# D5 on the web: the touch index is the browser's Touch.identifier, which need not start at 0 (iOS Safari)
+	for index in [0, 1, 7]:
+		app.card_panel.scroll_to_top()
+		cam0 = _camera_state(app)
+		await _swipe(text_at, Vector2(0, -150), 10, index)
+		t.ok(scroll.scroll_vertical >= 120, "D5 web: a swipe with touch index %d scrolls the card (%d px)" % [index, scroll.scroll_vertical])
+		t.eq(_camera_state(app), cam0, "D5 web: the swipe with touch index %d does not move the camera" % index)
+	# the first finger (index 5) drags; a second finger (index 0) on the text moving with it does not scroll the text twice
+	app.card_panel.scroll_to_top()
+	cam0 = _camera_state(app)
+	var second_at: Vector2 = text_at + Vector2(40, 30)
+	await _finger_at(5, text_at, true)
+	await _finger_at(0, second_at, true)
+	for k in 10:
+		await _finger_move(0, second_at + Vector2(0, -15) * (k + 1), Vector2(0, -15))
+	t.eq(scroll.scroll_vertical, 0, "D5 web: a second finger dragging alone does not scroll the card")
+	for k in 10:
+		await _finger_move(5, text_at + Vector2(0, -15) * (k + 1), Vector2(0, -15))
+		await _finger_move(0, second_at + Vector2(0, -15) * (k + 11), Vector2(0, -15))
+	t.ok(absi(scroll.scroll_vertical - 150) <= 2, "D5 web: the first finger (index 5) scrolls the card once, not with the second (%d px of 150)" % scroll.scroll_vertical)
+	await _finger_at(5, text_at + Vector2(0, -150), false)
+	await _finger_at(0, second_at + Vector2(0, -300), false)
+	t.eq(_camera_state(app), cam0, "D5 web: two fingers over the card do not move the camera")
+	at = scroll.scroll_vertical
+	await _swipe(text_at, Vector2(0, -100), 10, 3)
+	t.ok(scroll.scroll_vertical - at >= 80, "D5 web: after the lift a new finger (index 3) drags the card again (%d -> %d px)" % [at, scroll.scroll_vertical])
+	t.eq(_camera_state(app), cam0, "D5 web: and the camera stays")
 
 	# D2: another homestead's card opens at its top: by key, by select, and after the card was closed
 	t.ok(scroll.scroll_vertical > 0, "D2 control: the card is scrolled down before switching")
