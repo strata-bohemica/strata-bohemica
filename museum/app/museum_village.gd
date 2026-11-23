@@ -11,6 +11,9 @@ const CardPanel = preload("res://museum/ui/card_panel.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
 const SoundView = preload("res://museum/view/sound_view.gd")
 const CameraRig = preload("res://museum/core/camera_rig.gd")
+const ObjectView = preload("res://museum/core/object_view.gd")
+const ObjectStage = preload("res://museum/view/object_stage.gd")
+const ObjectViewer = preload("res://museum/ui/object_viewer.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -41,6 +44,9 @@ var hud: Label
 var card_panel
 var time_bar
 var sound
+var object_stage                   # the object viewer's own little world (view/object_stage.gd)
+var object_viewer                  # its panel (ui/object_viewer.gd)
+var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
 var cam_target := Vector3(0, 4, 0)
@@ -108,7 +114,14 @@ func _build_world() -> void:
 	card_panel = CardPanel.new()
 	card_panel.closed.connect(func(): select(0))
 	card_panel.language_toggled.connect(toggle_language)
+	card_panel.detail_requested.connect(open_detail)
 	layer.add_child(card_panel)
+	object_stage = ObjectStage.new()
+	object_viewer = ObjectViewer.new()
+	object_viewer.set_stage(object_stage)
+	object_viewer.view_chosen.connect(detail_go)
+	object_viewer.back_pressed.connect(close_detail)
+	layer.add_child(object_viewer)
 	time_bar = TimeBar.new()
 	time_bar.pause_toggled.connect(func(): paused = not paused)
 	time_bar.speed_chosen.connect(func(s): speed = s)
@@ -139,6 +152,9 @@ func apply_layout(size: Vector2) -> void:
 		dist_goal = base_dist()                  # a different layout frames the overview differently
 	camera.keep_aspect = Camera3D.KEEP_WIDTH if narrow else Camera3D.KEEP_HEIGHT   # on a phone the field of view spans the width
 	card_panel.set_layout(size)
+	object_viewer.set_layout(size)
+	if detail_state.open:
+		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
@@ -176,6 +192,8 @@ func zoom_by(factor: float) -> void:
 
 ## Select a house (0 = overview): the camera goes there and its card opens.
 func select(id: int) -> void:
+	if detail_state.open:
+		close_detail()
 	selected = id
 	pan = Vector3.ZERO
 	dist_goal = base_dist()
@@ -191,8 +209,46 @@ func toggle_mute() -> void:
 func toggle_language() -> void:
 	lang = "cs" if lang == "en" else "en"
 	_card_phase = ""
+	if detail_state.open:
+		_show_detail()
+	elif selected != 0:
+		_update_card(true)
+
+# ---- the object viewer (SB-056): a close look at one object of the selected craft, lit by its own light ----------
+
+## The `card.detail` of the selected homestead's craft, {} if it has none.
+func current_detail() -> Dictionary:
+	if not world.occupied.has(selected):
+		return {}
+	return world.occupied[selected].craft.card.get("detail", {})
+
+func open_detail() -> void:
+	var detail := current_detail()
+	if detail.is_empty():
+		return
+	detail_state = ObjectView.open(detail)
+	object_stage.show_model(str(detail.model))
+	card_panel.visible = false                  # the viewer takes its place; Back brings the card back
+	_show_detail()
+
+func detail_go(id: String) -> void:
+	detail_state = ObjectView.go(detail_state, current_detail(), id)
+	_show_detail()
+
+func close_detail() -> void:
+	detail_state = ObjectView.close(detail_state)
+	object_viewer.hide_viewer()
+	object_stage.set_active(false)
 	if selected != 0:
 		_update_card(true)
+
+func _show_detail() -> void:
+	var detail := current_detail()
+	if not detail_state.open or detail.is_empty():
+		return
+	object_stage.set_active(true)
+	object_stage.apply(ObjectView.framing(detail, detail_state.view, object_stage.anchors()))
+	object_viewer.show_page(ObjectView.page(detail, detail_state, lang, world.occupied[selected].craft.card.sources))
 
 ## Jump to a time of day (0..1), keeping the day number.
 func scrub(fraction: float) -> void:
@@ -212,6 +268,8 @@ func _update_card(force: bool) -> void:
 	if not force and phase == _card_phase:
 		return
 	_card_phase = phase
+	if detail_state.open:
+		return                                   # the card stays hidden under the viewer
 	var card: Dictionary
 	if world.occupied.has(selected):
 		var info: Dictionary = world.occupied[selected]
@@ -287,6 +345,7 @@ func _refresh(delta: float) -> void:
 	elif hover_id != 0:
 		line += "  |  %s" % _name_of(hover_id)
 	hud.text = line if narrow else line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
+	hud.visible = not detail_state.open          # the viewer panel covers the top of the screen
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
@@ -312,7 +371,12 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F: follow = not follow
 			KEY_M: toggle_mute()
 			KEY_C: toggle_language()
-			KEY_0, KEY_ESCAPE: select(0)
+			KEY_0: select(0)
+			KEY_ESCAPE:
+				if detail_state.open:
+					close_detail()
+				else:
+					select(0)
 			KEY_TAB:
 				var i := focus_index()
 				select(focus_ids[i] if i < focus_ids.size() else 0)

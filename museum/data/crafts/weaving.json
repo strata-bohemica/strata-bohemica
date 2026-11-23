@@ -137,6 +137,122 @@
       "LOOMWEIGHT-001 PROVENANCE.md",
       "LOOM-001 PROVENANCE.md",
       "WEAVE-001 PROVENANCE.md"
-    ]
+    ],
+    "detail": {
+      "model": "LOOMWEIGHT-001/loomweight",
+      "button": {
+        "cs": "Prohlédnout závaží",
+        "en": "Look at the weight"
+      },
+      "title": {
+        "cs": "Závaží: otvor a jeho otěr",
+        "en": "The weight: its hole and the wear"
+      },
+      "views": [
+        {
+          "id": "whole",
+          "label": {
+            "cs": "Celek",
+            "en": "Whole"
+          },
+          "caption": {
+            "cs": "Celé závaží v měkkém bočním světle. Model je typové jehlancovité závaží; otvor sedí výš, jako u kusu A 26 664 (odečteno z kresby, O, BREZ-006).",
+            "en": "The whole weight in soft side light. The model is a typical pyramidal weight; the hole sits high, as on piece A 26 664 (read from the drawing, O, BREZ-006)."
+          },
+          "target": {
+            "anchor": "base_center",
+            "offset": [
+              0.0,
+              0.0775,
+              0.0
+            ]
+          },
+          "eye": [
+            0.26,
+            0.2,
+            0.62
+          ],
+          "fov_deg": 24.0,
+          "light": {
+            "dir": [
+              -0.47,
+              -0.79,
+              -0.39
+            ],
+            "energy": 0.82
+          }
+        },
+        {
+          "id": "hole",
+          "label": {
+            "cs": "Otvor",
+            "en": "Hole"
+          },
+          "caption": {
+            "cs": "Přední ústí otvoru za šikmého světla zleva shora, asi 17° k ploše stěny. Dolní okraj otvoru je rozšířený a zaoblený, horní ne.",
+            "en": "The front mouth of the hole in raking light from the upper left, about 17° to the face. The lower edge of the hole is widened and rounded, the upper edge is not."
+          },
+          "target": {
+            "anchor": "cord_hole",
+            "offset": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "eye": [
+            0.035,
+            0.045,
+            0.2
+          ],
+          "fov_deg": 20.0,
+          "light": {
+            "dir": [
+              0.75,
+              -0.6,
+              -0.2
+            ],
+            "energy": 1.25
+          },
+          "face_normal": [
+            0.0,
+            0.145,
+            0.989
+          ]
+        }
+      ],
+      "notes": [
+        {
+          "kind": "find",
+          "class": "E",
+          "text": {
+            "cs": "U závaží A 26 664 z objektu 1/05 autoři zaznamenali otěr otvoru „v dolní třetině (z obou stran)“. V celém souboru z Březnice jsou otvory obroušené téměř jen dole.",
+            "en": "On weight A 26 664 from feature 1/05 the authors recorded wear of the hole \"in the lower third (on both sides)\". Across the Březnice find the holes are worn almost only at the bottom."
+          }
+        },
+        {
+          "kind": "model",
+          "class": "R",
+          "text": {
+            "cs": "Velikost otěru v modelu (nejvýš o 3 mm širší okraj) je náš odhad: autoři ji u kusu neuvádějí. Tělo je typové závaží, ne kopie kusu A 26 664; barvu a povrch kusu neznáme.",
+            "en": "The size of the wear in the model (an edge at most 3 mm wider) is our estimate: the authors do not give it for this piece. The body is a typical weight, not a copy of A 26 664; the colour and surface of the piece are not known."
+          }
+        },
+        {
+          "kind": "hypothesis",
+          "text": {
+            "cs": "Výklad autorů, ne pozorování: podle otěru soudí, že většina závaží visela podstavou nahoru. Klasické zavěšení na osnovu svislého stavu považují za málo pravděpodobné a k čemu velká část závaží sloužila, nechávají otevřené. Stav v této usedlosti je proto rekonstrukce.",
+            "en": "The authors' interpretation, not an observation: from the wear they think most weights hung base-up. They consider the classic way of hanging from the warp of an upright loom unlikely and leave open what a large part of the weights was used for. The loom at this homestead is therefore a reconstruction."
+          }
+        },
+        {
+          "kind": "related",
+          "text": {
+            "cs": "Předení příze tu není: je to samostatná ukázka v usedlosti Předoucí.",
+            "en": "Spinning the yarn is not shown here: it is a separate exhibit, at the spinner's homestead."
+          }
+        }
+      ]
+    }
   }
 }

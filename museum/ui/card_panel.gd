@@ -3,6 +3,7 @@ extends PanelContainer
 
 signal closed
 signal language_toggled
+signal detail_requested                  # the button that opens the object viewer (SB-056)
 
 const Card = preload("res://museum/core/card.gd")
 const I18n = preload("res://museum/core/i18n.gd")
@@ -13,6 +14,7 @@ var craft_label: Label
 var body: RichTextLabel
 var lang_button: Button
 var close_button: Button
+var detail_button: Button
 var current: Dictionary = {}
 var lang := "en"
 var viewer: Control            # a figure shown over the whole screen; any click or Esc closes it
@@ -56,6 +58,11 @@ func _init() -> void:
 	craft_label = Label.new()
 	craft_label.add_theme_color_override("font_color", Color("#E6D5A8"))
 	box.add_child(craft_label)
+	detail_button = Button.new()
+	detail_button.visible = false
+	detail_button.custom_minimum_size = Vector2(0, 44)       # a touch target on a phone
+	detail_button.pressed.connect(func(): detail_requested.emit())
+	box.add_child(detail_button)
 	var scroll := ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -125,6 +132,8 @@ func show_card(card: Dictionary, p_lang: String) -> void:
 	lang_button.text = I18n.tr_("ui.language", lang)
 	close_button.tooltip_text = I18n.tr_("ui.close", lang)
 	body.text = _bbcode(card)
+	detail_button.text = str(card.get("detail", ""))
+	detail_button.visible = detail_button.text != ""
 	visible = true
 
 func _notification(what: int) -> void:
