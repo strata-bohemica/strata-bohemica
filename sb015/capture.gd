@@ -87,7 +87,10 @@ func _initialize() -> void:
 					acc[key].append(r.mean_ms)
 		for key in acc:
 			var m: Array = acc[key]
-			res[key] = {"mean_ms": (m[0] + m[1] + m[2]) / 3.0, "median_ms": m[1], "p95_ms": m.max(), "runs": m}
+			var sorted_m := m.duplicate()
+			sorted_m.sort()
+			# per state: the mean of the three runs' mean frame times, their middle and largest value (not a percentile of frames)
+			res[key] = {"mean_ms": (m[0] + m[1] + m[2]) / 3.0, "median_run_mean_ms": sorted_m[1], "max_run_mean_ms": sorted_m[2], "runs": m}
 		log.append(res)
 		if has_w:
 			app.weather.set_quality("high")
