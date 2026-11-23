@@ -695,12 +695,14 @@ func _sb059(t, app) -> void:
 			t.ok(not cr.intersects(app.hud.get_global_rect()) and not cr.intersects(card_r) and not cr.intersects(app.time_bar.get_global_rect()), "D4 %s: it covers neither the top line %s, the card nor the bar" % [tag, app.hud.get_global_rect()])
 			var seen: Array = [cyc.text]
 			var speeds: Array = [app.speed]
+			var cam_before: Array = _camera_state(app)
 			for k in 3:
 				await _tap(cyc.get_global_rect().get_center())
 				app._refresh(0.0)
 				seen.append(cyc.text)
 				speeds.append(app.speed)
 			t.eq(speeds, [1.0, 10.0, 40.0, 1.0], "D4 %s: tapping the speed button cycles x1 -> x10 -> x40 -> x1" % tag)
+			t.eq(_camera_state(app), cam_before, "D4 %s: the taps on the speed button do not reach the camera or pick a homestead" % tag)
 			t.eq(seen, ["x1", "x10", "x40", "x1"], "D4 %s: the button shows the current speed" % tag)
 			t.eq(cyc.tooltip_text, I18n.tr_("ui.speed", lang), "D4 %s: the button is named in the current language" % tag)
 	t.eq(TimeBar.next_speed(10.0), 40.0, "D4: x10 is followed by x40")
