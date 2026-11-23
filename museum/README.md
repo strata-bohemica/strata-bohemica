@@ -34,9 +34,15 @@ checks/museum_village/run.sh                     # core, data, terrain, boundary
 The village layout and the ground are **F/R**: no house plan or terrain model of Březnice survives. `tools/organic_layout.py`
 chose the house positions on a fictional height field (seed 11); `tools/build_village.py` levels a platform under each house and
 work yard, routes the paths over the terrain and writes `data/villages/breznice*.json`.
+The long axis of the houses runs roughly north–south. That is our inference (F) from the north–south long pits of Březnice (Chvojka et al. 2019, 269–270),
+not an attested house orientation; house 57, the source of type A, is NW–SE. The village is also denser than Březnice: 12 houses in four clusters
+(number and size of the clusters are F) on about 1.5 ha, against a site of about 13 ha with about 70 houses over time and at most about 20 standing at once (Šálková et al. 2022).
 Two house types alternate (`house_types` in `data/villages/breznice-layout.json`: odd houses type A, HOUSE-004, 15 × 5.5 m, three rooms;
 even houses type B, HOUSE-005, about 8.5 × 5 m, one room), in plain, limewashed or patterned daub; both are R/F reconstructions after
 other Bohemian sites, not plans of Březnice houses.
+Type A follows house 57 at Březno u Loun, whose dating is uncertain (the excavator also considers the Migration Period; Sklenářová 2012, 114),
+and the model adds a central row of ridge posts that house 57 does not have (Pleinerová and Hrala 1988, PDF p. 56). Type B follows the one dwelling
+of the Liptice farmstead, whose reading as a house is uncertain, and the museum shows none of the farmstead's other buildings (Jiráň 2008, 169–171; Sklenářová 2012, 114).
 The house models are revision r002 (SB-033): round-wood posts, irregular spacing and uneven daub and thatch show traces of hand work (evidence class F/R: the shapes are our reconstruction choices after other sites, not plans of Březnice houses).
 The type A model has 6 758 triangles and the check allows it 7000 (type B: 5000); details in `assets/HOUSE-004/r002/PROVENANCE.md`.
 The fields carry furrows (SB-008): `data/villages/breznice-furrows.json` (written by `tools/build_furrows.py`) gives each field a direction and a

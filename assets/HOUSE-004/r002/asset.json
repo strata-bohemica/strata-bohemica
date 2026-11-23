@@ -1034,7 +1034,7 @@
   "hearth": "on the axis (brief) 7.5 m from the east (+X) end (house 57 pit 243, D-houses-recon.md after Pleinerová and Hrala 1988, PDF pp. 55-56) = (0,0,0), pebble paving ellipse 1.9 x 1.6 m (46 pebbles, Stone material); the paving size is F",
   "post_spacing": "long-wall posts nominally every 1.50 m, each shifted by a seeded +-0.13 m (spacing 1.24-1.76 m); corner posts fixed",
   "partitions": "daub panels 0.14 m on posts, up to the tie beams (y 2.2), open above; 1.0 m passage at z 0.2..1.2, clear height 1.85 m under a head panel",
-  "ridge_post_row": "central row of ridge posts: internal posts at x = -4.0, -1.5, 4.0 plus the gable centre posts (F; house 57 is not three-aisled, see deviations)",
+  "ridge_post_row": "central row of ridge posts: internal posts at x = -4.0, -1.5, 4.0 plus the gable centre posts (F; house 57 has no middle row of posts, see deviations)",
   "anchors": "all anchor positions are F (placement suggestions)",
   "finishes": "plain / limewash / pattern as described per model"
  },
@@ -1297,7 +1297,7 @@
   "Vertex colours (COLOR_0) are exported on all meshes (patina, damp at the post feet, tone patches); the museum import keeps them as vertex colours multiplied with the albedo texture. The timber texture is an atlas of three column bands (round surface, hewn facet, lashing) addressed by UV.",
   "Post, rafter and tie-beam positions differ from r001 by seeded jitter (bounds in irregularity_r002.bounds_F); rafter pairs 16 (r001: 18, hidden under the thatch). Anchors are unchanged.",
   "Type A has a 4th material 'Stone' (untextured, base colour only) for the pebble hearth paving, part of the Frame mesh.",
-  "Central ridge-post row (internal posts at x = -4.0, -1.5, 4.0 and the gable centre posts) is an F choice that conflicts with the model source: the authors state house 57 is not three-aisled (except perhaps the unclear west end; D-houses-recon.md, Pleinerová and Hrala 1988, PDF pp. 167-170). Only the Knovíz plan of Praha-Čakovice had a partly preserved middle row of roof-beam posts (Soudsky 1966, via Pleinerová and Hrala 1988, PDF p. 168; D-houses-VERIFICATION.md).",
+  "Central ridge-post row (internal posts at x = -4.0, -1.5, 4.0 and the gable centre posts) makes the model two-aisled, an F choice that conflicts with the model source: house 57 has no middle row of posts; its east room has only 5 irregularly placed post holes that did not disturb the impression of open space (Pleinerová and Hrala 1988, PDF p. 56). The authors' statement that the house is not three-aisled (two inner rows of posts; except perhaps the unclear west end; PDF p. 169) concerns a different feature and only adds support. Only the Knovíz plan of Praha-Čakovice had a partly preserved middle row of roof-beam posts (Soudsky 1966, via Pleinerová and Hrala 1988, PDF p. 168; D-houses-VERIFICATION.md).",
   "Door in the east (hearth) room at x = 3.0 is an F choice that departs from the source hint: house 57 has doubled posts at the partition and no posts on the north side of the middle room, both read as a possible entrance to the middle room (D-houses-recon.md, PDF pp. 55-56, 167).",
   "West room 3.5 m outer / 3.23 m clear against house 57's 3 x 5.5 m west room (D-houses-recon.md; the brief gives only the 9 m east room and the 15 m total): the partition lines are F."
  ]

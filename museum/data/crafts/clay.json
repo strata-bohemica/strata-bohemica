@@ -41,14 +41,14 @@
       {
         "class": "E",
         "text": {
-          "cs": "Na Březnici je jáma na hlínu (objekt 5/05) a mazanice s bílým nátěrem až ve třech vrstvách.",
-          "en": "A clay pit (feature 5/05) and daub with a white coat, up to three layers, are recorded at Březnice."
+          "cs": "Na Březnici je jáma, kterou autoři depoziční analýzy označují jako hliník (objekt 5/05, asi 12 m², hluboká nejvýš 30 cm). Bílý nátěr nese jen malá část mazanice (191 z více než 11 000 zlomků); omítka má nejvýše tři vrstvy.",
+          "en": "At Březnice one pit is labelled a clay pit by the authors of the deposition analysis (feature 5/05, about 12 m², at most 30 cm deep). Only a small part of the daub carries a white coat (191 of more than 11,000 fragments); the plaster has at most three layers."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Šlapání hlíny s plevami, míchání a nanášení omítky jsou rekonstrukce.",
-      "en": "Treading clay with chaff, mixing and plastering are reconstructed."
+      "cs": "Šlapání hlíny s plevami, míchání a nanášení omítky jsou rekonstrukce. Plevy jako příměs jsou doloženy v hliněných závažích, u mazanice se jen předpokládají.",
+      "en": "Treading clay with chaff, mixing and plastering are reconstructed. Chaff as temper is attested in the clay weights; for daub it is only assumed."
     },
     "unknown": [
       {
@@ -65,8 +65,10 @@
       }
     ],
     "sources": [
-      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, sections 3.2 and 5.3.1",
-      "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, sections 3.2 and 5.3.1, pp. 4, 6, 10",
+      "Kuna, Němcová, Chvojka 2022, Zenodo 10.5281/zenodo.6475797",
+      "Šálková et al. 2022, Scientific Reports 12:20323, p. 8",
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308, p. 301",
       "CLAY-001 PROVENANCE.md"
     ]
   }

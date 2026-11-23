@@ -72,21 +72,28 @@
     "status": "R",
     "evidence": [
       {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici se našly hromadné nálezy hliněných závaží. Podle autorů mohla zatěžovat osnovu tkalcovského stavu, ale ani funkci podstavců pod rožně nelze vyloučit. Žádné neleželo na místě použití.",
+          "en": "Březnice yielded mass finds of clay weights. Per the authors they may have weighted the warp of a loom, but use as spit supports cannot be ruled out. None lay where it was used."
+        }
+      },
+      {
         "class": "R",
         "text": {
-          "cs": "Textilní výroba je doložena nepřímo (hliněná závaží, jejichž použití je ale sporné). Předení tvořilo v analogiích většinu času věnovaného látce.",
-          "en": "Textile production is attested indirectly (clay weights, whose use is contested). In analogies, spinning took most of the time spent on cloth."
+          "cs": "V pokusu muzea Düppel zabralo ruční předení příze vřetenem 332 z 529 hodin, které stálo utkání keprové látky 3 × 2 m.",
+          "en": "In an experiment at the Düppel museum, spinning the yarn by hand spindle took 332 of the 529 hours needed to weave a 3 × 2 m twill cloth."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Postoj, tah vlákna, švih zápěstím a otáčení vřetena jsou rekonstrukce. Vřeteno se u animace točí pomaleji než skutečné, kvůli čitelnosti.",
-      "en": "The stance, drafting, wrist flick and spindle turn are reconstructed. The spindle is slowed in the animation for readability."
+      "cs": "Postoj, tah vlákna, švih zápěstím a otáčení vřetena jsou rekonstrukce. Ručním vřetenem se dalo příst vsedě, vstoje i za chůze. Přeslice z doby bronzové doložena není. Vřeteno se u animace točí pomaleji než skutečné, kvůli čitelnosti.",
+      "en": "The stance, drafting, wrist flick and spindle turn are reconstructed. A hand spindle could be used sitting, standing or even walking. No Bronze Age distaff is attested. The spindle is slowed in the animation for readability."
     },
     "unknown": [
       {
-        "cs": "vlákno (len nenalezen, vlna místně neověřena)",
-        "en": "fibre (flax not found, wool unverified locally)"
+        "cs": "vlákno (len v přečtených zprávách z Březnice neuveden, vlna místně neověřena)",
+        "en": "fibre (flax not reported in the Březnice reports read, wool unverified locally)"
       },
       {
         "cs": "zda se na Březnici našly přesleny (neověřeno)",
@@ -95,11 +102,15 @@
       {
         "cs": "kdo předl",
         "en": "who spun"
+      },
+      {
+        "cs": "zda se při předení používala přeslice",
+        "en": "whether a distaff was used for spinning"
       }
     ],
     "sources": [
-      "Sabatini, Earle & Cardarelli 2018, Proc. Prehist. Soc. 84:359–385, p. 364 (analogy)",
-      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308",
+      "Grömer 2016, The Art of Prehistoric Textile Making, NHM Vienna, pp. 78–80, 134 (analogy, experiment)",
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308, pp. 300–301",
       "SPIN-001 PROVENANCE.md"
     ]
   }

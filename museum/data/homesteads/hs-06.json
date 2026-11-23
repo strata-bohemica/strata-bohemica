@@ -30,5 +30,5 @@
   "walker": "PERSON-001/model",
   "sleeper": "SLEEP-001/person_sleep",
   "day_offset": -0.004,
-  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F/R. day_offset shifts this household's day (F)."
+  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F. day_offset shifts this household's day (F)."
 }
