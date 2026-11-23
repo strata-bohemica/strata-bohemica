@@ -39,12 +39,12 @@
      "en": "Vertical section through the ground: a bowl-shaped pit 1.42 m wide and 0.60 m deep, with a jar sunk into it mouth up, its rim 0.08 m above the floor. Labels give the certainty classes and the omitted lid, contents and ladle."},
     "class": "R",
     "source": {
-     "cs": "Strata Bohemica, studijní řez BREZ-005 (vlastní kresba řezu, CC BY 4.0); šířka jámy odečtena z Kuna et al. 2022, obr. 3, hloubka z Chvojka, Kuna et al. 2022 (Zenodo); model nádoby STORE-001 r001",
-     "en": "Strata Bohemica, BREZ-005 study section (our own section drawing, CC BY 4.0); pit width read from Kuna et al. 2022, fig. 3, depth from Chvojka, Kuna et al. 2022 (Zenodo); jar model STORE-001 r001"}}
+     "cs": "Strata Bohemica, studijní řez BREZ-005 (vlastní kresba řezu, CC BY 4.0); šířka jámy odečtena z Kuna et al. 2022, obr. 3, hloubka z Kuna, Němcová, Chvojka 2022 (Zenodo); model nádoby STORE-001 r001",
+     "en": "Strata Bohemica, BREZ-005 study section (our own section drawing, CC BY 4.0); pit width read from Kuna et al. 2022, fig. 3, depth from Kuna, Němcová, Chvojka 2022 (Zenodo); jar model STORE-001 r001"}}
   ],
   "sources": [
    "Kuna, Němcová, Šálková, Menšík, Chvojka 2022, J. Anthropol. Archaeol. 67:101433, fig. 3, §5.2, §6",
-   "Chvojka, Kuna et al. 2022, Sídliště z mladší doby bronzové v Březnici: data pro depoziční analýzu, Zenodo 10.5281/zenodo.6475797 (feature 2005-O-06)",
+   "Kuna, Němcová, Chvojka 2022, Sídliště z mladší doby bronzové v Březnici: data pro depoziční analýzu, Zenodo 10.5281/zenodo.6475797 (feature 2005-O-06)",
    "research/breznice-workshops.md, section 2"
   ]
  }

@@ -24,7 +24,7 @@ Sibling document: another agent is writing a parallel economy research doc in th
 |---|---|---|---|---|
 | **S22** | Šálková T. et al. 2022, *Sci Rep* 12:20323 | Full PDF from the University of West Bohemia repository, pp. 1–16, all text incl. Tables 1–2. Figures not visually inspected. | CC BY 4.0 (p. 16; third-party credit exceptions) | Model assumptions, crops, charcoal, landscape, carrying capacity |
 | **SP23** | Šálková T. et al., Research Square preprint rs-2665597/v1 (posted 14 Mar 2023), the preprint of **S25** | Full PDF, 28 pp. | CC BY 4.0 (preprint p. 2) | Crop proportions, starch/phytoliths, protein tests, storage contents. **Preprint: the published S25 text may differ.** |
-| S25 | Šálková T. et al. 2025, *Archaeological Prospection* 32:525–548, doi 10.1002/arp.1973 | **Not accessible this session.** The Wiley host is blocked for web_fetch, and curl returned an HTML challenge. Repository handle 20.500.14178/3512 timed out. | CC BY (OpenAlex) | Cited only via SP23 and earlier project notes |
+| S25 | Šálková T. et al. 2025, *Archaeological Prospection* 32:525–548, doi 10.1002/arp.1973 | **Not accessible this session.** The Wiley host is blocked for web_fetch, and curl returned an HTML challenge. Repository handle 20.500.14178/3512 timed out. | CC BY (OpenAlex) | Cited only via SP23 and earlier project notes; later read for §3.4, §3.5 and §4.3 (SB-006 fixes, cited below) |
 | **K22** | Kuna M. et al. 2022, *J. Anthropol. Archaeol.* 67:101433 | Full PDF from the same repository, 16 pp. | **CC BY-NC-ND**: cite and link only, nothing copied | Storage vessels, house life, boiled-meat residue mention, storage-pit hypothesis |
 | **C19** | Chvojka O., Menšík P., Šálková T., Kuna M. 2019, *Archeologické rozhledy* 71:267–308 | Full institute PDF, 42 pp. (journal p. = PDF p. + 266) | Journal; cite only | Plant impressions in clay weights: crops, chaff, acorn, hazel, sloe |
 | **KY16** | Kyselý R. 2016, *Živa* 2016/5:225–229 | Full PDF, 5 pp. | Academia: reprint forbidden; cite only | Regional animal husbandry, secondary products |
@@ -130,10 +130,10 @@ S22 combines catchment analysis (SCA) with demand per household. **All demand in
 ### 2.5 Grinding and food preparation
 
 - **E (SP23 §3.3–3.5 pp. 8–9; §4.1 p. 12):**
-  - Grinding slabs carry starch of grasses (Poaceae), wheat (cf. *Triticum*), cf. einkorn, and the legume family (Fabaceae).
+  - Starch was examined on three slabs: 2/09 grasses (Poaceae), wheat (*Triticum*) and legumes (Fabaceae); 6/07 grasses and probably einkorn (cf. *T. monococcum*); 12/06 indeterminate (S25 §3.4, p. 11).
   - Some slabs have phytoliths of cereal husks, leafy or woody plant parts, fungal spores and brown ash.
   - Gliadin (cereal protein) was found on two slabs and in three features.
-  - The authors relate the grinding slabs to food preparation of "material other than grain".
+  - The authors relate the grinding slabs to food preparation of "material other than grain" (preprint SP23 only; not found in the published S25, whose "plant parts other than grains" in §4.3, p. 19 refers to uncharred plant waste in the fills, not to the slabs).
   - **R:** the saddle quern was multipurpose (cereals, legumes, possibly other plants), not barley-only.
 - **E (B20 p. 12, p. 13, p. 14) *(experiment: Greece; saddle-quern-type tools)*:**
 
@@ -169,7 +169,7 @@ S22 combines catchment analysis (SCA) with demand per household. **All demand in
   | Ovomucoid (egg) | not detected in any of 3 samples |
 
   - **R/caution:**
-    - These are immunological detections in the preprint, and the published S25 should be checked.
+    - These are immunological detections. The published S25 §3.5 (p. 11) reports the same results, including the casein detection.
     - "Poultry" is the test category and may not mean domestic chicken. The project's current chicken exclusion should be re-reviewed against S25 rather than silently changed.
     - The sentence "Casein … observed in 21 samples" is ambiguous; it reads as "tested in 21".
 - **R (game diet):**

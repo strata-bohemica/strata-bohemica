@@ -241,7 +241,7 @@ not in `data/asset_manifest.json` and is not shown in the village: showing it su
 terrain, which the terrain has no mechanism for, and a decision on which homestead hosts it. So the SB-055 criterion
 "the section is available during the visit" is not met yet.
 
-Every craft carries a card with an evidence class (E observed, R reconstruction, F fiction), what is unknown and its sources.
+Every craft carries a card with an evidence class (E evidence at Březnice, R reconstruction, including regional analogy, F fiction: our choice without a source), what is unknown and its sources.
 The day rhythm and the layout of the work place are F. No house plan survives at Březnice; the layout is reconstruction.
 
 Licence: code MIT (`../LICENSE`), models, textures and animations CC BY 4.0 (`../LICENSE-ASSETS.md`).
