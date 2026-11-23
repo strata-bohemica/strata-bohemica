@@ -1,0 +1,119 @@
+{
+ "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+ "driver": "opengl3",
+ "godot": "4.5.1-stable (official)",
+ "shots": [
+  {
+   "file": "0_card_hs05_cs.png",
+   "size": [
+    1280,
+    800
+   ],
+   "stage_cam": "Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)",
+   "stage_light_energy": 1.0,
+   "state": {
+    "open": false,
+    "view": ""
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": false
+  },
+  {
+   "file": "1_celek_cs.png",
+   "size": [
+    1280,
+    800
+   ],
+   "stage_cam": "Transform3D(0.9221944, -0.11026852, 0.37067285, 0, 0.958488, 0.28513297, -0.38672665, -0.26294804, 0.88391227, 0.26, 0.2775, 0.62)",
+   "stage_light_energy": 0.819999992847443,
+   "state": {
+    "open": true,
+    "view": "whole"
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": true
+  },
+  {
+   "file": "2_otvor_cs.png",
+   "size": [
+    1280,
+    800
+   ],
+   "stage_cam": "Transform3D(0.9850305, -0.037299868, 0.16829646, 0, 0.976309, 0.2163812, -0.17238033, -0.2131421, 0.96169406, 0.036305, 0.15740001, 0.2)",
+   "stage_light_energy": 1.25,
+   "state": {
+    "open": true,
+    "view": "hole"
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": true
+  },
+  {
+   "file": "3_navrat_celek_cs.png",
+   "size": [
+    1280,
+    800
+   ],
+   "stage_cam": "Transform3D(0.9221944, -0.11026852, 0.37067285, 0, 0.958488, 0.28513297, -0.38672665, -0.26294804, 0.88391227, 0.26, 0.2775, 0.62)",
+   "stage_light_energy": 0.819999992847443,
+   "state": {
+    "open": true,
+    "view": "whole"
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": true
+  },
+  {
+   "file": "4_otvor_noc_cs.png",
+   "size": [
+    1280,
+    800
+   ],
+   "stage_cam": "Transform3D(0.9850305, -0.037299868, 0.16829646, 0, 0.976309, 0.2163812, -0.17238033, -0.2131421, 0.96169406, 0.036305, 0.15740001, 0.2)",
+   "stage_light_energy": 1.25,
+   "state": {
+    "open": true,
+    "view": "hole"
+   },
+   "sun_energy": 0.0,
+   "t": 0.0,
+   "viewer_visible": true
+  },
+  {
+   "file": "5_phone_hole_en.png",
+   "size": [
+    390,
+    844
+   ],
+   "stage_cam": "Transform3D(0.9850305, -0.037299868, 0.16829646, 0, 0.976309, 0.2163812, -0.17238033, -0.2131421, 0.96169406, 0.036305, 0.15740001, 0.2)",
+   "stage_light_energy": 1.25,
+   "state": {
+    "open": true,
+    "view": "hole"
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": true
+  },
+  {
+   "file": "6_phone_whole_en.png",
+   "size": [
+    390,
+    844
+   ],
+   "stage_cam": "Transform3D(0.9221944, -0.11026852, 0.37067285, 0, 0.958488, 0.28513297, -0.38672665, -0.26294804, 0.88391227, 0.26, 0.2775, 0.62)",
+   "stage_light_energy": 0.819999992847443,
+   "state": {
+    "open": true,
+    "view": "whole"
+   },
+   "sun_energy": 1.0,
+   "t": 144.0,
+   "viewer_visible": true
+  }
+ ]
+}
