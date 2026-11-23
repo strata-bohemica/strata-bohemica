@@ -226,6 +226,21 @@ and regenerates `data/assets.json`. `tools/import_settings.py` then sets the imp
 The card is built from the craft's data (`museum/data/crafts/*.json`): an E/R/F status, evidence entries each with their own class,
 the reconstruction, what is unknown and the sources, in both languages.
 
+A card may carry `figures` (SB-055): a picture per language (`image: {cs, en}` as `res://` paths), `caption`, `alt` text
+and `source` (each `{cs, en}`), and its own E/R/F `class`. They are drawn in an "Illustration" section before the sources;
+a click opens the picture over the whole screen, in its own `CanvasLayer` above the app's UI so the click never reaches the
+time bar underneath (any click or Esc closes it). A missing picture shows its alt text instead and offers no enlargement.
+`Card.figure_problems()` lists what a figure lacks (tested). Pictures live under `research/figures/` (CC BY 4.0, not
+under `assets/`, whose PNGs `tools/refresh_assets.sh` deletes) and are imported lossless (`compress/mode=0`): they are
+drawings with small text.
+
+Exhibit cards (`museum/data/exhibits/*.json`, built by `Card.build_exhibit()`) describe one find on its own, not a craft.
+The first, `store-6-05.json` (storage jar of feature 6/05 with the BREZ-005 section, byte copies of the studio figure,
+hashes pinned in `test_data.gd`), is data and tests only: nothing in the village opens it yet. The jar model STORE-001 is
+not in `data/asset_manifest.json` and is not shown in the village: showing it sunk in the ground needs a hole in the
+terrain, which the terrain has no mechanism for, and a decision on which homestead hosts it. So the SB-055 criterion
+"the section is available during the visit" is not met yet.
+
 Every craft carries a card with an evidence class (E observed, R reconstruction, F fiction), what is unknown and its sources.
 The day rhythm and the layout of the work place are F. No house plan survives at Březnice; the layout is reconstruction.
 

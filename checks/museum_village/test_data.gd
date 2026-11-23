@@ -131,6 +131,7 @@ func _init() -> void:
 		scenes[ref].free()
 	_furrows(t, all)
 	_grinding_card(t)
+	_store_exhibit(t)
 	quit(t.finish("data"))
 
 # SB-054: the grinding card says, in both languages, that the gesture follows experiments elsewhere and the pace is only
@@ -536,3 +537,49 @@ func _furrow_irregularity(t, d: Dictionary, n: int, all: Dictionary) -> void:
 			for k in range(mini(firsts[a].size(), firsts[c].size())):
 				diff += absf(firsts[a][k] - firsts[c][k])
 			t.ok(diff / firsts[a].size() > 0.005, "fields %d and %d differ (mean path difference %.1f cm)" % [a, c, diff / firsts[a].size() * 100.0])
+
+# SB-055: the storage jar of feature 6/05 is an exhibit card with the BREZ-005 section as a figure in both languages.
+# The pictures are byte copies of the studio section (BREZ-005, make_section.py); a changed copy must fail here.
+const STORE_FIGURES := {
+	"res://research/figures/BREZ-005/section_6-05_cs.png": "93ab6551b5564a5ff53eaa9e8a7068f9020290eb0ca966a9d0836d4f976a3ab8",
+	"res://research/figures/BREZ-005/section_6-05_en.png": "d030733fd1bdfe0f4a932b8a3ea28f89a85551af56c046b7d62ab5e6b6443dac"}
+
+func _store_exhibit(t) -> void:
+	const Schema = preload("res://museum/core/schema.gd")
+	const Card = preload("res://museum/core/card.gd")
+	var ex: Dictionary = Schema.load_json("res://museum/data/exhibits/store-6-05.json")
+	var card: Dictionary = ex.card
+	t.eq(str(card.status), "R", "store 6/05: the exhibit as a whole is a reconstruction")
+	t.ok(ex.name.has("cs") and ex.name.has("en") and ex.kind.has("cs") and ex.kind.has("en"), "store 6/05: names in both languages")
+	t.ok(card.sources.size() >= 2 and card.unknown.size() >= 1, "store 6/05: sources and unknowns")
+	for src in card.sources:
+		var m := RegEx.create_from_string("research/[A-Za-z0-9_/.-]+\\.md").search(str(src))
+		if m != null:
+			t.ok(FileAccess.file_exists("res://" + m.get_string()), "store 6/05: cited note %s is in the repo" % m.get_string())
+	var classes := {}
+	for ev in card.evidence:
+		t.ok(ev["class"] in Card.CLASSES and ev.text.has("cs") and ev.text.has("en"), "store 6/05: evidence entry has a class and both languages")
+		classes[ev["class"]] = true
+	t.ok(classes.has("E") and classes.has("R"), "store 6/05: the card separates the documented find (E) from the reconstructed use (R)")
+	# what the card must say (BREZ-005 stance): the find, the vessel, the analogy, and the gaps
+	var all_cs := JSON.stringify(card).to_lower()
+	for needle in ["6/05", "chj-1447", "z2", "25–60 %", "1,42", "0,60", "regionální analogie", "stav po zániku", "víko", "naběračka", "replika nebyla"]:
+		t.ok(all_cs.contains(needle), "store 6/05: the card mentions '%s'" % needle)
+	for needle in ["regional analogy", "after the pit went out of use", "not shown in the village", "there was no replica"]:
+		t.ok(all_cs.contains(needle), "store 6/05: the English card says '%s'" % needle)
+	for needle in ["grain pots", "hrnců obilí", "height of the original floor", "výška původní podlahy"]:
+		t.ok(not all_cs.contains(needle), "store 6/05: the card no longer says '%s' (no such element; not the reason)" % needle)
+	for fig in card.figures:
+		t.ok(fig.source is Dictionary and fig.source.cs.contains("vlastní kresba") and fig.source.en.contains("our own section drawing"), "store 6/05: the source says the section is our own drawing")
+	for path in STORE_FIGURES:
+		var imp := ConfigFile.new()
+		t.eq(imp.load(path + ".import"), OK, "store 6/05: %s has an import file" % path.get_file())
+		t.eq(int(imp.get_value("params", "compress/mode", -1)), 0, "store 6/05: %s is imported lossless" % path.get_file())
+	t.eq(card.figures.size(), 1, "store 6/05: one figure, the section")
+	for fig in card.figures:
+		t.eq(Card.figure_problems(fig), [] as Array[String], "store 6/05: the figure is complete")
+		t.eq(str(fig["class"]), "R", "store 6/05: the section is marked as a reconstruction")
+		t.ok(fig.image.cs != fig.image.en, "store 6/05: each language has its own picture")
+	for path in STORE_FIGURES:
+		t.eq(FileAccess.get_sha256(path), STORE_FIGURES[path], "store 6/05: %s is the byte copy of the studio section" % path.get_file())
+		t.ok(load(path) is Texture2D, "store 6/05: %s imports as a texture" % path.get_file())

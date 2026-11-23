@@ -2,6 +2,8 @@
  "ui.evidence": "Doloženo",
  "ui.reconstruction": "Rekonstrukce",
  "ui.unknown": "Neznámé",
+ "ui.figure": "Ilustrace",
+ "ui.figure_open": "klepnutím zvětšíte, Esc zavře",
  "ui.sources": "Zdroje",
  "ui.close": "Zavřít",
  "ui.provisional": "Všechny rekonstrukce jsou provizorní.",
