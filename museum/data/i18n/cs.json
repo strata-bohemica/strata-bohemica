@@ -21,7 +21,7 @@
  "ui.status.E": "Doloženo (E)",
  "ui.status.R": "Rekonstrukce (R)",
  "ui.status.F": "Fikce (F)",
- "ui.help": "[Mezerník] pauza  [Q/W/E] rychlost  [0] přehled  [1-9] statek  [Tab] další  [F] sledovat  [L] řez  [M] ticho  [C] jazyk  [Esc] zavřít",
+ "ui.help": "[Mezerník] pauza  [Q/W/E] rychlost  [0] přehled  [1-9] statek  [Tab] další  [F] sledovat  [L] řez  [M] ticho  [C] jazyk  [P] počasí  [Esc] zavřít",
  "phase.sleep": "spí",
  "phase.wake": "vstává",
  "phase.walk_out": "jde do práce",
@@ -36,5 +36,10 @@
  "ui.detail.model": "Model",
  "ui.detail.hypothesis": "Hypotéza o použití",
  "ui.detail.related": "Jinde v muzeu",
- "ui.detail.back": "Zpět"
+ "ui.detail.back": "Zpět",
+ "ui.weather": "Počasí (F)",
+ "ui.weather_note": "Počasí je simulace (F, fikce): oblačnost, déšť, mlha a vítr podle našeho výběru, ne rekonstrukce počasí let 1150–1000 př. n. l.",
+ "ui.weather_quality_high": "Kvalita: vyšší",
+ "ui.weather_quality_low": "Kvalita: nižší",
+ "ui.weather_quality_note": "Nižší kvalita: méně kapek deště a stromy se ve větru nehýbou (pro slabší zařízení)."
 }

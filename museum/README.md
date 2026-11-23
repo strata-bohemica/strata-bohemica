@@ -4,12 +4,12 @@ A digital open-air museum of Bohemian prehistory. M6: the plougher walks a real 
 Everything the scene does is a pure function of time; the view only applies it.
 
 ```
-core/    day clock, soundscape, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema,
+core/    day clock, soundscape, weather, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema,
          object view   (no nodes, testable headless)
 data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
-view/    thin Godot adapters: sound, pose driver, homestead view, terrain view, village view, object stage
-ui/      card panel, time bar and object viewer (they draw what core/card.gd, core/object_view.gd and the app give them)
+view/    thin Godot adapters: sound, pose driver, homestead view, terrain view, village view, object stage, weather
+ui/      card panel, time bar, object viewer and weather switch (they draw what core/card.gd, core/object_view.gd and the app give them)
 app/     the main scene and the loader that assembles the village
 ```
 
@@ -26,7 +26,7 @@ Adding a craft or a homestead means adding JSON, not code. Animals are data too:
 
 ```sh
 godot --path .      # click a person for the card; M mute, Space pause, Q/W/E speed, 0/Esc overview, 1-9 homestead, Tab next,
-                    # F follow, L cutaway, C language (cs/en), right-drag orbit, wheel zoom; slider scrubs the day
+                    # F follow, L cutaway, C language (cs/en), P weather, right-drag orbit, wheel zoom; slider scrubs the day
 checks/museum_village/run.sh                     # core, data, terrain, boundary, view and plough-team checks (headless)
 ```
 
@@ -86,6 +86,27 @@ On a phone the viewer fills the screen above the time bar, picture on top, text 
 Checked in `checks/museum_village/test_object_view.gd` (data and wording, cs/en parity, the tour whole -> hole -> whole with
 three mutants of the core that must fail, the stage light at night, phone widths 320-400 px with real taps).
 
+## Weather (SB-015)
+
+The weather is a **simulation (F)**: plausible Central European weather of our choosing, not a reconstruction of the weather of Březnice in 1150–1000 BCE, which no source gives. The switch in the top right corner says so ("Počasí (F)" / "Weather (F)", with the note as tooltip).
+
+```
+core/weather.gd   weather(t, season) -> {cloud, rain, fog, snow, wind} 0..1; shading(w) -> light factors; storm, smoke_push, sway
+view/weather_view.gd   app._refresh: base light of the day -> weather.apply(t, base, camera) -> sun, sky, ambient, fog, rain, smoke, trees
+ui/weather_toggle.gd   on/off and quality (lower/higher), key P
+```
+
+- Pure function of time, like the rest of the scene: each channel is smooth value noise (hashed values at knots 120 s and 40 s apart, eased between them), no state and no random generator, so the time slider, scrubbing backwards and the speeds x1/x10/x40 show the same weather for the same time. The knots repeat after 7 days (2520 s), so the weather has its own period, a whole number of days. The day's own cycles (fire flicker, smoke on/off, animals, work) do not read the weather and still repeat every day; the whole scene repeats every 7 days.
+- Over the 7 days (measured in `test_weather.gd`): above half strength rain 15 % of the time, cloud 50 %, wind 24 %, mist 4 % (it forms around dawn and the wind blows it away); clear 27 %. A visit starts (07:12 on the first day) in clear weather. Neighbouring times 0.1 s apart differ by at most 0.01 per channel.
+- Snow is only a state of the function: precipitation falls as snow when `season` (0 winter .. 1 summer, as in `core/soundscape.gd`) is below 0.3. Until SB-016 brings seasons there is one climate (season 1), so there is never snow; snow has no picture yet (SB-016).
+- The weather multiplies the light of the day, it does not replace it (SB-017 will compute that base light): sun energy x0.28 under full cloud (less in rain and mist), the sky turns towards overcast grey and darker, the ambient a little stronger. Mist is `Environment.fog` (exponential depth fog, supported by GL Compatibility) in the colour of the sky; rain and cloud add a light haze.
+- Rain is one mesh of thin streaks in a 48 x 28 x 48 m box around the camera (`view/rain.gdshader`): 4000 streaks at the higher quality, 1200 at the lower, one draw call, moved in the vertex shader by the museum clock (not the engine's `TIME`), so paused rain stands still and scrubbing shows the rain of that time. No particle simulation runs on the CPU (the web build is single-threaded). It does not wet the ground (a wet surface was left out: the house and ground materials would have to change).
+- Wind (fixed direction, F) pushes the hearth smoke sideways (the smoke's `gravity`) and leans the trees about their bases by 0.1–2.3 degrees at full wind, a slow sway (node rotation only; the village data are not changed). The ambient wind and the bird layers of the soundscape follow `Weather.storm` (the larger of wind and rain).
+- Settings: weather on/off and quality, saved in `user://weather.cfg`. Before the visitor chooses, weather is off when the browser asks for reduced motion (`prefers-reduced-motion: reduce`, read on the web through `JavaScriptBridge`), and the quality is lower on a phone or tablet (`web_android`, `web_ios`). The lower quality draws fewer raindrops and keeps the trees still; fog stays.
+- People do not react to the weather (they work outdoors in the rain): changing what they do would change claims about the crafts, a separate card.
+- Checked in `checks/museum_village/test_weather.gd`: purity (same t, any order, negative times), range, continuity, the 7-day period and days that differ, snow only in the cold, the light multiplied not replaced, the view the same for a time whatever was shown before, fire and animals repeating a day later under other weather (with a positive control), the switch, key P, the quality, the saved choice, scrubbing and x1/x10/x40 in the app, the phone layout (inside the screen, 44 px, off the time bar), the labels; mutants that must fail: a counter between calls, a random generator, steps between knots, knots that never repeat, snow regardless of season, a one-day period, and a view that remembers the last weather.
+- Frame time (native Godot 4.5.1, GL Compatibility, Intel UHD 620 laptop with Mesa, 1280 x 800, vsync off, overview, mean of three interleaved 300-frame runs): clear 16.0 ms with weather on or off (main 16.5 / 14.1 ms in runs before and after), rain 19.9 ms high / 20.1 ms low against 18.6 ms off (+1.3 to +1.5 ms), mist 17.8 ms against 15.8 ms off (+2 ms, the fog). Run-to-run spread of the same build was up to 15 %. Not measured on a phone or on the reference devices of SB-009 (none is listed yet): unverified on the reference GPU.
+
 ## Web build
 
 `export_presets.cfg` has a single-threaded Web preset (no special server headers needed). `.github/workflows/pages.yml` exports it in a
@@ -105,7 +126,7 @@ becomes a sheet along the bottom); touch: tap to select, drag to orbit, two fing
 This is the frame the ambient, spatial and craft sounds (SB-019..021) plug into. No recordings are shipped yet: the ambient layer is made by script (see Ambient below).
 
 - `core/soundscape.gd`: pure functions of time. `layers(t, season, weather, day_length)` gives the loudness 0..1 of `dawn`, `day`, `dusk`, `night`, `wind`
-  (season 0 winter..1 summer and weather 0..1 are placeholders, defaults summer/clear, until SB-016/SB-015). `events(kinds, t0, t1, ...)` plans the
+  (season 0 winter..1 summer is a placeholder, default summer, until SB-016; the app passes `Weather.storm` of the weather on screen as weather 0..1, SB-015). `events(kinds, t0, t1, ...)` plans the
   random one-shots (bird call, dog bark; kinds in `data/sound.json`) from a stateless hash of (kind, time bucket of the day): same window, same events,
   independent of how the window is cut, repeating every day (this needs every `bucket_s` to divide the period's `day_length_s`, 360 s today; `test_sound.gd` checks both, and its `DAY` equals the period's day). No random generator, no state, so scrubbing the slider keeps the scene a function of time.
 - `view/sound_view.gd`: sets the volumes of the buses `Ambient`, `Sources` (3D sources), `Craft`, `UI` under `Master` (they are defined in `../default_bus_layout.tres`, see "Sound on the web: buses and the output check"; offsets in `data/sound.json`), keeps volume and

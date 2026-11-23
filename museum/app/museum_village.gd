@@ -14,6 +14,9 @@ const CameraRig = preload("res://museum/core/camera_rig.gd")
 const ObjectView = preload("res://museum/core/object_view.gd")
 const ObjectStage = preload("res://museum/view/object_stage.gd")
 const ObjectViewer = preload("res://museum/ui/object_viewer.gd")
+const WeatherView = preload("res://museum/view/weather_view.gd")
+const WeatherToggle = preload("res://museum/ui/weather_toggle.gd")
+const Weather = preload("res://museum/core/weather.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -46,6 +49,8 @@ var time_bar
 var sound
 var object_stage                   # the object viewer's own little world (view/object_stage.gd)
 var object_viewer                  # its panel (ui/object_viewer.gd)
+var weather                        # view/weather_view.gd: applies core/weather.gd, owns on/off and quality
+var weather_toggle                 # ui/weather_toggle.gd
 var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
@@ -78,6 +83,10 @@ func _ready() -> void:
 	village = VillageView.new()
 	add_child(village)
 	village.build(world.village, world.terrain, world.occupied, world.pending)
+	weather = WeatherView.new()
+	weather.day_length = float(period.day_length_s)
+	add_child(weather)
+	weather.build(env, sun, village)
 	t = START_FRACTION * float(period.day_length_s)
 	_fit_ui_scale()
 	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
@@ -132,6 +141,10 @@ func _build_world() -> void:
 	time_bar.volume_changed.connect(func(v): sound.set_volume(v); sound.set_muted(false))
 	time_bar.volume_committed.connect(func(): sound.blip())
 	layer.add_child(time_bar)
+	weather_toggle = WeatherToggle.new()
+	weather_toggle.weather_toggled.connect(toggle_weather)
+	weather_toggle.quality_toggled.connect(toggle_weather_quality)
+	layer.add_child(weather_toggle)
 	add_child(layer)
 
 # ---- layout ---------------------------------------------------------------------------------------------------
@@ -156,6 +169,7 @@ func apply_layout(size: Vector2) -> void:
 	if detail_state.open:
 		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
+	weather_toggle.set_narrow(narrow)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
@@ -205,6 +219,12 @@ func select(id: int) -> void:
 
 func toggle_mute() -> void:
 	sound.set_muted(not sound.muted)
+
+func toggle_weather() -> void:
+	weather.set_enabled(not weather.enabled)
+
+func toggle_weather_quality() -> void:
+	weather.set_quality("low" if weather.quality == "high" else "high")
 
 func toggle_language() -> void:
 	lang = "cs" if lang == "en" else "en"
@@ -295,7 +315,7 @@ func _process(delta: float) -> void:
 		t += delta * speed
 	_pan_keys(delta)
 	_refresh(delta)
-	sound.apply(t, paused, speed, delta, 1.0, 0.0, cam_dist)
+	sound.apply(t, paused, speed, delta, 1.0, Weather.storm(weather.current), cam_dist)
 	_hover()
 
 ## Arrow keys move the overview, always at the same speed on screen.
@@ -319,16 +339,16 @@ func _refresh(delta: float) -> void:
 	village.apply(t, 1.0 - daylight, cutaway)
 	var f: float = clock.fraction(t)
 	sun.rotation_degrees = Vector3(-clock.elevation(t) * 65.0, lerpf(100.0, -100.0, f), 0.0)
-	sun.light_energy = 1.0 * daylight
-	env.background_color = Color("#0c0f18").lerp(Color("#8fb5d9"), daylight)
-	env.ambient_light_color = Color("#2b3652").lerp(Color("#a09c92"), daylight)
-	env.ambient_light_energy = lerpf(0.5, 0.6, daylight)
+	# the light of the day; the weather only multiplies it (view/weather_view.gd)
+	var base_light := {"sun_energy": 1.0 * daylight, "background": Color("#0c0f18").lerp(Color("#8fb5d9"), daylight),
+		"ambient_color": Color("#2b3652").lerp(Color("#a09c92"), daylight), "ambient_energy": lerpf(0.5, 0.6, daylight)}
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
 	var kz := 1.0 - exp(-12.0 * delta) if delta > 0.0 else 1.0      # zoom follows the fingers/wheel quickly
 	cam_target = cam_target.lerp(_focus_target(), k)
 	cam_dist = lerpf(cam_dist, dist_goal, kz)
 	camera.position = CameraRig.position(cam_target, orbit_yaw, orbit_pitch, cam_dist, village.terrain)     # never under the ground
 	camera.look_at(cam_target)
+	weather.apply(t, base_light, camera.position)
 	# keep the subject in the free part of the screen while the card covers the right side
 	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)
 	var aspect: float = get_viewport().get_visible_rect().size.aspect()
@@ -347,6 +367,8 @@ func _refresh(delta: float) -> void:
 	hud.text = line if narrow else line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
 	hud.visible = not detail_state.open          # the viewer panel covers the top of the screen
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
+	weather_toggle.visible = not detail_state.open and (narrow or not card_panel.visible)    # the wide card covers the top right
+	weather_toggle.sync(weather.enabled, weather.quality, lang)
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
 func _hover() -> void:
@@ -371,6 +393,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F: follow = not follow
 			KEY_M: toggle_mute()
 			KEY_C: toggle_language()
+			KEY_P: toggle_weather()
 			KEY_0: select(0)
 			KEY_ESCAPE:
 				if detail_state.open:

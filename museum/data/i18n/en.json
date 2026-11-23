@@ -21,7 +21,7 @@
  "ui.status.E": "Evidence (E)",
  "ui.status.R": "Reconstruction (R)",
  "ui.status.F": "Fiction (F)",
- "ui.help": "[Space] pause  [Q/W/E] speed  [0] overview  [1-9] homestead  [Tab] next  [F] follow  [L] cutaway  [M] mute  [C] language  [Esc] close",
+ "ui.help": "[Space] pause  [Q/W/E] speed  [0] overview  [1-9] homestead  [Tab] next  [F] follow  [L] cutaway  [M] mute  [C] language  [P] weather  [Esc] close",
  "phase.sleep": "asleep",
  "phase.wake": "waking up",
  "phase.walk_out": "walking to work",
@@ -36,5 +36,10 @@
  "ui.detail.model": "The model",
  "ui.detail.hypothesis": "Hypothesis about the use",
  "ui.detail.related": "Elsewhere in the museum",
- "ui.detail.back": "Back"
+ "ui.detail.back": "Back",
+ "ui.weather": "Weather (F)",
+ "ui.weather_note": "The weather is a simulation (F, fiction): cloud, rain, mist and wind of our choosing, not a reconstruction of the weather of 1150–1000 BCE.",
+ "ui.weather_quality_high": "Quality: higher",
+ "ui.weather_quality_low": "Quality: lower",
+ "ui.weather_quality_note": "Lower quality: fewer raindrops and the trees do not move in the wind (for weaker devices)."
 }
