@@ -19,8 +19,8 @@
     "en": "The jar shape in the section is a regional analogy (storage jars from other sites), not the profile of the vessel from 6/05. How the jar is set, its rim 0.08 m above the floor, the floor at the level where the pit was found and the 0.011 m wall (the site median, not 6/05) are reconstructed."}}
   ],
   "reconstruction": {
-   "cs": "Řez je ilustrace (R): jáma má rozměry z výzkumu, ale její obrys je zobecněný a nádoba je rekonstrukční model STORE-001 r001. Nejde o kresbu výzkumu ani o její překreslení. Ve vesnici se nádoba zatím neukazuje; jáma se do terénu vesnice nevyřezává, protože výška původní podlahy není známa. Tato zásobnice nesouvisí s počtem hrnců obilí u domů.",
-   "en": "The section is an illustration (R): the pit has the excavated dimensions, but its outline is generalised and the jar is the reconstruction model STORE-001 r001. It is not the excavation drawing nor a redrawing of it. The jar is not yet shown in the village; the pit is not cut into the village ground, because the height of the original floor is unknown. This storage jar has nothing to do with the number of grain pots by the houses."
+   "cs": "Řez je ilustrace (R): jáma má rozměry z výzkumu, ale její obrys je zobecněný a nádoba je rekonstrukční model STORE-001 r001. Nejde o kresbu výzkumu ani o její překreslení. V této verzi muzea se zásobnice ve vesnici neukazuje.",
+   "en": "The section is an illustration (R): the pit has the excavated dimensions, but its outline is generalised and the jar is the reconstruction model STORE-001 r001. It is not the excavation drawing nor a redrawing of it. In this version of the museum the storage jar is not shown in the village."
   },
   "unknown": [
    {"cs": "původní povrch a podlaha: o kolik byla jáma hlubší, nevíme", "en": "the original surface and floor: how much deeper the pit was is unknown"},
@@ -38,7 +38,9 @@
      "cs": "Svislý řez zemí: mísovitá jáma široká 1,42 m a hluboká 0,60 m, v ní hrdlem nahoru zapuštěná nádoba, jejíž okraj vyčnívá 0,08 m nad podlahu. Popisky uvádějí třídy jistoty a vynechané víko, obsah a naběračku.",
      "en": "Vertical section through the ground: a bowl-shaped pit 1.42 m wide and 0.60 m deep, with a jar sunk into it mouth up, its rim 0.08 m above the floor. Labels give the certainty classes and the omitted lid, contents and ladle."},
     "class": "R",
-    "source": "Strata Bohemica, BREZ-005 study section (CC BY 4.0), from Kuna et al. 2022 fig. 3 and Chvojka, Kuna et al. 2022 (Zenodo); jar model STORE-001 r001"}
+    "source": {
+     "cs": "Strata Bohemica, studijní řez BREZ-005 (vlastní kresba řezu, CC BY 4.0); šířka jámy odečtena z Kuna et al. 2022, obr. 3, hloubka z Chvojka, Kuna et al. 2022 (Zenodo); model nádoby STORE-001 r001",
+     "en": "Strata Bohemica, BREZ-005 study section (our own section drawing, CC BY 4.0); pit width read from Kuna et al. 2022, fig. 3, depth from Chvojka, Kuna et al. 2022 (Zenodo); jar model STORE-001 r001"}}
   ],
   "sources": [
    "Kuna, Němcová, Šálková, Menšík, Chvojka 2022, J. Anthropol. Archaeol. 67:101433, fig. 3, §5.2, §6",

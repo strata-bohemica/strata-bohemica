@@ -9,7 +9,7 @@ extends RefCounted
 const I18n = preload("res://museum/core/i18n.gd")
 
 const CLASSES := ["E", "R", "F"]
-const FIGURE_KEYS := ["image", "caption", "alt"]     # each a {cs, en} dictionary
+const FIGURE_KEYS := ["image", "caption", "alt", "source"]     # each a {cs, en} dictionary
 
 static func build(craft: Dictionary, homestead: Dictionary, lang: String, phase: String = "") -> Dictionary:
 	var card: Dictionary = craft.card
@@ -46,8 +46,6 @@ static func figure_problems(fig: Dictionary) -> Array[String]:
 			out.append("%s needs cs and en" % key)
 	if str(fig.get("class", "")) not in CLASSES:
 		out.append("class must be one of %s" % [CLASSES])
-	if str(fig.get("source", "")) == "":
-		out.append("source is missing")
 	var image = fig.get("image")
 	if image is Dictionary:
 		for lang in ["cs", "en"]:
@@ -71,7 +69,7 @@ static func _sections(card: Dictionary, lang: String) -> Array:
 		var figures: Array = []
 		for f in card.figures:
 			figures.append({"image": I18n.pick(f.image, lang), "caption": I18n.pick(f.caption, lang),
-				"alt": I18n.pick(f.alt, lang), "class": str(f["class"]), "source": str(f.source)})
+				"alt": I18n.pick(f.alt, lang), "class": str(f["class"]), "source": I18n.pick(f.source, lang)})
 		sections.append({"kind": "figure", "heading": I18n.tr_("ui.figure", lang), "items": figures})
 	sections.append({"kind": "list", "heading": I18n.tr_("ui.sources", lang), "items": card.sources.duplicate()})
 	return sections

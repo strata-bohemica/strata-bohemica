@@ -565,8 +565,16 @@ func _store_exhibit(t) -> void:
 	var all_cs := JSON.stringify(card).to_lower()
 	for needle in ["6/05", "chj-1447", "z2", "25–60 %", "1,42", "0,60", "regionální analogie", "stav po zániku", "víko", "naběračka", "replika nebyla"]:
 		t.ok(all_cs.contains(needle), "store 6/05: the card mentions '%s'" % needle)
-	for needle in ["regional analogy", "after the pit went out of use", "not cut into the village ground", "there was no replica"]:
+	for needle in ["regional analogy", "after the pit went out of use", "not shown in the village", "there was no replica"]:
 		t.ok(all_cs.contains(needle), "store 6/05: the English card says '%s'" % needle)
+	for needle in ["grain pots", "hrnců obilí", "height of the original floor", "výška původní podlahy"]:
+		t.ok(not all_cs.contains(needle), "store 6/05: the card no longer says '%s' (no such element; not the reason)" % needle)
+	for fig in card.figures:
+		t.ok(fig.source is Dictionary and fig.source.cs.contains("vlastní kresba") and fig.source.en.contains("our own section drawing"), "store 6/05: the source says the section is our own drawing")
+	for path in STORE_FIGURES:
+		var imp := ConfigFile.new()
+		t.eq(imp.load(path + ".import"), OK, "store 6/05: %s has an import file" % path.get_file())
+		t.eq(int(imp.get_value("params", "compress/mode", -1)), 0, "store 6/05: %s is imported lossless" % path.get_file())
 	t.eq(card.figures.size(), 1, "store 6/05: one figure, the section")
 	for fig in card.figures:
 		t.eq(Card.figure_problems(fig), [] as Array[String], "store 6/05: the figure is complete")

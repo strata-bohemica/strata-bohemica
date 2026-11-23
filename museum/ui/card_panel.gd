@@ -19,6 +19,9 @@ var current: Dictionary = {}
 var lang := "en"
 var viewer: Control            # a figure shown over the whole screen; any click or Esc closes it
 var viewer_image: TextureRect
+var viewer_layer: CanvasLayer  # its own layer above the app's UI layer, so no click on it reaches the time bar below
+
+const VIEWER_LAYER := 10       # above the app's CanvasLayer (layer 1) that holds the card, the object viewer and the time bar
 
 func _init() -> void:
 	visible = false
@@ -75,8 +78,10 @@ func _init() -> void:
 	body.add_theme_color_override("default_color", Color("#F3EBDD"))
 	body.meta_clicked.connect(_on_meta)
 	scroll.add_child(body)
+	viewer_layer = CanvasLayer.new()
+	viewer_layer.layer = VIEWER_LAYER
+	add_child(viewer_layer)
 	viewer = Control.new()
-	viewer.top_level = true
 	viewer.visible = false
 	viewer.mouse_filter = Control.MOUSE_FILTER_STOP
 	viewer.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -98,7 +103,7 @@ func _init() -> void:
 	viewer_image.offset_right = -12.0
 	viewer_image.offset_bottom = -12.0
 	viewer.add_child(viewer_image)
-	add_child(viewer)
+	viewer_layer.add_child(viewer)
 
 ## Wide screens: a panel on the right. Narrow ones (phones): a sheet along the bottom, above the time bar.
 func set_layout(viewport_size: Vector2) -> void:
@@ -139,8 +144,8 @@ func show_card(card: Dictionary, p_lang: String) -> void:
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED and visible and not current.is_empty() and body != null:
 		body.text = _bbcode(current)          # figures follow the new width of the card
-	if what == NOTIFICATION_RESIZED and viewer != null and viewer.visible:
-		viewer.size = get_viewport_rect().size
+	if what == NOTIFICATION_VISIBILITY_CHANGED and viewer != null and not is_visible_in_tree():
+		close_figure()                        # the figure's layer does not inherit the card's visibility
 
 func hide_card() -> void:
 	close_figure()
@@ -153,10 +158,6 @@ func open_figure(index: int) -> void:
 	if index < 0 or index >= figs.size() or not ResourceLoader.exists(figs[index].image):
 		return
 	viewer_image.texture = load(figs[index].image)
-	viewer_image.tooltip_text = figs[index].alt
-	var vp := get_viewport_rect().size
-	viewer.position = Vector2.ZERO
-	viewer.size = vp
 	viewer.visible = true
 
 func close_figure() -> void:
@@ -180,7 +181,7 @@ func _figures() -> Array:
 			return s.items
 	return []
 
-## Width of a figure inside the card body: the panel's inner width, at most the picture's own width.
+## Width of a figure inside the card body: the panel's inner width (400 px before the first layout), kept within 200..900 px.
 func _figure_width() -> int:
 	var w := size.x - 48.0 if size.x > 100.0 else 400.0
 	return int(clampf(w, 200.0, 900.0))
@@ -201,12 +202,15 @@ func _bbcode(card: Dictionary) -> String:
 			"figure":
 				var k := 0
 				for item in s.items:
-					if ResourceLoader.exists(item.image):
+					var shown := ResourceLoader.exists(item.image)
+					if shown:
 						out += "[url=figure:%d][img width=%d tooltip=\"%s\"]%s[/img][/url]\n" % [k, _figure_width(), _attr(item.alt), item.image]
 					else:
 						out += "[color=#C46A3F](%s)[/color]\n" % _bb_escape(item.alt)
-					out += "[color=%s][b]%s[/b][/color]  %s\n" % [CHIP.get(item["class"], "#8A6B4B"), item["class"], item.caption]
-					out += "[color=#8A6B4B][i]%s[/i]\n%s[/color]\n" % [I18n.tr_("ui.figure_open", lang), item.source]
+					out += "[color=%s][b]%s[/b][/color]  %s\n" % [CHIP.get(item["class"], "#8A6B4B"), item["class"], _bb_escape(item.caption)]
+					if shown:
+						out += "[color=#8A6B4B][i]%s[/i][/color]\n" % I18n.tr_("ui.figure_open", lang)
+					out += "[color=#8A6B4B]%s[/color]\n" % _bb_escape(item.source)
 					k += 1
 			_:
 				for item in s.items:
