@@ -131,6 +131,7 @@ func _init() -> void:
 		scenes[ref].free()
 	_furrows(t, all)
 	_grinding_card(t)
+	_pottery(t, all)
 	_store_exhibit(t)
 	quit(t.finish("data"))
 
@@ -283,7 +284,7 @@ func _houses(t, all: Dictionary) -> void:
 		var h2 := Vector2(hearth.x, hearth.z)
 		t.ok(Geometry2D.get_closest_point_to_segment(h2, a, b).distance_to(h2) >= 0.5, "%s: the walk to the door does not cross the hearth" % tag)
 		t.ok(Fixture.seg_poly_dist(a, b, corners) > 0.0, "%s: the sleeper stands beside the bed and walks away from it, not over it" % tag)
-	t.eq(beds, 11, "every staffed homestead has a bed")
+	t.eq(beds, 12, "every staffed homestead has a bed")
 
 func skin_ref_of(craft: Dictionary, prop_id: String) -> String:
 	return _asset_of(craft, prop_id)
@@ -537,6 +538,112 @@ func _furrow_irregularity(t, d: Dictionary, n: int, all: Dictionary) -> void:
 			for k in range(mini(firsts[a].size(), firsts[c].size())):
 				diff += absf(firsts[a][k] - firsts[c][k])
 			t.ok(diff / firsts[a].size() > 0.005, "fields %d and %d differ (mean path difference %.1f cm)" % [a, c, diff / firsts[a].size() * 100.0])
+
+# SB-058: the potter of hs-11 forms a bowl (POTTERY-001 r001, experimental variant; owner decision 2026-11-23, SB-057).
+# The clips are split (enter / cycle / exit, no walking). CraftProps can only show or hide a bowl, so the raised bowl is held in
+# form_enter and form and the smoothed one only in form_exit (studio CHECKS.md, "Bowl choreography (decided)").
+const POTTERY_CLIPS := {"form_enter": 3.45, "form": 9.1, "form_exit": 3.45}
+# The museum's work segments are the same for every homestead (period bronze_late: 75.6 s and 46.8 s); CraftTimeline starts
+# form_exit at segment end - 3.45 s wherever the cycle is. Neither length is 3.45 + n x 9.1 + 3.45 s, so form_exit cuts in at these
+# cycle times (body jump about 10.6 cm at both, measured in the PR); a change of the period must revisit this (studio CHECKS.md, Wiring note).
+const POTTERY_EXIT_CUTS := [5.0, 3.5]
+
+## Every 0.01 s of each work segment through CraftTimeline and CraftProps: exactly one bowl in the hand, the raised one before
+## form_exit and the smoothed one in it, one change per block; at rest no bowl. -> list of problems (empty = right).
+static func pottery_bowl_problems(craft: Dictionary, durations: Dictionary, seg_lens: Array) -> Array[String]:
+	const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
+	const CraftProps = preload("res://museum/core/craft_props.gd")
+	var out: Array[String] = []
+	for seg_len in seg_lens:
+		var changes := 0
+		var last := ""
+		var steps := int(roundf(float(seg_len) / 0.01))
+		for i in steps:
+			var pose: Dictionary = CraftTimeline.pose_at(craft, i * 0.01, float(seg_len), durations)
+			var st: Dictionary = CraftProps.state(craft, pose.clip, pose.clip_time, true)
+			var shown := []
+			for id in ["bowl_raised", "bowl_smoothed"]:
+				if st[id].mode == "held":
+					shown.append(id)
+				elif st[id].mode != "hidden":
+					out.append("%s is %s at %.2f s" % [id, st[id].mode, i * 0.01])
+			var want := "bowl_smoothed" if pose.clip == "form_exit" else "bowl_raised"
+			if shown != [want] and out.size() < 5:      # the first few are enough to read
+				out.append("%.1f s block, %.2f s (%s): shown %s, want %s" % [seg_len, i * 0.01, pose.clip, shown, want])
+			var now := ",".join(shown)
+			if last != "" and now != last:
+				changes += 1
+			last = now
+		if changes != 1:
+			out.append("%.1f s block: %d bowl changes, want 1" % [seg_len, changes])
+	var idle: Dictionary = CraftProps.state(craft, "", 0.0, false)
+	for id in ["bowl_raised", "bowl_smoothed"]:
+		if idle[id].mode != "hidden":
+			out.append("%s is %s at rest" % [id, idle[id].mode])
+	return out
+
+func _pottery(t, all: Dictionary) -> void:
+	const Schema = preload("res://museum/core/schema.gd")
+	const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
+	var craft: Dictionary = Schema.load_json("res://museum/data/crafts/pottery.json")
+	var hs: Dictionary = Schema.load_json("res://museum/data/homesteads/hs-11.json")
+	t.eq(str(hs.craft), "pottery", "hs-11 forms pottery")
+	t.eq(hs.name, {"cs": "Hrnčířka", "en": "The potter"}, "hs-11 keeps its name")
+	t.ok(not hs.has("pending"), "hs-11 no longer carries the old pending text")
+	t.eq(all.pending.size(), 0, "no house waits for research any more")
+	t.eq(str(craft.skin), "POTTERY-001/person_forming", "pottery: the skin is POTTERY-001 person_forming")
+	t.eq(craft.block, {"enter": "form_enter", "cycle": [["form", null]], "exit": "form_exit"}, "pottery: enter, cycle and exit clips")
+	var lens: Dictionary = Catalogue.clip_lengths(craft.skin)
+	for clip in POTTERY_CLIPS:
+		t.ok(absf(float(lens.get(clip, -1.0)) - POTTERY_CLIPS[clip]) < 1e-3, "pottery: %s lasts %.2f s (%s)" % [clip, POTTERY_CLIPS[clip], lens.get(clip)])
+	t.eq(lens.size(), 3, "pottery: the skin has only the three forming clips (no walking)")
+	var props := {}
+	for p in craft.props:
+		props[p.id] = p
+	t.eq(props.bowl_raised.held, [{"node": "vessel_hold", "clip": "form_enter"}, {"node": "vessel_hold", "clip": "form"}], "pottery: the raised bowl is held in form_enter and form")
+	t.eq(props.bowl_smoothed.held, [{"node": "vessel_hold", "clip": "form_exit"}], "pottery: the smoothed bowl is held only in form_exit")
+	t.ok(not props.bowl_raised.has("rest") and not props.bowl_smoothed.has("rest"), "pottery: neither bowl has a rest place (it would overlap the other)")
+	for id in ["block", "stock", "coil"]:
+		t.ok(not props[id].has("held"), "pottery: %s is static" % id)
+	# the work segments of the period, and where form_exit cuts the cycle in each
+	var segs := []
+	for s in all.period.segments:
+		if s.id == "work":
+			segs.append((float(s["to"]) - float(s["from"])) * float(all.period.day_length_s))
+	var cuts := []
+	for seg_len in segs:
+		var pose: Dictionary = CraftTimeline.pose_at(craft, seg_len - POTTERY_CLIPS.form_exit - 0.001, seg_len, lens)
+		t.eq(pose.clip, "form", "pottery: the %.1f s block is still in the cycle just before form_exit" % seg_len)
+		cuts.append(snappedf(float(pose.clip_time) + 0.001, 0.01))
+	t.eq(cuts, POTTERY_EXIT_CUTS, "pottery: form_exit cuts the cycle at the recorded times (%s s)" % [cuts])
+	t.eq(pottery_bowl_problems(craft, lens, segs), [] as Array[String], "pottery: one bowl at a time, raised then smoothed once at form_exit, none at rest")
+	# positive control: the bowl check fails for the earlier choreography (smoothed bowl shown in the cycle, too)
+	var broken: Dictionary = craft.duplicate(true)
+	for p in broken.props:
+		if p.id == "bowl_smoothed":
+			p.held.append({"node": "vessel_hold", "clip": "form", "from": 4.55})
+	t.ok(not pottery_bowl_problems(broken, lens, segs).is_empty(), "pottery: a smoothed bowl in the cycle is caught, so the check can fail")
+	# the card: what is local (E), what is analogy or project value (R); no claim beyond the approved scope
+	var card: Dictionary = craft.card
+	t.eq(str(card.status), "R", "pottery: the card is a reconstruction")
+	var classes := {}
+	for ev in card.evidence:
+		classes[ev["class"]] = true
+	t.ok(classes.has("E") and classes.has("R"), "pottery: the card separates local evidence (E) from analogy and project values (R)")
+	var text := JSON.stringify(card)
+	for needle in ["46 ze 133 mís v datech (37 z nich bez určeného typu)", "46 of the 133 bowls in the data (37 of them with no type determined)", "2–11", "214 × 91", "projektová hodnota", "project value", "11 objektů", "11 features", "Chvojka a kol. 2021", "Chvojka et al. 2021", "nevypálená", "unfired"]:
+		t.ok(text.contains(needle), "pottery: the card says '%s'" % needle)
+	for needle in ["typově určených", "typed bowls"]:      # 133 = all bowls in DTB1; only 96 have a determined type (37 are M0)
+		t.ok(not text.contains(needle), "pottery: the card does not call the 133 bowls typed ('%s')" % needle)
+	for needle in ["\\bkruh", "\\bwheel", "hněvotín", "hnevotin"]:      # no potter's wheel, no Hněvotín (scope of SB-057); "okruh" (sphere) is fine
+		t.ok(RegEx.create_from_string(needle).search(text.to_lower()) == null, "pottery: the card says nothing about '%s'" % needle)
+	t.eq(card.unknown.size(), 4, "pottery: technique, firing, local profile and size are unknown")
+	var cites := {"Kuna, Němcová, Chvojka 2022, Zenodo": false, "Kuna et al. 2022": false, "Jiráň (ed.) 2008": false, "Jeffra 2019": false}
+	for s in card.sources:
+		for k in cites:
+			cites[k] = cites[k] or str(s).begins_with(k)
+	for k in cites:
+		t.ok(cites[k], "pottery: the card cites %s" % k)
 
 # SB-055: the storage jar of feature 6/05 is an exhibit card with the BREZ-005 section as a figure in both languages.
 # The pictures are byte copies of the studio section (BREZ-005, make_section.py); a changed copy must fail here.

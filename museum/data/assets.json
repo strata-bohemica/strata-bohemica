@@ -2706,5 +2706,211 @@
     }
    }
   }
+ },
+ "POTTERY-001": {
+  "source": "museum-pottery-v3/POTTERY-001",
+  "rev": "r001",
+  "models": {
+   "bowl_coil_raised": {
+    "file": "POTTERY-001/r001/models/bowl_coil_raised.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "opening_center": {
+      "translation": [
+       0.0,
+       0.062,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "outer_work_contact": {
+      "translation": [
+       0.0,
+       0.05,
+       0.0857
+      ],
+      "yaw_deg": 0.0
+     },
+     "inner_work_contact": {
+      "translation": [
+       0.0,
+       0.05,
+       0.0742
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "bowl_smoothed": {
+    "file": "POTTERY-001/r001/models/bowl_smoothed.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "opening_center": {
+      "translation": [
+       0.0,
+       0.089,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "outer_work_contact": {
+      "translation": [
+       0.0,
+       0.06,
+       0.0985
+      ],
+      "yaw_deg": 0.0
+     },
+     "inner_work_contact": {
+      "translation": [
+       0.0,
+       0.06,
+       0.0921
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "clay_coil": {
+    "file": "POTTERY-001/r001/models/clay_coil.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "coil_pickup": {
+      "translation": [
+       0.0,
+       0.011,
+       0.02
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "clay_stock": {
+    "file": "POTTERY-001/r001/models/clay_stock.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "clay_pickup": {
+      "translation": [
+       0.0,
+       0.063,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   },
+   "person_forming": {
+    "file": "POTTERY-001/r001/models/person_forming.glb",
+    "animations": {
+     "form_enter": 3.45,
+     "form": 9.1,
+     "form_exit": 3.45
+    },
+    "anchors": {
+     "carry_anchor": {
+      "translation": [
+       0.223504,
+       -0.152738,
+       -0.067734
+      ],
+      "yaw_deg": 0.0
+     },
+     "block_place": {
+      "translation": [
+       0.0,
+       0.0,
+       0.53
+      ],
+      "yaw_deg": 180.0
+     },
+     "vessel_hold": {
+      "translation": [
+       0.086,
+       0.2,
+       0.58
+      ],
+      "yaw_deg": 180.0
+     }
+    }
+   },
+   "work_block": {
+    "file": "POTTERY-001/r001/models/work_block.glb",
+    "animations": {},
+    "anchors": {
+     "base_center": {
+      "translation": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "vessel_seat": {
+      "translation": [
+       -0.086,
+       0.2,
+       -0.05
+      ],
+      "yaw_deg": 0.0
+     },
+     "stock_seat": {
+      "translation": [
+       0.12,
+       0.2,
+       0.013
+      ],
+      "yaw_deg": 0.0
+     },
+     "coil_seat": {
+      "translation": [
+       -0.085,
+       0.2,
+       0.11
+      ],
+      "yaw_deg": 0.0
+     },
+     "operator_approach": {
+      "translation": [
+       0.0,
+       0.0,
+       0.43
+      ],
+      "yaw_deg": 0.0
+     }
+    }
+   }
+  }
  }
 }

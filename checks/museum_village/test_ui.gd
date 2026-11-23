@@ -76,10 +76,13 @@ func _initialize() -> void:
 		var en := Card.build(info.craft, info.homestead, "en", "work")
 		t.ok(cs.title != en.title or cs.craft != en.craft, "hs-%02d: Czech and English differ" % id)
 		t.ok(Card.to_text(cs).contains(cs.sections[1].items[0]), "hs-%02d: the flat text holds the reconstruction" % id)
-	for id in all.pending:
-		var pc := Card.build_pending(all.pending[id], "en")
-		t.ok(pc.sections[0].items[0].length() > 20, "pending house %d states why it is empty" % id)
-	t.eq(all.pending.keys().size(), 1, "one house still waits for research (the potter)")
+	# every house is staffed since SB-058 (the potter); the card of a house not staffed yet still states its reason
+	t.eq(all.pending.keys().size(), 0, "no house waits for research any more")
+	var waiting := {"id": "hs-99", "schema": 2, "craft": null, "name": {"cs": "Čeká", "en": "Waiting"}, "house": {"model": "HOUSE-004/house_004_plain"},
+		"pending": {"cs": "Čeká na rešerši k řemeslu této usedlosti.", "en": "Waiting for research on the craft of this homestead."}}
+	for lang in ["cs", "en"]:
+		var pc := Card.build_pending(waiting, lang)
+		t.eq(pc.sections[0].items[0], waiting.pending[lang], "a house not staffed yet states why it is empty (%s)" % lang)
 
 	# picking: pure maths
 	t.ok(absf(Picking.ray_sphere(Vector3(0, 0, 10), Vector3(0, 0, -1), Vector3.ZERO, 2.0) - 8.0) < 1e-6, "a ray hits a sphere at the near surface")
@@ -303,10 +306,9 @@ func _initialize() -> void:
 	t.eq(app.selected, 0, "escape returns to the overview")
 	t.ok(not app.card_panel.visible, "escape closes the card")
 
-	# pending house: clicking it opens its reason
-	var pend_id: int = app.world.pending.keys()[0]
-	app.select(pend_id)
-	t.ok(app.card_panel.visible and app.card_panel.plain_text().length() > 40, "a house waiting for research opens a card too")
+	# the potter's house (pending until SB-058) opens the craft card in both languages
+	app.select(11)
+	t.ok(app.card_panel.visible and app.card_panel.plain_text().contains("214 × 91"), "the potter's house opens the pottery card")
 	app.select(0)
 
 	# the camera follows the person when they walk, and stays on the work place when follow is off

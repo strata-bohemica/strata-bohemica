@@ -1,0 +1,133 @@
+{
+  "id": "pottery",
+  "schema": 2,
+  "name": {
+    "cs": "Ruční formování misky",
+    "en": "Hand-forming a bowl"
+  },
+  "skin": "POTTERY-001/person_forming",
+  "block": {
+    "enter": "form_enter",
+    "cycle": [
+      [
+        "form",
+        null
+      ]
+    ],
+    "exit": "form_exit"
+  },
+  "props": [
+    {
+      "id": "block",
+      "asset": "POTTERY-001/work_block",
+      "place": {
+        "on": "skin",
+        "node": "block_place"
+      }
+    },
+    {
+      "id": "stock",
+      "asset": "POTTERY-001/clay_stock",
+      "place": {
+        "on": "prop:block",
+        "node": "stock_seat"
+      }
+    },
+    {
+      "id": "coil",
+      "asset": "POTTERY-001/clay_coil",
+      "place": {
+        "on": "prop:block",
+        "node": "coil_seat"
+      }
+    },
+    {
+      "id": "bowl_raised",
+      "asset": "POTTERY-001/bowl_coil_raised",
+      "grip": "base_center",
+      "held": [
+        {
+          "node": "vessel_hold",
+          "clip": "form_enter"
+        },
+        {
+          "node": "vessel_hold",
+          "clip": "form"
+        }
+      ]
+    },
+    {
+      "id": "bowl_smoothed",
+      "asset": "POTTERY-001/bowl_smoothed",
+      "grip": "base_center",
+      "held": [
+        {
+          "node": "vessel_hold",
+          "clip": "form_exit"
+        }
+      ]
+    }
+  ],
+  "card": {
+    "status": "R",
+    "evidence": [
+      {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici je nejčastějším typem mísy kónická oblá mísa (typ M2): 46 ze 133 mís v datech (37 z nich bez určeného typu). Tloušťka stěny mís M2 má medián 5 a rozpětí 2–11 (jednotka v datech neuvedena, pravděpodobně mm). U žádné z nich není zapsáno dno a v otevřených datech nejsou změřeny průměry ústí ani dna.",
+          "en": "At Březnice the commonest bowl type is the rounded conical bowl (type M2): 46 of the 133 bowls in the data (37 of them with no type determined). The wall thickness of the M2 bowls has a median of 5 and a range of 2–11 (the unit is not given in the data, probably mm). None of them has a recorded base, and the open data give no measured rim or base diameters."
+        }
+      },
+      {
+        "class": "E",
+        "text": {
+          "cs": "Výzkum vede na sídlišti 11 objektů jako pece, podle propáleného povrchu nebo výplně. Že se v nich pálila keramika, otevřené prameny neukazují: nejsou u nich zapsány konstrukční prvky ani zmetky. Výpal se proto v ukázce neobjevuje.",
+          "en": "The excavators list 11 features on the site as kilns, by their burnt surface or fill. The open sources do not show that pottery was fired in them: no structural parts and no wasters are recorded with them. Firing is therefore not shown here."
+        }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "Stavba nádoby z válečků hlíny je jen analogie. Přehled české doby bronzové obecně popisuje hnětení hlíny do válečků, ze kterých se tvar modeloval, bez dokladu z konkrétní lokality; přehled hrnčířských technik doby bronzové ji pro okruh popelnicových polí uvádí jen jako možnost. Na březnických nádobách výrobní technika popsána není; prstování povrchu je tu zapsáno jako úprava nebo výzdoba, ne jako stopa stavby stěny.",
+          "en": "Building a vessel from clay coils is only an analogy. A survey of the Bronze Age in Bohemia describes in general terms kneading clay into coils from which the shape was modelled, without evidence from a particular site; a survey of Bronze Age potting techniques gives it only as a possibility for the Urnfield world. No forming technique is described on the Březnice vessels; finger-wiping of the surface is recorded there as finishing or decoration, not as a trace of how the wall was built."
+        }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "Velikost misky 214 × 91 mm je projektová hodnota, ne březnická míra. Ploché dno není u březnických mís M2 doloženo; je převzato z regionálních analogií (Drhovice, Čížová). Kresbu místní nádoby s měřítkem jsme v otevřených pramenech nenašli; může být v monografii Chvojka a kol. 2021, kterou jsme neměli k dispozici.",
+          "en": "The bowl's size of 214 × 91 mm is a project value, not a Březnice measurement. A flat base is not attested for the Březnice M2 bowls; it is taken from regional analogies (Drhovice, Čížová). We found no drawing of a local vessel with a scale in the open sources; it may be in the monograph by Chvojka et al. 2021, which we could not consult."
+        }
+      }
+    ],
+    "reconstruction": {
+      "cs": "Ukázka je pokusná varianta: jak se na Březnici nádoby vyráběly, doloženo není. Dřep u špalku, pohyby rukou na stěně misky, příchod a odchod, pracovní špalek, zásoba hlíny a váleček jsou rekonstrukce. Rozpracovaná miska s viditelnými válečky se při odchodu najednou vymění za zhlazenou; je to zkratka zobrazení, ne údaj o tom, jak dlouho výroba misky trvala. Samotné zhlazování se neukazuje. Nádoba zůstává nevypálená.",
+      "en": "This is an experimental variant: how vessels were made at Březnice is not attested. Crouching at the block, the hand movements on the bowl wall, getting down to work and leaving it, the work block, the clay stock and the spare coil are reconstructed. The unfinished bowl with visible coils is replaced at once by a smoothed one when the potter leaves; this is a display shortcut, not a statement about how long making a bowl took. The smoothing itself is not shown. The vessel stays unfired."
+    },
+    "unknown": [
+      {
+        "cs": "jak se na Březnici nádoby vyráběly (výrobní technika)",
+        "en": "how vessels were made at Březnice (forming technique)"
+      },
+      {
+        "cs": "kde a jak se keramika pálila",
+        "en": "where and how the pottery was fired"
+      },
+      {
+        "cs": "profil místní mísy s měřítkem",
+        "en": "the profile of a local bowl with a scale"
+      },
+      {
+        "cs": "velikost nádoby",
+        "en": "the size of the vessel"
+      }
+    ],
+    "sources": [
+      "Kuna, Němcová, Chvojka 2022, Zenodo 10.5281/zenodo.6475797, tables DTB1 and DTB2 (pottery) and the table of features",
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, section 3.2, p. 4",
+      "Jiráň (ed.) 2008, Archeologie pravěkých Čech 5, p. 15; p. 186, fig. 106: 3, 5",
+      "Jeffra 2019, CRAFTER: Potting Techniques of the Bronze Age, EXARC Journal 2019/1, p. 7",
+      "POTTERY-001 PROVENANCE.md"
+    ]
+  }
+}
