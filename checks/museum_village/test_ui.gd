@@ -120,6 +120,7 @@ func _initialize() -> void:
 	t.eq(toggled[0], 1, "the language button emits language_toggled")
 	panel.hide_card()
 	t.ok(not panel.visible, "the panel hides")
+	await _figure_card(t, panel)
 
 	# the app: click a person, the card opens and the camera follows; escape closes; language and time controls work
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
@@ -455,3 +456,61 @@ func _release(app: Node) -> void:
 	root.remove_child(app)
 	app.free()
 	await create_timer(0.3).timeout
+
+# SB-055: a card section "figure" (picture, caption, alt text, certainty class, source), drawn in the card and openable
+# over the whole screen; and the checks that refuse an incomplete figure.
+func _figure_card(t, panel) -> void:
+	var ex: Dictionary = Schema.load_json("res://museum/data/exhibits/store-6-05.json")
+	for lang in ["cs", "en"]:
+		var card := Card.build_exhibit(ex, lang)
+		var fig_sections: Array = card.sections.filter(func(s): return s.kind == "figure")
+		t.eq(fig_sections.size(), 1, "store 6/05 (%s): one figure section" % lang)
+		var item: Dictionary = fig_sections[0].items[0]
+		t.ok(item.image.ends_with("_%s.png" % lang), "store 6/05 (%s): the picture in the card's language" % lang)
+		t.ok(item.caption != "" and item.alt != "" and item.source != "" and item["class"] == "R", "store 6/05 (%s): caption, alt text, source and class" % lang)
+		t.eq(card.sections[-1].heading, I18n.tr_("ui.sources", lang), "store 6/05 (%s): sources stay last" % lang)
+		var flat := Card.to_text(card)
+		t.ok(flat.contains(item.caption) and flat.contains(item.alt) and flat.contains(item.source), "store 6/05 (%s): the flat text holds caption, alt text and source" % lang)
+		panel.show_card(card, lang)
+		await process_frame
+		t.ok(panel.body.text.contains("[img") and panel.body.text.contains(item.image), "store 6/05 (%s): the card draws the picture" % lang)
+		t.ok(panel.body.text.contains('tooltip="%s"' % CardPanel._attr(item.alt)), "store 6/05 (%s): the picture carries its alt text" % lang)
+		t.ok(panel.plain_text().contains(item.caption) and panel.plain_text().contains(I18n.tr_("ui.figure", lang)), "store 6/05 (%s): the panel shows the heading and caption" % lang)
+	# craft cards are unchanged: no figure section
+	var all := Fixture.load_all()
+	for id in all.occupied:
+		var c := Card.build(all.occupied[id].craft, all.occupied[id].homestead, "en", "work")
+		t.ok(c.sections.all(func(s): return s.kind != "figure"), "hs-%02d: craft card has no figure section" % id)
+	# the full-screen view opens on the figure link and closes with Esc
+	panel._on_meta("figure:0")
+	t.ok(panel.viewer.visible and panel.viewer_image.texture != null, "a click on the figure opens it over the whole screen")
+	var esc := InputEventKey.new()
+	esc.keycode = KEY_ESCAPE
+	esc.pressed = true
+	panel._input(esc)
+	t.ok(not panel.viewer.visible and panel.viewer_image.texture == null, "Esc closes the full-screen figure")
+	panel._on_meta("figure:7")
+	t.ok(not panel.viewer.visible, "an unknown figure index opens nothing")
+	# negative controls: an incomplete figure is refused, and a missing picture falls back to its alt text
+	var good: Dictionary = ex.card.figures[0]
+	t.eq(Card.figure_problems(good), [] as Array[String], "the real figure passes")
+	var no_alt: Dictionary = good.duplicate(true)
+	no_alt.alt.erase("en")
+	t.ok(Card.figure_problems(no_alt).has("alt needs cs and en"), "a figure without English alt text is refused")
+	var bad_class: Dictionary = good.duplicate(true)
+	bad_class["class"] = "O"
+	t.ok(Card.figure_problems(bad_class).size() == 1 and Card.figure_problems(bad_class)[0].begins_with("class"), "a class outside E/R/F is refused")
+	var no_source: Dictionary = good.duplicate(true)
+	no_source.erase("source")
+	t.ok(Card.figure_problems(no_source).has("source is missing"), "a figure without a source is refused")
+	var lost: Dictionary = good.duplicate(true)
+	lost.image.cs = "res://research/figures/missing.png"
+	t.ok(Card.figure_problems(lost).has("image cs not found: res://research/figures/missing.png"), "a figure whose picture is missing is refused")
+	var lost_ex: Dictionary = ex.duplicate(true)
+	lost_ex.card.figures = [lost]
+	panel.show_card(Card.build_exhibit(lost_ex, "cs"), "cs")
+	await process_frame
+	t.ok(not panel.body.text.contains("[img") and panel.plain_text().contains(I18n.pick(lost.alt, "cs")), "a missing picture shows its alt text instead")
+	panel._on_meta("figure:0")
+	t.ok(not panel.viewer.visible, "a missing picture does not open the full-screen view")
+	panel.hide_card()

@@ -1,0 +1,49 @@
+{
+ "id": "store-6-05",
+ "name": {"cs": "Zásobnice z objektu 6/05", "en": "Storage jar from feature 6/05"},
+ "kind": {"cs": "Zásobní jáma a nádoba", "en": "Storage pit and jar"},
+ "card": {
+  "status": "R",
+  "evidence": [
+   {"class": "E", "text": {
+    "cs": "Objekt 6/05 (2005-O-06) je mísovitá zásobní jáma s torzem zásobnice. Autoři výzkumu ji vykládají jako zásobní jámu původně se zahloubenou nádobou; to je jejich výklad, ne pozorování.",
+    "en": "Feature 6/05 (2005-O-06) is a bowl-shaped storage pit with the remains of a storage jar. The excavators interpret it as a storage pit originally holding a sunken vessel; this is their interpretation, not an observation."}},
+   {"class": "E", "text": {
+    "cs": "Jáma je hluboká 0,60 m pod úrovní, kde byla zachycena (databáze výzkumu). Šířku 1,42 m (± 0,05 m) jsme odečetli z publikované kresby řezu; je to náš odečet, ne údaj autorů. Původní povrch sídliště zanikl orbou a erozí, takže jáma byla o neznámou hodnotu hlubší.",
+    "en": "The pit is 0.60 m deep below the level at which it was found (excavation database). We read its width, 1.42 m (± 0.05 m), from the published section drawing; this is our reading, not the authors' figure. The original ground surface was lost to ploughing and erosion, so the pit was deeper by an unknown amount."}},
+   {"class": "E", "text": {
+    "cs": "Ve výplni jsou zlomky tří zásobnic. Hlavní jedinec CHj-1447 je typ Z2 (amforovitá zásobnice s nálevkovitě rozšířeným hrdlem), zachovaný z 25–60 %. Jeho rozměry ani kresba nejsou v pramenech, které jsme četli. Výplň (3 vrstvy) je stav po zániku jámy.",
+    "en": "The fill holds sherds of three storage jars. The main vessel, CHj-1447, is type Z2 (an amphora-like storage jar with a funnel-shaped neck), 25–60 % preserved. Its dimensions and drawing are not in the sources we read. The fill (3 layers) is the state after the pit went out of use."}},
+   {"class": "R", "text": {
+    "cs": "Tvar nádoby v řezu je regionální analogie (zásobnice z jiných nalezišť), ne profil nádoby z 6/05. Usazení nádoby, okraj 0,08 m nad podlahou, podlaha v úrovni zachycení a stěna 0,011 m (medián lokality, ne 6/05) jsou rekonstrukce.",
+    "en": "The jar shape in the section is a regional analogy (storage jars from other sites), not the profile of the vessel from 6/05. How the jar is set, its rim 0.08 m above the floor, the floor at the level where the pit was found and the 0.011 m wall (the site median, not 6/05) are reconstructed."}}
+  ],
+  "reconstruction": {
+   "cs": "Řez je ilustrace (R): jáma má rozměry z výzkumu, ale její obrys je zobecněný a nádoba je rekonstrukční model STORE-001 r001. Nejde o kresbu výzkumu ani o její překreslení. Ve vesnici se nádoba zatím neukazuje; jáma se do terénu vesnice nevyřezává, protože výška původní podlahy není známa. Tato zásobnice nesouvisí s počtem hrnců obilí u domů.",
+   "en": "The section is an illustration (R): the pit has the excavated dimensions, but its outline is generalised and the jar is the reconstruction model STORE-001 r001. It is not the excavation drawing nor a redrawing of it. The jar is not yet shown in the village; the pit is not cut into the village ground, because the height of the original floor is unknown. This storage jar has nothing to do with the number of grain pots by the houses."
+  },
+  "unknown": [
+   {"cs": "původní povrch a podlaha: o kolik byla jáma hlubší, nevíme", "en": "the original surface and floor: how much deeper the pit was is unknown"},
+   {"cs": "profil a rozměry nádoby CHj-1447", "en": "the profile and dimensions of vessel CHj-1447"},
+   {"cs": "čím byla nádoba v době užívání obsypána", "en": "what packed the jar while it was in use"},
+   {"cs": "víko, obsah a naběračka (nemají oporu, proto vynechány)", "en": "lid, contents and ladle (no evidence, so left out)"},
+   {"cs": "jak se z nádoby nabíralo: gesto a dosah nebyly vyzkoušeny, replika nebyla", "en": "how the jar was emptied: the gesture and reach were not tested, there was no replica"}
+  ],
+  "figures": [
+   {"image": {"cs": "res://research/figures/BREZ-005/section_6-05_cs.png", "en": "res://research/figures/BREZ-005/section_6-05_en.png"},
+    "caption": {
+     "cs": "Řez objektem 6/05 se zahloubenou zásobnicí, v měřítku (osy v metrech). Jáma podle výzkumu, terén, podlaha, usazení a tvar nádoby jsou rekonstrukce.",
+     "en": "Section through feature 6/05 with a sunken storage jar, to scale (axes in metres). The pit follows the excavation; ground, floor, the jar's setting and shape are reconstructed."},
+    "alt": {
+     "cs": "Svislý řez zemí: mísovitá jáma široká 1,42 m a hluboká 0,60 m, v ní hrdlem nahoru zapuštěná nádoba, jejíž okraj vyčnívá 0,08 m nad podlahu. Popisky uvádějí třídy jistoty a vynechané víko, obsah a naběračku.",
+     "en": "Vertical section through the ground: a bowl-shaped pit 1.42 m wide and 0.60 m deep, with a jar sunk into it mouth up, its rim 0.08 m above the floor. Labels give the certainty classes and the omitted lid, contents and ladle."},
+    "class": "R",
+    "source": "Strata Bohemica, BREZ-005 study section (CC BY 4.0), from Kuna et al. 2022 fig. 3 and Chvojka, Kuna et al. 2022 (Zenodo); jar model STORE-001 r001"}
+  ],
+  "sources": [
+   "Kuna, Němcová, Šálková, Menšík, Chvojka 2022, J. Anthropol. Archaeol. 67:101433, fig. 3, §5.2, §6",
+   "Chvojka, Kuna et al. 2022, Sídliště z mladší doby bronzové v Březnici: data pro depoziční analýzu, Zenodo 10.5281/zenodo.6475797 (feature 2005-O-06)",
+   "research/breznice-workshops.md, section 2"
+  ]
+ }
+}

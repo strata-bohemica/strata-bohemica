@@ -2,6 +2,8 @@
  "ui.evidence": "Evidence",
  "ui.reconstruction": "Reconstruction",
  "ui.unknown": "Unknown",
+ "ui.figure": "Illustration",
+ "ui.figure_open": "tap to enlarge, Esc closes",
  "ui.sources": "Sources",
  "ui.close": "Close",
  "ui.provisional": "All reconstructions are provisional.",
