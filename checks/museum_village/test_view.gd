@@ -244,10 +244,12 @@ func _initialize() -> void:
 
 	# cutaway and night glow
 	var any = view.homesteads[view.homesteads.keys()[0]]
-	any.view.apply(any.schedule.state_at(0.02 * day), 1.0, true, 0.0)
-	t.ok(not any.view.house.visible and any.view.glow.light_energy > 1.0, "cutaway hides the house; the door glows at night")
-	any.view.apply(any.schedule.state_at(0.5 * day), 0.0, false, 0.0)
-	t.ok(any.view.house.visible and any.view.glow.light_energy == 0.0, "house shown and dark by day")
+	any.view.apply(any.schedule.state_at(0.02 * day), 1.0, true, 0.02 * day)
+	t.ok(not any.view.house.visible and any.view.glow.light_energy > 0.5, "cutaway hides the house; the door glows at night (embers, %.2f)" % any.view.glow.light_energy)
+	any.view.apply(any.schedule.state_at(0.8 * day), 1.0, false, 0.8 * day)
+	t.ok(any.view.glow.light_energy > 1.5 and any.view.doorway.visible, "in the evening the hearth is fed: the door glows brighter (%.2f) and the doorway shows it" % any.view.glow.light_energy)
+	any.view.apply(any.schedule.state_at(0.5 * day), 0.0, false, 0.5 * day)
+	t.ok(any.view.house.visible and any.view.glow.light_energy == 0.0 and any.view.hearth.light_energy == 0.0 and not any.view.doorway.visible, "house shown and dark by day")
 
 	# the real main scene boots and switches focus
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()

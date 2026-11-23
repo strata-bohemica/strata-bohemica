@@ -2,7 +2,7 @@ extends Node3D
 ## Weather on screen (SB-015). It only applies what core/weather.gd says for the time it is given; it decides nothing
 ## about the weather and keeps no weather state. It owns the visitor's settings: on/off and quality (lower/higher).
 ##
-## The light of the day comes in as `base` (from the app; SB-017 will compute it) and the weather only multiplies it:
+## The light of the day comes in as `base` (from the app: core/lighting.gd, SB-017) and the weather only multiplies it:
 ##   sun energy x shading.sun, ambient energy x shading.ambient, sky colour turned towards overcast grey and dimmed,
 ##   fog density from shading.fog_density (Environment.fog, exponential; the fog takes the sky colour).
 ## Rain: one mesh of streaks around the camera (view/rain.gdshader), driven by the museum clock. Wind: pushes the hearth

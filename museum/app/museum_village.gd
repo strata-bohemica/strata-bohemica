@@ -17,6 +17,8 @@ const ObjectViewer = preload("res://museum/ui/object_viewer.gd")
 const WeatherView = preload("res://museum/view/weather_view.gd")
 const WeatherToggle = preload("res://museum/ui/weather_toggle.gd")
 const Weather = preload("res://museum/core/weather.gd")
+const Lighting = preload("res://museum/core/lighting.gd")
+const LightView = preload("res://museum/view/light_view.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -51,6 +53,7 @@ var object_stage                   # the object viewer's own little world (view/
 var object_viewer                  # its panel (ui/object_viewer.gd)
 var weather                        # view/weather_view.gd: applies core/weather.gd, owns on/off and quality
 var weather_toggle                 # ui/weather_toggle.gd
+var light                          # view/light_view.gd: which fires are on and cast shadows (SB-017)
 var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
@@ -87,6 +90,9 @@ func _ready() -> void:
 	weather.day_length = float(period.day_length_s)
 	add_child(weather)
 	weather.build(env, sun, village)
+	light = LightView.new()
+	add_child(light)
+	light.build(village)
 	t = START_FRACTION * float(period.day_length_s)
 	_fit_ui_scale()
 	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
@@ -355,10 +361,10 @@ func _refresh(delta: float) -> void:
 	var daylight: float = clock.daylight(t)
 	village.apply(t, 1.0 - daylight, cutaway)
 	var f: float = clock.fraction(t)
-	sun.rotation_degrees = Vector3(-clock.elevation(t) * 65.0, lerpf(100.0, -100.0, f), 0.0)
-	# the light of the day; the weather only multiplies it (view/weather_view.gd)
-	var base_light := {"sun_energy": 1.0 * daylight, "background": Color("#0c0f18").lerp(Color("#8fb5d9"), daylight),
-		"ambient_color": Color("#2b3652").lerp(Color("#a09c92"), daylight), "ambient_energy": lerpf(0.5, 0.6, daylight)}
+	# the light of the day (core/lighting.gd, SB-017); the weather only multiplies it (view/weather_view.gd)
+	var base_light := Lighting.base(t, float(period.day_length_s))
+	sun.rotation_degrees = Vector3(float(base_light.sun_pitch_deg), float(base_light.sun_yaw_deg), 0.0)
+	sun.light_color = base_light.sun_color
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
 	var kz := 1.0 - exp(-12.0 * delta) if delta > 0.0 else 1.0      # zoom follows the fingers/wheel quickly
 	cam_target = cam_target.lerp(_focus_target(), k)
@@ -366,6 +372,8 @@ func _refresh(delta: float) -> void:
 	camera.position = CameraRig.position(cam_target, orbit_yaw, orbit_pitch, cam_dist, village.terrain)     # never under the ground
 	camera.look_at(cam_target)
 	weather.apply(t, base_light, camera.position)
+	sun.visible = sun.light_energy > 1e-3        # below the horizon: no light, and no shadow map to draw
+	light.apply(camera.position, cutaway, weather.quality, 1.0 - daylight)
 	# keep the subject in the free part of the screen while the card covers the right side
 	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)
 	var aspect: float = get_viewport().get_visible_rect().size.aspect()
