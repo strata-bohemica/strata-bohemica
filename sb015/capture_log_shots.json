@@ -1,0 +1,246 @@
+{
+ "adapter": "Mesa Intel(R) UHD Graphics 620 (KBL GT2)",
+ "driver": "opengl3",
+ "godot": "4.5.1-stable (official)",
+ "log": [
+  {
+   "enabled": false,
+   "file": "jasno_pred.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 1.0,
+   "t": 108.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": true,
+   "file": "jasno_po.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 1.0,
+   "t": 108.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": false,
+   "file": "oblacno_pred.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.85194057226181,
+   "t": 259.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": true,
+   "file": "oblacno_po.png",
+   "fog": true,
+   "fog_density": 0.001164217479527,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.257754981517792,
+   "t": 259.0,
+   "weather": {
+    "cloud": 0.968641160486677,
+    "fog": 0.0,
+    "rain": 0.000616010247889214,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": false,
+   "file": "dest_pred.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 1.0,
+   "t": 1226.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": true,
+   "file": "dest_po.png",
+   "fog": true,
+   "fog_density": 0.00419999985024333,
+   "quality": "high",
+   "rain_visible": true,
+   "sun": 0.238000005483627,
+   "t": 1226.0,
+   "weather": {
+    "cloud": 1.0,
+    "fog": 0.0,
+    "rain": 1.0,
+    "snow": 0.0,
+    "wind": 0.998723652317373
+   }
+  },
+  {
+   "enabled": false,
+   "file": "mlha_pred.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.925835251808167,
+   "t": 1903.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": true,
+   "file": "mlha_po.png",
+   "fog": true,
+   "fog_density": 0.0160893220454454,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.324537307024002,
+   "t": 1903.0,
+   "weather": {
+    "cloud": 0.441252334680162,
+    "fog": 0.972488703373765,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": false,
+   "file": "vitr_pred.png",
+   "fog": false,
+   "fog_density": 0.0,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 1.0,
+   "t": 1561.0,
+   "weather": {
+    "cloud": 0.0,
+    "fog": 0.0,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.0
+   }
+  },
+  {
+   "enabled": true,
+   "file": "vitr_po.png",
+   "fog": true,
+   "fog_density": 0.000409244297770783,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.976187646389008,
+   "t": 1561.0,
+   "weather": {
+    "cloud": 0.0163617391567838,
+    "fog": 0.024350637628761,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.520557167891273
+   }
+  },
+  {
+   "enabled": true,
+   "file": "dest_zblizka_po.png",
+   "fog": true,
+   "fog_density": 0.00419999985024333,
+   "quality": "high",
+   "rain_visible": true,
+   "sun": 0.238000005483627,
+   "t": 1226.0,
+   "weather": {
+    "cloud": 1.0,
+    "fog": 0.0,
+    "rain": 1.0,
+    "snow": 0.0,
+    "wind": 0.998723652317373
+   }
+  },
+  {
+   "enabled": true,
+   "file": "dest_zblizka_nizsi.png",
+   "fog": true,
+   "fog_density": 0.00419999985024333,
+   "quality": "low",
+   "rain_visible": true,
+   "sun": 0.238000005483627,
+   "t": 1226.0,
+   "weather": {
+    "cloud": 1.0,
+    "fog": 0.0,
+    "rain": 1.0,
+    "snow": 0.0,
+    "wind": 0.998723652317373
+   }
+  },
+  {
+   "enabled": true,
+   "file": "vitr_zblizka_po.png",
+   "fog": true,
+   "fog_density": 0.000409244297770783,
+   "quality": "high",
+   "rain_visible": false,
+   "sun": 0.976187646389008,
+   "t": 1561.0,
+   "weather": {
+    "cloud": 0.0163617391567838,
+    "fog": 0.024350637628761,
+    "rain": 0.0,
+    "snow": 0.0,
+    "wind": 0.520557167891273
+   }
+  },
+  {
+   "enabled": true,
+   "file": "telefon_dest_po.png",
+   "fog": true,
+   "fog_density": 0.00419999985024333,
+   "quality": "high",
+   "rain_visible": true,
+   "sun": 0.238000005483627,
+   "t": 1226.0,
+   "weather": {
+    "cloud": 1.0,
+    "fog": 0.0,
+    "rain": 1.0,
+    "snow": 0.0,
+    "wind": 0.998723652317373
+   }
+  }
+ ],
+ "vsync": 1
+}
