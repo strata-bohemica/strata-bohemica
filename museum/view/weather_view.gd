@@ -13,6 +13,7 @@ const RAIN_SHADER = preload("res://museum/view/rain.gdshader")
 const PREFS_PATH := "user://weather.cfg"
 ## Streaks in the rain box per quality; the box is 48 x 28 x 48 m around the camera.
 const RAIN_STREAKS := {"low": 1200, "high": 4000}
+const RAIN_BOX := Vector3(48, 28, 48)
 const FALL_SPEED := 7.0             # m/s, a typical raindrop
 const DRIFT_SPEED := 1.5            # m/s sideways, along the wind direction
 const OVERCAST := Color("#8a9099")  # the sky under full cloud, before dimming
@@ -59,7 +60,10 @@ func save_prefs() -> bool:
 	var cfg := ConfigFile.new()
 	cfg.set_value("weather", "enabled", enabled)
 	cfg.set_value("weather", "quality", quality)
-	return cfg.save(PREFS_PATH) == OK
+	var err := cfg.save(PREFS_PATH)
+	if err != OK:
+		push_warning("weather: could not save the choice to %s (%s); it lasts until the page is closed" % [PREFS_PATH, error_string(err)])
+	return err == OK
 
 func load_prefs() -> bool:
 	var cfg := ConfigFile.new()
@@ -153,17 +157,30 @@ func _apply_rain(t: float, w: Dictionary, camera_pos: Vector3, sky_lum: float) -
 		return
 	var n: int = RAIN_STREAKS[quality]
 	if n != _built_streaks:
-		rain.mesh = streak_mesh(n, Vector3(48, 28, 48))
+		rain.mesh = streak_mesh(n, RAIN_BOX)
 		_built_streaks = n
-	var box := Vector3(48, 28, 48)
-	var side := Weather.WIND_DIR * DRIFT_SPEED * t
+	var box := RAIN_BOX
 	rain_material.set_shader_parameter("box", box)
-	rain_material.set_shader_parameter("drift", Vector3(fposmod(side.x, box.x), fposmod(-FALL_SPEED * t, box.y), fposmod(side.z, box.z)))
+	rain_material.set_shader_parameter("drift", rain_drift(t, box))
 	rain_material.set_shader_parameter("anchor", camera_pos)
 	rain_material.set_shader_parameter("fall_dir", (Vector3.DOWN * FALL_SPEED + Weather.WIND_DIR * (DRIFT_SPEED + 5.0 * float(w.wind))).normalized())
 	rain_material.set_shader_parameter("amount", amount)
 	var light := clampf(0.25 + 3.0 * sky_lum, 0.25, 1.0)       # streaks are unshaded: darker at night
 	rain_material.set_shader_parameter("tint", Color(0.78 * light, 0.82 * light, 0.88 * light, 0.4))
+
+## How far the rain has moved by time t, modulo the box: down at FALL_SPEED and along the wind at DRIFT_SPEED. A function of
+## the museum clock only, so a paused village shows still rain and a scrubbed one the rain of that time.
+static func rain_drift(t: float, box: Vector3) -> Vector3:
+	var fall := -FALL_SPEED * t                      # scalars (double): a Vector3 holds 32-bit floats, too coarse after a day
+	var along := DRIFT_SPEED * t
+	return Vector3(fposmod(Weather.WIND_DIR.x * along, box.x), fposmod(fall, box.y), fposmod(Weather.WIND_DIR.z * along, box.z))
+
+## Where a streak placed at `vertex` in the box is drawn: what view/rain.gdshader computes (RAIN_PLACE is its line;
+## the weather check keeps the two together).
+const RAIN_PLACE := "vec3 rel = mod(VERTEX + drift - anchor + box * 0.5, box) - box * 0.5;"
+static func streak_world(vertex: Vector3, drift: Vector3, anchor: Vector3, box: Vector3) -> Vector3:
+	var p := vertex + drift - anchor + box * 0.5
+	return anchor + Vector3(fposmod(p.x, box.x), fposmod(p.y, box.y), fposmod(p.z, box.z)) - box * 0.5
 
 ## n streaks at fixed places in the box (a stateless hash, the same every build); COLOR.r is the streak's order 0..1.
 static func streak_mesh(n: int, box: Vector3) -> ArrayMesh:

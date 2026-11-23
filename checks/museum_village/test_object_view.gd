@@ -145,6 +145,7 @@ func _initialize() -> void:
 	# ---- the app ----
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app)
+	app.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(3):
 		await process_frame
 	app.paused = true

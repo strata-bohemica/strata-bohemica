@@ -252,6 +252,7 @@ func _initialize() -> void:
 	# the real main scene boots and switches focus
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app)
+	app.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(5):
 		await process_frame
 	t.ok(app.world.errors.size() == 0 and app.village != null, "main scene built its village")

@@ -170,9 +170,22 @@ func apply_layout(size: Vector2) -> void:
 	if detail_state.open:
 		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
-	weather_toggle.set_narrow(narrow)
-	# on a phone the top line wraps before the speed button in the top right corner (SB-059 D4)
-	hud.custom_minimum_size.x = size.x - hud.position.x - 2.0 * TimeBar.NARROW_MARGIN - time_bar.speed_cycle_width() if narrow else 430.0
+	# phone: the right column holds the speed button and, under it, the weather buttons (SB-059 D4, SB-015)
+	weather_toggle.set_narrow(narrow, TimeBar.NARROW_MARGIN + TimeBar.NARROW_TOUCH + TimeBar.NARROW_MARGIN)
+	_fit_hud()
+
+## The top line: on a phone it wraps before the right column (speed and weather buttons), on a desktop it is 430 px.
+func _fit_hud() -> void:
+	var w := 430.0
+	if narrow:
+		w = get_viewport().get_visible_rect().size.x - hud.position.x - 2.0 * TimeBar.NARROW_MARGIN - right_column_width()
+	hud.custom_minimum_size.x = w
+	hud.size = Vector2(w, 0.0)                   # the label takes the height of its wrapped text again
+
+## The width of the phone's top-right column: the speed button and the weather buttons under it.
+func right_column_width() -> float:
+	var weather_w: float = weather_toggle.get_combined_minimum_size().x if weather_toggle.visible else 0.0
+	return maxf(time_bar.speed_cycle_width(), weather_w)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
@@ -374,6 +387,7 @@ func _refresh(delta: float) -> void:
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
 	weather_toggle.visible = not detail_state.open and (narrow or not card_panel.visible)    # the wide card covers the top right
 	weather_toggle.sync(weather.enabled, weather.quality, lang)
+	_fit_hud()                                   # the weather buttons' width follows the language and the quality label
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
 func _hover() -> void:

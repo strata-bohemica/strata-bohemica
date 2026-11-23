@@ -128,6 +128,7 @@ func _initialize() -> void:
 	# the app: click a person, the card opens and the camera follows; escape closes; language and time controls work
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app)
+	app.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(3):
 		await process_frame
 	app.paused = true
@@ -457,6 +458,7 @@ func _initialize() -> void:
 	t.eq(app.cutaway, true, "the cutaway button toggles")
 	await _figure_over_time_bar(t, app)
 	await _sb059(t, app)
+	await _sb015_top_right(t, app)
 	await _release(app)
 	quit(t.finish("ui"))
 
@@ -814,3 +816,87 @@ func _sb059(t, app) -> void:
 	t.ok(not app.hud.text.contains("(%s)" % I18n.tr_("ui.paused", app.lang)), "D3: no marker while running")
 	app.lang = "en"
 	app.select(0)
+
+# ---- SB-015 on a phone: the top line, the speed button and the weather buttons share the top of the screen ------------
+
+func _rects_apart(rects: Dictionary) -> Array:
+	var hits: Array = []
+	var names: Array = rects.keys()
+	for i in names.size():
+		for j in range(i + 1, names.size()):
+			if (rects[names[i]] as Rect2).intersects(rects[names[j]]):
+				hits.append("%s x %s" % [names[i], names[j]])
+	return hits
+
+func _sb015_top_right(t, app) -> void:
+	var id: int = app.focus_ids[2]
+	var hs: Dictionary = app.world.occupied[id].homestead
+	var real_name: Dictionary = hs.name
+	var long_name := {"cs": "Pražička prosa a pletařka košíků od Lomnického potoka", "en": "The millet roaster and basket maker by the Lomnice brook"}
+	app.weather.enabled = true                     # the quality button is shown too (not saved)
+	app.paused = true
+	app.speed = 40.0
+	for sz in [Vector2i(320, 640), Vector2i(360, 740), Vector2i(390, 844), Vector2i(400, 800)]:
+		root.size = sz
+		for lang in I18n.LANGS:
+			for named in [real_name, long_name]:
+				hs.name = named
+				app.lang = lang
+				app.select(id)
+				app._refresh(0.0)
+				await process_frame
+				await process_frame
+				var tag := "%dx%d %s %s" % [sz.x, sz.y, lang, "long name" if named == long_name else "hs-%02d" % id]
+				var wt = app.weather_toggle
+				var rects := {"top line": app.hud.get_global_rect(), "speed": app.time_bar.speed_cycle_button.get_global_rect(), "weather": wt.get_global_rect()}
+				var vp := Rect2(Vector2.ZERO, Vector2(sz))
+				t.ok(app.hud.visible and app.time_bar.speed_cycle_button.visible and wt.visible and wt.quality_button.visible, "SB-015 %s: top line, speed and both weather buttons are shown" % tag)
+				t.ok(app.hud.text.contains(I18n.pick(named, lang)) and app.hud.text.contains(I18n.tr_("ui.paused", lang)), "SB-015 %s: the top line names the person (%s)" % [tag, app.hud.text])
+				t.eq(_rects_apart(rects), [], "SB-015 %s: top line, speed button and weather buttons do not overlap %s" % [tag, rects])
+				var below := {"card": app.card_panel.get_global_rect(), "time bar": app.time_bar.get_global_rect()}
+				for k in rects:
+					t.ok(vp.encloses(rects[k]) and not (rects[k] as Rect2).intersects(below.card) and not (rects[k] as Rect2).intersects(below["time bar"]), "SB-015 %s: the %s lies on screen, clear of the card and the time bar" % [tag, k])
+				for b in [wt.weather_button, wt.quality_button]:
+					var r: Rect2 = b.get_global_rect()
+					t.ok(r.size.x >= 44.0 and r.size.y >= 44.0, "SB-015 %s: '%s' is at least 44 x 44 px (%.0f x %.0f)" % [tag, b.text, r.size.x, r.size.y])
+	hs.name = real_name
+	# taps on the weather buttons and on the gap between them stay with the buttons (as the speed button's, SB-059 D4)
+	for sz in [Vector2i(390, 844), Vector2i(320, 640)]:
+		root.size = sz
+		app.lang = "cs"
+		app.select(id)
+		app._refresh(0.0)
+		await process_frame
+		await process_frame
+		var wt = app.weather_toggle
+		var wr: Rect2 = wt.weather_button.get_global_rect()
+		var qr: Rect2 = wt.quality_button.get_global_rect()
+		var gap := Vector2(wr.get_center().x, (wr.end.y + qr.position.y) * 0.5)
+		var tag := "%dx%d" % [sz.x, sz.y]
+		t.ok(qr.position.y > wr.end.y and not wt.weather_button.get_global_rect().has_point(gap) and not wt.quality_button.get_global_rect().has_point(gap), "SB-015 %s: the gap between the buttons (%s) belongs to neither button" % [tag, gap])
+		var under: int = _homestead_under(app, gap)
+		t.ok(under != 0, "SB-015 %s: a homestead lies under the gap (hs-%02d)" % [tag, under])
+		var own_filter: int = wt.mouse_filter
+		wt.mouse_filter = Control.MOUSE_FILTER_PASS                       # positive control: a container's default filter
+		var through: Dictionary = await _spied_tap(app, gap)
+		wt.mouse_filter = own_filter
+		t.ok(through.pressed and through.picked, "SB-015 control %s: with a passing container a tap on the gap reaches the village and picks %s" % [tag, through])
+		app._refresh(0.0)
+		var cam_before: Array = _camera_state(app)
+		var leaked: Array = []
+		var seen: Array = []
+		for at in [gap, wt.weather_button.get_global_rect().get_center(), wt.weather_button.get_global_rect().get_center(),
+				wt.quality_button.get_global_rect().get_center(), wt.quality_button.get_global_rect().get_center()]:
+			var got: Dictionary = await _spied_tap(app, at)
+			if got.pressed or got.picked:
+				leaked.append(got)
+			app._refresh(0.0)
+			seen.append("%s/%s" % [app.weather.enabled, app.weather.quality])
+		t.eq(leaked, [], "SB-015 %s: no tap on the weather buttons or their gap reaches the app's input (no press, no select())" % tag)
+		t.eq(seen, ["true/high", "false/high", "true/high", "true/low", "true/high"], "SB-015 %s: gap does nothing; weather off and on; quality lower and higher" % tag)
+		t.eq(_camera_state(app), cam_before, "SB-015 %s: the taps do not move the camera or change the selection" % tag)
+	app.weather.enabled = false
+	app.speed = 1.0
+	root.size = Vector2i(1280, 720)
+	await process_frame
+	await process_frame

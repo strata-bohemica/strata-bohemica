@@ -26,6 +26,39 @@ func _mutant(path: String, pairs: Array) -> GDScript:
 	s.source_code = src
 	return s if s.reload() == OK else null
 
+## -> failures of the rain motion of `WV` (view/weather_view.gd or a mutant): between t and t + 0.2 s every streak that
+## does not wrap round the box falls (world y goes down by FALL_SPEED x 0.2) and moves along WIND_DIR, never against it.
+func _rain_motion_failures(t: T, WV: Variant, label: String) -> int:
+	var box: Vector3 = WV.RAIN_BOX
+	var mesh: ArrayMesh = WV.streak_mesh(400, box)
+	var verts: PackedVector3Array = mesh.surface_get_arrays(0)[Mesh.ARRAY_VERTEX]
+	var anchor := Vector3(3.0, 20.0, 60.0)
+	var dt := 0.2
+	var bad := 0
+	var checked := 0
+	var worst := ""
+	for t0 in [1226.0, 0.05, -0.1, -1226.3, 86399.7]:
+		var d0: Vector3 = WV.rain_drift(t0, box)
+		var d1: Vector3 = WV.rain_drift(t0 + dt, box)
+		for i in range(0, verts.size(), 4):
+			var a: Vector3 = WV.streak_world(verts[i], d0, anchor, box)
+			var b: Vector3 = WV.streak_world(verts[i], d1, anchor, box)
+			var d := b - a
+			if absf(d.x) > box.x * 0.5 or absf(d.y) > box.y * 0.5 or absf(d.z) > box.z * 0.5:
+				continue                         # wrapped round the box this step: comes in again at the far side
+			checked += 1
+			var horiz := Vector3(d.x, 0.0, d.z)
+			var ok := absf(d.y + WV.FALL_SPEED * dt) < 1e-3 and horiz.dot(Weather.WIND_DIR) > 0.0 \
+				and horiz.distance_to(Weather.WIND_DIR * WV.DRIFT_SPEED * dt) < 1e-3
+			if not ok:
+				bad += 1
+				worst = "t=%.2f streak %d moved %s" % [t0, i / 4, d]
+	t.ok(checked > 1500, "%s: most streaks are followed without wrapping (%d)" % [label, checked])
+	if worst != "":
+		t.ok(false, "%s: e.g. %s" % [label, worst])
+	return bad + (0 if checked > 1500 else 1)
+
+
 func _same(a: Dictionary, b: Dictionary, tol := 0.0) -> bool:
 	if a.size() != b.size():
 		return false
@@ -186,6 +219,23 @@ func _initialize() -> void:
 	var s_rain: Dictionary = snap.call()
 	t.ok(s_rain.rain and float(s_rain.amount) > 0.9, "rain: the streaks are shown (amount %.2f)" % float(s_rain.amount))
 	t.eq((wv.rain.mesh as ArrayMesh).surface_get_array_len(0), 4 * WeatherView.RAIN_STREAKS.high, "high quality: %d streaks" % WeatherView.RAIN_STREAKS.high)
+	# the rain falls and goes with the wind, as the streaks lean (fall_dir): positions computed as the shader does
+	var shader_code: String = (WeatherView.RAIN_SHADER as Shader).code
+	t.ok(shader_code.contains(WeatherView.RAIN_PLACE), "rain.gdshader places a streak as streak_world() does ('%s')" % WeatherView.RAIN_PLACE)
+	t.eq(_rain_motion_failures(t, WeatherView, "rain"), 0, "rain: between t and t + 0.2 s every streak falls %.1f m and moves %.2f m along the wind (t > 0 and t < 0)" % [WeatherView.FALL_SPEED * 0.2, WeatherView.DRIFT_SPEED * 0.2])
+	var fall_dir: Vector3 = wv.rain_material.get_shader_parameter("fall_dir")
+	t.ok(fall_dir.y < 0.0 and Vector3(fall_dir.x, 0.0, fall_dir.z).dot(Weather.WIND_DIR) > 0.0, "rain: the streaks lean down and with the wind (%s)" % fall_dir)
+	var drift_now: Vector3 = wv.rain_material.get_shader_parameter("drift")
+	t.ok(drift_now.is_equal_approx(WeatherView.rain_drift(RAINY, WeatherView.RAIN_BOX)), "rain: the shader gets the drift of the museum clock's time")
+	for m in [["upward (the old sign)", [["var p := vertex + drift - anchor", "var p := vertex - drift - anchor"]]],
+			["fall reversed on the CPU", [["var fall := -FALL_SPEED * t", "var fall := FALL_SPEED * t"], ["var along := DRIFT_SPEED * t", "var along := -DRIFT_SPEED * t"]]]]:
+		var mut := _mutant("res://museum/view/weather_view.gd", m[1])
+		t.ok(mut != null, "rain mutant '%s' applies" % m[0])
+		if mut != null:
+			var q := T.new()
+			q.quiet = true
+			t.ok(_rain_motion_failures(q, mut, m[0]) > 1000, "rain mutant '%s' is caught" % m[0])
+	t.ok(not shader_code.replace("VERTEX + drift", "VERTEX - drift").contains(WeatherView.RAIN_PLACE), "negative control: a shader with the old sign fails the placement check")
 	t.ok(s_rain.sun < 0.4 and s_rain.fog and s_rain.bg.get_luminance() < base.background.get_luminance(), "rain: darker sun and sky, light fog (sun %.2f)" % s_rain.sun)
 	var leaned := 0
 	for i in wv.trees.size():
