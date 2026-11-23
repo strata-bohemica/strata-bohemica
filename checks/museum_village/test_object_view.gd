@@ -97,6 +97,8 @@ func _initialize() -> void:
 	t.ok(str(kinds.find.text.cs).contains("A 26 664") and str(kinds.find.text.cs).contains("v dolní třetině (z obou stran)"), "cs: the find is the wear in the lower third, on A 26 664")
 	t.ok(str(kinds.find.text.en).contains("A 26 664") and str(kinds.find.text.en).contains("in the lower third (on both sides)"), "en: the find is the wear in the lower third, on A 26 664")
 	t.ok(str(kinds.hypothesis.text.cs).begins_with("Výklad autorů, ne pozorování") and str(kinds.hypothesis.text.en).begins_with("The authors' interpretation, not an observation"), "the weaving reading is marked as interpretation in both languages")
+	# CH19 p. 292 doubts only the *classic* hanging from the warp; dropping the qualifier changes the authors' reading
+	t.ok(str(kinds.hypothesis.text.cs).contains("lasick") and str(kinds.hypothesis.text.en).contains("classic"), "the hypothesis keeps 'classic' hanging from the warp (CH19 p. 292) in both languages")
 	var spinner := {}
 	for id in all.occupied:
 		if all.occupied[id].craft.id == "spinning":
