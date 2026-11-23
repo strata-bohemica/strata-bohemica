@@ -13,15 +13,7 @@ on:
       - 'research/**'
       - 'project.godot'
       - '.github/workflows/checks.yml'
-  pull_request:
-    paths:
-      - 'museum/**'
-      - 'checks/**'
-      - 'tools/**'
-      - 'assets/**'
-      - 'research/**'
-      - 'project.godot'
-      - '.github/workflows/checks.yml'
+  pull_request:          # no paths filter: `museum-tests` is a required check, a skipped one blocks docs-only PRs
   workflow_dispatch:
 
 permissions:
