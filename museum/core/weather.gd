@@ -51,8 +51,8 @@ static func _noise(t: float, channel: int, knot_s: float, period: float) -> floa
 	var b := Soundscape.hash01(SEED + channel, posmod(int(i) + 1, n))
 	return lerpf(a, b, u * u * (3.0 - 2.0 * u))
 
-## What the weather does to the light: factors the view multiplies the light of the day by (it never replaces it; SB-017
-## will compute the base light and these keep multiplying it), plus the grey the sky and fog take.
+## What the weather does to the light: factors the view multiplies the light of the day by (it never replaces it;
+## core/lighting.gd computes the base light, SB-017, and these multiply it), plus the grey the sky and fog take.
 ## sun: sun energy factor; ambient: ambient energy factor; grey: 0..1 how far the sky colour turns to overcast grey;
 ## dim: brightness factor of the sky colour; fog_density: exponential fog density (1/m).
 static func shading(w: Dictionary) -> Dictionary:

@@ -13,7 +13,7 @@ checks/museum_village/run.sh            # všechny kontroly
 checks/museum_village/run.sh data ui    # vybrané kontroly
 ```
 
-- Výchozí sada: `core data terrain boundary view plough_team ui sound ambient camera object_view weather`.
+- Výchozí sada: `core data terrain boundary view plough_team ui sound ambient camera object_view weather lighting`.
 - Každá kontrola je soubor `checks/museum_village/test_<jméno>.gd`.
 - Skript nejdřív dvakrát spustí import projektu (první průchod rozbalí textury
   modelů, druhý je použije ve scénách), pak spustí každou kontrolu s limitem 120 s.

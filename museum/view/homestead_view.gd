@@ -7,21 +7,35 @@ const Catalogue = preload("res://museum/assets/catalogue.gd")
 const PoseDriver = preload("res://museum/view/pose_driver.gd")
 const Animals = preload("res://museum/core/animals.gd")
 const CraftProps = preload("res://museum/core/craft_props.gd")
+const Lighting = preload("res://museum/core/lighting.gd")
 const MAX_TEAM_TILT_DEG := 20.0     # how far the plough team may lean to follow a slope
 const MAX_AIM_DEG := 45.0           # how far the plough may be turned about the grip, from level, to meet the team
 const TURN_ROLL_DEG := 90.0         # the ard lies on its side through the turn: rolled about the line from the grip to the yoke hitch (the share comes up out of the ground)
 const ROLL_SIDE := -1.0
 const MAX_TEAM_SHIFT_M := 0.6       # m: how far the whole team may be shifted to be one ard away from the hand
 const TEAM_SLOPE_BASE := 0.6        # m: the span the slope is measured over (about half an ox)
-const W := TAU / 360.0       # one cycle per 360 s; flicker uses whole multiples so the scene stays periodic
+const DOOR_ENERGY := 3.0           # the doorway glow at a fully fed hearth (SB-017; F, chosen on screen)
+const DOOR_RANGE := 11.0
+const DOORWAY_SIZE := Vector2(0.84, 1.75)   # m, the clear door opening of both house types (asset.json construction_measured.door)
+const DOORWAY_GLOW := 2.5           # emission of the doorway at a fully fed hearth: the opening itself shows the fire, at no light cost
+const HEARTH_ENERGY := 3.2         # the hearth inside the house, seen through the door when it casts shadows (or cut away)
+const HEARTH_RANGE := 8.0
+const HEARTH_COLOR := Color("#FF9A4A")
+const HEARTH_HEIGHT := 0.5          # m above the hearth spot: the flames
 
 var house: Node3D
 var bed: Node3D
 var skins: Dictionary = {}          # "walker"/"worker"/"sleeper" -> {"root": Node3D, "driver": PoseDriver}
 var props: Dictionary = {}          # id -> {"nodes": Array[Node3D], "grip_inverse": Transform3D, "def": Dictionary}
-var lights: Array = []              # [{"light": OmniLight3D, "base": float, "flicker": bool, "smoke": CPUParticles3D or null}]
+var lights: Array = []              # [{"light": OmniLight3D, "base": float, "flicker": bool, "smoke": CPUParticles3D or null, "pos": Vector3, "color": Color, "phase": float}]
 var animals: Array = []             # [{"root": Node3D, "driver": PoseDriver, "def": Dictionary, "lengths": Dictionary}]
-var glow: OmniLight3D
+var glow: OmniLight3D               # the doorway: the hearth's light spilling out of the door (never shadowed)
+var hearth: OmniLight3D             # the hearth inside the house (view/light_view.gd turns it on only when its walls hold it)
+var doorway: MeshInstance3D         # the door opening, glowing with the hearth's light at night (seen from any distance)
+var motion := 1.0                   # liveliness of the fires (view/light_view.gd: calmer with reduced motion)
+var home_id := 0                    # the house id: gives each fire its own flicker phase
+var day_length := 360.0
+var _hearth_pos := Vector3.ZERO
 var workplace := Transform3D.IDENTITY
 var travels := false                # the worker moves while working (the plough): their transform follows the schedule
 var _skin_nodes: Dictionary = {}    # "node name" -> Node3D on the worker skin
@@ -38,6 +52,7 @@ var _team_frame := Transform3D.IDENTITY   # the frame the team stands in, this f
 ## p_ground: (x, z) in this homestead's frame -> ground height in it (the schedule's own ground function), so a plough team can stand on it.
 func build(homestead: Dictionary, craft: Dictionary, p_ground: Callable = Callable()) -> void:
 	ground = p_ground
+	home_id = int(str(homestead.get("id", "hs-0")).trim_prefix("hs-"))
 	house = _add(homestead.house.model)
 	bed = _add(homestead.bed.model)
 	var origin_node := bed.find_child("sleeper_origin", true, false) as Node3D
@@ -63,16 +78,43 @@ func build(homestead: Dictionary, craft: Dictionary, p_ground: Callable = Callab
 			smoke = _smoke()
 			smoke.position = Vector3(0, 0.5, 0)
 			node.add_child(smoke)
-		lights.append({"light": light, "base": float(l.energy), "flicker": bool(l.get("flicker", false)), "smoke": smoke})
+		lights.append({"light": light, "base": float(l.energy), "flicker": bool(l.get("flicker", false)), "smoke": smoke,
+			"pos": light.position, "color": light.light_color, "phase": Lighting.phase_of(home_id, lights.size())})
 	for a in homestead.get("animals", []):
 		_build_animal(a)
 	glow = OmniLight3D.new()
 	glow.light_color = Color("#FFB070")
-	glow.omni_range = 9.0
+	glow.omni_range = DOOR_RANGE
 	glow.position = Catalogue.anchor(homestead.house.model, "door_inside").get("pos", Vector3(0, 1.2, 2.2)) + Vector3(0, 1.4, 0)
 	add_child(glow)
+	hearth = OmniLight3D.new()
+	hearth.light_color = HEARTH_COLOR
+	hearth.omni_range = HEARTH_RANGE
+	_hearth_pos = Catalogue.anchor(homestead.house.model, "hearth_spot").get("pos", Vector3.ZERO) + Vector3(0, HEARTH_HEIGHT, 0)
+	hearth.position = _hearth_pos
+	add_child(hearth)
+	doorway = _doorway(homestead.house.model)
+	add_child(doorway)
 	if travels:
 		_calibrate_team(craft, homestead)      # last: it applies a pose, which needs the whole view built
+
+## A quad in the door opening, just inside the wall, facing out: it glows with the hearth (emission, no light).
+func _doorway(model: String) -> MeshInstance3D:
+	var inside: Vector3 = Catalogue.anchor(model, "door_inside").get("pos", Vector3(0, 0, 2.2))
+	var entry: Vector3 = Catalogue.anchor(model, "entry").get("pos", inside + Vector3(0, 0, 0.85))
+	var quad := QuadMesh.new()
+	quad.size = DOORWAY_SIZE
+	var mat := StandardMaterial3D.new()
+	mat.albedo_color = Color.BLACK
+	mat.emission_enabled = true
+	mat.emission = HEARTH_COLOR
+	quad.material = mat
+	var mi := MeshInstance3D.new()
+	mi.mesh = quad
+	mi.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+	mi.position = Vector3(inside.x, DOORWAY_SIZE.y * 0.5, (inside.z + entry.z) * 0.5)     # the quad faces +Z, out of the door
+	mi.visible = false
+	return mi
 
 func _v(a: Array) -> Vector3:
 	return Vector3(float(a[0]), float(a[1]), float(a[2]))
@@ -316,7 +358,19 @@ func _worker_node(node_name: String) -> Node3D:
 ## night: 0..1 (1 = dark). cutaway hides the house so a sleeper can be seen. time: clock seconds (for flicker).
 func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: float = 0.0) -> void:
 	house.visible = not cutaway
-	glow.light_energy = 1.6 * night
+	# the house hearth (SB-017): fed in the evening and before work, smouldering at night; the doorway shows it
+	var hf := Lighting.fire(time, Lighting.phase_of(home_id, 9), motion, day_length)
+	var h := Lighting.hearth(time, day_length) * float(hf.energy)
+	var hc := Lighting.fire_color(HEARTH_COLOR, float(hf.warmth))
+	glow.light_energy = DOOR_ENERGY * h
+	glow.light_color = Color("#FFB070").lerp(hc, 0.5)
+	hearth.light_energy = HEARTH_ENERGY * h
+	hearth.light_color = hc
+	hearth.position = _hearth_pos + (hf.offset as Vector3)
+	doorway.visible = h > 0.02 and not cutaway
+	var dm: StandardMaterial3D = (doorway.mesh as QuadMesh).material
+	dm.emission = hc
+	dm.emission_energy_multiplier = DOORWAY_GLOW * h
 	for name_ in skins:
 		skins[name_].root.visible = (name_ == state.skin)
 	var active: Dictionary = skins[state.skin]
@@ -357,9 +411,13 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 	var on: bool = state.phase in ["work", "meal"]
 	for l in lights:
 		var flicker := 1.0
-		if l.flicker:
-			flicker = 0.78 + 0.14 * sin(time * W * 20.0) + 0.08 * sin(time * W * 52.0 + 1.3)
-		l.light.light_energy = l.base * flicker * (0.12 + 0.88 * night) if on else 0.0
+		var light: OmniLight3D = l.light
+		if l.flicker:                                 # whole cycles per day (core/lighting.gd): the fire repeats every day
+			var f := Lighting.fire(time, float(l.phase), motion, day_length)
+			flicker = float(f.energy)
+			light.position = (l.pos as Vector3) + (f.offset as Vector3)
+			light.light_color = Lighting.fire_color(l.color, float(f.warmth))
+		light.light_energy = l.base * flicker * (0.12 + 0.88 * night) if on else 0.0
 		if l.smoke != null:
 			l.smoke.emitting = on
 	for a in animals:
