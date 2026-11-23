@@ -36,7 +36,7 @@ chose the house positions on a fictional height field (seed 11); `tools/build_vi
 work yard, routes the paths over the terrain and writes `data/villages/breznice*.json`.
 The long axis of the houses runs roughly north–south. That is our inference (F) from the north–south long pits of Březnice (Chvojka et al. 2019, 269–270),
 not an attested house orientation; house 57, the source of type A, is NW–SE. The village is also denser than Březnice: 12 houses in four clusters
-(number and size of the clusters are F) on about 1.5 ha, against a site of about 13 ha with about 70 houses over time and at most about 20 standing at once (Šálková et al. 2022).
+(number and size of the clusters are F) on about 1.5 ha, against a site of about 13 ha with about 70 houses over time, whose land could have supported at most about 20 houses at once (Šálková et al. 2022: "could have sustained up to 20 houses at the same time", a carrying capacity, not a counted number).
 Two house types alternate (`house_types` in `data/villages/breznice-layout.json`: odd houses type A, HOUSE-004, 15 × 5.5 m, three rooms;
 even houses type B, HOUSE-005, about 8.5 × 5 m, one room), in plain, limewashed or patterned daub; both are R/F reconstructions after
 other Bohemian sites, not plans of Březnice houses.
