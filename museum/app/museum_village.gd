@@ -132,6 +132,7 @@ func _build_world() -> void:
 	time_bar.volume_changed.connect(func(v): sound.set_volume(v); sound.set_muted(false))
 	time_bar.volume_committed.connect(func(): sound.blip())
 	layer.add_child(time_bar)
+	layer.add_child(time_bar.speed_cycle_button)   # the phone's speed button: top right corner of the screen (see time_bar.gd)
 	add_child(layer)
 
 # ---- layout ---------------------------------------------------------------------------------------------------

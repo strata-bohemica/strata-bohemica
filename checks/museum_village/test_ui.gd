@@ -372,6 +372,7 @@ func _initialize() -> void:
 					root.add_child(host)
 					var bar := TimeBar.new()
 					host.add_child(bar)
+					host.add_child(bar.speed_cycle_button)      # the app puts it beside the bar, in its UI layer
 					bar.set_narrow(true)
 					bar.sync(0.4, paused, 1.0, true, true, lang, muted, 0.5)
 					await process_frame
@@ -383,7 +384,7 @@ func _initialize() -> void:
 					var used_end := 0.0
 					var used_start := INF
 					for c in bar.get_children():
-						if c.visible and not c.top_level:     # the phone's speed button floats at the top (checked in _sb059)
+						if c.visible:
 							used_end = maxf(used_end, c.get_global_rect().end.x)
 							used_start = minf(used_start, c.get_global_rect().position.x)
 					t.ok(used_start >= -0.5 and used_end <= sz.x + 0.5, "%s: the controls lie inside the screen (%.0f..%.0f of %.0f)" % [tag, used_start, used_end, sz.x])
@@ -410,7 +411,7 @@ func _initialize() -> void:
 						await process_frame
 						var full_end := 0.0
 						for c in bar.get_children():
-							if c.visible and not c.top_level:
+							if c.visible:
 								full_end = maxf(full_end, c.get_global_rect().end.x)
 						if shown_short:
 							t.ok(full_end > sz.x - TimeBar.NARROW_MARGIN + 0.5, "%s: the short label is needed (the full name would reach %.0f of %.0f)" % [tag, full_end, sz.x])
@@ -611,6 +612,39 @@ func _push_wheel(pos: Vector2, button: int) -> void:
 		w.global_position = pos
 		root.push_input(w)
 
+## A tap that the app's own input handler must not see: what reached it. `pressed`: the press arrived in `_unhandled_input`
+## (it starts a click there); `picked`: the release picked a homestead and called `select()`, seen by its side effects on
+## two sentinels it always resets (the card's scroll and the overview pan).
+func _spied_tap(app, at: Vector2) -> Dictionary:
+	app.card_panel.scroll.scroll_vertical = 300
+	app.pan = Vector3(3.0, 0.0, 3.0)
+	var sentinel_scroll: int = app.card_panel.scroll.scroll_vertical
+	var e := InputEventScreenTouch.new()
+	e.position = at
+	e.pressed = true
+	await _finger(e)
+	var pressed: bool = app._pressing
+	e = InputEventScreenTouch.new()
+	e.position = at
+	e.pressed = false
+	await _finger(e)
+	var picked: bool = app.card_panel.scroll.scroll_vertical != sentinel_scroll or app.pan == Vector3.ZERO
+	app.pan = Vector3.ZERO
+	return {"pressed": pressed, "picked": picked, "sentinel": sentinel_scroll}
+
+## Turn the camera until a homestead lies under the screen point `at` (a ray through it picks one); its id, 0 if none.
+func _homestead_under(app, at: Vector2) -> int:
+	for pitch in range(-80, -5, 5):
+		for k in 36:
+			app.orbit_yaw = TAU * k / 36.0
+			app.orbit_pitch = deg_to_rad(pitch)
+			app.cam_dist = app.dist_goal
+			app._refresh(0.0)
+			var id: int = app.pick_at(at)
+			if id != 0:
+				return id
+	return 0
+
 ## What a stray input could change about the camera (and the selection).
 func _camera_state(app) -> Array:
 	return [app.orbit_yaw, app.orbit_pitch, app.dist_goal, app.pan, app.selected]
@@ -693,16 +727,36 @@ func _sb059(t, app) -> void:
 			var vp := Rect2(Vector2.ZERO, Vector2(sz))
 			t.ok(cyc.visible and cr.size.x >= 44.0 and cr.size.y >= 44.0 and vp.encloses(cr), "D4 %s: the speed button is shown, at least 44 x 44 px, on screen %s" % [tag, cr])
 			t.ok(not cr.intersects(app.hud.get_global_rect()) and not cr.intersects(card_r) and not cr.intersects(app.time_bar.get_global_rect()), "D4 %s: it covers neither the top line %s, the card nor the bar" % [tag, app.hud.get_global_rect()])
+			# a homestead right under the button, so a tap that fell through would pick it
+			var tap_at: Vector2 = cr.get_center()
+			var under: int = _homestead_under(app, tap_at)
+			t.ok(under != 0, "D4 %s: a homestead lies under the speed button (hs-%02d)" % [tag, under])
+			cyc.mouse_filter = Control.MOUSE_FILTER_IGNORE                     # positive control: the same tap without the button
+			var through: Dictionary = await _spied_tap(app, tap_at)
+			cyc.mouse_filter = Control.MOUSE_FILTER_STOP
+			t.ok(through.sentinel > 0 and through.pressed and through.picked, "D4 control %s: without the button that tap reaches the app and picks the homestead %s" % [tag, through])
+			app.speed = 1.0
+			app._refresh(0.0)
+			t.eq(app.pick_at(tap_at), under, "D4 %s: the homestead is still under the button" % tag)
 			var seen: Array = [cyc.text]
 			var speeds: Array = [app.speed]
 			var cam_before: Array = _camera_state(app)
+			var leaked: Array = []
 			for k in 3:
-				await _tap(cyc.get_global_rect().get_center())
+				var got: Dictionary = await _spied_tap(app, tap_at)
+				if got.pressed or got.picked:
+					leaked.append(got)
 				app._refresh(0.0)
 				seen.append(cyc.text)
 				speeds.append(app.speed)
 			t.eq(speeds, [1.0, 10.0, 40.0, 1.0], "D4 %s: tapping the speed button cycles x1 -> x10 -> x40 -> x1" % tag)
-			t.eq(_camera_state(app), cam_before, "D4 %s: the taps on the speed button do not reach the camera or pick a homestead" % tag)
+			t.eq(leaked, [], "D4 %s: no tap on the speed button reaches the app's input (no press, no select())" % tag)
+			t.eq(_camera_state(app), cam_before, "D4 %s: the taps on the speed button do not move the camera or change the selection" % tag)
+			# the card's language button keeps its taps too (it is a plain child of the UI layer)
+			for k in 2:
+				var on_lang: Dictionary = await _spied_tap(app, app.card_panel.lang_button.get_global_rect().get_center())
+				t.ok(not on_lang.pressed and not on_lang.picked, "D6 %s: a tap on the language button stays with the card %s" % [tag, on_lang])
+			t.eq(app.lang, lang, "D6 %s: two taps on the language button toggle there and back" % tag)
 			t.eq(seen, ["x1", "x10", "x40", "x1"], "D4 %s: the button shows the current speed" % tag)
 			t.eq(cyc.tooltip_text, I18n.tr_("ui.speed", lang), "D4 %s: the button is named in the current language" % tag)
 	t.eq(TimeBar.next_speed(10.0), 40.0, "D4: x10 is followed by x40")

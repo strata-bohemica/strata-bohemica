@@ -57,13 +57,15 @@ func _init() -> void:
 	pause_button = Button.new()
 	pause_button.pressed.connect(func(): pause_toggled.emit())
 	add_child(pause_button)
+	# Not a child of the bar: it sits in the top right corner of the screen, so the bar's owner adds it to the bar's parent
+	# (the app: its UI CanvasLayer, beside the top line). It must not be a top_level child here instead: Godot stops passing
+	# a click up at a top_level control before MOUSE_FILTER_STOP takes effect, so a tap on it would also reach the 3D view
+	# and pick the homestead under it (SB-059 D4).
 	speed_cycle_button = Button.new()
 	speed_cycle_button.visible = false
-	speed_cycle_button.top_level = true     # not laid out in the bar: it floats in the top right corner of the screen
 	speed_cycle_button.anchor_left = 1.0
 	speed_cycle_button.anchor_right = 1.0
 	speed_cycle_button.pressed.connect(func(): speed_chosen.emit(next_speed(_speed)))
-	add_child(speed_cycle_button)
 	for s in SPEEDS:
 		var b := Button.new()
 		b.text = "x%d" % int(s)
@@ -138,6 +140,10 @@ func set_narrow(narrow: bool) -> void:
 	sound_button.custom_minimum_size = Vector2(NARROW_TOUCH, NARROW_TOUCH) if narrow else Vector2.ZERO
 	_refresh_labels()
 	_refresh_sound_button()
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_PREDELETE and is_instance_valid(speed_cycle_button) and speed_cycle_button.get_parent() == null:
+		speed_cycle_button.free()           # never placed (a bar on its own): it goes with the bar
 
 ## The width of the phone's cycling speed button: its widest label ("x40") with padding, at least NARROW_TOUCH.
 func speed_cycle_width() -> float:
