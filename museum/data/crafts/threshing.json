@@ -86,14 +86,14 @@
       {
         "class": "E",
         "text": {
-          "cs": "Zbytky zpracování obilí (plevy, pluchy) jsou doložené, například v hliněných závažích. Samotné mlácení doloženo není.",
-          "en": "Crop-processing waste (chaff, glumes) is attested, for example inside clay weights. Threshing itself is not attested."
+          "cs": "Odpad ze zpracování obilí (plevy, pluchy, klásky, stébla) je hlavní rostlinnou příměsí hliněných závaží. Mezi zuhelnatělými zbytky pšenic převažují báze plev nad zrny. Mezi zuhelnatělými zbytky je stébel a vřeten klasů málo; první fáze zpracování proto pravděpodobně nejsou zachyceny. Samotné mlácení doloženo není.",
+          "en": "Crop-processing waste (chaff, glumes, spikelets, straw) is the main plant temper of the clay weights. Among charred wheat remains, glume bases outnumber grains. Among the charred remains, straw and ear rachis are scarce; the first processing stages are therefore probably not captured. Threshing itself is not attested."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Mlácení tyčí na udusané tenně a následné vějení jsou rekonstrukce. Vějení v tomto kole není, protože klip nemá přechod.",
-      "en": "Beating with a stick on a trodden floor and winnowing are reconstructed. Winnowing is not shown here because its clip has no transition."
+      "cs": "Mlácení tyčí na udusané ploše je rekonstrukce. Vějení na podnosu je také rekonstrukce a v animaci se zatím neukazuje.",
+      "en": "Beating with a stick on a trodden floor is reconstructed. Winnowing with a tray is also reconstructed and is not shown in the animation yet."
     },
     "unknown": [
       {
@@ -110,7 +110,9 @@
       }
     ],
     "sources": [
-      "Chvojka et al. 2019, Archeologické rozhledy 71:267–308, p. 295",
+      "Chvojka et al. 2019, Archeologické rozhledy 71:267–308, pp. 286, 295, 301",
+      "Šálková et al. 2025, Archaeol. Prospect. 32(3):525–548, section 3.1",
+      "Šálková 2010, diploma thesis, University of South Bohemia, p. 163",
       "research/economy/crafts-exchange.md",
       "THRESH-001 PROVENANCE.md"
     ]
