@@ -98,7 +98,11 @@ python3 -m http.server -d build/web 8000
 ```
 
 The first load is about 30 MB of engine and 30 MB of data. The UI scales to the screen density and re-flows on a phone (the card
-becomes a sheet along the bottom); touch: tap to select, drag to orbit, two fingers to zoom.
+becomes a sheet along the bottom); touch: tap to select, drag to orbit, two fingers to zoom, drag the card's text to scroll it.
+On a phone the x1/x10/x40 buttons give way to one 44 x 44 px button in the top right corner that shows the speed and steps
+x1 -> x10 -> x40 -> x1 (the bar has no room for it at 320 px); the card's language and close buttons are 44 x 44 px there too.
+Input over the card stays with the card: a finger drag or the wheel scrolls its text and never turns or zooms the camera, and
+another homestead's card opens at its top (SB-059; `test_ui.gd` drives real touches and wheel events through the viewport).
 
 ## Sound (foundation, SB-018)
 

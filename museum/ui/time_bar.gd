@@ -14,6 +14,7 @@ const I18n = preload("res://museum/core/i18n.gd")
 
 var pause_button: Button
 var speed_buttons: Array[Button] = []
+var speed_cycle_button: Button           # phone only: one button that shows the speed and steps through SPEEDS (SB-059 D4)
 var slider: HSlider
 var clock_label: Label
 var follow_button: Button
@@ -24,6 +25,7 @@ var dragging := false
 var _narrow := false
 var _muted := false
 var _lang := "en"
+var _speed := 1.0
 var _icons := {}                         # muted (bool) -> speaker icon, drawn once on first use
 
 ## The day slider never gets narrower than this on a phone; the bar is laid out so that it fits (see test_ui.gd).
@@ -35,6 +37,12 @@ const NARROW_TOUCH := 44.0
 const NARROW_BAR_HEIGHT := 46.0
 const WIDE_BAR_HEIGHT := 38.0
 const BOTTOM_GAP := 10.0
+const SPEEDS := [1.0, 10.0, 40.0]
+
+## The speed after `speed` on the phone's cycling button: x1 -> x10 -> x40 -> x1 (anything else starts again at x1).
+static func next_speed(speed: float) -> float:
+	var i := SPEEDS.find(speed)
+	return SPEEDS[(i + 1) % SPEEDS.size()] if i >= 0 else SPEEDS[0]
 
 func _init() -> void:
 	anchor_left = 0.0
@@ -49,7 +57,14 @@ func _init() -> void:
 	pause_button = Button.new()
 	pause_button.pressed.connect(func(): pause_toggled.emit())
 	add_child(pause_button)
-	for s in [1.0, 10.0, 40.0]:
+	speed_cycle_button = Button.new()
+	speed_cycle_button.visible = false
+	speed_cycle_button.top_level = true     # not laid out in the bar: it floats in the top right corner of the screen
+	speed_cycle_button.anchor_left = 1.0
+	speed_cycle_button.anchor_right = 1.0
+	speed_cycle_button.pressed.connect(func(): speed_chosen.emit(next_speed(_speed)))
+	add_child(speed_cycle_button)
+	for s in SPEEDS:
 		var b := Button.new()
 		b.text = "x%d" % int(s)
 		b.toggle_mode = true
@@ -92,8 +107,11 @@ func _init() -> void:
 	volume_slider.drag_ended.connect(func(_changed): volume_committed.emit())
 	add_child(volume_slider)
 
-## On a phone the speed buttons and the clock label make way for the slider, and "Řez domem" becomes "Řez"
-## (`ui.cutaway_short`; the full name stays as the tooltip) only where the full name does not fit (see `_cutaway_fits`),
+## On a phone the speed buttons and the clock label make way for the slider. One cycling speed button takes the place of
+## the three (SB-059 D4), in the top right corner of the screen, not in the bar: at 320 px the bar has no 44 px to spare
+## (it is full with the 48 px slider floor). It is NARROW_TOUCH px high and as wide as its widest label, so it does not
+## change size with the speed.
+## "Řez domem" becomes "Řez" (`ui.cutaway_short`; the full name stays as the tooltip) only where the full name does not fit (see `_cutaway_fits`),
 ## so that 320 px wide screens fit in Czech too.
 ## The sound control shrinks to a speaker icon of the same width in both states (the words "Zvuk"/"Ztlumeno" cost
 ## 46/83 px, more than the slider could spare), NARROW_TOUCH px wide and the bar NARROW_BAR_HEIGHT px high so that it is
@@ -103,6 +121,13 @@ func set_narrow(narrow: bool) -> void:
 	_narrow = narrow
 	for b in speed_buttons:
 		b.visible = not narrow
+	speed_cycle_button.visible = narrow
+	var cycle_w := speed_cycle_width()
+	speed_cycle_button.custom_minimum_size = Vector2(cycle_w, NARROW_TOUCH)
+	speed_cycle_button.offset_right = -NARROW_MARGIN
+	speed_cycle_button.offset_left = -NARROW_MARGIN - cycle_w
+	speed_cycle_button.offset_top = NARROW_MARGIN
+	speed_cycle_button.offset_bottom = NARROW_MARGIN + NARROW_TOUCH
 	clock_label.visible = not narrow
 	volume_slider.visible = not narrow       # the mute button stays
 	slider.custom_minimum_size.x = NARROW_SLIDER_MIN if narrow else 0.0
@@ -114,7 +139,19 @@ func set_narrow(narrow: bool) -> void:
 	_refresh_labels()
 	_refresh_sound_button()
 
+## The width of the phone's cycling speed button: its widest label ("x40") with padding, at least NARROW_TOUCH.
+func speed_cycle_width() -> float:
+	var font := speed_cycle_button.get_theme_font("font")
+	var font_size := speed_cycle_button.get_theme_font_size("font_size")
+	var style := speed_cycle_button.get_theme_stylebox("normal")
+	var widest := 0.0
+	for s in SPEEDS:
+		widest = maxf(widest, font.get_string_size("x%d" % int(s), HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x)
+	return maxf(NARROW_TOUCH, ceilf(widest + style.get_minimum_size().x))
+
 func _refresh_labels() -> void:
+	speed_cycle_button.text = "x%d" % int(_speed)
+	speed_cycle_button.tooltip_text = I18n.tr_("ui.speed", _lang)
 	follow_button.text = I18n.tr_("ui.follow", _lang)
 	var short := _narrow and not _cutaway_fits()
 	cutaway_button.text = I18n.tr_("ui.cutaway_short" if short else "ui.cutaway", _lang)
@@ -179,7 +216,8 @@ func sync(fraction: float, paused: bool, speed: float, follow: bool, cutaway: bo
 	clock_label.text = "%02d:%02d" % [int(hours), int(fmod(hours, 1.0) * 60.0)]
 	pause_button.text = I18n.tr_("ui.play", lang) if paused else I18n.tr_("ui.pause", lang)
 	for i in range(speed_buttons.size()):
-		speed_buttons[i].set_pressed_no_signal(int(speed) == [1, 10, 40][i])
+		speed_buttons[i].set_pressed_no_signal(int(speed) == int(SPEEDS[i]))
+	_speed = speed
 	follow_button.set_pressed_no_signal(follow)
 	cutaway_button.set_pressed_no_signal(cutaway)
 	_lang = lang
