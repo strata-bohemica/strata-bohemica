@@ -1,0 +1,13 @@
+[0.9] http 404: http://127.0.0.1:8765/favicon.svg
+[0.9] console.error: Failed to load resource: the server responded with a status of 404 (File not found)
+[65.1] shot d1_card
+[72.6] shot d1_left
+[209.2] http 404: http://127.0.0.1:8765/favicon.svg
+[209.2] console.error: Failed to load resource: the server responded with a status of 404 (File not found)
+[278.2] shot d2_after_40_wheel_down
+[291.8] shot d2_left
+[291.8] village region identical after 40 wheel notches over the card: false
+[310.7] shot d3_next_card_top
+[323.0] shot d4_cs_paused
+[338.9] shot d5_left_after_wheel_over_village
+[338.9] control: village region changed after a wheel notch over the village: true

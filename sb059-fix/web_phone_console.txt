@@ -1,0 +1,19 @@
+[0.9] http 404: http://127.0.0.1:8765/favicon.svg
+[0.9] console.error: Failed to load resource: the server responded with a status of 404 (File not found)
+[81.0] shot p1_card_top
+[103.0] shot p1_village_before
+[228.7] shot p2_after_text_drag
+[251.6] shot p2_village_after
+[251.6] village region identical after text drag: false
+[300.7] http 404: http://127.0.0.1:8765/favicon.svg
+[300.7] console.error: Failed to load resource: the server responded with a status of 404 (File not found)
+[655.4] shot p3_text_dragged_to_end
+[670.6] shot p3_village_after
+[670.6] village region identical after 9 text drags: false
+[734.8] shot p4_back_a_little
+[766.5] shot p5_next_card_top
+[790.1] shot p6_speed_x10
+[812.8] shot p7_speed_x40
+[833.5] shot p8_speed_x1
+[904.2] shot p9_village_after_village_drag
+[904.2] control: village region changed after a drag over the village: true
