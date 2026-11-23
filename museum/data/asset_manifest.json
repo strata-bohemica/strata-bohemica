@@ -92,6 +92,17 @@
         "ard",
         "yoke_pair"
       ]
+    },
+    {
+      "id": "museum-pottery-v3/POTTERY-001",
+      "models": [
+        "person_forming",
+        "work_block",
+        "clay_stock",
+        "clay_coil",
+        "bowl_coil_raised",
+        "bowl_smoothed"
+      ]
     }
   ]
 }

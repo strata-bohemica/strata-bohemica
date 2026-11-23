@@ -1,0 +1,725 @@
+{
+ "example_only": false,
+ "spec_version": "2.0",
+ "asset_id": "POTTERY-001",
+ "revision": "r001",
+ "previous_revision": null,
+ "brief": "SB-058 part 1 (team/museum-kanban/tasks/SB-058.md, SB-057): museum pottery package. Owner decisions 2026-11-23: (a) public release of MUSEUM-018/019 models under CC BY 4.0 allowed; (b) choreography solved by splitting clips (enter / cycle / exit, no walking), not by changing CraftProps code; (c) scope: existing hand-forming of the MUSEUM-018 bowl as an experimental variant (BREZ-008/010: no firing, no Hněvotín). Contract: art/handoffs/bronze-bohemia-opus-v2/COMMON.md + RETURN.md, kit spec 2.0.",
+ "status": "draft",
+ "author": "Claude Code agent (SB-058 part 1); clip split and skin nodes are new, pose math and all meshes are MUSEUM-018/019 project work",
+ "actual_agent_model": "Claude Code session reporting model id claude-opus-5-5; the commit trailer requested by the dispatcher names Claude Sonnet 5.5. Not independently verifiable from inside the session.",
+ "tools": [
+  "Python 3 standard library (source/build.py, imports MUSEUM-019 source/build.py unchanged)",
+  "numpy (independent GLB parser, skinning, contact) via uv",
+  "Blender 5.0.1 as the bpy module from PyPI via uv, Python 3.11 (glTF re-import, Workbench stills); Blender is not installed on this machine",
+  "Godot Engine 4.5.1-stable (headless import/probe, museum CraftTimeline/CraftProps simulation; GPU captures gl_compatibility/opengl3)"
+ ],
+ "units": "metres",
+ "up_axis": "+Y",
+ "model_front": "+Z",
+ "scale_basis": "project_fit",
+ "historical_status": "provisional_reconstruction",
+ "physical_dimensions_m": null,
+ "design_dimensions_m": {
+  "bowl_smoothed_w_h_d": [
+   0.214,
+   0.091,
+   0.214
+  ],
+  "bowl_coil_raised_w_h_d": [
+   0.178,
+   0.064,
+   0.178
+  ],
+  "qualification": "MUSEUM-018 project values (BREZ-008 class P); no Březnice measurement exists for M2 bowls."
+ },
+ "models": [
+  {
+   "file": "models/person_forming.glb",
+   "role": "craft skin: PERSON-001 r002 body/rig/skin byte-identical (via MUSEUM-019), clips form_enter / form / form_exit, in place, no walking; static skin nodes block_place and vessel_hold",
+   "sha256": "cb00fd4a2aa91ecfe692cf8e893176a7a35a1fb48cbf1b3e7a8cd05061318952",
+   "file_bytes": 361632,
+   "triangles": 2052,
+   "godot_triangles": 2052,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 2132,
+   "materials": 2,
+   "material_names": [
+    "body",
+    "garment"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [
+    {
+     "name": "person_palette",
+     "mimeType": "image/png",
+     "embedded": true
+    }
+   ],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.30227,
+     0.0,
+     -0.2
+    ],
+    "max": [
+     0.30227,
+     1.7,
+     0.2
+    ],
+    "size": [
+     0.60454,
+     1.7,
+     0.4
+    ]
+   },
+   "anchors": {
+    "carry_anchor": {
+     "parent": "hand.R",
+     "translation": [
+      0.223504,
+      -0.152738,
+      -0.067734
+     ],
+     "rotation_xyzw": [
+      0.046635,
+      0.084315,
+      -0.055281,
+      0.993811
+     ],
+     "note": "PERSON-001 node under hand.R, unchanged; not used by these clips."
+    },
+    "block_place": {
+     "parent": "PERSON_rig",
+     "translation": [
+      0.0,
+      0.0,
+      0.53
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": 180.0,
+     "note": "NEW. Static child of PERSON_rig (not a bone). work_block root goes here: 0.53 m in front of the worker origin, turned 180 deg so the block's operator side (+Z) faces the worker (= MUSEUM-019 placement)."
+    },
+    "vessel_hold": {
+     "parent": "PERSON_rig",
+     "translation": [
+      0.086,
+      0.2,
+      0.58
+     ],
+     "rotation_xyzw": [
+      0.0,
+      1.0,
+      0.0,
+      0.0
+     ],
+     "yaw_deg_about_plusY": 180.0,
+     "note": "NEW. Static child of PERSON_rig (not a bone, not in a hand). = block_place * work_block/vessel_seat. Both bowls are 'held' here (grip base_center = bowl origin), which is how CraftProps shows exactly one of them at a time."
+    }
+   },
+   "animations": [
+    {
+     "name": "form_enter",
+     "duration_s": 3.45,
+     "keys": 139,
+     "fps": 40.0,
+     "interpolation": "LINEAR",
+     "godot_length_s": 3.45,
+     "take_range_s": [
+      0.0,
+      3.45
+     ],
+     "first_pose": "standing, arms at rest twist (= form_exit last pose)",
+     "last_pose": "crouched, hands settled above the raised bowl (= form first pose)",
+     "loop": "none (one-shot)"
+    },
+    {
+     "name": "form",
+     "duration_s": 9.1,
+     "keys": 365,
+     "fps": 40.001,
+     "interpolation": "LINEAR",
+     "godot_length_s": 9.1,
+     "take_range_s": [
+      3.45,
+      12.55
+     ],
+     "first_pose": "hands above the raised bowl",
+     "last_pose": "identical to first pose (seam 0.0 deg)",
+     "loop": "cycle clip; seamless (museum CraftTimeline repeats it by clip time; the glTF/Godot loop flag is not used)",
+     "bowl": "bowl_coil_raised only; hands on the raised wall geometry in every key"
+    },
+    {
+     "name": "form_exit",
+     "duration_s": 3.45,
+     "keys": 139,
+     "fps": 40.0,
+     "interpolation": "LINEAR",
+     "godot_length_s": 3.45,
+     "take_range_s": [
+      12.55,
+      16.0
+     ],
+     "first_pose": "= form last pose; bowl_smoothed swapped in here (the one swap), hands above the rim",
+     "last_pose": "standing (= form_enter first pose, 2e-06 deg)",
+     "loop": "none (one-shot); ends standing in place, no turn or walk"
+    }
+   ],
+   "export_bounds_note": "bind pose; animated poses differ",
+   "blender_reimport_note": "Blender count includes the importer's 80-triangle Icosphere bone-display shape; body = 2052",
+   "root_motion": "none: PERSON_rig root identity and never animated; pelvis translates locally"
+  },
+  {
+   "file": "models/work_block.glb",
+   "role": "MUSEUM-018 log-round work block, byte copy; placed on the skin node block_place",
+   "sha256": "a5ae246786ab7f09b5af2f9d34865a5deb6d2e903988cf985e71047c176487a1",
+   "file_bytes": 90576,
+   "triangles": 3712,
+   "godot_triangles": 3712,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 3712,
+   "materials": 1,
+   "material_names": [
+    "Hewn timber and bark"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.24822,
+     0.0,
+     -0.23747
+    ],
+    "max": [
+     0.26754,
+     0.2,
+     0.24051
+    ],
+    "size": [
+     0.51577,
+     0.2,
+     0.47798
+    ]
+   },
+   "anchors": {
+    "base_center": {
+     "parent": "work_block",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "vessel_seat": {
+     "parent": "work_block",
+     "translation": [
+      -0.086,
+      0.2,
+      -0.05
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "stock_seat": {
+     "parent": "work_block",
+     "translation": [
+      0.12,
+      0.2,
+      0.013
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "coil_seat": {
+     "parent": "work_block",
+     "translation": [
+      -0.085,
+      0.2,
+      0.11
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "operator_approach": {
+     "parent": "work_block",
+     "translation": [
+      0.0,
+      0.0,
+      0.43
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "animations": [],
+   "identical_to": "art/returns/museum-pottery/models/work_block.glb (MUSEUM-018, frozen)"
+  },
+  {
+   "file": "models/clay_stock.glb",
+   "role": "MUSEUM-018 prepared clay mass, byte copy; on work_block stock_seat",
+   "sha256": "588e59ebf406074235c180cb14d407e1367667b95bd975cbe426fa9bfe75d9f2",
+   "file_bytes": 14772,
+   "triangles": 560,
+   "godot_triangles": 560,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 560,
+   "materials": 1,
+   "material_names": [
+    "Unfired earth-brown clay"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.08516,
+     0.0,
+     -0.0684
+    ],
+    "max": [
+     0.10019,
+     0.06526,
+     0.07307
+    ],
+    "size": [
+     0.18535,
+     0.06526,
+     0.14147
+    ]
+   },
+   "anchors": {
+    "base_center": {
+     "parent": "clay_stock",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "clay_pickup": {
+     "parent": "clay_stock",
+     "translation": [
+      0.0,
+      0.063,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "animations": [],
+   "identical_to": "art/returns/museum-pottery/models/clay_stock.glb (MUSEUM-018, frozen)"
+  },
+  {
+   "file": "models/clay_coil.glb",
+   "role": "MUSEUM-018 spare clay roll, byte copy; on work_block coil_seat",
+   "sha256": "f9865cb6bbe3d7a6db23250be91a12c9c629ded855fd9291e246d1273c0cd4ae",
+   "file_bytes": 25116,
+   "triangles": 992,
+   "godot_triangles": 992,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 992,
+   "materials": 1,
+   "material_names": [
+    "Unfired earth-brown clay"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.112,
+     0.0,
+     -0.05097
+    ],
+    "max": [
+     0.112,
+     0.01191,
+     0.0338
+    ],
+    "size": [
+     0.224,
+     0.01191,
+     0.08477
+    ]
+   },
+   "anchors": {
+    "base_center": {
+     "parent": "clay_coil",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "coil_pickup": {
+     "parent": "clay_coil",
+     "translation": [
+      0.0,
+      0.011,
+      0.02
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "animations": [],
+   "identical_to": "art/returns/museum-pottery/models/clay_coil.glb (MUSEUM-018, frozen)"
+  },
+  {
+   "file": "models/bowl_coil_raised.glb",
+   "role": "MUSEUM-018 unfired bowl during raising (coils visible), byte copy; shown (held at vessel_hold, grip base_center) in form_enter and form",
+   "sha256": "34af7bf611f4b8797ad33492123b3f1b0785734eda23cb46cf8ffae7da5a6ec0",
+   "file_bytes": 84416,
+   "triangles": 3456,
+   "godot_triangles": 3456,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 3456,
+   "materials": 1,
+   "material_names": [
+    "Unfired earth-brown clay"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.08772,
+     0.0,
+     -0.09045
+    ],
+    "max": [
+     0.09028,
+     0.06356,
+     0.08755
+    ],
+    "size": [
+     0.178,
+     0.06356,
+     0.178
+    ]
+   },
+   "anchors": {
+    "base_center": {
+     "parent": "bowl_coil_raised",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "opening_center": {
+     "parent": "bowl_coil_raised",
+     "translation": [
+      0.0,
+      0.062,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "outer_work_contact": {
+     "parent": "bowl_coil_raised",
+     "translation": [
+      0.0,
+      0.05,
+      0.0857
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "inner_work_contact": {
+     "parent": "bowl_coil_raised",
+     "translation": [
+      0.0,
+      0.05,
+      0.0742
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "animations": [],
+   "identical_to": "art/returns/museum-pottery/models/bowl_coil_raised.glb (MUSEUM-018, frozen)"
+  },
+  {
+   "file": "models/bowl_smoothed.glb",
+   "role": "MUSEUM-018 unfired bowl after smoothing, byte copy; shown (held at vessel_hold, grip base_center) in form_exit only",
+   "sha256": "4219205a1bd6cac07efc881b4591907453ce39c8ce094c0a9bd5a247c72a617b",
+   "file_bytes": 75196,
+   "triangles": 3072,
+   "godot_triangles": 3072,
+   "godot_cull_back": true,
+   "blender_reimport_triangles": 3072,
+   "materials": 1,
+   "material_names": [
+    "Unfired earth-brown clay"
+   ],
+   "double_sided_exceptions": [],
+   "alpha_mode": [
+    "OPAQUE"
+   ],
+   "textures": [],
+   "extensions": [],
+   "export_bounds_m": {
+    "min": [
+     -0.10562,
+     0.0,
+     -0.10897
+    ],
+    "max": [
+     0.10838,
+     0.09056,
+     0.10503
+    ],
+    "size": [
+     0.214,
+     0.09056,
+     0.214
+    ]
+   },
+   "anchors": {
+    "base_center": {
+     "parent": "bowl_smoothed",
+     "translation": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "opening_center": {
+     "parent": "bowl_smoothed",
+     "translation": [
+      0.0,
+      0.089,
+      0.0
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "outer_work_contact": {
+     "parent": "bowl_smoothed",
+     "translation": [
+      0.0,
+      0.06,
+      0.0985
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    },
+    "inner_work_contact": {
+     "parent": "bowl_smoothed",
+     "translation": [
+      0.0,
+      0.06,
+      0.0921
+     ],
+     "rotation_xyzw": [
+      0.0,
+      0.0,
+      0.0,
+      1.0
+     ]
+    }
+   },
+   "animations": [],
+   "identical_to": "art/returns/museum-pottery/models/bowl_smoothed.glb (MUSEUM-018, frozen)"
+  }
+ ],
+ "kit_totals": {
+  "triangles_all_models": 13844,
+  "glb_bytes_total": 651708,
+  "shown_at_once_while_working": "person_forming + work_block + clay_stock + clay_coil + one bowl"
+ },
+ "contact_summary": {
+  "form_enter": {
+   "keys": 139,
+   "keys_with_body_inside_a_prop": 0,
+   "max_bowl_penetration_depth_mm": 0.0,
+   "ground_min_y_m": 0.0,
+   "max_vertex_step_per_key_m": 0.01611,
+   "fingertip_gap_mm": {
+    "L": {
+     "min": 41.71,
+     "max": 652.03
+    },
+    "R": {
+     "min": 78.14,
+     "max": 714.8
+    }
+   }
+  },
+  "form": {
+   "keys": 365,
+   "keys_with_body_inside_a_prop": 8,
+   "max_bowl_penetration_depth_mm": 3.59,
+   "ground_min_y_m": 0.0,
+   "max_vertex_step_per_key_m": 0.00903,
+   "fingertip_gap_mm": {
+    "L": {
+     "min": 1.28,
+     "max": 79.24
+    },
+    "R": {
+     "min": 0.04,
+     "max": 78.14
+    }
+   }
+  },
+  "form_exit": {
+   "keys": 139,
+   "keys_with_body_inside_a_prop": 0,
+   "max_bowl_penetration_depth_mm": 0.0,
+   "ground_min_y_m": 0.0,
+   "max_vertex_step_per_key_m": 0.02952,
+   "fingertip_gap_mm": {
+    "L": {
+     "min": 9.91,
+     "max": 619.57
+    },
+    "R": {
+     "min": 43.89,
+     "max": 683.22
+    }
+   }
+  },
+  "museum019_take_max_vertex_step_per_key_m": 0.10739,
+  "form_to_exit_start_jump_max_m": 0.13409,
+  "source": "checks/contact.json"
+ },
+ "museum_wiring_proposal": "source/craft_example.json (not applied; museum PR is a separate follow-up step)",
+ "museum_import_requirements": "person_forming.glb.import: AnimationPlayer optimizer/enabled=false and gltf/naming_version=2 (tested here, checks/godot_person_forming.glb.import.txt); props default import",
+ "input_hashes": {
+  "art/returns/museum-pottery/models/bowl_coil_raised.glb": "34af7bf611f4b8797ad33492123b3f1b0785734eda23cb46cf8ffae7da5a6ec0",
+  "art/returns/museum-pottery/models/bowl_smoothed.glb": "4219205a1bd6cac07efc881b4591907453ce39c8ce094c0a9bd5a247c72a617b",
+  "art/returns/museum-pottery/models/clay_stock.glb": "588e59ebf406074235c180cb14d407e1367667b95bd975cbe426fa9bfe75d9f2",
+  "art/returns/museum-pottery/models/clay_coil.glb": "f9865cb6bbe3d7a6db23250be91a12c9c629ded855fd9291e246d1273c0cd4ae",
+  "art/returns/museum-pottery/models/work_block.glb": "a5ae246786ab7f09b5af2f9d34865a5deb6d2e903988cf985e71047c176487a1",
+  "art/returns/museum-pottery/README.md": "6b6ae6a1a6cedc535042756d045dfa7fcf0741fb90a6d0ed3274f0603b7052bc",
+  "art/returns/museum-pottery-animation/forming.glb": "0e2b1883c2e01f4d4f96054440a2db58394a6b874af7db8e4a68d0638eb04cc7",
+  "art/returns/museum-pottery-animation/source/build.py": "5ba45cd1e13e6b00117733c9f24f77bc4e1fd6d53766bd03b0e783744f640a6b",
+  "art/returns/museum-pottery-animation/README.md": "29e3d3f365cf70130be1d731f443b6fb49b8454d028861bf91303d5fa7eb80ae",
+  "art/returns/bronze-bohemia-opus-v2/PERSON-001/r002/model.glb": "f2be7a0f948e554974e2fb76aeda1fa583a8a4f4fe755c8469a0dbf46ae84706",
+  "art/handoffs/bronze-bohemia-opus-v2/COMMON.md": "8e22c54cbacf2f03ea29e78f1e88d5c99ebe42d0a8336be34c7bf7c1ae0560b2",
+  "art/handoffs/bronze-bohemia-opus-v2/RETURN.md": "5a54eec9cd6be17861abc30d78970b36e35f08c2bafe615d3ed02a40f8165876",
+  "art/handoffs/bronze-bohemia-opus-v2/templates/kit-asset.json": "2e49186cb1bd1f135da6a6e94867d8e7d223ff37df3acb3f50becfc0c982211c",
+  "team/museum-kanban/tasks/SB-057.md": "85768f270763baf25858bd0dcaa5656fedce0238da42e0ff93fe263f4052ea1b",
+  "team/museum-kanban/tasks/SB-058.md": "69c58214751d3ef8ac3f92a656ed25a0ccc80fb5094c5be4bf554a6f8c08a63a",
+  "team/museum-kanban/tasks/BREZ-008.md": "9a657a994b282be592b99a027a0211a76192e30e1795ee54210f4ba69862830c",
+  "team/museum-kanban/tasks/BREZ-010.md": "347edf7f13c5cc1b8dd7d16815750e06a8e267e125d7f047be9e5bd7d28fb4a8",
+  "team/evidence/breznice/BREZ-008/README.md": "21da4656a7c2770486f3b3999b401ac819ebbf16dde73a701431c937ce76a0ed"
+ },
+ "parts_and_uncertainties": [
+  "Bowl shape class M2 and wall thickness: local Březnice evidence (BREZ-008, DTB1) — M.",
+  "214 x 91 mm and all other dimensions: project values (MUSEUM-018), not Březnice measurements.",
+  "Flat base: not attested for M2 at Březnice (no M2 with a recorded base); regional analogy only.",
+  "Coil building and the forming gestures: analogy (experiments, general syntheses), not local evidence.",
+  "Discrete bowl swap, once, at the start of form_exit (the cycle shows only the raised bowl): display convention of this package (F), not a claim about how fast a bowl was made.",
+  "No firing, no kiln, no wheel, no Hněvotín (owner decision (c); BREZ-010 deferred)."
+ ],
+ "own_work_license": "CC BY 4.0 for the original project models of this package (MUSEUM-018/019 derived) — owner approval 2026-11-23 in conversation; see PROVENANCE.md",
+ "incorporated_resources": [],
+ "deviations": [
+  "MUSEUM-019's FormingTransition blend-shape mesh is not exported: CraftProps can show or hide whole props but not drive a blend shape, so the bowls swap discretely.",
+  "Arm roll of upper_arm/forearm made continuous (twist about the segment axis only; joint positions and hand orientation per key unchanged); MUSEUM-019 had a 113 deg single-key roll at 3.4 s.",
+  "No ZIP; package made inside the studio repository (precedent HOUSE-004 r002, LOOMWEIGHT-001 r002).",
+  "No village views at ortho 25/16, no PERSON/POT/HOUSE line-up: sizes are unchanged MUSEUM-018 kit; see CHECKS.md.",
+  "GPU captures at the window size the compositor gave (checks/godot_shot_log.json), not forced 1280x800."
+ ]
+}

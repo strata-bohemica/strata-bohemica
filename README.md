@@ -13,13 +13,13 @@
 
 <p align="center"><sub>Render of the project's own models, 14 s loop. All reconstructions are provisional.</sub></p>
 
-<p align="center"><a href="https://strata-bohemica.github.io/strata-bohemica/"><b>Enter the museum</b></a> (a village of twelve homesteads, eleven with a craftsperson at work, in your browser) · <a href="https://strata-bohemica.github.io/strata-bohemica/diorama/">the living diorama</a></p>
+<p align="center"><a href="https://strata-bohemica.github.io/strata-bohemica/"><b>Enter the museum</b></a> (a village of twelve homesteads, each with a craftsperson at work, in your browser) · <a href="https://strata-bohemica.github.io/strata-bohemica/diorama/">the living diorama</a></p>
 
 <img src="docs/brand/readme/divider.svg" alt="" width="100%">
 
 ## Status
 
-Early development. The museum (a Godot 4.5 project in [`museum/`](museum/), also built for the browser) shows a Late Bronze Age village after Březnice u Bechyně: eleven craftspeople work in front of their houses and go to sleep in the evening; the twelfth homestead (the potter) is still empty because no evidence for it has been verified. Click a person or house for the evidence card; research notes are in [`research/`](research/). The living diorama above is the earlier single-homestead render.
+Early development. The museum (a Godot 4.5 project in [`museum/`](museum/), also built for the browser) shows a Late Bronze Age village after Březnice u Bechyně: twelve craftspeople work in front of their houses and go to sleep in the evening; the potter's hand-forming of a clay bowl is shown as an experimental variant, without firing. Click a person or house for the evidence card; research notes are in [`research/`](research/). The living diorama above is the earlier single-homestead render.
 
 ## Licence
 

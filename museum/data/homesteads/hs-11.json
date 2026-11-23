@@ -1,7 +1,7 @@
 {
   "id": "hs-11",
   "schema": 2,
-  "craft": null,
+  "craft": "pottery",
   "name": {
     "cs": "Hrnčířka",
     "en": "The potter"
@@ -9,8 +9,26 @@
   "house": {
     "model": "HOUSE-004/house_004_plain"
   },
-  "pending": {
-    "cs": "Čeká na rešerši k hrnčířství v pozdní době bronzové. Dostupné modely jsou z doby starší a střední bronzové.",
-    "en": "Waiting for research on Late Bronze Age pottery. The available models date from the Early and Middle Bronze Age."
-  }
+  "workplace": {
+    "pos": [
+      0.0,
+      0.0,
+      6.0
+    ],
+    "yaw_deg": 90.0
+  },
+  "bed": {
+    "model": "SLEEP-001/bed_straw",
+    "pos": [
+      5.78,
+      0.0,
+      -0.25
+    ],
+    "yaw_deg": -90.0,
+    "note": "F: no sleeping place is known for these houses (the house brief says nothing about it). Type A (HOUSE-004): the bed lies along the +X gable of the large (east) room, the sleeper's side towards the door, so the walk from the bed to door_inside stays in that room (the partitions and the hearth are out of the way)."
+  },
+  "walker": "PERSON-001/model",
+  "sleeper": "SLEEP-001/person_sleep",
+  "day_offset": -0.005,
+  "note": "Positions are in the house frame (+Z is the door side). The work place is F; the bed place inside the house is F. day_offset shifts this household's day (F). The craft is the experimental hand-forming of the POTTERY-001 bowl (SB-057/SB-058): no firing is shown."
 }
