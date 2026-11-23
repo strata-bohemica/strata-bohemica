@@ -14,6 +14,9 @@ const CameraRig = preload("res://museum/core/camera_rig.gd")
 const ObjectView = preload("res://museum/core/object_view.gd")
 const ObjectStage = preload("res://museum/view/object_stage.gd")
 const ObjectViewer = preload("res://museum/ui/object_viewer.gd")
+const WeatherView = preload("res://museum/view/weather_view.gd")
+const WeatherToggle = preload("res://museum/ui/weather_toggle.gd")
+const Weather = preload("res://museum/core/weather.gd")
 
 const START_FRACTION := 0.30    # a bright morning, the households already at work
 const OVERVIEW_DIST := 175.0
@@ -46,6 +49,8 @@ var time_bar
 var sound
 var object_stage                   # the object viewer's own little world (view/object_stage.gd)
 var object_viewer                  # its panel (ui/object_viewer.gd)
+var weather                        # view/weather_view.gd: applies core/weather.gd, owns on/off and quality
+var weather_toggle                 # ui/weather_toggle.gd
 var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
@@ -78,6 +83,10 @@ func _ready() -> void:
 	village = VillageView.new()
 	add_child(village)
 	village.build(world.village, world.terrain, world.occupied, world.pending)
+	weather = WeatherView.new()
+	weather.day_length = float(period.day_length_s)
+	add_child(weather)
+	weather.build(env, sun, village)
 	t = START_FRACTION * float(period.day_length_s)
 	_fit_ui_scale()
 	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
@@ -133,6 +142,10 @@ func _build_world() -> void:
 	time_bar.volume_committed.connect(func(): sound.blip())
 	layer.add_child(time_bar)
 	layer.add_child(time_bar.speed_cycle_button)   # the phone's speed button: top right corner of the screen (see time_bar.gd)
+	weather_toggle = WeatherToggle.new()
+	weather_toggle.weather_toggled.connect(toggle_weather)
+	weather_toggle.quality_toggled.connect(toggle_weather_quality)
+	layer.add_child(weather_toggle)
 	add_child(layer)
 
 # ---- layout ---------------------------------------------------------------------------------------------------
@@ -157,8 +170,22 @@ func apply_layout(size: Vector2) -> void:
 	if detail_state.open:
 		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
-	# on a phone the top line wraps before the speed button in the top right corner (SB-059 D4)
-	hud.custom_minimum_size.x = size.x - hud.position.x - 2.0 * TimeBar.NARROW_MARGIN - time_bar.speed_cycle_width() if narrow else 430.0
+	# phone: the right column holds the speed button and, under it, the weather buttons (SB-059 D4, SB-015)
+	weather_toggle.set_narrow(narrow, TimeBar.NARROW_MARGIN + TimeBar.NARROW_TOUCH + TimeBar.NARROW_MARGIN)
+	_fit_hud()
+
+## The top line: on a phone it wraps before the right column (speed and weather buttons), on a desktop it is 430 px.
+func _fit_hud() -> void:
+	var w := 430.0
+	if narrow:
+		w = get_viewport().get_visible_rect().size.x - hud.position.x - 2.0 * TimeBar.NARROW_MARGIN - right_column_width()
+	hud.custom_minimum_size.x = w
+	hud.size = Vector2(w, 0.0)                   # the label takes the height of its wrapped text again
+
+## The width of the phone's top-right column: the speed button and the weather buttons under it.
+func right_column_width() -> float:
+	var weather_w: float = weather_toggle.get_combined_minimum_size().x if weather_toggle.visible else 0.0
+	return maxf(time_bar.speed_cycle_width(), weather_w)
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
@@ -209,6 +236,12 @@ func select(id: int) -> void:
 
 func toggle_mute() -> void:
 	sound.set_muted(not sound.muted)
+
+func toggle_weather() -> void:
+	weather.set_enabled(not weather.enabled)
+
+func toggle_weather_quality() -> void:
+	weather.set_quality("low" if weather.quality == "high" else "high")
 
 func toggle_language() -> void:
 	lang = "cs" if lang == "en" else "en"
@@ -299,7 +332,7 @@ func _process(delta: float) -> void:
 		t += delta * speed
 	_pan_keys(delta)
 	_refresh(delta)
-	sound.apply(t, paused, speed, delta, 1.0, 0.0, cam_dist)
+	sound.apply(t, paused, speed, delta, 1.0, Weather.storm(weather.current), cam_dist)
 	_hover()
 
 ## Arrow keys move the overview, always at the same speed on screen.
@@ -323,16 +356,16 @@ func _refresh(delta: float) -> void:
 	village.apply(t, 1.0 - daylight, cutaway)
 	var f: float = clock.fraction(t)
 	sun.rotation_degrees = Vector3(-clock.elevation(t) * 65.0, lerpf(100.0, -100.0, f), 0.0)
-	sun.light_energy = 1.0 * daylight
-	env.background_color = Color("#0c0f18").lerp(Color("#8fb5d9"), daylight)
-	env.ambient_light_color = Color("#2b3652").lerp(Color("#a09c92"), daylight)
-	env.ambient_light_energy = lerpf(0.5, 0.6, daylight)
+	# the light of the day; the weather only multiplies it (view/weather_view.gd)
+	var base_light := {"sun_energy": 1.0 * daylight, "background": Color("#0c0f18").lerp(Color("#8fb5d9"), daylight),
+		"ambient_color": Color("#2b3652").lerp(Color("#a09c92"), daylight), "ambient_energy": lerpf(0.5, 0.6, daylight)}
 	var k := 1.0 - exp(-4.0 * delta) if delta > 0.0 else 1.0
 	var kz := 1.0 - exp(-12.0 * delta) if delta > 0.0 else 1.0      # zoom follows the fingers/wheel quickly
 	cam_target = cam_target.lerp(_focus_target(), k)
 	cam_dist = lerpf(cam_dist, dist_goal, kz)
 	camera.position = CameraRig.position(cam_target, orbit_yaw, orbit_pitch, cam_dist, village.terrain)     # never under the ground
 	camera.look_at(cam_target)
+	weather.apply(t, base_light, camera.position)
 	# keep the subject in the free part of the screen while the card covers the right side
 	_card_shift = lerpf(_card_shift, 1.0 if card_panel.visible else 0.0, k)
 	var aspect: float = get_viewport().get_visible_rect().size.aspect()
@@ -352,6 +385,9 @@ func _refresh(delta: float) -> void:
 	hud.visible = not detail_state.open          # the viewer panel covers the top of the screen
 	time_bar.speed_cycle_button.visible = narrow and not detail_state.open
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
+	weather_toggle.visible = not detail_state.open and (narrow or not card_panel.visible)    # the wide card covers the top right
+	weather_toggle.sync(weather.enabled, weather.quality, lang)
+	_fit_hud()                                   # the weather buttons' width follows the language and the quality label
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
 func _hover() -> void:
@@ -376,6 +412,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			KEY_F: follow = not follow
 			KEY_M: toggle_mute()
 			KEY_C: toggle_language()
+			KEY_P: toggle_weather()
 			KEY_0: select(0)
 			KEY_ESCAPE:
 				if detail_state.open:

@@ -118,6 +118,7 @@ func _initialize() -> void:
 	# a focus view: every house at its starting distance and default angle stays exactly on the raw orbit
 	var app0 = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app0)
+	app0.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(3):
 		await process_frame
 	app0.paused = true
@@ -139,6 +140,7 @@ func _initialize() -> void:
 	# SB-035: the overview looks at the ground (+ 3 m), not at a fixed height, and the target moves smoothly
 	var ov = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(ov)
+	ov.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(3):
 		await process_frame
 	ov.paused = true
@@ -215,6 +217,7 @@ func _initialize() -> void:
 	# the real app: drag, pinch and arrow-key panning (pan_by_pixels) keep the camera above the ground after every frame
 	var app = (load("res://museum/app/museum_village.tscn") as PackedScene).instantiate()
 	root.add_child(app)
+	app.weather.enabled = false               # the clear light of the day (SB-015 weather off, not saved)
 	for i in range(3):
 		await process_frame
 	app.paused = true
