@@ -25,7 +25,8 @@ var viewer_layer: CanvasLayer  # its own layer above the app's UI layer, so no c
 const VIEWER_LAYER := 10       # above the app's CanvasLayer (layer 1) that holds the card, the object viewer and the time bar
 const NARROW_TOUCH := 44.0     # touch target of the language and close buttons on a phone (as the time bar's, see time_bar.gd)
 
-var _drag_from := 0.0          # a finger dragging the text: the scroll offset when it touched, and how far it has moved
+var _drag_finger := -1         # the finger dragging the text (its touch index, any number: a browser's Touch.identifier), -1 none
+var _drag_from := 0.0          # its drag: the scroll offset when it touched, and how far it has moved
 var _drag_accum := 0.0
 var _drag_beyond := false
 
@@ -143,20 +144,26 @@ func set_layout(viewport_size: Vector2) -> void:
 func scroll_to_top() -> void:
 	scroll.scroll_vertical = 0
 	_drag_beyond = false
+	_drag_finger = -1
 
 ## One finger dragging the card's text scrolls it (SB-059 D5). The engine's own drag scrolling in ScrollContainer works
 ## only from the mouse events emulated from touch and only where DisplayServer reports a touch screen; it is replaced
 ## here by the touch events themselves, and the emulated mouse events are taken, so the text never scrolls twice.
+## The first finger that touches the text drags it, whatever its index: a web build takes the index from the browser's
+## Touch.identifier, which need not start at 0. Other fingers are ignored until it lifts.
 ## Everything is accepted, so a drag over the card never reaches the camera.
 func _on_scroll_input(event: InputEvent) -> void:
 	if event is InputEventScreenTouch:
-		if event.index == 0:
+		if event.pressed and (_drag_finger == -1 or event.index == _drag_finger):
+			_drag_finger = event.index
 			_drag_from = scroll.scroll_vertical
 			_drag_accum = 0.0
 			_drag_beyond = false
+		elif not event.pressed and event.index == _drag_finger:      # lifted or cancelled
+			_drag_finger = -1
 		scroll.accept_event()
 	elif event is InputEventScreenDrag:
-		if event.index == 0:
+		if event.index == _drag_finger:
 			_drag_accum -= event.relative.y
 			if _drag_beyond or absf(_drag_accum) > scroll.scroll_deadzone:
 				_drag_beyond = true
@@ -190,6 +197,8 @@ func _notification(what: int) -> void:
 		body.text = _bbcode(current)          # figures follow the new width of the card
 	if what == NOTIFICATION_VISIBILITY_CHANGED and viewer != null and not is_visible_in_tree():
 		close_figure()                        # the figure's layer does not inherit the card's visibility
+	if what == NOTIFICATION_VISIBILITY_CHANGED and not is_visible_in_tree():
+		_drag_finger = -1                     # a hidden card may never get the lift of the finger that dragged it
 
 func hide_card() -> void:
 	close_figure()
