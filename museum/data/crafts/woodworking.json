@@ -50,14 +50,14 @@
       {
         "class": "E",
         "text": {
-          "cs": "Ve dřevěném uhlí z Březnice převládá dub (stavba, otop), jedle pochází hlavně z kůlových jam. Domy se předpokládají jako sloupové s proplétanou stěnou a mazanicí (převzato z jiných regionů).",
-          "en": "Oak dominates the charcoal from Březnice (building, fuel); fir comes mostly from post pits. Houses are assumed to be post-built with wattle and daub (taken from other regions)."
+          "cs": "Ve dřevěném uhlí z Březnice převládá dub, užívaný hlavně jako stavební dřevo; jedle, také stavební, pochází hlavně z kůlových jamek. Půdorysy domů zachyceny nejsou; předpokládají se sloupové domy s proplétanou stěnou a mazanicí jako v jiných regionech. Z objektu 5/05 pochází dosud nepublikovaný zlomek břitu bronzového tyčinkovitého dlátka (Chvojka 2009).",
+          "en": "Oak dominates the charcoal from Březnice and was used mainly as building timber; fir, also building timber, comes mostly from stake pits. No house plans were found; post-built houses with wattle and daub are assumed, as in other regions. A so far unpublished blade fragment of a small bronze rod chisel comes from feature 5/05 (Chvojka 2009)."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Sekání bronzovou sekerou na špalku je rekonstrukce. Bronzové nástroje jsou doložené regionálně, ne na této lokalitě.",
-      "en": "Chopping with a bronze axe on a block is reconstructed. Bronze tools are attested regionally, not at this site."
+      "cs": "Sekání bronzovou sekerou na špalku je rekonstrukce. Sekery se středovými laloky jsou v jižních Čechách v době popelnicových polí nejčastějším typem, v přečtených pracích o Březnici ale sekera uvedena není. Násada a postoj jsou rekonstrukce.",
+      "en": "Chopping on a block with a bronze axe is reconstructed. Axes with central wings are the commonest type in South Bohemia in the Urnfield period, but no axe is reported in the Březnice studies read. The haft and the stance are reconstructed."
     },
     "unknown": [
       {
@@ -76,6 +76,8 @@
     "sources": [
       "Šálková et al. 2022, Scientific Reports 12:20323, pp. 6 and 10",
       "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, p. 8",
+      "Chvojka 2009, Jižní Čechy v mladší a pozdní době bronzové, pp. 97–99",
+      "Lobisser 2018, EXARC Journal 2018/2",
       "BRONZE-001 PROVENANCE.md",
       "research/economy/crafts-exchange.md, section 2.4"
     ]

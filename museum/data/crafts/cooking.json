@@ -168,14 +168,21 @@
       {
         "class": "E",
         "text": {
-          "cs": "Na Březnici je 11 objektů označených jako pec (propálený povrch nebo výplň), vykopaná plocha 0,2–1,3 m², dochováno 5–25 cm. Na nádobách jsou stopy vaření.",
-          "en": "At Březnice 11 features are classed as ovens (burnt surface or fill), 0.2–1.3 m² excavated, 5–25 cm preserved. Vessels carry traces of cooking."
+          "cs": "Na Březnici je 11 objektů označených jako pec (propálený povrch nebo výplň), vykopaná plocha 0,2–1,3 m², dochováno 5–25 cm. Na povrchu artefaktů a v zásypech dlouhých jam byly zjištěny bílkoviny vařeného masa, což ukazuje na vaření.",
+          "en": "At Březnice 11 features are classed as ovens (burnt surface or fill), 0.2–1.3 m² excavated, 5–25 cm preserved. Boiled-meat proteins were found on artefact surfaces and in long-pit fills, which indicates cooking."
+        }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "V knovízské kultuře jsou hrubé hrnce obecně vejčité nebo soudkovité; část má dvě protilehlá ucha a početná je i kategorie hrnců bez uch.",
+          "en": "In the Knovíz culture coarse pots are generally egg- or barrel-shaped; some have two opposed handles, and handleless pots form a numerous category too."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Nástavba ohniště (kamenný kruh, otevřený vrch), klek u ohně, naběračka, hrnec stojící v žhavých uhlících a přikládání podpalu jsou rekonstrukce.",
-      "en": "The hearth superstructure (stone ring, open top), the crouch at the fire, the ladle, the pot standing in the embers and feeding kindling are reconstructed."
+      "cs": "Nástavba ohniště (kamenný kruh, otevřený vrch), klek u ohně, naběračka, velký hrnec bez uch stojící v žhavých uhlících a přikládání podpalu jsou rekonstrukce.",
+      "en": "The hearth superstructure (stone ring, open top), the crouch at the fire, the ladle, the large handleless pot standing in the embers and feeding kindling are reconstructed."
     },
     "unknown": [
       {
@@ -187,13 +194,15 @@
         "en": "roofing of the hearth"
       },
       {
-        "cs": "tvar nádoby a recept",
-        "en": "vessel shape and recipe"
+        "cs": "který tvar a velikost hrnce se na Březnici používaly k vaření a recept",
+        "en": "which pot shape and size were used for cooking at Březnice, and the recipe"
       }
     ],
     "sources": [
       "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, section 3.2 and p. 10",
       "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "Šálková et al. 2025, Archaeol. Prospect. 32(3):525–548, section 3.5",
+      "Jiráň (ed.) 2008, Archeologie pravěkých Čech 5, pp. 175, 181, fig. 105",
       "COOK-002 PROVENANCE.md",
       "KILN-001 PROVENANCE.md",
       "research/next-batch/settlement-features.md, KILN-001"

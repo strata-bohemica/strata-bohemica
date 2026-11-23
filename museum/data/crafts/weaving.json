@@ -85,14 +85,14 @@
       {
         "class": "E",
         "text": {
-          "cs": "Na Březnici jsou hliněná závaží (převážně jehlancovitá, vypálená). Jejich použití jako závaží stavu je ale sporné: mohly být podstavci pod rožně.",
-          "en": "Fired clay weights (mostly pyramidal) were found at Březnice. Their use as loom weights is contested: they may have been supports under spits."
+          "cs": "Na Březnici se našlo téměř 500 hliněných závaží a jejich zlomků, všechna vypálená a jehlancovitá nebo tvaru velmi blízkého. Otvory jsou obroušené téměř jen dole, proto autoři soudí, že většina visela podstavou nahoru. Klasické zavěšení na osnovu svislého stavu považují za málo pravděpodobné; podstavce pod rožně nevylučují, ale nic na ně neukazuje.",
+          "en": "Almost 500 clay weights and fragments were found at Březnice, all fired and pyramidal or very close to it. Their holes are worn almost only at the bottom, so the authors think most hung base-up. They consider the classic hanging from the warp of an upright loom unlikely; they do not rule out spit supports, but nothing points to them."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Typ stavu (závaží zavěšená na osnově), poloha závaží nahoře, pohyb člunku a tepání jsou rekonstrukce.",
-      "en": "The loom type (warp-weighted), the weights hung base-up, the shuttle passes and the beating are reconstructed."
+      "cs": "Typ stavu (svislý se závažími), zavěšení závaží podstavou nahoru, provlékání útku na tyčce a přirážení útku mečem nahoru jsou rekonstrukce. Tkaní shora a přirážení nahoru odpovídá obvyklému stavu se závažími, ne nálezu z Březnice.",
+      "en": "The loom type (upright, warp-weighted), the weights hung base-up, passing the weft on a stick and beating it upwards with a sword are reconstructed. Weaving from the top and beating upwards follow the usual warp-weighted loom, not a find from Březnice."
     },
     "unknown": [
       {
@@ -100,8 +100,8 @@
         "en": "whether a loom was used at all"
       },
       {
-        "cs": "vlákno (len nenalezen, vlna místně neověřena)",
-        "en": "fibre (flax not found, wool unverified locally)"
+        "cs": "vlákno (len ani vlna nejsou v přečtených pracích o Březnici doloženy)",
+        "en": "fibre (neither flax nor wool is attested in the Březnice studies read)"
       },
       {
         "cs": "kdo tkal",
@@ -109,7 +109,9 @@
       }
     ],
     "sources": [
-      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308",
+      "Chvojka, Menšík, Šálková, Kuna 2019, Archeologické rozhledy 71:267–308, pp. 279, 291–292, 301",
+      "Kuna et al. 2022, J. Anthropol. Archaeol. 67:101433, pp. 4, 8",
+      "Grömer 2016, The Art of Prehistoric Textile Making, pp. 107, 110–111, 117–118",
       "LOOM-001 PROVENANCE.md",
       "WEAVE-001 PROVENANCE.md"
     ]

@@ -37,6 +37,13 @@
     "status": "R",
     "evidence": [
       {
+        "class": "E",
+        "text": {
+          "cs": "Na Březnici byl imunologickým testem zjištěn kasein (mléčná bílkovina) v zásypech několika objektů a na povrchu misky z objektu 8/19.",
+          "en": "At Březnice an immunological test detected casein (milk protein) in the fills of several features and on the surface of a bowl from feature 8/19."
+        }
+      },
+      {
         "class": "R",
         "text": {
           "cs": "Na Březnici se nedochovaly žádné zvířecí kosti (kyselá půda). Regionálně chov skotu, prasat a ovcí převažoval, skot nejčastěji.",
@@ -45,13 +52,13 @@
       }
     ],
     "reconstruction": {
-      "cs": "Dojení, stolička, nádoba a poloha dojičky jsou rekonstrukce. Model krávy nemá vemeno, ruce míří na spodek břicha.",
-      "en": "The milking, stool, pail and the milker's position are reconstructed. The cattle model has no udder; the hands aim at the belly underside."
+      "cs": "Dojení, stolička, tvar nádoby a poloha dojičky jsou rekonstrukce. Model krávy nemá vemeno, ruce míří na spodek břicha.",
+      "en": "The milking, stool, vessel shape and the milker's position are reconstructed. The cattle model has no udder; the hands aim at the belly underside."
     },
     "unknown": [
       {
-        "cs": "zda se využívalo mléko (analýza tuků zde není k dispozici)",
-        "en": "whether milk was used (lipid analysis not available here)"
+        "cs": "z kterého zvířete mléko pocházelo a jak se zpracovávalo",
+        "en": "which animal the milk came from and how it was processed"
       },
       {
         "cs": "plemeno a velikost",
@@ -63,7 +70,8 @@
       }
     ],
     "sources": [
-      "Kyselý 2016, Živa 2016/5:225–229 (cite only)",
+      "Kyselý 2016, Živa 2016/5:225–229, pp. 227–228 (cite only)",
+      "Šálková et al. 2025, Archaeol. Prospect. 32(3):525–548, section 3.5",
       "research/next-batch/settlement-features.md, ANIMAL-001",
       "MILK-001 PROVENANCE.md"
     ]
