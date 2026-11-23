@@ -4,11 +4,12 @@ A digital open-air museum of Bohemian prehistory. M6: the plougher walks a real 
 Everything the scene does is a pure function of time; the view only applies it.
 
 ```
-core/    day clock, soundscape, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema   (no nodes, testable headless)
+core/    day clock, soundscape, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema,
+         object view   (no nodes, testable headless)
 data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
-view/    thin Godot adapters: sound, pose driver, homestead view, terrain view, village view
-ui/      card panel and time bar (they draw what core/card.gd and the app give them)
+view/    thin Godot adapters: sound, pose driver, homestead view, terrain view, village view, object stage
+ui/      card panel, time bar and object viewer (they draw what core/card.gd, core/object_view.gd and the app give them)
 app/     the main scene and the loader that assembles the village
 ```
 
@@ -64,6 +65,26 @@ The profile is band-limited (blurred by the pixel footprint) and fades out when 
 The patch carries the ground's own colour, so a field looks the same as before wherever the pattern has faded.
 A craft lists its props in data: placed on a station anchor, on a node of the worker or of another prop, held in a hand
 node during named clips, or resting where it is put down (`core/craft_props.gd`).
+
+## Object viewer (SB-056)
+
+A craft card can offer a close look at one object: `card.detail` in the craft's JSON names the model (asset ID), the views
+(the first is the whole object; each aims the camera at a model anchor and sets its own light) and notes of four kinds:
+`find` (what was observed), `model` (our own choices in the model), `hypothesis` (an interpretation) and `related` (another
+exhibit). Another object is JSON, not code. Today only the weaving card (hs-05) has one: the loom weight LOOMWEIGHT-001 r002,
+"Celek / Otvor / Zpět" (Whole / Hole / Back), the hole in raking light at 16.9 degrees to the face, as in the modelling previews.
+
+```
+card button -> app.open_detail -> core/object_view.open (always the whole) -> view/object_stage.apply(framing) + ui/object_viewer.show_page
+Celek/Otvor -> app.detail_go -> object_view.go -> the same      Zpět/Esc -> app.close_detail -> the card again
+```
+
+The stage is a `SubViewport` with its own world (`own_world_3d`): its own camera, light and environment, so the sun of the
+village never reaches the object and the viewer never touches the village or its clock (the village stays a function of time;
+the object looks the same at noon and at midnight). It renders only while the viewer is open; the model is loaded on first use.
+On a phone the viewer fills the screen above the time bar, picture on top, text below; every button is at least 44 x 44 px.
+Checked in `checks/museum_village/test_object_view.gd` (data and wording, cs/en parity, the tour whole -> hole -> whole with
+three mutants of the core that must fail, the stage light at night, phone widths 320-400 px with real taps).
 
 ## Web build
 

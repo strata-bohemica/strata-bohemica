@@ -29,5 +29,10 @@
  "phase.settle": "jde spát",
  "ui.sound": "Zvuk",
  "ui.sound_note": "Zvuk je atmosféra (F, fikce): syntetičtí ptáci, hmyz a vítr, ne rekonstrukce zvuku doby bronzové.",
- "ui.muted": "Ztlumeno"
+ "ui.muted": "Ztlumeno",
+ "ui.detail.find": "Nález",
+ "ui.detail.model": "Model",
+ "ui.detail.hypothesis": "Hypotéza o použití",
+ "ui.detail.related": "Jinde v muzeu",
+ "ui.detail.back": "Zpět"
 }
