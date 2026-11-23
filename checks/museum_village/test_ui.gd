@@ -372,6 +372,7 @@ func _initialize() -> void:
 					root.add_child(host)
 					var bar := TimeBar.new()
 					host.add_child(bar)
+					host.add_child(bar.speed_cycle_button)      # the app puts it beside the bar, in its UI layer
 					bar.set_narrow(true)
 					bar.sync(0.4, paused, 1.0, true, true, lang, muted, 0.5)
 					await process_frame
@@ -393,6 +394,10 @@ func _initialize() -> void:
 					var snd: Rect2 = bar.sound_button.get_global_rect()
 					t.ok(snd.size.x >= 44.0 and snd.size.y >= 44.0, "%s: the sound button is at least 44 x 44 px to tap (%.0f x %.0f)" % [tag, snd.size.x, snd.size.y])
 					t.ok(bar.get_global_rect().end.y <= sz.y - 10.0 + 0.5 and bar.get_global_rect().size.y >= 44.0, "%s: the bar is tall enough and keeps its gap to the screen edge %s" % [tag, bar.get_global_rect()])
+					# SB-059 D4: on a phone one button cycles the speed in place of x1/x10/x40, a full touch target
+					var spd: Rect2 = bar.speed_cycle_button.get_global_rect()
+					t.ok(bar.speed_cycle_button.visible and bar.speed_buttons.all(func(b): return not b.visible), "%s: one speed button instead of three" % tag)
+					t.ok(spd.size.x >= 44.0 and spd.size.y >= 44.0, "%s: the speed button is at least 44 x 44 px (%.0f x %.0f)" % [tag, spd.size.x, spd.size.y])
 					# the short "Řez" only where the full name does not fit: shown short => the full name really overflows here;
 					# shown full => it fits (the inside-the-screen check above) and there is no tooltip repeating it
 					var full_name: String = I18n.tr_("ui.cutaway", lang)
@@ -437,6 +442,7 @@ func _initialize() -> void:
 	wide_bar.set_narrow(false)
 	wide_bar.sync(0.4, false, 1.0, false, false, "en", true, 0.5)
 	t.ok(wide_bar.sound_button.text == "Muted" and wide_bar.sound_button.icon == null and wide_bar.volume_slider.visible, "desktop keeps the worded button and the volume slider")
+	t.ok(not wide_bar.speed_cycle_button.visible and wide_bar.speed_buttons.all(func(b): return b.visible), "desktop keeps x1/x10/x40 and no cycling speed button")
 	wide_bar.free()
 
 	# time controls
@@ -450,6 +456,7 @@ func _initialize() -> void:
 	app.time_bar.cutaway_toggled.emit()
 	t.eq(app.cutaway, true, "the cutaway button toggles")
 	await _figure_over_time_bar(t, app)
+	await _sb059(t, app)
 	await _release(app)
 	quit(t.finish("ui"))
 
@@ -563,3 +570,247 @@ func _figure_over_time_bar(t, app) -> void:
 	app.card_panel.visible = false
 	t.ok(not app.card_panel.viewer.visible, "hiding the card closes its figure")
 	app.card_panel.hide_card()
+
+# ---- SB-059: defects found on the live site ---------------------------------------------------------------------------
+
+## A real touch: the event goes through Input, which also emulates the mouse from finger 0 (as a phone browser does).
+func _finger(e: InputEvent) -> void:
+	Input.parse_input_event(e)
+	Input.flush_buffered_events()
+	await process_frame
+
+## One finger presses at `from`, moves by `by` in `steps` equal steps and lifts.
+func _swipe(from: Vector2, by: Vector2, steps := 10) -> void:
+	var e := InputEventScreenTouch.new()
+	e.position = from
+	e.pressed = true
+	await _finger(e)
+	for k in steps:
+		var d := InputEventScreenDrag.new()
+		d.position = from + by * float(k + 1) / steps
+		d.relative = by / steps
+		await _finger(d)
+	e = InputEventScreenTouch.new()
+	e.position = from + by
+	e.pressed = false
+	await _finger(e)
+
+func _tap(at: Vector2) -> void:
+	for pressed in [true, false]:
+		var e := InputEventScreenTouch.new()
+		e.position = at
+		e.pressed = pressed
+		await _finger(e)
+
+func _push_wheel(pos: Vector2, button: int) -> void:
+	for pressed in [true, false]:
+		var w := InputEventMouseButton.new()
+		w.button_index = button
+		w.pressed = pressed
+		w.factor = 1.0
+		w.position = pos
+		w.global_position = pos
+		root.push_input(w)
+
+## A tap that the app's own input handler must not see: what reached it. `pressed`: the press arrived in `_unhandled_input`
+## (it starts a click there); `picked`: the release picked a homestead and called `select()`, seen by its side effects on
+## two sentinels it always resets (the card's scroll and the overview pan).
+func _spied_tap(app, at: Vector2) -> Dictionary:
+	app.card_panel.scroll.scroll_vertical = 300
+	app.pan = Vector3(3.0, 0.0, 3.0)
+	var sentinel_scroll: int = app.card_panel.scroll.scroll_vertical
+	var e := InputEventScreenTouch.new()
+	e.position = at
+	e.pressed = true
+	await _finger(e)
+	var pressed: bool = app._pressing
+	e = InputEventScreenTouch.new()
+	e.position = at
+	e.pressed = false
+	await _finger(e)
+	var picked: bool = app.card_panel.scroll.scroll_vertical != sentinel_scroll or app.pan == Vector3.ZERO
+	app.pan = Vector3.ZERO
+	return {"pressed": pressed, "picked": picked, "sentinel": sentinel_scroll}
+
+## Turn the camera until a homestead lies under the screen point `at` (a ray through it picks one); its id, 0 if none.
+func _homestead_under(app, at: Vector2) -> int:
+	for pitch in range(-80, -5, 5):
+		for k in 36:
+			app.orbit_yaw = TAU * k / 36.0
+			app.orbit_pitch = deg_to_rad(pitch)
+			app.cam_dist = app.dist_goal
+			app._refresh(0.0)
+			var id: int = app.pick_at(at)
+			if id != 0:
+				return id
+	return 0
+
+## What a stray input could change about the camera (and the selection).
+func _camera_state(app) -> Array:
+	return [app.orbit_yaw, app.orbit_pitch, app.dist_goal, app.pan, app.selected]
+
+func _scroll_end(scroll: ScrollContainer) -> float:
+	return scroll.get_v_scroll_bar().max_value - scroll.get_v_scroll_bar().page
+
+func _sb059(t, app) -> void:
+	var scroll: ScrollContainer = app.card_panel.scroll
+	var first_id: int = app.focus_ids[2]
+	app.paused = true
+	app.lang = "en"
+
+	# D5: on a phone one finger dragging the card's text scrolls it, and never turns the camera
+	root.size = Vector2i(390, 844)
+	app.select(first_id)
+	await process_frame
+	await process_frame
+	t.ok(_scroll_end(scroll) > 200.0, "D5: the phone card has more text than fits (%.0f px to scroll)" % _scroll_end(scroll))
+	var text_at: Vector2 = scroll.get_global_rect().get_center()
+	var cam0: Array = _camera_state(app)
+	await _swipe(Vector2(195, 150), Vector2(0, -150))                    # positive control: over the village it does turn
+	t.ok(_camera_state(app) != cam0, "D5 control: a one-finger swipe over the village turns the camera")
+	t.eq(scroll.scroll_vertical, 0, "D5 control: and does not scroll the card")
+	cam0 = _camera_state(app)
+	await _swipe(text_at, Vector2(0, -150))
+	t.ok(scroll.scroll_vertical >= 120, "D5: a one-finger swipe up over the card text scrolls it (%d px)" % scroll.scroll_vertical)
+	t.eq(_camera_state(app), cam0, "D5: the swipe over the card does not move the camera")
+	var mid: int = scroll.scroll_vertical
+	await _swipe(text_at, Vector2(0, 60))
+	t.ok(scroll.scroll_vertical < mid and scroll.scroll_vertical > 0, "D5: a swipe down scrolls back (%d -> %d px)" % [mid, scroll.scroll_vertical])
+	for k in 12:
+		await _swipe(text_at, Vector2(0, -250))
+	t.ok(absf(scroll.scroll_vertical - _scroll_end(scroll)) <= 1.0, "D5: swiping reaches the end of the card, Unknown and Sources (%d of %.0f px)" % [scroll.scroll_vertical, _scroll_end(scroll)])
+	t.eq(_camera_state(app), cam0, "D5: swiping past the end of the card does not move the camera either")
+	var at: int = scroll.scroll_vertical
+	await _swipe(text_at, Vector2(0, 5), 1)
+	t.eq(scroll.scroll_vertical, at, "D5: a finger moving less than the dead zone (%d px) does not scroll" % scroll.scroll_deadzone)
+
+	# D2: another homestead's card opens at its top: by key, by select, and after the card was closed
+	t.ok(scroll.scroll_vertical > 0, "D2 control: the card is scrolled down before switching")
+	var key := InputEventKey.new()
+	key.keycode = KEY_1
+	key.pressed = true
+	app._unhandled_input(key)
+	await process_frame
+	t.eq(app.selected, app.focus_ids[0], "D2: key 1 opens the first homestead")
+	t.eq(scroll.scroll_vertical, 0, "D2: the newly opened card starts at its top (key)")
+	scroll.scroll_vertical = 300
+	t.ok(scroll.scroll_vertical > 0, "D2 control: scrolled down again")
+	app.select(first_id)
+	await process_frame
+	t.eq(scroll.scroll_vertical, 0, "D2: switching cards starts at the top (select, as a tap does)")
+	scroll.scroll_vertical = 300
+	app.select(0)
+	app.select(app.focus_ids[0])
+	await process_frame
+	t.eq(scroll.scroll_vertical, 0, "D2: a card opened after the previous one was closed starts at the top")
+
+	# D6 and D4 at every supported phone width, both languages
+	for sz in [Vector2i(320, 640), Vector2i(360, 740), Vector2i(400, 800)]:
+		root.size = sz
+		for lang in I18n.LANGS:
+			app.lang = lang
+			app.select(first_id)
+			app.speed = 1.0
+			app._refresh(0.0)
+			await process_frame
+			await process_frame
+			var tag := "%dx%d %s" % [sz.x, sz.y, lang]
+			var card_r: Rect2 = app.card_panel.get_global_rect()
+			for b in [app.card_panel.lang_button, app.card_panel.close_button]:
+				var r: Rect2 = b.get_global_rect()
+				t.ok(r.size.x >= 44.0 and r.size.y >= 44.0, "D6 %s: '%s' is at least 44 x 44 px (%.0f x %.0f)" % [tag, b.text, r.size.x, r.size.y])
+				t.ok(card_r.encloses(r), "D6 %s: '%s' lies inside the card" % [tag, b.text])
+			t.ok(app.card_panel.title_label.size.x >= 100.0, "D6 %s: the title keeps room (%.0f px)" % [tag, app.card_panel.title_label.size.x])
+			# D4: one speed button, a 44 px target on screen clear of the top line and the card, tapped with a finger
+			var cyc: Button = app.time_bar.speed_cycle_button
+			var cr: Rect2 = cyc.get_global_rect()
+			var vp := Rect2(Vector2.ZERO, Vector2(sz))
+			t.ok(cyc.visible and cr.size.x >= 44.0 and cr.size.y >= 44.0 and vp.encloses(cr), "D4 %s: the speed button is shown, at least 44 x 44 px, on screen %s" % [tag, cr])
+			t.ok(not cr.intersects(app.hud.get_global_rect()) and not cr.intersects(card_r) and not cr.intersects(app.time_bar.get_global_rect()), "D4 %s: it covers neither the top line %s, the card nor the bar" % [tag, app.hud.get_global_rect()])
+			# a homestead right under the button, so a tap that fell through would pick it
+			var tap_at: Vector2 = cr.get_center()
+			var under: int = _homestead_under(app, tap_at)
+			t.ok(under != 0, "D4 %s: a homestead lies under the speed button (hs-%02d)" % [tag, under])
+			cyc.mouse_filter = Control.MOUSE_FILTER_IGNORE                     # positive control: the same tap without the button
+			var through: Dictionary = await _spied_tap(app, tap_at)
+			cyc.mouse_filter = Control.MOUSE_FILTER_STOP
+			t.ok(through.sentinel > 0 and through.pressed and through.picked, "D4 control %s: without the button that tap reaches the app and picks the homestead %s" % [tag, through])
+			app.speed = 1.0
+			app._refresh(0.0)
+			t.eq(app.pick_at(tap_at), under, "D4 %s: the homestead is still under the button" % tag)
+			var seen: Array = [cyc.text]
+			var speeds: Array = [app.speed]
+			var cam_before: Array = _camera_state(app)
+			var leaked: Array = []
+			for k in 3:
+				var got: Dictionary = await _spied_tap(app, tap_at)
+				if got.pressed or got.picked:
+					leaked.append(got)
+				app._refresh(0.0)
+				seen.append(cyc.text)
+				speeds.append(app.speed)
+			t.eq(speeds, [1.0, 10.0, 40.0, 1.0], "D4 %s: tapping the speed button cycles x1 -> x10 -> x40 -> x1" % tag)
+			t.eq(leaked, [], "D4 %s: no tap on the speed button reaches the app's input (no press, no select())" % tag)
+			t.eq(_camera_state(app), cam_before, "D4 %s: the taps on the speed button do not move the camera or change the selection" % tag)
+			# the card's language button keeps its taps too (it is a plain child of the UI layer)
+			for k in 2:
+				var on_lang: Dictionary = await _spied_tap(app, app.card_panel.lang_button.get_global_rect().get_center())
+				t.ok(not on_lang.pressed and not on_lang.picked, "D6 %s: a tap on the language button stays with the card %s" % [tag, on_lang])
+			t.eq(app.lang, lang, "D6 %s: two taps on the language button toggle there and back" % tag)
+			t.eq(seen, ["x1", "x10", "x40", "x1"], "D4 %s: the button shows the current speed" % tag)
+			t.eq(cyc.tooltip_text, I18n.tr_("ui.speed", lang), "D4 %s: the button is named in the current language" % tag)
+	t.eq(TimeBar.next_speed(10.0), 40.0, "D4: x10 is followed by x40")
+	t.eq(TimeBar.next_speed(3.0), 1.0, "D4: an unknown speed starts again at x1")
+	# the object viewer takes the top of a phone screen: the speed button gives way, like the top line
+	var with_detail: Array = app.focus_ids.filter(func(id): return not app.world.occupied[id].craft.card.get("detail", {}).is_empty())
+	app.select(with_detail[0])
+	app.open_detail()
+	app._refresh(0.0)
+	t.ok(not app.time_bar.speed_cycle_button.visible, "D4: the speed button hides under the object viewer")
+	app.close_detail()
+	app._refresh(0.0)
+	t.ok(app.time_bar.speed_cycle_button.visible, "D4: and comes back with the card")
+	app.lang = "en"
+	# the desktop: header and speed buttons as before
+	root.size = Vector2i(1280, 720)
+	await process_frame
+	await process_frame
+	app._refresh(0.0)
+	t.eq(app.card_panel.lang_button.custom_minimum_size, Vector2.ZERO, "D6: the desktop card header is unchanged")
+	t.ok(not app.time_bar.speed_cycle_button.visible and app.time_bar.speed_buttons.all(func(b): return b.visible), "D4: the desktop keeps x1/x10/x40 and no cycling button")
+
+	# D1: the wheel over the card never zooms the camera, also past either end of its text
+	app.select(first_id)
+	await process_frame
+	await process_frame
+	var over_card: Vector2 = scroll.get_global_rect().get_center()
+	var goal0: float = app.dist_goal
+	for k in 60:
+		_push_wheel(over_card, MOUSE_BUTTON_WHEEL_DOWN)
+	await process_frame
+	t.ok(absf(scroll.scroll_vertical - _scroll_end(scroll)) <= 1.0, "D1: the wheel scrolls the card to its end (%d of %.0f px)" % [scroll.scroll_vertical, _scroll_end(scroll)])
+	t.eq(app.dist_goal, goal0, "D1: wheel turns past the end of the card do not zoom the camera")
+	for k in 60:
+		_push_wheel(over_card, MOUSE_BUTTON_WHEEL_UP)
+	await process_frame
+	t.eq(scroll.scroll_vertical, 0, "D1: the wheel scrolls the card back to its top")
+	t.eq(app.dist_goal, goal0, "D1: nor past its top")
+	_push_wheel(Vector2(200, 300), MOUSE_BUTTON_WHEEL_DOWN)             # positive control
+	await process_frame
+	t.ok(app.dist_goal > goal0, "D1 control: the wheel over the village zooms out (%.1f -> %.1f)" % [goal0, app.dist_goal])
+
+	# D3: the paused marker on the top line is in the chosen language
+	app.paused = true
+	for lang in I18n.LANGS:
+		app.lang = lang
+		app._refresh(0.0)
+		var line: String = app.hud.text.get_slice("\n", 0)
+		t.ok(line.contains("(%s)" % I18n.tr_("ui.paused", lang)), "D3 %s: the paused marker is in this language: %s" % [lang, line])
+		if lang == "cs":
+			t.ok(not line.contains("paused"), "D3 cs: no English 'paused' on the top line")
+	t.ok(I18n.tr_("ui.paused", "cs") != I18n.tr_("ui.paused", "en"), "D3: the Czech and English markers differ")
+	app.paused = false
+	app._refresh(0.0)
+	t.ok(not app.hud.text.contains("(%s)" % I18n.tr_("ui.paused", app.lang)), "D3: no marker while running")
+	app.lang = "en"
+	app.select(0)

@@ -132,6 +132,7 @@ func _build_world() -> void:
 	time_bar.volume_changed.connect(func(v): sound.set_volume(v); sound.set_muted(false))
 	time_bar.volume_committed.connect(func(): sound.blip())
 	layer.add_child(time_bar)
+	layer.add_child(time_bar.speed_cycle_button)   # the phone's speed button: top right corner of the screen (see time_bar.gd)
 	add_child(layer)
 
 # ---- layout ---------------------------------------------------------------------------------------------------
@@ -156,6 +157,8 @@ func apply_layout(size: Vector2) -> void:
 	if detail_state.open:
 		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
+	# on a phone the top line wraps before the speed button in the top right corner (SB-059 D4)
+	hud.custom_minimum_size.x = size.x - hud.position.x - 2.0 * TimeBar.NARROW_MARGIN - time_bar.speed_cycle_width() if narrow else 430.0
 
 # ---- state changes (also what the checks drive) ---------------------------------------------------------
 
@@ -202,6 +205,7 @@ func select(id: int) -> void:
 		card_panel.hide_card()
 	else:
 		_update_card(true)
+		card_panel.scroll_to_top()               # another homestead's card starts at its top
 
 func toggle_mute() -> void:
 	sound.set_muted(not sound.muted)
@@ -339,13 +343,14 @@ func _refresh(delta: float) -> void:
 	camera.v_offset = -_card_shift * 0.2 * view_h if narrow else 0.0
 	_update_card(false)
 	var hours := f * 24.0
-	var line := "%02d:%02d  x%d%s" % [int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (paused)" if paused else ""]
+	var line := "%02d:%02d  x%d%s" % [int(hours), int(fmod(hours, 1.0) * 60.0), int(speed), "  (%s)" % I18n.tr_("ui.paused", lang) if paused else ""]
 	if selected != 0:
 		line += "  |  %s: %s" % [_name_of(selected), I18n.tr_("phase.%s" % _phase_of(selected), lang) if _phase_of(selected) != "" else ""]
 	elif hover_id != 0:
 		line += "  |  %s" % _name_of(hover_id)
 	hud.text = line if narrow else line + "\n" + (I18n.tr_("ui.hint", lang) if selected == 0 else I18n.tr_("ui.help", lang))
 	hud.visible = not detail_state.open          # the viewer panel covers the top of the screen
+	time_bar.speed_cycle_button.visible = narrow and not detail_state.open
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
