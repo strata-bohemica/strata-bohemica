@@ -94,11 +94,25 @@
           "cs": "Na Březnici jsou ječmen, proso, pšenice dvouzrnka, jednozrnka a špalda a luštěniny. Pražení pluchatých obilí je tu rekonstrukce.",
           "en": "Barley, millet, emmer, einkorn, spelt and legumes were recovered at Březnice. Parching of hulled cereals is a reconstruction here."
         }
+      },
+      {
+        "class": "E",
+        "text": {
+          "cs": "Autoři rozboru Březnice uvádějí ze tří objektů předměty, které nazývají pražicí desky (anglicky roasters). Na jejich povrchu zjistili bílkoviny syrové drůbeže. Tvar těchto předmětů ani to, zda se na nich pražilo obilí, pramen neuvádí.",
+          "en": "The authors of the Březnice analysis report objects they call roasters from three features. They found raw poultry protein on their surfaces. The source gives neither their shape nor whether grain was parched on them."
+        }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "Plevnaté pšenice se podle obecného popisu zpracování před použitím suší a odplevují; sušení není totéž co pražení a zda se na Březnici obilí pražilo, nevíme. Pražený ječmen je v Čechách doložen ze střední doby bronzové (Meclov-Březí, mohylová kultura).",
+          "en": "According to general accounts of crop processing, hulled wheats are dried and dehusked before use; drying is not the same as parching, and whether grain was parched at Březnice is unknown. Parched barley is known in Bohemia from the Middle Bronze Age (Meclov-Březí, Tumulus culture)."
+        }
       }
     ],
     "reconstruction": {
-      "cs": "Pražení v misce nad ohništěm, míchání klacíkem a kleku jsou rekonstrukce.",
-      "en": "Parching in a dish over the hearth, stirring with a stick and the crouch are reconstructed."
+      "cs": "Pražení na velkém střepu nebo hliněné desce v uhlíkách ohniště, kamenný kruh ohniště, míchání klacíkem a podřep jsou rekonstrukce.",
+      "en": "Parching on a large sherd or clay plate in the hearth embers, the stone ring of the hearth, stirring with a stick and the crouch are reconstructed."
     },
     "unknown": [
       {
@@ -106,8 +120,8 @@
         "en": "whether grain was parched at all"
       },
       {
-        "cs": "použitá nádoba",
-        "en": "vessel used"
+        "cs": "na čem se pražilo a k čemu sloužily pražicí desky z Březnice",
+        "en": "what grain was parched on, and what the Březnice roasters were used for"
       },
       {
         "cs": "kdo to dělal",
@@ -116,7 +130,10 @@
     ],
     "sources": [
       "Šálková et al. 2022, Scientific Reports 12:20323, p. 6",
-      "research/economy/subsistence.md, section 2.5",
+      "Šálková et al. 2025, Archaeol. Prospect. 32(3):525–548, section 3.5 and Table 1",
+      "research/economy/subsistence.md, section 2.4",
+      "Jiráň (ed.) 2008, Archeologie pravěkých Čech 5, pp. 83, 126",
+      "Šálková 2010, diploma thesis, University of South Bohemia, pp. 13–14",
       "PARCH-001 PROVENANCE.md"
     ]
   }

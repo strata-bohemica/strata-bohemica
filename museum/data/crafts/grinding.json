@@ -54,19 +54,26 @@
       {
         "class": "E",
         "text": {
-          "cs": "Na Březnici jsou drticí kameny; analýza povrchů podporuje zpracování potravin. Nalezeny jsou ječmen a proso.",
-          "en": "Grinding stones were found at Březnice; surface analysis supports food processing. Barley and millet were recovered."
+          "cs": "Na Březnici se našly drticí podložky z několika objektů. Na jejich povrchu je škrob trav, pšenice a luštěnin, na jedné podložce pravděpodobně jednozrnky, a bílkovina obilí; na jedné podložce i bílkoviny syrové drůbeže. Mezi pěstovanými plodinami jsou ječmen, proso, pšenice a luštěniny.",
+          "en": "Grinding slabs from several features were found at Březnice. Their surfaces carry starch of grasses, wheat and legumes, on one slab probably einkorn, and a cereal protein; one slab also carries raw poultry protein. The crops grown include barley, millet, wheat and legumes."
+        }
+      },
+      {
+        "class": "R",
+        "text": {
+          "cs": "V Čechách doby popelnicových polí jsou drticí podložky většinou pískovcové desky silné 3–11 cm a jako drtiče sloužily hlavně valouny. Úplně dochovaná zrnotěrka z Tajanova (západní Čechy) je jiná: granodioritová deska 60 × 30 × 16 cm s kulovitým drtičem.",
+          "en": "In Urnfield-period Bohemia, grinding slabs are mostly sandstone slabs 3–11 cm thick, and pebbles served mainly as grinders. A completely preserved quern from Tajanov (West Bohemia) is different: a granodiorite slab of 60 × 30 × 16 cm with a ball-shaped grinder."
         }
       }
     ],
     "reconstruction": {
-      "cs": "Klek, předklon a pohyb rukou po spodním kameni jsou rekonstrukce pohybu. Výběr jedné plodiny a rozložení pracoviště také.",
-      "en": "The kneeling posture, forward lean and hand motion over the lower stone are reconstructed, as are the choice of one crop and the layout of the work spot."
+      "cs": "Způsob mletí na Březnici doložen není. Klek u kamene a tah horním kamenem tam a zpět vycházejí z pokusů se zrnotěrkami z jiných období a oblastí (neolitická zrnotěrka v laboratoři, repliky); držení těla, délka tahu a rytmus jsou rekonstrukce. Půdorys spodního kamene zhruba odpovídá kresbě podložky z objektu 12/06; jeho výška a tvar pracovní plochy, horní kámen a jeho úchop, výběr jedné plodiny a rozložení pracoviště jsou rekonstrukce.",
+      "en": "How grain was ground at Březnice is not attested. Kneeling at the stone and moving the upper stone to and fro follow experiments with querns from other periods and regions (a Neolithic quern in the laboratory, replicas); posture, stroke length and rhythm are reconstructed. The outline of the lower stone roughly matches the drawing of the slab from feature 12/06; its height and working surface, the upper stone and its grip, the choice of one crop and the layout of the work spot are reconstructed."
     },
     "unknown": [
       {
-        "cs": "přesný tvar žernovu (sedlový, nebo rotační)",
-        "en": "exact quern form (saddle or rotary)"
+        "cs": "velikost a hornina horního kamene a tloušťka spodního (místní horní kámen se nenašel)",
+        "en": "size and rock of the upper stone and thickness of the lower one (no local upper stone was found)"
       },
       {
         "cs": "kdo mlel",
@@ -78,8 +85,11 @@
       }
     ],
     "sources": [
-      "Šálková et al. 2022, Scientific Reports 12:20323, p. 3",
-      "Chvojka, Kuna et al. 2022, Zenodo 10.5281/zenodo.6475797",
+      "Šálková et al. 2022, Scientific Reports 12:20323, p. 6",
+      "Šálková et al. 2025, Archaeol. Prospect. 32(3):525–548, sections 3.3–3.5",
+      "Šálková 2010, Rostlinné makrozbytky… Březnice, diploma thesis, University of South Bohemia, p. 90, fig. 10",
+      "Jiráň (ed.) 2008, Archeologie pravěkých Čech 5, p. 177",
+      "Struška et al. 2021, PLoS ONE 16(8):e0243669",
       "WORK-001 PROVENANCE.md",
       "research/breznice-workshops.md, section 1"
     ]
