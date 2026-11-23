@@ -6,6 +6,7 @@ const Schema = preload("res://museum/core/schema.gd")
 const Schedule = preload("res://museum/core/schedule.gd")
 const Terrain = preload("res://museum/core/terrain.gd")
 const Catalogue = preload("res://museum/assets/catalogue.gd")
+const ObjectView = preload("res://museum/core/object_view.gd")
 
 const PERIOD_PATH := "res://museum/data/periods/bronze_late.json"
 const VILLAGE_PATH := "res://museum/data/villages/breznice.json"
@@ -42,6 +43,8 @@ static func load_all() -> Dictionary:
 			continue
 		var craft: Dictionary = Schema.load_json(CRAFT_DIR + "%s.json" % homestead.craft)
 		errors.append_array(Schema.validate_craft(craft))
+		if craft.get("card", {}).has("detail"):
+			errors.append_array(ObjectView.validate(craft.card.detail, "craft '%s'" % craft.get("id", "?")))
 		errors.append_array(Schema.validate_animals(homestead.get("animals", []), float(period.day_length_s), str(homestead.id)))
 		var anchors := {
 			"door_inside": Catalogue.anchor(homestead.house.model, "door_inside").pos,

@@ -29,5 +29,10 @@
  "phase.settle": "going to bed",
  "ui.sound": "Sound",
  "ui.sound_note": "The sound is atmosphere (F, fiction): synthetic birds, insects and wind, not a reconstruction of Bronze Age sound.",
- "ui.muted": "Muted"
+ "ui.muted": "Muted",
+ "ui.detail.find": "The find",
+ "ui.detail.model": "The model",
+ "ui.detail.hypothesis": "Hypothesis about the use",
+ "ui.detail.related": "Elsewhere in the museum",
+ "ui.detail.back": "Back"
 }

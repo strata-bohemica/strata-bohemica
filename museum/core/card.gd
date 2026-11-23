@@ -1,6 +1,7 @@
 extends RefCounted
 ## The information card of a craft, as plain data in one language. The UI only draws it.
-##   {title, craft, status, status_label, now, sections: [{kind, heading, items}], footer}
+##   {title, craft, status, status_label, now, sections: [{kind, heading, items}], footer, detail}
+## detail: the label of the button that opens the object viewer (core/object_view.gd), "" when the craft has none.
 ## Section kinds: "evidence" (items: {class, text}), "text" (items: [text]), "list" (items: [text]).
 
 const I18n = preload("res://museum/core/i18n.gd")
@@ -25,7 +26,8 @@ static func build(craft: Dictionary, homestead: Dictionary, lang: String, phase:
 		"status_label": I18n.tr_("ui.status.%s" % card.status, lang),
 		"now": I18n.tr_("phase.%s" % phase, lang) if phase != "" else "",
 		"sections": sections,
-		"footer": I18n.tr_("ui.provisional", lang)}
+		"footer": I18n.tr_("ui.provisional", lang),
+		"detail": I18n.pick(card.detail.button, lang) if card.has("detail") else ""}
 
 ## The card of a house nobody works in yet.
 static func build_pending(homestead: Dictionary, lang: String) -> Dictionary:
