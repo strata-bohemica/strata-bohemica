@@ -1,0 +1,752 @@
+{
+ "EBA-PERSON-001": {
+  "anchors": {
+   "pin_shoulder.L": {
+    "local_rotation_xyzw_gltf": [
+     0.3585,
+     0.6095,
+     0.6095,
+     0.3585
+    ],
+    "local_translation_m_gltf": [
+     0.072,
+     0.1217,
+     0.022
+    ],
+    "parent_bone": "clavicle.L"
+   },
+   "wrist_ornament.L": {
+    "local_rotation_xyzw_gltf": [
+     -0.9962,
+     0.0,
+     -0.0872,
+     0.0
+    ],
+    "local_translation_m_gltf": [
+     0.0,
+     0.215,
+     -0.0
+    ],
+    "parent_bone": "forearm.L"
+   },
+   "wrist_ornament.R": {
+    "local_rotation_xyzw_gltf": [
+     -0.9962,
+     -0.0,
+     0.0872,
+     0.0
+    ],
+    "local_translation_m_gltf": [
+     -0.0,
+     0.215,
+     -0.0
+    ],
+    "parent_bone": "forearm.R"
+   }
+  },
+  "models": [
+   {
+    "anchors": [
+     "wrist_ornament.L",
+     "pin_shoulder.L",
+     "wrist_ornament.R"
+    ],
+    "path": "models/person_eba_a.glb"
+   }
+  ]
+ },
+ "EBA-POTTERY-002": {
+  "models": [
+   {
+    "anchors": {
+     "shelf_spot_1": {
+      "local_rotation_xyzw": [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ],
+      "local_translation": [
+       -0.93,
+       0.04,
+       0.0
+      ],
+      "parent": "drying_shelf_row",
+      "world_position": [
+       -0.93,
+       0.04,
+       0.0
+      ],
+      "world_rotation_xyzw": [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     }
+    },
+    "path": "models/drying_shelf_row.glb"
+   }
+  ]
+ },
+ "FENCE-001": {
+  "models": [
+   {
+    "anchors": {
+     "latch": {
+      "parent": "gate_leaf",
+      "position_m": [
+       0.0,
+       1.0,
+       -0.835
+      ],
+      "yaw_deg": 90.0
+     },
+     "open_stand": {
+      "parent": "gate_hurdle_open",
+      "position_m": [
+       0.62,
+       0.0,
+       0.42
+      ],
+      "yaw_deg": 180.0
+     }
+    },
+    "path": "models/gate_hurdle_open.glb"
+   }
+  ]
+ },
+ "HILL-ADORN-001": {
+  "models": [
+   {
+    "anchors": {
+     "attach_calf_L": {
+      "basis_columns": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "translation_m": [
+       0.03922,
+       0.225,
+       0.11206
+      ]
+     },
+     "attach_calf_R": {
+      "basis_columns": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "translation_m": [
+       -0.03922,
+       0.225,
+       0.11206
+      ]
+     },
+     "attach_spur": {
+      "basis_columns": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "translation_m": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
+    },
+    "path": "models/spur_set_gilt.glb"
+   },
+   {
+    "anchors": {
+     "attach_bronze": {
+      "basis_columns": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "translation_m": [
+       0.0,
+       0.0,
+       0.007
+      ]
+     },
+     "attach_silver": {
+      "basis_columns": [
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        1.0,
+        0.0
+       ],
+       [
+        0.0,
+        0.0,
+        1.0
+       ]
+      ],
+      "translation_m": [
+       0.0,
+       0.0,
+       -0.007
+      ]
+     },
+     "display_bronze": {
+      "basis_columns": [
+       [
+        0.0,
+        0.0,
+        -1.0
+       ],
+       [
+        1.0,
+        0.0,
+        0.0
+       ],
+       [
+        0.0,
+        -1.0,
+        0.0
+       ]
+      ],
+      "translation_m": [
+       -0.00069,
+       -0.00505,
+       0.007
+      ]
+     }
+    },
+    "path": "models/temple_ring_s_small.glb"
+   }
+  ]
+ },
+ "HILL-CRAFT-001": {
+  "models": [
+   {
+    "anchors": {
+     "Bag_L_stick": {
+      "parent": "bellows_pair",
+      "position_m": [
+       -1.14,
+       0.30536,
+       -0.88
+      ],
+      "rotation_xyzw": [
+       0.0,
+       0.0,
+       0.19362,
+       0.98108
+      ]
+     },
+     "bellows_stand": {
+      "parent": "smithy_shed",
+      "position_m": [
+       -1.48,
+       0.012,
+       -0.75
+      ],
+      "rotation_xyzw": [
+       0.0,
+       0.70711,
+       0.0,
+       0.70711
+      ]
+     },
+     "smith_stand": {
+      "parent": "smithy_shed",
+      "position_m": [
+       0.55,
+       0.012,
+       -0.66
+      ],
+      "rotation_xyzw": [
+       0.0,
+       0.0,
+       0.0,
+       1.0
+      ]
+     }
+    },
+    "path": "models/smithy_shed.glb"
+   },
+   {
+    "anchors": {
+     "stack_rake_1": {
+      "parent": "charcoal_stack",
+      "position_m": [
+       1.125,
+       0.0,
+       1.94856
+      ],
+      "rotation_xyzw": [
+       -0.0,
+       -0.96593,
+       -0.0,
+       0.25882
+      ]
+     },
+     "stack_rake_2": {
+      "parent": "charcoal_stack",
+      "position_m": [
+       -1.44627,
+       0.0,
+       1.7236
+      ],
+      "rotation_xyzw": [
+       0.0,
+       0.93969,
+       0.0,
+       0.34202
+      ]
+     }
+    },
+    "path": "models/charcoal_stack.glb"
+   },
+   {
+    "anchors": {
+     "carry_anchor": {
+      "parent": "hand.R",
+      "position_m": [
+       -0.0089,
+       0.94836,
+       0.02789
+      ],
+      "rotation_xyzw": [
+       -0.99803,
+       0.03611,
+       -0.00186,
+       0.05131
+      ]
+     },
+     "hammer_hold": {
+      "parent": "hand.R",
+      "position_m": [
+       -0.24661,
+       0.77425,
+       0.0
+      ],
+      "rotation_xyzw": [
+       -0.15305,
+       -0.69035,
+       0.03084,
+       0.70643
+      ]
+     }
+    },
+    "path": "models/person_craft.glb"
+   }
+  ]
+ },
+ "HILL-INTERVAL-001": {
+  "models": [
+   {
+    "anchors": {
+     "carry_anchor": {
+      "parent": "hand.R"
+     },
+     "hand.R_prop": {
+      "parent": "hand.R"
+     }
+    },
+    "path": "models/person_interval.glb"
+   }
+  ]
+ },
+ "HILL-PERSON-001": {
+  "anchors": {
+   "carry_anchor": {
+    "local_rotation_xyzw_gltf": [
+     0.04663475975394249,
+     0.08431489765644073,
+     -0.05528111010789871,
+     0.9938109517097473
+    ],
+    "local_translation_m_gltf": [
+     0.2235044538974762,
+     -0.1527375727891922,
+     -0.06773355603218079
+    ],
+    "parent_bone": "hand.R",
+    "unchanged_from_r002": true,
+    "valid_in_clips": [
+     "carry_walk"
+    ]
+   },
+   "spur.L": {
+    "godot_node_name": "spur_L",
+    "godot_parent": "BoneAttachment3D (bone foot.L)",
+    "parent_bone": "foot.L",
+    "per_model": {
+     "person_hill_lady": {
+      "bind_pose_position_m_godot": "(0.09, 0.05, -0.083)",
+      "bind_pose_rotation_deg_godot": "(0.000009, 0.0, 0.0)",
+      "children": [],
+      "local_translation_m_gltf": [
+       0,
+       -0.06508,
+       0.05962
+      ]
+     },
+     "person_hill_rider": {
+      "bind_pose_position_m_godot": "(0.09, 0.05, -0.083)",
+      "bind_pose_rotation_deg_godot": "(0.000009, 0.0, 0.0)",
+      "children": [
+       "spur_gilt_L"
+      ],
+      "local_translation_m_gltf": [
+       0,
+       -0.06508,
+       0.05962
+      ]
+     }
+    }
+   },
+   "temple_ring.L": {
+    "godot_node_name": "temple_ring_L",
+    "godot_parent": "BoneAttachment3D (bone head)",
+    "parent_bone": "head",
+    "per_model": {
+     "person_hill_lady": {
+      "bind_pose_position_m_godot": "(0.083349, 1.577689, 0.073711)",
+      "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)",
+      "children": [
+       "temple_rings_L"
+      ],
+      "local_translation_m_gltf": [
+       0.08335,
+       0.07769,
+       0.06871
+      ]
+     },
+     "person_hill_rider": {
+      "bind_pose_position_m_godot": "(0.074734, 1.585, 0.06598)",
+      "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)",
+      "children": [],
+      "local_translation_m_gltf": [
+       0.07473,
+       0.085,
+       0.06098
+      ]
+     }
+    }
+   }
+  },
+  "models": [
+   {
+    "anchors": [
+     "carry_anchor",
+     "temple_ring.L",
+     "spur.L"
+    ],
+    "path": "models/person_hill_rider.glb"
+   },
+   {
+    "anchors": [
+     "carry_anchor",
+     "temple_ring.L",
+     "spur.L"
+    ],
+    "path": "models/person_hill_lady.glb"
+   }
+  ]
+ },
+ "HILL-PIT-001": {
+  "models": [
+   {
+    "anchors": {
+     "dig_spot": {
+      "position_m": [
+       -0.4,
+       -2.4,
+       0.05
+      ],
+      "yaw_deg": -180.0
+     },
+     "floor_center": {
+      "position_m": [
+       0.0,
+       -2.4,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "grain_level": {
+      "position_m": [
+       0.0,
+       -0.915,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "ladder_bottom": {
+      "position_m": [
+       -0.3994,
+       -2.4,
+       0.0
+      ],
+      "yaw_deg": 90.0
+     },
+     "ladder_top": {
+      "position_m": [
+       0.7486,
+       0.004,
+       0.0
+      ],
+      "yaw_deg": 90.0
+     },
+     "lid_grip": {
+      "position_m": [
+       0.0,
+       0.054,
+       0.39
+      ],
+      "yaw_deg": -180.0
+     },
+     "lid_rest": {
+      "position_m": [
+       -0.6928,
+       0.004,
+       0.4
+      ],
+      "yaw_deg": 60.0
+     },
+     "pit_mouth": {
+      "position_m": [
+       0,
+       0,
+       0
+      ],
+      "yaw_deg": 0.0
+     },
+     "sack_spot": {
+      "position_m": [
+       0.62,
+       0.004,
+       -0.74
+      ],
+      "yaw_deg": 0.0
+     },
+     "work_spot_1": {
+      "position_m": [
+       0.0,
+       0.004,
+       0.8
+      ],
+      "yaw_deg": -180.0
+     },
+     "work_spot_2": {
+      "position_m": [
+       0.0,
+       0.004,
+       -0.8
+      ],
+      "yaw_deg": 0.0
+     }
+    },
+    "path": "models/grainpit_deep.glb"
+   }
+  ]
+ },
+ "HILL-RAMPART-001": {
+  "models": [
+   {
+    "anchors": {
+     "causeway_mid": {
+      "pos": [
+       0.0,
+       0.0,
+       -7.45
+      ],
+      "yaw_deg": 0.0
+     },
+     "ditch_floor_mid": {
+      "pos": [
+       -6.5,
+       -1.6121,
+       -7.45
+      ],
+      "yaw_deg": 0.0
+     },
+     "gate_inner": {
+      "pos": [
+       0.0,
+       0.0,
+       9.6
+      ],
+      "yaw_deg": 0.0
+     },
+     "gate_leaf_hinge.L": {
+      "pos": [
+       -1.73,
+       0.0,
+       7.9
+      ],
+      "yaw_deg": 0.0
+     },
+     "gate_leaf_hinge.R": {
+      "pos": [
+       1.73,
+       0.0,
+       7.9
+      ],
+      "yaw_deg": 0.0
+     },
+     "gate_outer": {
+      "pos": [
+       0.0,
+       0.0,
+       -10.6
+      ],
+      "yaw_deg": 0.0
+     },
+     "label_anchor": {
+      "pos": [
+       0.0,
+       4.6,
+       2.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "passage_mid": {
+      "pos": [
+       0.0,
+       0.0,
+       3.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "snap_end": {
+      "pos": [
+       10.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "snap_start": {
+      "pos": [
+       -10.0,
+       0.0,
+       0.0
+      ],
+      "yaw_deg": 0.0
+     },
+     "walk_access": {
+      "pos": [
+       -7.4857,
+       0.0,
+       2.25
+      ],
+      "yaw_deg": 0.0
+     },
+     "walk_access_2": {
+      "pos": [
+       7.4857,
+       0.0,
+       2.25
+      ],
+      "yaw_deg": 0.0
+     },
+     "walk_post_1": {
+      "pos": [
+       -2.65,
+       2.6,
+       3.6
+      ],
+      "yaw_deg": 90.0
+     },
+     "walk_post_2": {
+      "pos": [
+       0.0,
+       2.6,
+       7.3
+      ],
+      "yaw_deg": -180.0
+     },
+     "walk_post_3": {
+      "pos": [
+       2.65,
+       2.6,
+       3.6
+      ],
+      "yaw_deg": -90.0
+     }
+    },
+    "path": "models/gate_pincer.glb"
+   }
+  ]
+ },
+ "ROM-POTTERY-001": {
+  "models": [
+   {
+    "anchors": {
+     "base": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "rim_center": [
+      0.0,
+      0.11,
+      0.0
+     ]
+    },
+    "path": "models/terrine_fine.glb"
+   }
+  ]
+ }
+}

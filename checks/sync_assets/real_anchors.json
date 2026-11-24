@@ -1,0 +1,535 @@
+{
+ "pos:local_translation": {
+  "model": "drying_shelf_row",
+  "name": "shelf_spot_1",
+  "raw": {
+   "local_rotation_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "local_translation": [
+    -0.93,
+    0.04,
+    0.0
+   ],
+   "parent": "drying_shelf_row",
+   "world_position": [
+    -0.93,
+    0.04,
+    0.0
+   ],
+   "world_rotation_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ]
+  },
+  "source": "eba-batch1/EBA-POTTERY-002/r001"
+ },
+ "pos:local_translation_m": {
+  "model": "person_churchday",
+  "name": "child_hand.L",
+  "raw": {
+   "local_translation_m": [
+    -0.02,
+    0.075,
+    0.0
+   ],
+   "new": true,
+   "parent": "hand.L"
+  },
+  "source": "early-state-batch2/STATE-CHURCHDAY-001/r001"
+ },
+ "pos:local_translation_m_gltf": {
+  "model": "person_poultry",
+  "name": "grip.R",
+  "raw": {
+   "local_translation_m_gltf": [
+    0.0118,
+    0.1,
+    -0.0021
+   ],
+   "node": "grip.R",
+   "parent_bone": "hand.R",
+   "use": "new hand.R prop node: basket handle (basket_carry), switch grip (switch_grip), hen flank"
+  },
+  "source": "medieval-batch1/MED-POULTRY-001/r001"
+ },
+ "pos:model_position_m": {
+  "model": "adze_hafted",
+  "name": "edge_point",
+  "raw": {
+   "axis_y": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "axis_z": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "model_position_m": [
+    0.1045,
+    0.025,
+    0.2685
+   ],
+   "parent": "adze_hafted",
+   "use": "centre of the cutting edge (contact point)."
+  },
+  "source": "neolithic-batch1/NEO-TIMBER-001/r001"
+ },
+ "pos:pos": {
+  "model": "antler_stock",
+  "name": "take_spot",
+  "raw": {
+   "pos": [
+    0.0,
+    0.0,
+    0.75
+   ],
+   "yaw_deg": -180.0
+  },
+  "source": "eneolithic-batch1/ENE-HUNT-001/r001"
+ },
+ "pos:pos_m": {
+  "model": "churchyard_rows",
+  "name": "grave_slot_001",
+  "raw": {
+   "pos_m": [
+    -9.735616,
+    0.0,
+    -7.594411
+   ],
+   "yaw_deg": -18.722
+  },
+  "source": "early-state-batch1/STATE-BURIAL-001/r001"
+ },
+ "pos:pos_rest_m": {
+  "model": "person_churchday",
+  "name": "carry_anchor",
+  "raw": {
+   "parent": "hand.R",
+   "pos_rest_m": [
+    -0.0089,
+    0.9484,
+    0.0279
+   ]
+  },
+  "source": "early-state-batch2/STATE-CHURCHDAY-001/r001"
+ },
+ "pos:pos_world": {
+  "model": "firing_props",
+  "name": "ember_rake/grip",
+  "raw": {
+   "pos_world": [
+    0.69158,
+    0.0048,
+    0.08
+   ],
+   "rot_world_xyzw": [
+    -0.07807,
+    -0.23626,
+    0.937179,
+    0.244505
+   ]
+  },
+  "source": "eneolithic-batch2/ENE-FIRING-001/r001"
+ },
+ "pos:position": {
+  "model": "bank",
+  "name": "water_touch",
+  "raw": {
+   "note": "FUTURE animation target on the water surface (measured depth below it 0.019 m); current standing collect animation does not reach it; manager owns a suitable collection pose",
+   "position": [
+    0.0,
+    -0.08,
+    0.8
+   ]
+  },
+  "source": "bronze-bohemia-opus-v2/WATER-001/r001"
+ },
+ "pos:position_m": {
+  "model": "display_board",
+  "name": "item.amber_beads",
+  "raw": {
+   "node": "item.amber_beads",
+   "position_m": [
+    0.21,
+    0.058,
+    -0.05
+   ]
+  },
+  "source": "early-state-batch1/STATE-ADORN-001/r001"
+ },
+ "pos:position_m_rest": {
+  "model": "anvil_spike_small",
+  "name": "spike_top",
+  "raw": {
+   "parent": "anvil_spike_small",
+   "position_m_rest": [
+    0.0,
+    0.4575,
+    0.0
+   ],
+   "use": "top face of the small spike anvil (local)"
+  },
+  "source": "latene-batch2/LT-SMITH-001/r001"
+ },
+ "pos:rest_position": {
+  "model": "bench_plank",
+  "name": "label_anchor",
+  "raw": {
+   "parent": "bench_plank",
+   "rest_position": [
+    0.0,
+    0.8,
+    0.0
+   ]
+  },
+  "source": "medieval-batch2/MED-TEXTILE-001/r001"
+ },
+ "pos:rest_position_m": {
+  "model": "antler_retoucher",
+  "name": "grip",
+  "raw": {
+   "parent": "antler_retoucher",
+   "rest_position_m": [
+    0.0,
+    0.0095,
+    0.0
+   ]
+  },
+  "source": "final-eneolithic-batch1/FEN-TOOLKIT-001/r001"
+ },
+ "pos:rest_position_m_gltf": {
+  "model": "poultry_props",
+  "name": "perch_point",
+  "raw": {
+   "node": "perch_point",
+   "parent": "hen_house",
+   "rest_position_m_gltf": [
+    0.0,
+    0.8775,
+    -0.06
+   ],
+   "use": "roost bar inside the hen-house (hen/cock `roost` clip stands here; feet on the bar)"
+  },
+  "source": "medieval-batch1/MED-POULTRY-001/r001"
+ },
+ "pos:rest_scene_origin_m_godot": {
+  "model": "person_groom",
+  "name": "bead_string",
+  "raw": {
+   "parent_bone_or_node": "chest",
+   "rest_scene_origin_m_godot": [
+    0.056,
+    1.375,
+    0.11265
+   ]
+  },
+  "source": "migration-period-batch2/MIG-GROOM-001/r001"
+ },
+ "pos:rest_translation": {
+  "model": "person_build",
+  "name": "wedge_placed",
+  "raw": {
+   "note": "world-placed animated work prop (scale 1e-4 when hidden)",
+   "parent": "PERSON_rig",
+   "rest_translation": [
+    0.0,
+    0.06,
+    0.34
+   ]
+  },
+  "source": "eneolithic-batch2/ENE-BUILD-001/r001"
+ },
+ "pos:rest_translation_m": {
+  "model": "break_board",
+  "name": "seat_origin",
+  "raw": {
+   "parent": "break_board",
+   "rest_rotation_xyzw": [
+    0.0,
+    -0.707107,
+    0.0,
+    0.707107
+   ],
+   "rest_translation_m": [
+    -0.3,
+    0.0,
+    0.15
+   ],
+   "role": "seated cord twister root on the break_board (person faces the log's -X side)"
+  },
+  "source": "neolithic-batch2/NEO-TEXTILE-001/r001"
+ },
+ "pos:rest_world_position": {
+  "model": "hen",
+  "name": "beak_tip",
+  "raw": {
+   "parent": "head",
+   "purpose": "exported node on bone 'head' at the beak tip (peck target / food point); Godot path <kind>_rig/Skeleton3D/head/beak_tip",
+   "rest_world_position": [
+    -0.0,
+    0.3,
+    0.183
+   ]
+  },
+  "source": "slavic-batch1/SLAV-HEN-001/r001"
+ },
+ "pos:rest_world_position_m": {
+  "model": "horse_mare",
+  "name": "label_anchor",
+  "raw": {
+   "parent": "mare_rig",
+   "rest_world_position_m": [
+    0.0,
+    2.0091,
+    0.2652
+   ]
+  },
+  "source": "medieval-batch1/MED-HORSE-001/r001"
+ },
+ "pos:rest_world_translation_m": {
+  "model": "weaving_sword_iron",
+  "name": "blade_shoulder",
+  "raw": {
+   "parent": "WEAVING_SWORD_IRON",
+   "rest_world_translation_m": [
+    0.0805,
+    0.0,
+    0.0
+   ]
+  },
+  "source": "migration-period-batch1/MIG-TEXTILE-001/r001"
+ },
+ "pos:translation": {
+  "model": "quern",
+  "name": "grain_patch_spot",
+  "raw": {
+   "parent": "QUERN",
+   "rotation_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "translation": [
+    0.0,
+    0.0,
+    0.43
+   ]
+  },
+  "source": "bronze-bohemia-opus-v2/WORK-001/r001"
+ },
+ "pos:translation_m": {
+  "model": "antler_mattock",
+  "name": "edge_mid",
+  "raw": {
+   "note": "bevelled working edge",
+   "rotation_xyzw": [
+    0.0,
+    0.0,
+    0.01065,
+    0.99994
+   ],
+   "translation_m": [
+    0.36596,
+    0.03285,
+    0.14027
+   ]
+  },
+  "source": "eba-batch1/EBA-TOOLKIT-001/r001"
+ },
+ "pos:translation_rest_m": {
+  "model": "bone_smoother",
+  "name": "grip",
+  "raw": {
+   "parent": "BONE_SMOOTHER",
+   "rotation_identity": true,
+   "translation_rest_m": [
+    -0.03,
+    0.0045,
+    0.0
+   ]
+  },
+  "source": "hallstatt-batch1/HAL-POTTERY-002/r001"
+ },
+ "pos:translation_rest_world": {
+  "model": "bucket_stave",
+  "name": "bail_grip",
+  "raw": {
+   "facing_plusZ_world": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "parent": "bucket_stave_root",
+   "translation_rest_world": [
+    0.0,
+    0.44,
+    0.0
+   ]
+  },
+  "source": "latene-batch2/LT-WOODWORK-001/r001"
+ },
+ "pos:translation_world": {
+  "model": "kiln_2chamber",
+  "name": "kiln_center",
+  "raw": {
+   "note": "grate top centre (y = -0.12); place kiln_load_set here",
+   "parent": "KILN_2CHAMBER",
+   "plus_z_world": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "rotation_xyzw": [
+    0.0,
+    0.0,
+    0.0,
+    1.0
+   ],
+   "translation_world": [
+    0.0,
+    -0.12,
+    0.0
+   ]
+  },
+  "source": "latene-batch2/LT-KILN-001/r001"
+ },
+ "pos:translation_world_rest_m": {
+  "model": "girdle_leather",
+  "name": "label_anchor",
+  "raw": {
+   "parent": "attach_point.belt_front",
+   "translation_world_rest_m": [
+    0.0,
+    1.198,
+    0.226
+   ]
+  },
+  "source": "medieval-batch2/MED-DRESSACC-001/r001"
+ },
+ "pos:world_translation_m": {
+  "model": "longhouse_21m_build",
+  "name": "label_anchor",
+  "raw": {
+   "parent": "longhouse_21m_build",
+   "world_translation_m": [
+    0.0,
+    6.744,
+    0.0
+   ]
+  },
+  "source": "eba-batch2/EBA-BUILD-001/r001"
+ },
+ "pos:xyz": {
+  "model": "terrain_base",
+  "name": "brook_ford",
+  "raw": {
+   "xyz": [
+    -21.07585,
+    -5.99577,
+    90.82506
+   ],
+   "yaw_deg": 101.33
+  },
+  "source": "eba-batch1/LAND-001/r001"
+ },
+ "yaw:godot_yaw_deg_about_plusY": {
+  "model": "firing_burning",
+  "name": "fuel_input",
+  "raw": {
+   "forward_plusZ_world": [
+    -0.62,
+    0.0,
+    0.784
+   ],
+   "godot_yaw_deg_about_plusY": -38.333,
+   "parent": "FIRING_BURNING",
+   "translation": [
+    -0.34,
+    0.12,
+    0.43
+   ]
+  },
+  "source": "economy-batch4/FIRING-001/r001"
+ },
+ "yaw:yaw_deg": {
+  "model": "churchyard_rows",
+  "name": "grave_slot_001",
+  "raw": {
+   "pos_m": [
+    -9.735616,
+    0.0,
+    -7.594411
+   ],
+   "yaw_deg": -18.722
+  },
+  "source": "early-state-batch1/STATE-BURIAL-001/r001"
+ },
+ "yaw:yaw_deg_about_plusY": {
+  "model": "hearth_base",
+  "name": "firewood_spot",
+  "raw": {
+   "parent": "HEARTH_BASE",
+   "rotation_xyzw": [
+    0.0,
+    0.70711,
+    0.0,
+    0.70711
+   ],
+   "translation": [
+    -1.0,
+    0.0,
+    0.3
+   ],
+   "yaw_deg_about_plusY": 90.0
+  },
+  "source": "bronze-bohemia-v3/KILN-001/r001"
+ },
+ "yaw:yaw_deg_local_+Z": {
+  "model": "posthouse_13x6",
+  "name": "entry",
+  "raw": {
+   "position": [
+    2.4375,
+    0.0,
+    3.75
+   ],
+   "yaw_deg_local_+Z": -180.0
+  },
+  "source": "hallstatt-batch1/HAL-HOUSE-002/r001"
+ },
+ "yaw:yaw_deg_local_plusZ": {
+  "model": "spur_ditch_open",
+  "name": "entrance_1",
+  "raw": {
+   "position_m": [
+    -15.9159,
+    0.0,
+    -1.4185
+   ],
+   "yaw_deg_local_plusZ": -10.19
+  },
+  "source": "eba-batch1/EBA-ENCLOSURE-001/r001"
+ },
+ "yaw:yaw_deg_of_plus_z": {
+  "model": "desert_field_terrace_forest_relics",
+  "name": "tree_cluster_01",
+  "raw": {
+   "pos_m": [
+    -3.0,
+    1.003,
+    -3.5
+   ],
+   "yaw_deg_of_plus_z": 60.0
+  },
+  "source": "medieval-batch1/MED-DESERT-001/r001"
+ }
+}

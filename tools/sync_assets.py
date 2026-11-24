@@ -1,20 +1,68 @@
 #!/usr/bin/env python3
 """Copy the museum's factory assets into assets/ and write museum/data/assets.json.
 
-usage: tools/sync_assets.py FACTORY_RETURNS_DIR [--dry-run]
+usage: tools/sync_assets.py FACTORY_RETURNS_DIR [--dry-run | --check-anchors]
+  --dry-run        copy nothing, write nothing
+  --check-anchors  only normalise the anchors of every asset.json under FACTORY_RETURNS_DIR (all revisions, no models
+                   or manifest needed) and print the anchors that could not be converted
 
 Reads museum/data/asset_manifest.json. For each "pack/ID" the newest revision is copied to assets/<ID>/<rev>/
 (models, asset.json, PROVENANCE.md, Godot .import files with paths rewritten); a manifest entry may list the models to copy. The generated assets.json holds,
-per model, the GLB path, animation names with durations and the anchors listed in the asset's own asset.json.
+per model, the GLB path, animation names with durations and the anchors listed in the asset's own asset.json,
+normalised by tools/anchors.py to translation + yaw_deg_about_plusY. Every anchor that is not converted (or only
+partly: attached to a bone, borrowed, guessed key) is logged as "anchor <level> ASSET/model/anchor: text"; an anchor
+with neither position nor parent is an error: it is left out and the exit status is 1 (not with --dry-run).
 """
-import json, os, re, shutil, struct, sys
+import glob, json, os, re, shutil, struct, sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import anchors as anc
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 DRY = '--dry-run' in sys.argv
+CHECK = '--check-anchors' in sys.argv
 if not args:
     sys.exit(__doc__)
 SRC = os.path.abspath(args[0])
+ERRORS = []
+
+
+def log_anchors(label, entries):
+    for level, name, text in entries:
+        print('anchor %-13s %s/%s: %s' % (level, label, name, text))
+        if level == 'error':
+            ERRORS.append('%s/%s' % (label, name))
+
+
+def borrow_carry(aid):
+    """Raw carry_anchor of the epoch's PERSON-001 (HILL-INTERVAL-001 takes it from HILL-PERSON-001), newest revision."""
+    prefix = aid.split('-')[0]
+    if aid == prefix + '-PERSON-001':
+        return None
+    hits = sorted(glob.glob(os.path.join(SRC, '*', prefix + '-PERSON-001', 'r*', 'asset.json')))
+    return anc.carry_anchor_of(json.load(open(hits[-1]))) if hits else None
+
+
+def check_anchors():
+    files = sorted(glob.glob(os.path.join(SRC, '**', 'asset.json'), recursive=True))
+    n_models = n_anchors = 0
+    for f in files:
+        d = json.load(open(f))
+        parts = os.path.relpath(f, SRC).split(os.sep)
+        aid, rev = parts[-3], parts[-2]
+        carry = borrow_carry(aid)
+        for m in anc.models_of(d):
+            out, log = anc.normalize_model_anchors(d, m, carry)
+            n_models += 1
+            n_anchors += len(out)
+            log_anchors('%s/%s/%s' % (aid, rev, anc.model_stem(m)), log)
+    print('%d asset.json, %d models, %d anchors converted, %d errors' % (len(files), n_models, n_anchors, len(ERRORS)))
+
+
+if CHECK:
+    check_anchors()
+    sys.exit(0)
 manifest = json.load(open(os.path.join(ROOT, 'museum/data/asset_manifest.json')))
 
 
@@ -47,7 +95,11 @@ for entry in manifest['assets']:
     old_prefix = 'res://art/returns/%s/%s/' % (rel, rev)
     new_prefix = 'res://assets/%s/%s/' % (aid, rev)
     asset_json = json.load(open(os.path.join(src_rev_dir, 'asset.json')))
-    anchors_by_file = {os.path.basename(m['file']): m.get('anchors', {}) for m in asset_json.get('models', [])}
+    carry = borrow_carry(aid)
+    anchors_by_stem = {}
+    for m in anc.models_of(asset_json):
+        anchors_by_stem[anc.model_stem(m)], log = anc.normalize_model_anchors(asset_json, m, carry)
+        log_anchors('%s/%s/%s' % (aid, rev, anc.model_stem(m)), log)
     models = {}
     for dirpath, dirs, files in os.walk(src_rev_dir):
         dirs[:] = [d for d in dirs if d not in ('source', 'checks', 'previews', 'inputs', 'fixtures', 'review', 'renders', 'tmp', 'hosts')]
@@ -69,9 +121,11 @@ for entry in manifest['assets']:
             if f.endswith('.glb'):
                 j = glb_json(p)
                 models[f[:-4]] = dict(file='%s/%s/%s' % (aid, rev, r.replace(os.sep, '/')), animations=clip_lengths(j),
-                                      anchors={k: dict(translation=v.get('translation'), yaw_deg=v.get('yaw_deg_about_plusY', 0.0)) for k, v in anchors_by_file.get(f, {}).items()})
+                                      anchors=anchors_by_stem.get(f[:-4], {}))
     catalogue[aid] = dict(source=rel, rev=rev, models=models)
     print('%-12s %s  %2d models' % (aid, rev, len(models)))
 if not DRY:
     json.dump(catalogue, open(os.path.join(ROOT, 'museum/data/assets.json'), 'w'), indent=1, ensure_ascii=False)
     print('wrote museum/data/assets.json')
+if ERRORS and not DRY:
+    sys.exit("%d anchors with neither position nor parent (see \"anchor error\" lines)" % len(ERRORS))

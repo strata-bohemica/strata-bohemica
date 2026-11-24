@@ -285,6 +285,31 @@ Not measured: wasm or phone CPU, battery, decode time of real recordings, the co
 and regenerates `data/assets.json`. `tools/import_settings.py` then sets the import options the models need
 (`gltf/naming_version=2`, textures kept inside the scene, animation optimizer off); the generated `.import` files are committed, the PNGs Godot would extract are not.
 
+### Anchors in `data/assets.json` (SB-095)
+
+The factory returns spell anchors in dozens of shapes. `tools/anchors.py` (used by `sync_assets.py`) turns every one into
+`{translation: [x,y,z], yaw_deg_about_plusY, yaw_deg}` (`yaw_deg` repeats the yaw for `catalogue.gd`), plus `parent` when the
+source names one:
+- model key `path` or `file`; `anchors` as a dict, as a list of names (defined in the asset's top-level `anchors`, the PERSON kits)
+  or bare `[x,y,z]`;
+- position, first key found: `translation`, `translation_m`, `position`, `position_m`, `pos`, `pos_m`, `xyz`, then the parent-local keys
+  (`local_translation*`), the `rest_*` keys, then the world keys (`rest_world_position`, `world_position`, `world_translation*`, ...).
+  Local keys win over world keys. A key not on the list that still looks like a position is used and logged as `heuristic`;
+- yaw: `yaw_deg_about_plusY`, `godot_yaw_deg_about_plusY`, `yaw_deg`, `yaw_deg_of_plus_z`, `yaw_deg_local_*`; else the heading of
+  `rotation_xyzw` / `local_rotation_xyzw[_gltf]` / ..., of the Z column of `basis_columns`, of `bind_pose_rotation_deg_godot`, of a
+  facing vector (`forward_*`, `facing_*`, `z_axis`); else 0;
+- shared PERSON anchors: the entry for the model (`per_model[stem]`, `<stem>`, `all_models`, `silhouette_<x>`, longest prefix);
+  with none, a sibling model's entry (logged `heuristic`);
+- an anchor with only a parent (bone, node, host) becomes `parent` + `translation` [0,0,0] + `bone_attached: true`
+  (logged `bone_attached`). `carry_anchor` of a model that only names its parent is taken from the epoch's `<EPOCH>-PERSON-001`
+  (logged `borrowed`; HILL-INTERVAL-001);
+- an anchor with neither position nor parent is logged `anchor error ASSET/rev/model/name` and left out; the sync then exits 1
+  (not with `--dry-run`).
+
+`tools/sync_assets.py FACTORY_RETURNS_DIR --check-anchors` normalises every `asset.json` under the directory (all revisions, no
+models needed), prints one `anchor <level> ...` line per unconverted anchor and a count, and always exits 0. Test:
+`checks/museum_village/run.sh sync_assets` (Python, `checks/sync_assets/`; real anchors from the returns as fixtures).
+
 ## Evidence
 
 The card is built from the craft's data (`museum/data/crafts/*.json`): an E/R/F status, evidence entries each with their own class,
