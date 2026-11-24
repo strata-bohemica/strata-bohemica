@@ -74,7 +74,7 @@ func _schedule_on(start: Vector2, dir: Vector2) -> Schedule:
 	return Schedule.new(all.period, info.craft, homestead, anchors, info.durations, Loader._ground_fn(village, terrain, 1))
 
 func Schema_load(id: int) -> Dictionary:
-	return JSON.parse_string(FileAccess.get_file_as_string("res://museum/data/homesteads/hs-%02d.json" % id))
+	return JSON.parse_string(FileAccess.get_file_as_string(Fixture.Loader.homestead_path("bronze_late", "hs-%02d" % id)))
 
 ## The steepest 14 m line (up to MAX_FIELD_SLOPE) that fits in the disc: start (world x, z) and the up-slope direction.
 func _steepest() -> Array:

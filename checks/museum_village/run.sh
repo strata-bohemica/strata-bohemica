@@ -18,7 +18,7 @@ cd "$here"
 "$godot" --headless --path . --import --quit >/dev/null 2>&1      # first pass extracts the model textures
 "$godot" --headless --path . --import --quit >/dev/null 2>&1      # second pass: scenes pick them up
 tests=("$@")
-if (( ${#tests[@]} == 0 )); then tests=(sync_assets core data terrain boundary view plough_team ui sound ambient camera object_view weather lighting); fi
+if (( ${#tests[@]} == 0 )); then tests=(sync_assets core epoch data terrain boundary view plough_team ui sound ambient camera object_view weather lighting); fi
 status=0
 for name in "${tests[@]}"; do
   if [[ "$name" == "sync_assets" ]]; then

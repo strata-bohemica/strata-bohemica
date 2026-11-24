@@ -75,6 +75,8 @@ func _ready() -> void:
 	world = Loader.load_all()
 	for e in world.errors:
 		push_error(e)
+	if not world.loaded:       # an epoch that cannot be loaded leaves the empty scene and its error in the log
+		return
 	period = world.period
 	lang = I18n.default_lang()
 	focus_ids = world.occupied.keys()
@@ -334,6 +336,8 @@ func _name_of(id: int) -> String:
 # ---- per frame ----------------------------------------------------------------------------------------------
 
 func _process(delta: float) -> void:
+	if not world.get("loaded", false):
+		return
 	if not paused:
 		t += delta * speed
 	_pan_keys(delta)
@@ -411,6 +415,8 @@ func pick_at(screen_pos: Vector2) -> int:
 	return Picking.pick(village.pick_targets(), camera.project_ray_origin(screen_pos), camera.project_ray_normal(screen_pos))
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not world.get("loaded", false):
+		return
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.keycode:
 			KEY_SPACE: paused = not paused

@@ -139,7 +139,7 @@ func _init() -> void:
 # illustrative (BREZ-002: no local evidence of the gesture; the clip is slower than the filmed experiments ST21 and D19), and cites both.
 func _grinding_card(t) -> void:
 	const Schema = preload("res://museum/core/schema.gd")
-	var card: Dictionary = Schema.load_json("res://museum/data/crafts/grinding.json").card
+	var card: Dictionary = Schema.load_json(Fixture.Loader.craft_path("bronze_late", "grinding")).card
 	t.ok(str(card.reconstruction.cs).contains("Způsob mletí na Březnici doložen není"), "grinding (cs): the gesture is not attested at Březnice")
 	t.ok(str(card.reconstruction.en).contains("How grain was ground at Březnice is not attested"), "grinding (en): the gesture is not attested at Březnice")
 	t.ok(str(card.reconstruction.cs).contains("Tempo animace je jen ukázkové"), "grinding (cs): the pace is only illustrative")
@@ -321,7 +321,7 @@ func _furrows(t, all: Dictionary) -> void:
 			t.ok(v >= FURROW_RANGES[key][0] and v <= FURROW_RANGES[key][1], "field %d: %s %.3f is inside the experiment's range" % [i, key, v])
 		t.ok(absf(Vector2(d.fields[i].dir[0], d.fields[i].dir[1]).length() - 1.0) < 1e-3, "field %d: the furrow direction is a unit vector" % i)
 	_furrow_irregularity(t, d, n, all)
-	var ploughing: Dictionary = Schema.load_json("res://museum/data/crafts/ploughing.json")
+	var ploughing: Dictionary = Schema.load_json(Fixture.Loader.craft_path("bronze_late", "ploughing"))
 	var cited := false
 	for s in ploughing.card.sources:
 		cited = cited or str(s).contains("Kováčik") or str(s).contains("Kováčik")
@@ -585,8 +585,8 @@ static func pottery_bowl_problems(craft: Dictionary, durations: Dictionary, seg_
 func _pottery(t, all: Dictionary) -> void:
 	const Schema = preload("res://museum/core/schema.gd")
 	const CraftTimeline = preload("res://museum/core/craft_timeline.gd")
-	var craft: Dictionary = Schema.load_json("res://museum/data/crafts/pottery.json")
-	var hs: Dictionary = Schema.load_json("res://museum/data/homesteads/hs-11.json")
+	var craft: Dictionary = Schema.load_json(Fixture.Loader.craft_path("bronze_late", "pottery"))
+	var hs: Dictionary = Schema.load_json(Fixture.Loader.homestead_path("bronze_late", "hs-11"))
 	t.eq(str(hs.craft), "pottery", "hs-11 forms pottery")
 	t.eq(hs.name, {"cs": "Hrnčířka", "en": "The potter"}, "hs-11 keeps its name")
 	t.ok(not hs.has("pending"), "hs-11 no longer carries the old pending text")

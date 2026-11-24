@@ -2,8 +2,8 @@ extends RefCounted
 ## The same world the main scene builds: period, village, terrain, and one schedule per occupied homestead.
 const Loader = preload("res://museum/app/village_loader.gd")
 
-static func load_all() -> Dictionary:
-	return Loader.load_all()
+static func load_all(epoch_id: String = "") -> Dictionary:
+	return Loader.load_all(epoch_id)
 
 ## House-frame point -> world point for a village house record.
 static func house_to_world(house: Dictionary, terrain, local: Vector3) -> Vector3:
@@ -86,11 +86,12 @@ static func seg_poly_dist(a: Vector2, b: Vector2, poly: PackedVector2Array) -> f
 		d = minf(d, minf(Geometry2D.get_closest_point_to_segment(c, a, b).distance_to(c), Geometry2D.get_closest_point_to_segment(e, a, b).distance_to(e)))
 	return d
 
-## Every homestead file, staffed or not: house id -> homestead dictionary.
-static func all_homesteads() -> Dictionary:
+## Every homestead file of an epoch, staffed or not: house id -> homestead dictionary.
+static func all_homesteads(epoch_id: String = "bronze_late") -> Dictionary:
 	var out := {}
-	for file in DirAccess.get_files_at("res://museum/data/homesteads/"):
+	var dir := Loader.homestead_path(epoch_id, "").get_base_dir() + "/"
+	for file in DirAccess.get_files_at(dir):
 		if file.ends_with(".json"):
-			var d: Dictionary = Schema.load_json("res://museum/data/homesteads/" + file)
+			var d: Dictionary = Schema.load_json(dir + file)
 			out[int(str(d.id).substr(3))] = d
 	return out
