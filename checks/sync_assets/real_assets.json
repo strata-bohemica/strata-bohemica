@@ -748,5 +748,630 @@
     "path": "models/terrine_fine.glb"
    }
   ]
+ },
+ "LT-PERSON-001": {
+  "models": [
+   {
+    "path": "models/person_lt_a.glb",
+    "silhouette": "trousered (tunic, trousers with leg bindings, cloak pinned at the right shoulder)",
+    "anchors": [
+     "brooch_shoulder.R"
+    ]
+   },
+   {
+    "path": "models/person_lt_b.glb",
+    "silhouette": "long dress (ankle-length dress pinned at both shoulders, shawl)",
+    "anchors": [
+     "brooch_shoulder.R"
+    ]
+   },
+   {
+    "path": "models/person_lt_c.glb",
+    "silhouette": "trousered (tunic, trousers with leg bindings, cloak pinned at the right shoulder)",
+    "anchors": [
+     "brooch_shoulder.R"
+    ]
+   },
+   {
+    "path": "models/person_lt_d.glb",
+    "silhouette": "long dress (ankle-length dress pinned at both shoulders, shawl)",
+    "anchors": [
+     "brooch_shoulder.R"
+    ]
+   }
+  ],
+  "anchors": {
+   "brooch_shoulder.R": {
+    "use": "cloak brooch (a) / right dress brooch (b)",
+    "silhouette_a": {
+     "parent_bone": "clavicle.R",
+     "local_translation_m_gltf": [
+      -0.10018,
+      0.09457,
+      0.048
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.51636,
+      -0.48308,
+      -0.48308,
+      0.51636
+     ],
+     "bind_pose_position_m_godot": "(-0.121025, 1.418, 0.103664)",
+     "bind_pose_rotation_deg_godot": "(-0.0, -0.000014, 0.000005)"
+    },
+    "silhouette_b": {
+     "parent_bone": "clavicle.R",
+     "local_translation_m_gltf": [
+      -0.09446,
+      0.03379,
+      0.055
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.51636,
+      -0.48308,
+      -0.48308,
+      0.51636
+     ],
+     "bind_pose_position_m_godot": "(-0.06, 1.425, 0.102)",
+     "bind_pose_rotation_deg_godot": "(-0.0, -0.000014, 0.000005)"
+    },
+    "godot_node_name": "brooch_shoulder_R",
+    "godot_parent": "BoneAttachment3D (bone clavicle.R)"
+   }
+  }
+ },
+ "SLAV-PERSON-001": {
+  "models": [
+   {
+    "path": "models/person_slav_a.glb",
+    "silhouette": "shirt and leg-wraps (knee-length long-sleeved shirt-tunic, narrow leather belt, knife in a sheath, trousers wrapped below the knee, turnshoes; cropped hair, beard cell)",
+    "anchors": [
+     "hair_ornament.L"
+    ]
+   },
+   {
+    "path": "models/person_slav_b.glb",
+    "silhouette": "long shirt-dress (ankle-length long-sleeved belted shirt-dress, wrapped head-cloth tied at the nape, braid, turnshoes)",
+    "anchors": [
+     "hair_ornament.L"
+    ]
+   },
+   {
+    "path": "models/person_slav_c.glb",
+    "silhouette": "shirt and leg-wraps (knee-length long-sleeved shirt-tunic, narrow leather belt, knife in a sheath, trousers wrapped below the knee, turnshoes; cropped hair, beard cell)",
+    "anchors": [
+     "hair_ornament.L"
+    ]
+   },
+   {
+    "path": "models/person_slav_d.glb",
+    "silhouette": "long shirt-dress (ankle-length long-sleeved belted shirt-dress, wrapped head-cloth tied at the nape, braid, turnshoes)",
+    "anchors": [
+     "hair_ornament.L"
+    ]
+   }
+  ],
+  "anchors": {
+   "hair_ornament.L": {
+    "use": "hair spiral at the temple (SLAV-ADORN-001)",
+    "silhouette_a": {
+     "parent_bone": "head",
+     "local_translation_m_gltf": [
+      0.07536,
+      0.1,
+      0.06481
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.0,
+      0,
+      0,
+      1
+     ],
+     "bind_pose_position_m_godot": "(0.075362, 1.6, 0.06981)",
+     "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)"
+    },
+    "silhouette_b": {
+     "parent_bone": "head",
+     "local_translation_m_gltf": [
+      0.08059,
+      0.112,
+      0.06866
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.0,
+      0,
+      0,
+      1
+     ],
+     "bind_pose_position_m_godot": "(0.080588, 1.612, 0.073663)",
+     "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)"
+    },
+    "godot_node_name": "hair_ornament_L",
+    "godot_parent": "BoneAttachment3D (bone head)"
+   }
+  }
+ },
+ "MED-PERSON-001": {
+  "models": [
+   {
+    "path": "models/person_med_a.glb",
+    "silhouette": "tunic and hose (knee-length wool tunic, long sleeves slightly wide at the cuff, girdled and pouched over a leather girdle; close hose; low leather shoes with a slight point; bobbed hair to the ears, short beard)",
+    "anchors": [
+     "belt_front"
+    ]
+   },
+   {
+    "path": "models/person_med_b.glb",
+    "silhouette": "gown and veil (ankle-length girdled gown with long fitted sleeves; linen veil over the head falling to the shoulders; hose; low leather shoes; hair and two braids under the veil, shown by veil_off)",
+    "anchors": [
+     "belt_front"
+    ]
+   },
+   {
+    "path": "models/person_med_c.glb",
+    "silhouette": "tunic and hose (knee-length wool tunic, long sleeves slightly wide at the cuff, girdled and pouched over a leather girdle; close hose; low leather shoes with a slight point; bobbed hair to the ears, short beard)",
+    "anchors": [
+     "belt_front"
+    ]
+   },
+   {
+    "path": "models/person_med_d.glb",
+    "silhouette": "gown and veil (ankle-length girdled gown with long fitted sleeves; linen veil over the head falling to the shoulders; hose; low leather shoes; hair and two braids under the veil, shown by veil_off)",
+    "anchors": [
+     "belt_front"
+    ]
+   }
+  ],
+  "anchors": {
+   "belt_front": {
+    "use": "purse (MED-DRESSACC-001, MED-EXCHANGE-001); on the girdle surface at the front",
+    "silhouette_a": {
+     "parent_bone": "pelvis",
+     "local_translation_m_gltf": [
+      0,
+      0.098,
+      0.126
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.0,
+      0,
+      0,
+      1
+     ],
+     "bind_pose_position_m_godot": "(0.0, 0.998, 0.126)",
+     "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)"
+    },
+    "silhouette_b": {
+     "parent_bone": "pelvis",
+     "local_translation_m_gltf": [
+      0,
+      0.098,
+      0.124
+     ],
+     "local_rotation_xyzw_gltf": [
+      0.0,
+      0,
+      0,
+      1
+     ],
+     "bind_pose_position_m_godot": "(0.0, 0.998, 0.124)",
+     "bind_pose_rotation_deg_godot": "(0.000004, 0.0, 0.0)"
+    },
+    "godot_node_name": "belt_front",
+    "godot_parent": "BoneAttachment3D (bone pelvis)"
+   }
+  }
+ },
+ "LMED-HERD-001": {
+  "models": [
+   {
+    "file": "models/person_lmed_herder.glb",
+    "anchors": {
+     "carry_anchor": {
+      "parent": "hand.R",
+      "position": [
+       -0.0089,
+       0.9484,
+       0.0279
+      ],
+      "local_translation": [
+       0.2235,
+       -0.1527,
+       -0.0677
+      ],
+      "local_rotation_xyzw": [
+       0.04663,
+       0.08431,
+       -0.05528,
+       0.99381
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "LNE-FLOCK-001": {
+  "models": [
+   {
+    "file": "models/person_herding.glb",
+    "anchors": {
+     "carry_anchor": {
+      "position": [
+       -0.0089,
+       0.9484,
+       0.0279
+      ],
+      "rotation_xyzw": [
+       -0.99803,
+       0.03611,
+       -0.00186,
+       0.05131
+      ],
+      "parent_joint": "hand.R",
+      "local_translation": [
+       0.2235,
+       -0.1527,
+       -0.0677
+      ],
+      "local_rotation_xyzw": [
+       0.04663,
+       0.08431,
+       -0.05528,
+       0.99381
+      ]
+     },
+     "fodder": {
+      "position": [
+       0.2433,
+       0.7818,
+       -0.0
+      ],
+      "rotation_xyzw": [
+       0.76604,
+       -0.64279,
+       -0.0,
+       0.0
+      ],
+      "parent_joint": "hand.L",
+      "local_translation": [
+       -0.0295,
+       0.052,
+       -0.0052
+      ],
+      "local_rotation_xyzw": [
+       -0.06163,
+       -0.06163,
+       0.70442,
+       0.70442
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "ENE-PERSON-001": {
+  "models": [],
+  "anchors": {
+   "carry_anchor": {
+    "parent_bone": "hand.R",
+    "local_translation_m_gltf": [
+     0.2235044538974762,
+     -0.1527375727891922,
+     -0.06773355603218079
+    ],
+    "local_rotation_xyzw_gltf": [
+     0.04663475975394249,
+     0.08431489765644073,
+     -0.05528111010789871,
+     0.9938109517097473
+    ],
+    "unchanged_from_r002": true,
+    "pot_adapter_rule": "unchanged r002 rule: POT-001 under carry_anchor at translation(0, 0.25, 0) x inverse(pot carry_grip local transform); 0.25 m lift is GAME-FIT",
+    "measured_contact_all_models": {
+     "person_ene_a": {
+      "pot_base_gap_above_hair_m": [
+       0.008,
+       0.008
+      ],
+      "right_hand_clearance_m": [
+       -0.00132,
+       -0.00132
+      ],
+      "max_body_vertices_inside_pot": 3,
+      "max_pot_tilt_deg": 1.324
+     },
+     "person_ene_b": {
+      "pot_base_gap_above_hair_m": [
+       0.008,
+       0.008
+      ],
+      "right_hand_clearance_m": [
+       -0.00132,
+       -0.00132
+      ],
+      "max_body_vertices_inside_pot": 3,
+      "max_pot_tilt_deg": 1.324
+     },
+     "person_ene_c": {
+      "pot_base_gap_above_hair_m": [
+       0.008,
+       0.008
+      ],
+      "right_hand_clearance_m": [
+       -0.00132,
+       -0.00132
+      ],
+      "max_body_vertices_inside_pot": 3,
+      "max_pot_tilt_deg": 1.324
+     }
+    },
+    "valid_in_clips": [
+     "carry_walk"
+    ]
+   }
+  }
+ },
+ "ENE-BUILD-001": {
+  "models": [
+   {
+    "file": "models/person_build.glb",
+    "anchors": {
+     "hand.R_prop": {
+      "note": "grip frame, child of hand.R (new)"
+     },
+     "hand.L_prop": {
+      "note": "grip frame, child of hand.L (new)"
+     },
+     "carry_anchor": {
+      "note": "unchanged from ENE-PERSON-001"
+     }
+    }
+   }
+  ]
+ },
+ "NEO-PERSON-001": {
+  "models": [],
+  "anchors": {
+   "carry_anchor": {
+    "parent_bone": "hand.R",
+    "local_translation_m_gltf": [
+     0.2235,
+     -0.1527,
+     -0.0677
+    ],
+    "local_rotation_xyzw_gltf": [
+     0.0466,
+     0.0843,
+     -0.0553,
+     0.9938
+    ],
+    "rest_world_position_m": [
+     -0.0089,
+     0.9484,
+     0.0279
+    ],
+    "rest_world_axes": {
+     "x": [
+      0.9974,
+      -0.0723,
+      0.0
+     ],
+     "y": [
+      -0.0719,
+      -0.9921,
+      -0.1025
+     ],
+     "z": [
+      0.0074,
+      0.1023,
+      -0.9947
+     ]
+    },
+    "godot_path": "PERSON_rig/Skeleton3D/hand_R/carry_anchor",
+    "unchanged_from_PERSON_r002": true,
+    "pot_adapter_rule": "POT-001 under carry_anchor = translation(0, 0.25, 0) x inverse(pot carry_grip local) (r002 rule, GAME-FIT, not a measured technique)",
+    "measured_contact": "carry_walk, 32 samples, actual POT-001 GLB: pot base 8.0 mm above the highest hair vertex; right-hand fingertips 1.32 mm into the pot wall (3 vertices, as r002); tilt <= 1.32 deg",
+    "valid_in_clips": [
+     "carry_walk"
+    ]
+   },
+   "belt_ornament": {
+    "parent_bone": "pelvis",
+    "local_translation_m_gltf": [
+     0,
+     0.0915,
+     0.147
+    ],
+    "local_rotation_xyzw_gltf": [
+     0.0,
+     0,
+     0,
+     1
+    ],
+    "rest_world_position_m": [
+     0.0,
+     0.9915,
+     0.147
+    ],
+    "rest_world_axes": {
+     "x": [
+      1.0,
+      0.0,
+      0.0
+     ],
+     "y": [
+      0.0,
+      1.0,
+      0.0
+     ],
+     "z": [
+      0.0,
+      -0.0,
+      1.0
+     ]
+    },
+    "godot_path": "PERSON_rig/Skeleton3D/pelvis/belt_ornament",
+    "purpose": "attachment point for NEO-ADORN-001 props (empty node, no geometry)",
+    "note": "front centre of the fibre cord belt, 6 mm outside it; axes = model axes in bind pose"
+   }
+  }
+ },
+ "NEO-WELL-001": {
+  "models": [
+   {
+    "file": "models/person_draw_water.glb",
+    "anchors": {
+     "bucket_hold": {
+      "type": "empty node",
+      "parent": "hand.R"
+     },
+     "carry_anchor": {
+      "type": "empty node",
+      "note": "unchanged NEO-PERSON-001 anchor"
+     },
+     "belt_ornament": {
+      "type": "empty node",
+      "note": "unchanged NEO-PERSON-001 anchor"
+     }
+    }
+   }
+  ]
+ },
+ "HAL-FIRING-001": {
+  "models": [
+   {
+    "file": "models/firing_props.glb",
+    "anchors": {
+     "ash_rake": [
+      "grip",
+      "grip_secondary",
+      "pole_tip"
+     ]
+    }
+   },
+   {
+    "file": "models/person_firing.glb",
+    "anchors": {
+     "hand.R": [
+      "hand.R_prop",
+      "carry_anchor (unchanged)"
+     ],
+     "hand.L": [
+      "hand.L_prop"
+     ]
+    }
+   }
+  ]
+ },
+ "LNE-ADORN-001": {
+  "models": [
+   {
+    "file": "models/adorn_armring_marble.glb",
+    "anchors": {
+     "attach_point": {
+      "type": "empty node (no geometry), child of the mesh root at the origin, identity TRS",
+      "meaning": "mount point = this GLB's origin; target empty(s): orn_forearm.L, orn_forearm.R"
+     }
+    }
+   }
+  ]
+ },
+ "NEO-ADORN-001": {
+  "models": [
+   {
+    "file": "models/necklace_stone_beads.glb",
+    "anchors": {
+     "mount_neck_ornament": {
+      "type": "empty node (no geometry), child of the mesh root at the origin, identity TRS",
+      "meaning": "mount point = this GLB's origin; target empty(s): neck_ornament"
+     }
+    }
+   }
+  ]
+ },
+ "FEN-PERSON-001": {
+  "models": [],
+  "anchors": {
+   "wrist_guard.L": {
+    "use": "stone wrist-guard or organic wrist band on the bow arm (FEN-ADORN-001); node 2 mm outside the outer (lateral) forearm surface, 7 cm above the wrist joint",
+    "all_models": {
+     "parent_bone": "forearm.L",
+     "local_translation_m_gltf": [
+      0.03695,
+      0.18,
+      0.00652
+     ],
+     "local_rotation_xyzw_gltf": [
+      -0.0,
+      0.64279,
+      0.0,
+      0.76604
+     ],
+     "bind_pose_position_m_godot": "(0.288566, 0.913656, 0.0)",
+     "bind_pose_rotation_deg_godot": "(-9.999974, 89.99999, 180.0)"
+    },
+    "godot_node_name": "wrist_guard_L",
+    "godot_parent": "BoneAttachment3D (bone forearm.L)"
+   }
+  }
+ },
+ "MED-PLOUGH-001": {
+  "models": [
+   {
+    "file": "models/plough_wheeled.glb",
+    "anchors": [
+     "hitch"
+    ]
+   },
+   {
+    "file": "models/harrow_frame.glb",
+    "anchors": []
+   },
+   {
+    "file": "models/yoke_withers.glb",
+    "anchors": []
+   },
+   {
+    "file": "models/harness_collar.glb",
+    "anchors": []
+   },
+   {
+    "file": "models/team_ox_plough.glb",
+    "anchors": [
+     "hitch"
+    ]
+   },
+   {
+    "file": "models/team_horse_plough.glb",
+    "anchors": [
+     "hitch"
+    ]
+   },
+   {
+    "file": "models/team_horse_harrow.glb",
+    "anchors": []
+   },
+   {
+    "file": "models/person_plough.glb",
+    "anchors": []
+   }
+  ]
+ },
+ "SLAV-BUILD-001": {
+  "models": [
+   {
+    "file": "models/person_build_dig.glb",
+    "anchors": {
+     "belt_side.L": {
+      "parent": "pelvis",
+      "world_translation_m": [
+       0.172,
+       1.016,
+       0.0
+      ]
+     }
+    }
+   }
+  ]
  }
 }

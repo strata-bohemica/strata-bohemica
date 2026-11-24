@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Copy the museum's factory assets into assets/ and write museum/data/assets.json.
 
-usage: tools/sync_assets.py FACTORY_RETURNS_DIR [--dry-run | --check-anchors]
-  --dry-run        copy nothing, write nothing
+usage: tools/sync_assets.py FACTORY_RETURNS_DIR [--dry-run | --check-anchors] [--allow-anchor-errors]
+  --dry-run        copy nothing, write nothing (exit status 0 even when anchors are in error: read the "anchor error" lines)
+  --allow-anchor-errors  write assets.json although anchors are in error (they are left out); exit status 0
   --check-anchors  only normalise the anchors of every asset.json under FACTORY_RETURNS_DIR (all revisions, no models
                    or manifest needed) and print the anchors that could not be converted
 
@@ -10,8 +11,9 @@ Reads museum/data/asset_manifest.json. For each "pack/ID" the newest revision is
 (models, asset.json, PROVENANCE.md, Godot .import files with paths rewritten); a manifest entry may list the models to copy. The generated assets.json holds,
 per model, the GLB path, animation names with durations and the anchors listed in the asset's own asset.json,
 normalised by tools/anchors.py to translation + yaw_deg_about_plusY. Every anchor that is not converted (or only
-partly: attached to a bone, borrowed, guessed key) is logged as "anchor <level> ASSET/model/anchor: text"; an anchor
-with neither position nor parent is an error: it is left out and the exit status is 1 (not with --dry-run).
+partly: attached to a bone, borrowed, guessed key, world position on an anchor with a parent, no heading) is logged as
+"anchor <level> ASSET/rev/model/anchor: text"; an anchor with neither position nor parent is an error: it is left out,
+assets.json is NOT written and the exit status is 1 (the assets already copied stay; see --allow-anchor-errors, --dry-run).
 """
 import glob, json, os, re, shutil, struct, sys
 
@@ -21,6 +23,7 @@ import anchors as anc
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 args = [a for a in sys.argv[1:] if not a.startswith('--')]
 DRY = '--dry-run' in sys.argv
+ALLOW_ERRORS = '--allow-anchor-errors' in sys.argv
 CHECK = '--check-anchors' in sys.argv
 if not args:
     sys.exit(__doc__)
@@ -35,13 +38,13 @@ def log_anchors(label, entries):
             ERRORS.append('%s/%s' % (label, name))
 
 
-def borrow_carry(aid):
-    """Raw carry_anchor of the epoch's PERSON-001 (HILL-INTERVAL-001 takes it from HILL-PERSON-001), newest revision."""
+def borrow_person(aid):
+    """Raw top-level anchors of the epoch's PERSON-001 (HILL-INTERVAL-001 takes its carry_anchor from HILL-PERSON-001), newest revision."""
     prefix = aid.split('-')[0]
     if aid == prefix + '-PERSON-001':
         return None
     hits = sorted(glob.glob(os.path.join(SRC, '*', prefix + '-PERSON-001', 'r*', 'asset.json')))
-    return anc.carry_anchor_of(json.load(open(hits[-1]))) if hits else None
+    return anc.person_anchors_of(json.load(open(hits[-1]))) if hits else None
 
 
 def check_anchors():
@@ -51,9 +54,9 @@ def check_anchors():
         d = json.load(open(f))
         parts = os.path.relpath(f, SRC).split(os.sep)
         aid, rev = parts[-3], parts[-2]
-        carry = borrow_carry(aid)
+        borrow = borrow_person(aid)
         for m in anc.models_of(d):
-            out, log = anc.normalize_model_anchors(d, m, carry)
+            out, log = anc.normalize_model_anchors(d, m, borrow)
             n_models += 1
             n_anchors += len(out)
             log_anchors('%s/%s/%s' % (aid, rev, anc.model_stem(m)), log)
@@ -95,10 +98,10 @@ for entry in manifest['assets']:
     old_prefix = 'res://art/returns/%s/%s/' % (rel, rev)
     new_prefix = 'res://assets/%s/%s/' % (aid, rev)
     asset_json = json.load(open(os.path.join(src_rev_dir, 'asset.json')))
-    carry = borrow_carry(aid)
+    borrow = borrow_person(aid)
     anchors_by_stem = {}
     for m in anc.models_of(asset_json):
-        anchors_by_stem[anc.model_stem(m)], log = anc.normalize_model_anchors(asset_json, m, carry)
+        anchors_by_stem[anc.model_stem(m)], log = anc.normalize_model_anchors(asset_json, m, borrow)
         log_anchors('%s/%s/%s' % (aid, rev, anc.model_stem(m)), log)
     models = {}
     for dirpath, dirs, files in os.walk(src_rev_dir):
@@ -124,8 +127,10 @@ for entry in manifest['assets']:
                                       anchors=anchors_by_stem.get(f[:-4], {}))
     catalogue[aid] = dict(source=rel, rev=rev, models=models)
     print('%-12s %s  %2d models' % (aid, rev, len(models)))
+if ERRORS and not DRY and not ALLOW_ERRORS:
+    sys.exit("%d anchors with neither position nor parent (see \"anchor error\" lines): museum/data/assets.json not written" % len(ERRORS))
 if not DRY:
-    json.dump(catalogue, open(os.path.join(ROOT, 'museum/data/assets.json'), 'w'), indent=1, ensure_ascii=False)
+    tmp = os.path.join(ROOT, 'museum/data/assets.json.tmp')
+    json.dump(catalogue, open(tmp, 'w'), indent=1, ensure_ascii=False)
+    os.replace(tmp, os.path.join(ROOT, 'museum/data/assets.json'))
     print('wrote museum/data/assets.json')
-if ERRORS and not DRY:
-    sys.exit("%d anchors with neither position nor parent (see \"anchor error\" lines)" % len(ERRORS))

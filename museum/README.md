@@ -288,26 +288,57 @@ and regenerates `data/assets.json`. `tools/import_settings.py` then sets the imp
 ### Anchors in `data/assets.json` (SB-095)
 
 The factory returns spell anchors in dozens of shapes. `tools/anchors.py` (used by `sync_assets.py`) turns every one into
-`{translation: [x,y,z], yaw_deg_about_plusY, yaw_deg}` (`yaw_deg` repeats the yaw for `catalogue.gd`), plus `parent` when the
-source names one:
+`{translation: [x,y,z], yaw_deg_about_plusY, yaw_deg, frame, source_key}` (`yaw_deg` repeats the yaw for `catalogue.gd`), plus `parent`
+when the source names one:
 - model key `path` or `file`; `anchors` as a dict, as a list of names (defined in the asset's top-level `anchors`, the PERSON kits)
   or bare `[x,y,z]`;
-- position, first key found: `translation`, `translation_m`, `position`, `position_m`, `pos`, `pos_m`, `xyz`, then the parent-local keys
-  (`local_translation*`), the `rest_*` keys, then the world keys (`rest_world_position`, `world_position`, `world_translation*`, ...).
-  Local keys win over world keys. A key not on the list that still looks like a position is used and logged as `heuristic`;
-- yaw: `yaw_deg_about_plusY`, `godot_yaw_deg_about_plusY`, `yaw_deg`, `yaw_deg_of_plus_z`, `yaw_deg_local_*`; else the heading of
-  `rotation_xyzw` / `local_rotation_xyzw[_gltf]` / ..., of the Z column of `basis_columns`, of `bind_pose_rotation_deg_godot`, of a
-  facing vector (`forward_*`, `facing_*`, `z_axis`); else 0;
-- shared PERSON anchors: the entry for the model (`per_model[stem]`, `<stem>`, `all_models`, `silhouette_<x>`, longest prefix);
-  with none, a sibling model's entry (logged `heuristic`);
-- an anchor with only a parent (bone, node, host) becomes `parent` + `translation` [0,0,0] + `bone_attached: true`
-  (logged `bone_attached`). `carry_anchor` of a model that only names its parent is taken from the epoch's `<EPOCH>-PERSON-001`
-  (logged `borrowed`; HILL-INTERVAL-001);
-- an anchor with neither position nor parent is logged `anchor error ASSET/rev/model/name` and left out; the sync then exits 1
-  (not with `--dry-run`).
+- **position, and which frame it is in.** The key groups are tried in this order, first hit wins:
+  - anchor with a `parent` (bone, node, host): `local_translation*`, then the generic keys (`translation`, `translation_m`,
+    `position`, `position_m`, `pos`, `pos_m`, `xyz`; read as parent-relative), then `rest_*` (model space), then the world keys
+    (`rest_world_position*`, `world_position*`, `world_translation*`, `rest_scene_origin_m_godot`, ...);
+  - anchor without a parent: the generic keys (model space), then `local_translation*`, `rest_*`, the world keys.
+
+  So on an anchor that hangs on a parent a `local_*` key always beats `position`/`translation` and any world key
+  (LMED-HERD-001 and LNE-FLOCK-001 `carry_anchor` have a world `position` and a parent-relative `local_translation`: the local one is used).
+  `frame` says what the translation is relative to: `local` (parent-relative), `model` (the GLB's own space) or `world`;
+  `source_key` is the key it came from. A key not on the list that still looks like a position is used and logged `heuristic`;
+- yaw: `yaw_deg_about_plusY`, `godot_yaw_deg_about_plusY`, `yaw_deg`, `yaw_deg_of_plus_z`, `yaw_deg_local_*`; else the heading of a
+  quaternion (the same order as the position: with a parent `local_rotation_xyzw[_gltf]`, then `rotation_xyzw`, then the world and rest ones),
+  of the Z column of `basis_columns`, of `bind_pose_rotation_deg_godot` (its middle component), of a facing vector (`forward_*`,
+  `facing_*`, `z_axis`); else 0. The yaw is the heading of the local +Z about +Y: **a tilt is lost** (EBA-PERSON `wrist_ornament.L`,
+  turned over about X, keeps only its heading 170), and an axis that points straight up or down has no heading at all (HILL-ADORN
+  `display_bronze`): the yaw is 0 and the anchor is logged `degenerate_yaw`;
+- shared PERSON anchors (one entry per model): `per_model[stem]`, `<stem>`, `all_models`, the longest prefix of the stem, and for the
+  silhouette kits (LT, SLAV, MED PERSON: "silhouette a and b; c/d use the a/b positions") `silhouette_<x>` where x is the model's own
+  letter or, failing that, the letter of the model with the same `models[].silhouette` text (`person_lt_d` = "long dress" = `_b`).
+  Without a silhouette text the entries are used by order (c -> a, d -> b) and logged `heuristic`; with no entry for the model at all,
+  the first sibling's position is used and logged `heuristic`;
+- an anchor with only a parent (bone, node, host, or "child of hand.R" in its note) becomes `parent` + `translation` [0,0,0] +
+  `bone_attached: true` (logged `bone_attached`); a key that is a bone with a list of child node names (HAL-FIRING-001 `hand.R`)
+  likewise, with the bone as parent. "identity TRS at the origin" (NEO-ADORN-001, LNE-ADORN-001) = translation [0,0,0], yaw 0, `frame: model`
+  (logged `heuristic`);
+- an anchor whose note says "unchanged" (ENE-BUILD-001, NEO-WELL-001), and the `carry_anchor` of a model that only names its parent
+  (HILL-INTERVAL-001), is taken from the epoch's `<EPOCH>-PERSON-001` (logged `borrowed`);
+- an anchor with neither position nor parent is logged `anchor error ASSET/rev/model/name` and left out.
+
+Log levels, one line per anchor and finding: `error`, `bone_attached`, `borrowed`, `heuristic`, `degenerate_yaw`, and
+`world_with_parent`: the position is a world/rest-pose value although the anchor hangs on a parent (881 anchors in the returns, e.g.
+SLAV-BUILD-001 `belt_side.L`, MED-HORSE-001 `bridle`). `catalogue.gd` (`Catalogue.anchor`) is unchanged and reads `translation` as a point
+in the model's space whatever the `frame` is: it is right for `model` anchors, wrong for `local` ones (parent-relative: needs the
+parent's transform) and for `world` ones with a parent. Use `frame` before placing something on a bone anchor; do not use `.pos` for it.
+
+Not converted (state of the returns, `--check-anchors`): HAL-FIRING-001 `firing_props`/`firing_states_extra` lists of child node names
+(ash_rake, daub_basket, daub_lump, pole_stoke, pot_green_tray, sherd_basket, State_CoverHalf, State_Unloading: positions only in the GLB
+nodes) and the 37 anchor names of MED-PLOUGH-001 (belt_front ... yoke_seat_R: named, never defined; positions only in the GLB nodes;
+reading them from the GLB is not implemented) are `error`. Position-less `bone_attached` (translation [0,0,0] on a parent): ENE-ADORN-001
+origin; ENE-BUILD-001 hand.L_prop, hand.R_prop; HAL-ADORN-001 (Anklet_*, Bracelet_*, belt_hook_iron, bracelet_stack_9, fibula_*,
+neck_ring_hook, necklace_beads, needle_case); HAL-FIRING-001 hand.L, hand.R; HILL-INTERVAL-001 hand.*_prop; MED-DRESSACC-001
+(attach_point.*); NEO-WELL-001 bucket_hold, draw_rope; STATE-ADORN-001 belt_front, neck_ornament, temple_ring.*.
 
 `tools/sync_assets.py FACTORY_RETURNS_DIR --check-anchors` normalises every `asset.json` under the directory (all revisions, no
-models needed), prints one `anchor <level> ...` line per unconverted anchor and a count, and always exits 0. Test:
+models needed), prints one `anchor <level> ...` line per finding and a count, and always exits 0. A real sync exits 1 on an `anchor error`
+**before** it writes `data/assets.json` (the assets it already copied stay); `--allow-anchor-errors` writes it anyway, leaving the bad
+anchors out, and exits 0; `--dry-run` writes nothing and exits 0 even when anchors are in error (read the log). Test:
 `checks/museum_village/run.sh sync_assets` (Python, `checks/sync_assets/`; real anchors from the returns as fixtures).
 
 ## Evidence

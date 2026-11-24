@@ -10,3 +10,6 @@ assets/**/*.png
 assets/**/*.png.import
 assets/**/*.jpg
 assets/**/*.jpg.import
+
+# Python caches of the tool tests
+__pycache__/
