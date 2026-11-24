@@ -39,7 +39,7 @@
  "ui.detail.hypothesis": "Hypothesis about the use",
  "ui.detail.related": "Elsewhere in the museum",
  "ui.detail.back": "Back",
- "ui.weather": "Weather (F)",
+ "ui.weather": "Weather [P]\nsimulation",
  "ui.weather_note": "The weather is a simulation (F, fiction): cloud, rain, mist and wind of our choosing, not a reconstruction of the weather of 1150–1000 BCE.",
  "ui.weather_quality_high": "Quality: higher",
  "ui.weather_quality_low": "Quality: lower",

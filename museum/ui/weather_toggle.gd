@@ -1,6 +1,7 @@
 extends VBoxContainer
 ## Weather settings (SB-015), top right (on a phone under the speed button): weather on/off and the quality
-## (lower/higher). The label says the weather is a simulation (F); the tooltip says what that means. It owns no setting; it only reports what the user asked for.
+## (lower/higher). The label names its key [P] and says the weather is a simulation, never "(F)", which read as the F key
+## (Follow; SB-059 R2-3); the tooltip says what simulation (F) means. It owns no setting; it only reports what the user asked for.
 
 signal weather_toggled
 signal quality_toggled
@@ -30,6 +31,8 @@ func _init() -> void:
 	quality_button = Button.new()
 	quality_button.pressed.connect(func(): quality_toggled.emit())
 	add_child(quality_button)
+	for b in [weather_button, quality_button]:
+		b.focus_mode = Control.FOCUS_NONE     # pointer only: P is the keyboard's (SB-059 R2-1, see time_bar.gd)
 
 ## On a phone the buttons are 44 px touch targets placed `narrow_top` px from the top (under the speed button, see
 ## app/museum_village.gd); on a desktop they sit in the top right corner.

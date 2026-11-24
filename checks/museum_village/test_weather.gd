@@ -370,7 +370,8 @@ func _initialize() -> void:
 		app._refresh(0.0)
 		var label: String = app.weather_toggle.weather_button.text
 		var note: String = app.weather_toggle.weather_button.tooltip_text
-		t.ok(label.contains("(F)") and note.contains("(F") and note.contains("1150"), "%s: the switch says the weather is a simulation (F) (%s / %s)" % [lang, label, note])
+		# the label says "simulation" and names its key [P]; "(F)" there read as the F key (Follow), so the class F is in the tooltip (SB-059 R2-3)
+		t.ok(label.contains("[P]") and label.contains("simula") and not label.contains("(F)") and note.contains("(F") and note.contains("1150"), "%s: the switch says the weather is a simulation, the tooltip that it is F (%s / %s)" % [lang, label, note])
 	app.lang = "en"
 	# scrubbing and speeds: the weather always follows the clock
 	var follows := true

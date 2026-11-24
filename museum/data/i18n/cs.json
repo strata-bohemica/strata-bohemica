@@ -39,7 +39,7 @@
  "ui.detail.hypothesis": "Hypotéza o použití",
  "ui.detail.related": "Jinde v muzeu",
  "ui.detail.back": "Zpět",
- "ui.weather": "Počasí (F)",
+ "ui.weather": "Počasí [P]\nsimulace",
  "ui.weather_note": "Počasí je simulace (F, fikce): oblačnost, déšť, mlha a vítr podle našeho výběru, ne rekonstrukce počasí let 1150–1000 př. n. l.",
  "ui.weather_quality_high": "Kvalita: vyšší",
  "ui.weather_quality_low": "Kvalita: nižší",

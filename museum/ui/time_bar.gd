@@ -1,5 +1,8 @@
 extends HBoxContainer
 ## Bottom bar: pause, speed, a time-of-day slider, follow and cutaway toggles. It owns no time; it only reports what the user asked for.
+## No control here takes the keyboard focus (SB-059 R2-1): the keyboard drives the app's own shortcuts (Space, Q/W/E, Tab ...,
+## see app/museum_village.gd). A clicked button that kept the focus pressed itself again on Space (and the app paused too),
+## and took Tab for focus navigation, so one key did two things or the wrong one.
 
 signal pause_toggled
 signal speed_chosen(speed: float)
@@ -108,6 +111,8 @@ func _init() -> void:
 	volume_slider.value_changed.connect(func(v): volume_changed.emit(v))
 	volume_slider.drag_ended.connect(func(_changed): volume_committed.emit())
 	add_child(volume_slider)
+	for c in get_children() + [speed_cycle_button]:
+		(c as Control).focus_mode = Control.FOCUS_NONE     # pointer only: the keyboard drives the app's shortcuts (SB-059 R2-1)
 
 ## On a phone the speed buttons and the clock label make way for the slider. One cycling speed button takes the place of
 ## the three (SB-059 D4), in the top right corner of the screen, not in the bar: at 320 px the bar has no 44 px to spare
