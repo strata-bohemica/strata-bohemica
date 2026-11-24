@@ -41,7 +41,7 @@ func _drag(app, index: int, from: Vector2, to: Vector2) -> void:
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var phases := ["sleep", "wake", "walk_out", "work", "meal", "walk_home", "settle"]
 
 	# strings: Czech and English cover the same keys; every phase and status has a name in both
@@ -492,7 +492,7 @@ func _figure_card(t, panel) -> void:
 		t.ok(panel.body.text.contains('tooltip="%s"' % CardPanel._attr(item.alt)), "store 6/05 (%s): the picture carries its alt text" % lang)
 		t.ok(panel.plain_text().contains(item.caption) and panel.plain_text().contains(I18n.tr_("ui.figure", lang)), "store 6/05 (%s): the panel shows the heading and caption" % lang)
 	# craft cards are unchanged: no figure section
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	for id in all.occupied:
 		var c := Card.build(all.occupied[id].craft, all.occupied[id].homestead, "en", "work")
 		t.ok(c.sections.all(func(s): return s.kind != "figure"), "hs-%02d: craft card has no figure section" % id)

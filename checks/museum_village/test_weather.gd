@@ -190,7 +190,7 @@ func _initialize() -> void:
 	t.eq(Weather.storm(Weather.clear()), 0.0, "clear weather is calm for the soundscape")
 
 	# ---- view ----------------------------------------------------------------------------------------------------
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var village := VillageView.new()
 	root.add_child(village)
 	village.build(all.village, all.terrain, all.occupied, all.pending)

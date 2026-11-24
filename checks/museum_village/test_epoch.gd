@@ -46,7 +46,7 @@ static func snapshot(all: Dictionary) -> Dictionary:
 
 func _init() -> void:
 	var t := T.new()
-	var all := Fixture.load_all("bronze_late")
+	var all := Fixture.load_all(self, "bronze_late")
 	var snap := snapshot(all)
 	var text := JSON.stringify(snap, "", true)
 	if OS.get_environment("EPOCH_REFERENCE_WRITE") == "1":

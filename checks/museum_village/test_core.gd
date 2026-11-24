@@ -12,7 +12,7 @@ const Travel = preload("res://museum/core/travel.gd")
 
 func _init() -> void:
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var period: Dictionary = all.period
 	var day: float = float(period.day_length_s)
 	t.eq(all.errors.size(), 0, "all shipped data validates (%s)" % [all.errors])

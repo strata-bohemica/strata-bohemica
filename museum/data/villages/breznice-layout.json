@@ -2,7 +2,7 @@
  "seed": 11,
  "disc_radius_m": 70.0,
  "house_types": {
-  "note": "Single source of the house type per house id (owner rule, HOUSE-BRIEF v1: types A and B alternate, odd ids A, even ids B). Read by tools/build_village.py (platform sizes from the model bounds) and by the checks; museum/data/homesteads/hs-*.json name the model of that type with its finish. Both types are R/F reconstructions, not plans of Březnice houses. The long axis N–S is F (after the N–S long pits); house 57, the model of type A, is NW–SE.",
+  "note": "Single source of the house type per house id (owner rule, HOUSE-BRIEF v1: types A and B alternate, odd ids A, even ids B). Read by tools/build_village.py (platform sizes from the model bounds) and by the checks; museum/data/homesteads/<epoch>/hs-*.json name the model of that type with its finish. Both types are R/F reconstructions, not plans of Březnice houses. The long axis N–S is F (after the N–S long pits); house 57, the model of type A, is NW–SE.",
   "assets": {
    "A": "HOUSE-004",
    "B": "HOUSE-005"

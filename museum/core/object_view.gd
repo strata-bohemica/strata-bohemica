@@ -3,7 +3,7 @@ extends RefCounted
 ## that keeps the find, the model's own choices, the interpretation and related exhibits apart. Pure: data in, state,
 ## camera framings and page text out. No nodes, no time: the village does not know the viewer is open.
 ##
-## Data: `card.detail` of a craft (museum/data/crafts/*.json):
+## Data: `card.detail` of a craft (museum/data/crafts/<epoch>/*.json):
 ##   {model: "ASSET/model", button, title: {cs, en},
 ##    views: [{id, label: {cs, en}, caption: {cs, en}, target: {anchor, offset: [x, y, z]}, eye: [x, y, z] (from the target),
 ##             fov_deg, light: {dir: [x, y, z] (the way the light travels), energy}, face_normal?: [x, y, z]}],

@@ -5,7 +5,7 @@ const Fixture = preload("res://checks/museum_village/fixture.gd")
 
 func _init() -> void:
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var terrain = all.terrain
 	var village: Dictionary = all.village
 	var radius: float = float(village.disc_radius_m)
