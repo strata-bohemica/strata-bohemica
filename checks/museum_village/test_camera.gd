@@ -54,7 +54,7 @@ const BEND_LIMIT := 0.0005    # m; BLEND 2 measures 0.00016, BLEND 0.2 0.0016, p
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var terrain = all.terrain
 
 	# positive control: the unlifted orbit position DOES go under the hills on this grid, so the grid can catch it

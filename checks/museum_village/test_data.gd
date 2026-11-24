@@ -6,7 +6,7 @@ const Catalogue = preload("res://museum/assets/catalogue.gd")
 
 func _init() -> void:
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var scenes := {}      # ref -> instantiated node, kept for node lookups
 	for house_id in all.occupied:
 		var info: Dictionary = all.occupied[house_id]

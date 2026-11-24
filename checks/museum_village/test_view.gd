@@ -8,7 +8,7 @@ const Animals = preload("res://museum/core/animals.gd")
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var view := VillageView.new()
 	root.add_child(view)
 	view.build(all.village, all.terrain, all.occupied, all.pending)

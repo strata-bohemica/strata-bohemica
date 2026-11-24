@@ -2,8 +2,17 @@ extends RefCounted
 ## The same world the main scene builds: period, village, terrain, and one schedule per occupied homestead.
 const Loader = preload("res://museum/app/village_loader.gd")
 
-static func load_all(epoch_id: String = "") -> Dictionary:
-	return Loader.load_all(epoch_id)
+## A world that cannot be loaded ends the test at once with the loader's errors and exit code 1: otherwise the first
+## `all.period` is a script error in _init, which never reaches quit() and hangs until the runner's timeout.
+## `tree` is the calling test (it extends SceneTree): Engine.get_main_loop() is still null while a script's _init runs.
+static func load_all(tree: SceneTree, epoch_id: String = "") -> Dictionary:
+	var world := Loader.load_all(epoch_id)
+	if not world.get("loaded", false):
+		printerr("FAIL Fixture.load_all(%s): the epoch did not load" % [epoch_id if epoch_id != "" else "default"])
+		for e in world.get("errors", []):
+			printerr("  ", e)
+		tree.quit(1)
+	return world
 
 ## House-frame point -> world point for a village house record.
 static func house_to_world(house: Dictionary, terrain, local: Vector3) -> Vector3:

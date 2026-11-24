@@ -319,7 +319,7 @@ func _initialize() -> void:
 	t.eq(int(ProjectSettings.get_setting("rendering/limits/opengl/max_lights_per_object")), Lighting.PER_OBJECT_LIMIT, "the limit is the project's own (rendering/limits/opengl/max_lights_per_object)")
 
 	# ---- view: the village with its lights ----------------------------------------------------------------------------
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	var village := VillageView.new()
 	root.add_child(village)
 	village.build(all.village, all.terrain, all.occupied, all.pending)

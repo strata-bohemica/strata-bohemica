@@ -1,6 +1,6 @@
 # Research notes
 
-Notes behind the info cards (`museum/data/crafts/*.json` cite them). Each claim is tagged E (evidenced at Březnice), R (reconstruction, including regional analogy) or F (fiction: our choice without a source). The notes are working material, not peer-reviewed.
+Notes behind the info cards (`museum/data/crafts/<epoch>/` cite them). Each claim is tagged E (evidenced at Březnice), R (reconstruction, including regional analogy) or F (fiction: our choice without a source). The notes are working material, not peer-reviewed.
 
 ## What was checked against the primary sources (2026-11-19)
 

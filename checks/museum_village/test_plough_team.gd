@@ -350,7 +350,7 @@ func _clamp_check(t, sched) -> void:
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
-	all = Fixture.load_all()
+	all = Fixture.load_all(self)
 	terrain = all.terrain
 	var view := VillageView.new()
 	root.add_child(view)

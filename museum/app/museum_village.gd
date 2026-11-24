@@ -54,6 +54,7 @@ var object_viewer                  # its panel (ui/object_viewer.gd)
 var weather                        # view/weather_view.gd: applies core/weather.gd, owns on/off and quality
 var weather_toggle                 # ui/weather_toggle.gd
 var light                          # view/light_view.gd: which fires are on and cast shadows (SB-017)
+var epoch_id := ""                 # "" = the registry's default epoch; the checks set another to see the refusal
 var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
@@ -72,7 +73,7 @@ var narrow := false                # a phone-sized screen: card as a bottom shee
 var _card_shift := 0.0            # 0..1: how far the view is pushed aside for the open card
 
 func _ready() -> void:
-	world = Loader.load_all()
+	world = Loader.load_all(epoch_id)
 	for e in world.errors:
 		push_error(e)
 	if not world.loaded:       # an epoch that cannot be loaded leaves the empty scene and its error in the log

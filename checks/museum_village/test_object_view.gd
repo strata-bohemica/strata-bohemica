@@ -55,7 +55,7 @@ func _tour_failures(core: GDScript, detail: Dictionary, anchors: Dictionary, qui
 func _initialize() -> void:
 	await process_frame
 	var t := T.new()
-	var all := Fixture.load_all()
+	var all := Fixture.load_all(self)
 	t.eq(all.errors.size(), 0, "the shipped data loads without errors %s" % [all.errors])
 
 	# ---- data: which craft has a viewer, and its record ----
