@@ -6,7 +6,7 @@ Everything the scene does is a pure function of time; the view only applies it.
 ```
 core/    day clock, soundscape, weather, lighting, craft timeline, craft props, animals, travel, schedule, terrain, card, i18n, picking, schema,
          object view   (no nodes, testable headless)
-data/    period, crafts, homesteads, village + terrain, asset catalogue      (JSON, shared with the web page)
+data/    epoch registry + manifests, crafts, homesteads (per epoch), village + terrain, asset catalogue  (JSON, shared with the web page)
 assets/  catalogue: "WORK-001/person_grinding" -> path, clips, anchors
 view/    thin Godot adapters: sound, pose driver, homestead view, terrain view, village view, object stage, weather, light
 ui/      card panel, time bar, object viewer and weather switch (they draw what core/card.gd, core/object_view.gd and the app give them)
@@ -287,7 +287,14 @@ and regenerates `data/assets.json`. `tools/import_settings.py` then sets the imp
 
 ## Evidence
 
-The card is built from the craft's data (`museum/data/crafts/*.json`): an E/R/F status, evidence entries each with their own class,
+Epochs (SB-072): `data/periods/index.json` is the registry (order, default); `data/periods/<epoch>.json` is the epoch manifest (schema 2:
+`name`, `label`, `village` files, `homesteads` ids, `exhibits` ids, day length and segments). Homesteads and crafts live in
+`data/homesteads/<epoch>/` and `data/crafts/<epoch>/`. `VillageLoader.load_all(epoch_id)` builds one epoch (no id: the default);
+an unknown or unreadable epoch gives `loaded = false` and one clear error, not a crash. Schema versions are per file type
+(`Schema.REGISTRY_SCHEMA`, `PERIOD_SCHEMA`, `CRAFT_SCHEMA`, `HOMESTEAD_SCHEMA`). Only epoch 1 (`bronze_late`) exists; `test_epoch.gd`
+compares every homestead's state over a day with `checks/museum_village/fixtures/bronze_late_states.json`, captured before the refactor.
+
+The card is built from the craft's data (`museum/data/crafts/<epoch>/*.json`): an E/R/F status, evidence entries each with their own class,
 the reconstruction, what is unknown and the sources, in both languages.
 
 A card may carry `figures` (SB-055): a picture per language (`image: {cs, en}` as `res://` paths), `caption`, `alt` text
