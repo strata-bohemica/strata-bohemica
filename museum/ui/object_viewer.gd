@@ -5,6 +5,7 @@ extends PanelContainer
 signal view_chosen(id: String)
 signal back_pressed
 
+const CardPanel = preload("res://museum/ui/card_panel.gd")
 const CHIP := {"E": "#5E9C8A", "R": "#D1A24B", "F": "#C46A3F"}     # brand: patina, bronze, clay
 const TOUCH := 44.0
 
@@ -46,6 +47,7 @@ func _init() -> void:
 	row.add_child(view_box)
 	back_button = Button.new()
 	back_button.custom_minimum_size = Vector2(TOUCH, TOUCH)
+	back_button.focus_mode = Control.FOCUS_NONE     # pointer only: Esc is the keyboard's (SB-059 R2-1, see time_bar.gd)
 	back_button.pressed.connect(func(): back_pressed.emit())
 	row.add_child(back_button)
 	split = BoxContainer.new()
@@ -57,6 +59,7 @@ func _init() -> void:
 	stage_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage_box.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage_box.focus_mode = Control.FOCUS_NONE     # it would pass the keys on to the stage (SB-059 R2-1)
 	split.add_child(stage_box)
 	text_scroll = ScrollContainer.new()
 	text_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -113,6 +116,7 @@ func show_page(page: Dictionary) -> void:
 		var b := Button.new()
 		b.text = v.label
 		b.toggle_mode = true
+		b.focus_mode = Control.FOCUS_NONE
 		b.button_pressed = v.active
 		b.custom_minimum_size = Vector2(TOUCH, TOUCH)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL if narrow else Control.SIZE_FILL
@@ -135,8 +139,8 @@ func _bbcode(page: Dictionary) -> String:
 			out += "  [color=%s][b]%s[/b][/color]" % [CHIP.get(n["class"], "#8A6B4B"), n["class"]]
 		out += "\n%s\n\n" % n.text
 	if not page.sources.is_empty():
-		out += "[color=#8A6B4B]%s[/color]" % "\n".join(page.sources)
+		out += "[color=#8A6B4B]%s[/color]" % CardPanel.breakable("\n".join(page.sources))     # paths break after "/" (SB-059 R2-2)
 	return out
 
 func plain_text() -> String:
-	return title_label.text + "\n" + body.get_parsed_text()
+	return (title_label.text + "\n" + body.get_parsed_text()).replace(CardPanel.ZWSP, "")

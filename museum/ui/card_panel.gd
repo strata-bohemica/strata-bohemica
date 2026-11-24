@@ -73,6 +73,8 @@ func _init() -> void:
 	detail_button.custom_minimum_size = Vector2(0, 44)       # a touch target on a phone
 	detail_button.pressed.connect(func(): detail_requested.emit())
 	box.add_child(detail_button)
+	for b in [lang_button, close_button, detail_button]:
+		b.focus_mode = Control.FOCUS_NONE     # pointer only: C and Esc are the keyboard's (SB-059 R2-1, see time_bar.gd)
 	scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -264,14 +266,29 @@ func _bbcode(card: Dictionary) -> String:
 					out += "[color=%s][b]%s[/b][/color]  %s\n" % [CHIP.get(item["class"], "#8A6B4B"), item["class"], _bb_escape(item.caption)]
 					if shown:
 						out += "[color=#8A6B4B][i]%s[/i][/color]\n" % I18n.tr_("ui.figure_open", lang)
-					out += "[color=#8A6B4B]%s[/color]\n" % _bb_escape(item.source)
+					out += "[color=#8A6B4B]%s[/color]\n" % breakable(_bb_escape(item.source))
 					k += 1
 			_:
 				for item in s.items:
-					out += "- %s\n" % item
+					out += "-%s%s\n" % [NBSP, breakable(item)]     # the dash never stays alone on a line (SB-059 R2-2)
 		out += "\n"
 	out += "[color=#8A6B4B]%s\n%s[/color]" % [I18n.tr_("ui.legend", lang), card.footer]
 	return out
+
+const ZWSP := "\u200b"         # zero-width space: a place where a line may break, invisible
+const NBSP := "\u00a0"
+
+## A path or an identifier ("research/next-batch/settlement-features.md", "KILN-001/hearth_open_top") is one long word
+## to the line breaker, so on a phone it was broken in the middle of a word (SB-059 R2-2). In every word that holds a "/"
+## a line may now also break after "/", "_" and "-". Words without "/" (the prose) and words with BBCode ("[") are left alone.
+static func breakable(text: String) -> String:
+	var words := text.split(" ")
+	for i in words.size():
+		if words[i].contains("/") and not words[i].contains("["):
+			for c in ["/", "_", "-"]:
+				words[i] = words[i].replace(c, c + ZWSP)
+			words[i] = words[i].trim_suffix(ZWSP)
+	return " ".join(words)
 
 ## Text safe inside a quoted BBCode tag parameter.
 static func _attr(text: String) -> String:
@@ -281,4 +298,4 @@ static func _bb_escape(text: String) -> String:
 	return text.replace("[", "[lb]")
 
 func plain_text() -> String:
-	return title_label.text + "\n" + craft_label.text + "\n" + body.get_parsed_text()
+	return (title_label.text + "\n" + craft_label.text + "\n" + body.get_parsed_text()).replace(ZWSP, "").replace(NBSP, " ")

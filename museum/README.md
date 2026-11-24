@@ -30,6 +30,10 @@ godot --path .      # click a person for the card; M mute, Space pause, Q/W/E sp
 checks/museum_village/run.sh                     # core, data, terrain, boundary, view and plough-team checks (headless)
 ```
 
+The keyboard drives these shortcuts only: no button or slider takes the keyboard focus (`focus_mode = FOCUS_NONE` in `ui/`),
+so after a click on a button a key still does exactly one thing (SB-059 R2-1: Space used to press the clicked button again
+as well as pause, and Tab moved the focus instead of choosing the next homestead).
+
 ## The village
 
 The village layout and the ground are **F/R**: no house plan or terrain model of Březnice survives. `tools/organic_layout.py`
@@ -88,7 +92,7 @@ three mutants of the core that must fail, the stage light at night, phone widths
 
 ## Weather (SB-015)
 
-The weather is a **simulation (F)**: plausible Central European weather of our choosing, not a reconstruction of the weather of Březnice in 1150–1000 BCE, which no source gives. The switch in the top right corner (on a phone under the speed button) says so ("Počasí (F)" / "Weather (F)", with the note as tooltip).
+The weather is a **simulation (F)**: plausible Central European weather of our choosing, not a reconstruction of the weather of Březnice in 1150–1000 BCE, which no source gives. The switch in the top right corner (on a phone under the speed button) says so on two lines, with its key: "Počasí [P] / simulace" / "Weather [P] / simulation", and the note (simulation, F) as tooltip. It used to read "Weather (F)", which looked like the F key, and F is Follow (SB-059 R2-3).
 
 ```
 core/weather.gd   weather(t, season) -> {cloud, rain, fog, snow, wind} 0..1; shading(w) -> light factors; storm, smoke_push, sway

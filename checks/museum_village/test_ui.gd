@@ -459,6 +459,9 @@ func _initialize() -> void:
 	await _figure_over_time_bar(t, app)
 	await _sb059(t, app)
 	await _sb015_top_right(t, app)
+	await _round2_keys(t, app)
+	await _round2_wrap(t, app)
+	_round2_weather_label(t)
 	await _release(app)
 	quit(t.finish("ui"))
 
@@ -933,3 +936,228 @@ func _sb015_top_right(t, app) -> void:
 	root.size = Vector2i(1280, 720)
 	await process_frame
 	await process_frame
+
+# ---- SB-059 round 2 ---------------------------------------------------------------------------------------------------
+
+## A key pressed and released through Input, as the browser delivers it (the GUI sees it before the app's _unhandled_input).
+func _press_key(code: int) -> void:
+	for pressed in [true, false]:
+		var e := InputEventKey.new()
+		e.keycode = code
+		e.physical_keycode = code
+		e.pressed = pressed
+		Input.parse_input_event(e)
+		Input.flush_buffered_events()
+		await process_frame
+
+func _mouse_click(at: Vector2) -> void:
+	for pressed in [true, false]:
+		var e := _button(at, pressed)
+		e.global_position = at
+		Input.parse_input_event(e)
+		Input.flush_buffered_events()
+		await process_frame
+
+## Every Control under `node` that can take the keyboard focus by a click or by Tab.
+func _focusable(node: Node) -> Array:
+	var out: Array = []
+	for c in node.get_children(true):
+		if c is Control and (c.focus_mode == Control.FOCUS_ALL or c.focus_mode == Control.FOCUS_CLICK):
+			out.append("%s %s" % [c.get_class(), c.get("text") if c.get("text") != null else c.name])
+		out.append_array(_focusable(c))
+	return out
+
+## R2-1: after a click or tap on any button of the bar, the weather column or the card, a key does exactly one thing.
+## The app is spied on through its own state: how often `paused`, `speed`, `follow`, `cutaway`, `muted`, the weather and the
+## selection changed during the key, compared with the change the key alone is for.
+func _key_effect(app, code: int) -> Dictionary:
+	var before := {"paused": app.paused, "speed": app.speed, "follow": app.follow, "cutaway": app.cutaway, "muted": app.sound.muted,
+		"weather": app.weather.enabled, "quality": app.weather.quality, "lang": app.lang, "selected": app.selected}
+	var counts := {"pause": 0, "speed": 0, "follow": 0, "cutaway": 0, "sound": 0, "weather": 0, "quality": 0, "lang": 0, "closed": 0}
+	var spies := [[app.time_bar.pause_toggled, "pause"], [app.time_bar.speed_chosen, "speed"], [app.time_bar.follow_toggled, "follow"],
+		[app.time_bar.cutaway_toggled, "cutaway"], [app.time_bar.sound_toggled, "sound"], [app.weather_toggle.weather_toggled, "weather"],
+		[app.weather_toggle.quality_toggled, "quality"], [app.card_panel.language_toggled, "lang"], [app.card_panel.closed, "closed"]]
+	var conns: Array = []
+	for sp in spies:
+		var key: String = sp[1]
+		var f := func(_a = null): counts[key] += 1
+		(sp[0] as Signal).connect(f)
+		conns.append([sp[0], f])
+	await _press_key(code)
+	for c in conns:
+		(c[0] as Signal).disconnect(c[1])
+	var after := {"paused": app.paused, "speed": app.speed, "follow": app.follow, "cutaway": app.cutaway, "muted": app.sound.muted,
+		"weather": app.weather.enabled, "quality": app.weather.quality, "lang": app.lang, "selected": app.selected}
+	var changed: Array = []
+	for k in before:
+		if before[k] != after[k]:
+			changed.append(k)
+	var buttons: Array = []
+	for k in counts:
+		if counts[k] > 0:
+			buttons.append(k)
+	return {"changed": changed, "buttons": buttons, "speed": after.speed}
+
+func _round2_keys(t, app) -> void:
+	var id: int = app.focus_ids[2]
+	var cases := {KEY_SPACE: ["paused"], KEY_Q: ["speed"], KEY_W: ["speed"], KEY_E: ["speed"], KEY_P: ["weather"], KEY_M: ["muted"],
+		KEY_F: ["follow"], KEY_L: ["cutaway"]}
+	for sz in [Vector2i(1280, 800), Vector2i(320, 640)]:
+		root.size = sz
+		var narrow: bool = sz.x < 700
+		var tb = app.time_bar
+		var wt = app.weather_toggle
+		var cp = app.card_panel
+		app.lang = "cs" if narrow else "en"
+		var buttons := {}
+		if narrow:
+			buttons["speed cycle"] = tb.speed_cycle_button
+		else:
+			for b in tb.speed_buttons:
+				buttons[b.text] = b
+		for k in ["pause_button", "follow_button", "cutaway_button", "sound_button"]:
+			buttons[k] = tb.get(k)
+		buttons["weather"] = wt.weather_button
+		buttons["quality"] = wt.quality_button
+		buttons["card language"] = cp.lang_button
+		buttons["card close"] = cp.close_button
+		var tag := "%dx%d" % [sz.x, sz.y]
+		t.eq(_focusable(app), [], "R2-1 %s: no control of the app takes the keyboard focus" % tag)
+		for bname in buttons:
+			for code in cases:
+				app.weather.enabled = true
+				app.paused = false
+				app.speed = 1.0
+				app.sound.set_muted(false)
+				app.select(id if bname.begins_with("card") or narrow else 0)     # the wide card covers the weather buttons
+				app._refresh(0.0)
+				await process_frame
+				await process_frame
+				var b: Button = buttons[bname]
+				t.ok(b.is_visible_in_tree(), "R2-1 %s: '%s' is shown" % [tag, bname])
+				var at: Vector2 = b.get_global_rect().get_center()
+				if narrow:
+					await _tap(at)
+				else:
+					await _mouse_click(at)
+				if code in [KEY_Q, KEY_W, KEY_E]:
+					app.speed = 10.0 if code == KEY_Q else 1.0       # the key has a speed to change, whatever the click chose
+				var before_speed: float = app.speed
+				var got: Dictionary = await _key_effect(app, code)
+				var want: Array = cases[code]
+				t.eq(got.changed, want, "R2-1 %s: after '%s', %s changes only %s %s" % [tag, bname, OS.get_keycode_string(code), want, got])
+				t.eq(got.buttons, [], "R2-1 %s: after '%s', %s presses no button" % [tag, bname, OS.get_keycode_string(code)])
+				t.eq(root.gui_get_focus_owner(), null, "R2-1 %s: '%s' keeps no focus" % [tag, bname])
+				if code == KEY_SPACE:
+					t.eq(got.speed, before_speed, "R2-1 %s: after '%s', Space keeps the speed x%d" % [tag, bname, int(before_speed)])
+		# Tab is the app's (next homestead), also after a click on a button; digits too
+		app.select(0)
+		if narrow:
+			await _tap(tb.pause_button.get_global_rect().get_center())
+		else:
+			await _mouse_click(tb.pause_button.get_global_rect().get_center())
+		await _press_key(KEY_TAB)
+		t.eq(app.selected, app.focus_ids[0], "R2-1 %s: Tab after a click on Pause selects the first homestead" % tag)
+		await _press_key(KEY_TAB)
+		t.eq(app.selected, app.focus_ids[1], "R2-1 %s: a second Tab the next one" % tag)
+		await _press_key(KEY_3)
+		t.eq(app.selected, app.focus_ids[2], "R2-1 %s: 3 selects the third homestead" % tag)
+		await _press_key(KEY_ESCAPE)
+		t.eq(app.selected, 0, "R2-1 %s: Esc returns to the overview" % tag)
+	# negative control: a bar button that keeps the default focus mode makes Space do two things again
+	root.size = Vector2i(1280, 800)
+	app.select(0)
+	app.paused = false
+	app.speed = 1.0
+	app._refresh(0.0)
+	await process_frame
+	var pb: Button = app.time_bar.pause_button
+	pb.focus_mode = Control.FOCUS_ALL
+	await _mouse_click(pb.get_global_rect().get_center())
+	var bad: Dictionary = await _key_effect(app, KEY_SPACE)
+	t.ok(bad.buttons == ["pause"] and bad.changed == [], "R2-1 control: with the default focus mode, Space after a click on Pause presses it again and the pause flips twice (no change) %s" % bad)
+	pb.release_focus()
+	pb.focus_mode = Control.FOCUS_NONE
+	app.weather.enabled = false
+	app.paused = true
+	app.speed = 1.0
+	app.lang = "en"
+	app.select(0)
+
+## The parsed text of `body` broken in the middle of a word, or with a list dash alone on its line: a list of what.
+## A word is a run of characters between spaces, zero-width spaces and the path separators "/", "_" and "-".
+static func _bad_breaks(body: RichTextLabel) -> Array:
+	var text := body.get_parsed_text()
+	var bad: Array = []
+	var start := -1
+	for i in text.length() + 1:
+		var c := text[i] if i < text.length() else " "
+		var sep := c in [" ", "\n", "\t", CardPanel.ZWSP, "/", "_", "-", "–", "—"]
+		if not sep and start < 0:
+			start = i
+		elif sep and start >= 0:
+			if body.get_character_line(start) != body.get_character_line(i - 1):
+				bad.append("'%s' split" % text.substr(start, i - start))
+			start = -1
+		if c == "-" and (i == 0 or text[i - 1] == "\n") and i + 2 < text.length() and body.get_character_line(i) != body.get_character_line(i + 2):
+			bad.append("dash alone before '%s'" % text.substr(i + 2, 24))
+	return bad
+
+## The words of the card's text that are wider than the text column although a line may break only at spaces and at the
+## break points `breakable()` adds. That is how the web build breaks lines: it ships without the ICU line-break data
+## (only the editor has it), so there a path has no break opportunity of its own and was cut in the middle (SB-059 R2-2).
+## A non-breaking space joins: the list dash and the first word of the item must fit together.
+static func _too_wide_words(body: RichTextLabel) -> Array:
+	var font := body.get_theme_font("normal_font")
+	var font_size := body.get_theme_font_size("normal_font_size")
+	var bad: Array = []
+	for line in body.get_parsed_text().split("\n"):
+		for word in line.split(" ", false):
+			for piece in word.split(CardPanel.ZWSP, false):
+				var w := font.get_string_size(piece, HORIZONTAL_ALIGNMENT_LEFT, -1, font_size).x
+				if w > body.size.x:
+					bad.append("'%s' %.0f > %.0f px" % [piece, w, body.size.x])
+	return bad
+
+## R2-2: no card text is broken in the middle of a word, at any phone width, in either language.
+func _round2_wrap(t, app) -> void:
+	var body: RichTextLabel = app.card_panel.body
+	for sz in [Vector2i(320, 640), Vector2i(360, 740), Vector2i(390, 844), Vector2i(400, 800)]:
+		root.size = sz
+		for lang in I18n.LANGS:
+			app.lang = lang
+			var bad: Array = []
+			for id in app.focus_ids:
+				app.select(id)
+				await process_frame
+				await process_frame
+				for b in _bad_breaks(body) + _too_wide_words(body):
+					bad.append("hs-%02d %s" % [id, b])
+			t.eq(bad, [], "R2-2 %dx%d %s: no card breaks a word or leaves a dash alone" % [sz.x, sz.y, lang])
+	# positive control: the cook's card as it was drawn (a plain "- " and no break points) breaks the path mid-word at 390 px
+	root.size = Vector2i(390, 844)
+	app.lang = "en"
+	var cook := -1
+	for id in app.focus_ids:
+		if app.world.occupied[id].craft.card.sources.any(func(s): return str(s).contains("settlement-features.md")):
+			cook = id
+			break
+	app.select(cook)
+	await process_frame
+	var old_text: String = body.text.replace(CardPanel.ZWSP, "").replace("-" + CardPanel.NBSP, "- ")
+	body.text = old_text
+	await process_frame
+	var was: Array = _too_wide_words(body)
+	t.ok(was.size() > 0, "R2-2 control: hs-%02d drawn the old way has a word wider than the card at 390 px, so the web build cuts it %s" % [cook, was])
+	t.eq(CardPanel.breakable("see research/a-b_c.md, KILN-001"), "see research/\u200ba-\u200bb_\u200bc.md, KILN-001", "R2-2: only a word with '/' gets break points")
+	t.eq(CardPanel.breakable("[color=#8A6B4B]a/b[/color]"), "[color=#8A6B4B]a/b[/color]", "R2-2: BBCode is never given break points")
+	app.select(0)
+	root.size = Vector2i(1280, 720)
+	await process_frame
+
+## R2-3: the weather button names its key [P]; "(F)" next to it read as the F key (which is Follow).
+func _round2_weather_label(t) -> void:
+	for lang in I18n.LANGS:
+		var label := I18n.tr_("ui.weather", lang)
+		t.ok(label.contains("[P]") and not label.contains("(F)"), "R2-3 %s: the weather label names its key P and has no '(F)' (%s)" % [lang, label])
+		t.ok(I18n.tr_("ui.weather_note", lang).contains("F"), "R2-3 %s: the tooltip still says the weather is a simulation (F)" % lang)
