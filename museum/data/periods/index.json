@@ -1,0 +1,5 @@
+{
+  "schema": 1,
+  "default": "bronze_late",
+  "epochs": ["bronze_late"]
+}

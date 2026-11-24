@@ -1,7 +1,11 @@
 {
   "id": "bronze_late",
-  "schema": 1,
+  "schema": 2,
   "name": {"cs": "Pozdní doba bronzová (kolem 1100 př. n. l.)", "en": "Late Bronze Age (around 1100 BCE)"},
+  "label": {"cs": "kolem 1100 př. n. l.", "en": "around 1100 BCE"},
+  "village": {"layout": "villages/breznice.json", "furrows": "villages/breznice-furrows.json", "terrain": "villages/breznice-terrain.json"},
+  "homesteads": ["hs-01", "hs-02", "hs-03", "hs-04", "hs-05", "hs-06", "hs-07", "hs-08", "hs-09", "hs-10", "hs-11", "hs-12"],
+  "exhibits": ["store-6-05"],
   "day_length_s": 360,
   "note": "Day rhythm is F (fiction): no source gives a daily schedule. Fractions run from midnight (0) through noon (0.5); sunrise is 0.25 and sunset 0.75 (core/day_clock.gd), so people wake before dawn, work in daylight and are home by dusk. Segments tile the day; the two sleep segments are one night across midnight.",
   "segments": [

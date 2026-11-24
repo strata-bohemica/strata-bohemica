@@ -269,7 +269,7 @@ func _initialize() -> void:
 		var jm := _jitter(unscaled, 40.0)
 		t.ok(jm.x >= 0.1 or jm.y >= 0.002, "mutant 'flicker not scaled by the speed' is caught: at x40 it jitters (energy %.3f, %.4f m per frame)" % [jm.x, jm.y])
 	# the hearth follows the period's segments (data/periods/bronze_late.json)
-	var period: Dictionary = Schema.load_json("res://museum/data/periods/bronze_late.json")
+	var period: Dictionary = Schema.load_json(Fixture.Loader.epoch_path("bronze_late"))
 	var seg := {}
 	for s in period.segments:
 		seg[str(s.id) + ("_am" if float(s.from) < 0.5 else "_pm")] = s

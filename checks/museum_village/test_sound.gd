@@ -6,6 +6,7 @@ const T = preload("res://checks/museum_village/t.gd")
 const Soundscape = preload("res://museum/core/soundscape.gd")
 const SoundView = preload("res://museum/view/sound_view.gd")
 const TimeBar = preload("res://museum/ui/time_bar.gd")
+const Fixture = preload("res://checks/museum_village/fixture.gd")
 const Schema = preload("res://museum/core/schema.gd")
 ## The length of a day in these checks. The daily repeat of one-shots needs every bucket_s to divide it (checked below),
 ## so the step of the windows used here must divide the period's day, and DAY must be the period's day_length_s (checked).
@@ -215,7 +216,7 @@ func _initialize() -> void:
 	var data: Dictionary = Schema.load_json("res://museum/data/sound.json")
 
 	# data
-	var period: Dictionary = Schema.load_json("res://museum/data/periods/bronze_late.json")
+	var period: Dictionary = Schema.load_json(Fixture.Loader.epoch_path("bronze_late"))
 	t.eq(float(period.day_length_s), DAY, "DAY in these checks is the period's day length (the events repeat daily only if bucket_s divides it)")
 	t.eq(data.layers, Array(Soundscape.LAYERS), "sound.json lists the layers the code mixes")
 	var bus_names := []

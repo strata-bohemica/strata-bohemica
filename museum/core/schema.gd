@@ -1,7 +1,11 @@
 extends RefCounted
 ## JSON loading and structural validation for museum data files.
 
-const SUPPORTED_SCHEMA := 1
+## One schema version per file type (SB-072): a type moves on without dragging the others along.
+const REGISTRY_SCHEMA := 1      # periods/index.json
+const PERIOD_SCHEMA := 2        # periods/<epoch>.json, the epoch manifest
+const CRAFT_SCHEMA := 2
+const HOMESTEAD_SCHEMA := 2
 
 static func load_json(path: String) -> Variant:
 	var file := FileAccess.open(path, FileAccess.READ)
@@ -14,13 +18,41 @@ static func _need(d: Dictionary, keys: Array, where: String, errors: PackedStrin
 		if not d.has(k):
 			errors.append("%s: missing '%s'" % [where, k])
 
-static func validate_period(d: Dictionary) -> PackedStringArray:
+## The registry of epochs: the order of the epochs and the one shown first.
+static func validate_registry(d: Dictionary) -> PackedStringArray:
 	var errors := PackedStringArray()
-	_need(d, ["id", "schema", "day_length_s", "segments"], "period", errors)
+	_need(d, ["schema", "default", "epochs"], "epoch registry", errors)
 	if not errors.is_empty():
 		return errors
-	if int(d.schema) != SUPPORTED_SCHEMA:
+	if int(d.schema) != REGISTRY_SCHEMA:
+		errors.append("epoch registry: unsupported schema %s" % d.schema)
+	if not (d.epochs is Array) or d.epochs.is_empty():
+		errors.append("epoch registry: epochs must be a non-empty list")
+	elif not d.epochs.has(d.default):
+		errors.append("epoch registry: the default '%s' is not in the list" % d.default)
+	return errors
+
+## The manifest of one epoch: its names, its village files, its homesteads and exhibits, and its day.
+static func validate_period(d: Dictionary) -> PackedStringArray:
+	var errors := PackedStringArray()
+	_need(d, ["id", "schema", "name", "label", "village", "homesteads", "exhibits", "day_length_s", "segments"], "period", errors)
+	if not errors.is_empty():
+		return errors
+	if int(d.schema) != PERIOD_SCHEMA:
 		errors.append("period: unsupported schema %s" % d.schema)
+		return errors
+	for key in ["name", "label"]:
+		if not (d[key] is Dictionary) or not d[key].has("cs") or not d[key].has("en"):
+			errors.append("period: %s needs both cs and en" % key)
+	if not (d.village is Dictionary):
+		errors.append("period: village must list layout, furrows and terrain")
+	else:
+		_need(d.village, ["layout", "furrows", "terrain"], "period village", errors)
+	for key in ["homesteads", "exhibits"]:
+		if not (d[key] is Array):
+			errors.append("period: %s must be a list" % key)
+	if not errors.is_empty():
+		return errors
 	var cursor := 0.0
 	for s in d.segments:
 		if not (s is Dictionary) or not s.has("id") or not s.has("from") or not s.has("to"):
@@ -39,7 +71,7 @@ static func validate_craft(d: Dictionary) -> PackedStringArray:
 	if not errors.is_empty():
 		return errors
 	var where := "craft '%s'" % d.id
-	if int(d.schema) != 2:
+	if int(d.schema) != CRAFT_SCHEMA:
 		errors.append("%s: unsupported schema %s" % [where, d.schema])
 	if d.has("travel"):
 		_need(d.travel, ["length", "speed", "walk", "enter", "exit", "turn_hold_s"], where + " travel", errors)
@@ -76,7 +108,7 @@ static func validate_homestead(d: Dictionary) -> PackedStringArray:
 	_need(d, ["id", "schema", "craft", "house", "workplace", "bed", "walker", "sleeper"], "homestead", errors)
 	if d.get("site", false) == true and d.has("workplace") == false:
 		errors.append("homestead '%s': a site homestead still lists a workplace placeholder" % d.get("id", "?"))
-	if errors.is_empty() and int(d.schema) != 2:
+	if errors.is_empty() and int(d.schema) != HOMESTEAD_SCHEMA:
 		errors.append("homestead '%s': unsupported schema %s" % [d.id, d.schema])
 	return errors
 
