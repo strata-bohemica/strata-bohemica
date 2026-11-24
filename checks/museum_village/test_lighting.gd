@@ -53,6 +53,7 @@ func _all(L: Variant, x: float, motion := 1.0) -> Array:
 	var out: Array = _flat(L.base(x))
 	out.append(L.hearth(x))
 	out.append_array(_flat(L.fire(x, 1.3, motion)))
+	out.append_array(_flat(L.fire(x, 1.3, motion, DAY, 40.0)))       # the speed calms the flicker; still a function of t
 	return out
 
 ## -> failures of the core guards against `L` (a script with the Lighting statics).
@@ -104,6 +105,31 @@ func _core_failures(L: Variant, quiet := false) -> int:
 	t.ok(worst_hearth < 0.01, "the hearth rises and falls smoothly (%.4f per %.1f s)" % [worst_hearth, STEP])
 	return t.failures.size()
 
+## The worst change of a fire from one frame to the next (60 frames a second of real time) at game speed `speed`:
+## Vector2(energy, offset in m), over a whole day of three fires.
+func _jitter(L: Variant, speed: float, motion := 1.0) -> Vector2:
+	var dt := speed / 60.0
+	var worst := Vector2.ZERO
+	for ph in [0.0, 0.7, 2.9]:
+		var prev: Dictionary = L.fire(-dt, ph, motion, DAY, speed)
+		var x := 0.0
+		while x < DAY:
+			var cur: Dictionary = L.fire(x, ph, motion, DAY, speed)
+			worst.x = maxf(worst.x, absf(float(cur.energy) - float(prev.energy)))
+			worst.y = maxf(worst.y, (cur.offset as Vector3).distance_to(prev.offset))
+			prev = cur
+			x += dt
+	return worst
+
+## The largest share of the fast flicker (what motion adds) left at game speed `speed`, over a day.
+func _fast_left(speed: float) -> float:
+	var m := 0.0
+	var x := 0.0
+	while x < DAY:
+		m = maxf(m, absf(float(Lighting.fire(x, 1.1, 1.0, DAY, speed).energy) - float(Lighting.fire(x, 1.1, 0.0, DAY, speed).energy)))
+		x += 0.0137
+	return m
+
 func _sat(c: Color) -> float:
 	return maxf(c.r, maxf(c.g, c.b)) - minf(c.r, minf(c.g, c.b))
 
@@ -118,6 +144,37 @@ static func _level(p: Vector3, ambient: float, lights: Array) -> float:
 		if d < light.omni_range:
 			sum += light.light_energy * pow(1.0 - d / light.omni_range, 2.0)
 	return sum
+
+## Walks `view` through switches that take shadows away (higher -> lower quality, night -> day, cut away) and checks the
+## real lights: no visible light keeps shadow_enabled where none is allowed, never more shadowed than the quality allows.
+## -> "" or what went wrong.
+func _stale_shadows(view: Node, village: Node, door_cam: Vector3, cook_root: Node3D) -> String:
+	var night_x := 0.8 * DAY
+	var day_x := 0.5 * DAY
+	var steps := [
+		[night_x, door_cam, "high", false], [night_x, door_cam, "low", false],
+		[night_x, door_cam, "high", false], [night_x, door_cam, "low", true],
+		[night_x, door_cam, "high", false], [day_x, door_cam, "high", false],
+		[night_x, cook_root.global_position + Vector3(-30, 10, 0), "high", false], [day_x, cook_root.global_position + Vector3(-30, 10, 0), "high", true],
+		[night_x, door_cam, "high", true], [night_x, door_cam, "low", true],
+		[day_x, door_cam, "low", false], [night_x, door_cam, "high", false],
+	]
+	var shadows_seen := 0
+	for s in steps:
+		var x: float = s[0]
+		var night := 1.0 - smoothstep(-0.15, 0.3, Lighting.elevation(x))
+		village.apply(x, night, s[3])
+		view.apply(s[1], s[3], s[2], night)
+		var allowed: int = int(Lighting.QUALITY[s[2]].shadows) if night > 0.5 else 0
+		var shadowed := 0
+		for e in view.entries:
+			var l: OmniLight3D = e.light
+			if l.visible and l.shadow_enabled:
+				shadowed += 1
+		shadows_seen = maxi(shadows_seen, shadowed)
+		if shadowed > allowed:
+			return "t=%.0f %s%s: %d visible lights cast shadows, %d allowed" % [x, s[2], " cut away" if s[3] else "", shadowed, allowed]
+	return "" if shadows_seen > 0 else "positive control: no step had a shadow at all"
 
 func _initialize() -> void:
 	await process_frame
@@ -182,6 +239,35 @@ func _initialize() -> void:
 	t.ok(moved > 0.03 and moved < 0.2, "the fire's light moves a few centimetres (%.3f m)" % moved)
 	t.ok((Lighting.fire(100.0, 0.7, 0.0).offset as Vector3).is_zero_approx(), "no movement at motion 0")
 	t.ok(Lighting.fire(100.0, 0.7).energy != Lighting.fire(100.0, 2.1).energy, "fires with other phases do not flicker in step")
+	# the game speed: at x10 and x40 a fast flicker would be random jitter frame to frame; only the slow swells stay
+	var same_x1 := true
+	for k in range(200):
+		var x := k * 1.79 - 20.0
+		same_x1 = same_x1 and str(Lighting.fire(x, 0.7, 1.0, DAY, 1.0)) == str(Lighting.fire(x, 0.7)) and str(Lighting.fire(x, 0.7, 1.0, DAY, 0.0)) == str(Lighting.fire(x, 0.7))
+	t.ok(same_x1, "at x1 (and paused) the fire is the one it always was")
+	var j1 := _jitter(Lighting, 1.0)
+	var j10 := _jitter(Lighting, 10.0)
+	var j40 := _jitter(Lighting, 40.0)
+	t.ok(j1.x > 0.05 and j1.y > 0.005, "x1: the fire licks from frame to frame (energy %.3f, %.4f m)" % [j1.x, j1.y])
+	t.ok(j10.x < 0.1 and j10.y < 0.002 and j40.x < 0.1 and j40.y < 0.002,
+		"x10/x40: no jitter between frames (energy %.3f / %.3f, light moves %.4f / %.4f m per frame)" % [j10.x, j40.x, j10.y, j40.y])
+	var calm_hi := 9.0
+	var calm_lo := -9.0
+	for k in range(60):                        # one second of play at x40
+		var e40 := float(Lighting.fire(100.0 + k * 40.0 / 60.0, 0.7, 1.0, DAY, 40.0).energy)
+		calm_hi = minf(calm_hi, e40); calm_lo = maxf(calm_lo, e40)
+	t.ok(calm_lo - calm_hi > 0.1, "x40: the fire still swells within a second (%.2f .. %.2f)" % [calm_hi, calm_lo])
+	var left: Array = [1.0, 1.5, 2.0, 3.0, 5.0, 10.0, 40.0].map(func(sp): return _fast_left(sp))
+	var falling := true
+	for i in range(1, left.size()):
+		falling = falling and float(left[i]) <= float(left[i - 1]) + 1e-9
+	t.ok(falling and float(left[0]) > 0.15 and float(left[2]) > 0.05 and float(left[2]) < float(left[0]) and float(left[5]) == 0.0,
+		"the fast flicker fades smoothly with the speed: %s" % str(left.map(func(v): return snappedf(v, 0.001))))
+	var unscaled := _mutant(path, [["return 1.0 - smoothstep(FLICKER_KEEP_HZ, FLICKER_DROP_HZ, float(cycles) * absf(speed) / day_length)", "return 1.0"]])
+	t.ok(unscaled != null, "mutant 'flicker not scaled by the speed' applies")
+	if unscaled != null:
+		var jm := _jitter(unscaled, 40.0)
+		t.ok(jm.x >= 0.1 or jm.y >= 0.002, "mutant 'flicker not scaled by the speed' is caught: at x40 it jitters (energy %.3f, %.4f m per frame)" % [jm.x, jm.y])
 	# the hearth follows the period's segments (data/periods/bronze_late.json)
 	var period: Dictionary = Schema.load_json("res://museum/data/periods/bronze_late.json")
 	var seg := {}
@@ -284,6 +370,18 @@ func _initialize() -> void:
 	t.ok(hearth_off, "lower quality: the hearth inside stays off (no shadow to hold it); the doorway glow stands for it")
 	at.call(0.8 * DAY, door_cam, "low", true)
 	t.ok((village.homesteads[COOK].view.hearth as OmniLight3D).visible, "cut away, the hearth lights the room")
+	# switching back down (quality, night to day): no light left on keeps a shadow it no longer has (the node itself)
+	var stale := _stale_shadows(lv, village, door_cam, cook_root)
+	t.eq(stale, "", "after higher -> lower and night -> day no visible light casts a shadow; never more than allowed")
+	var stuck := _mutant("res://museum/view/light_view.gd", [["\t\tif light.shadow_enabled != sh:\n\t\t\tlight.shadow_enabled = sh\n", "\t\tif sh:\n\t\t\tlight.shadow_enabled = true\n"]])
+	t.ok(stuck != null, "view mutant 'a shadow is never switched off' applies")
+	if stuck != null:
+		var ms: Node = stuck.new()
+		root.add_child(ms)
+		ms.build(village)
+		var caught := _stale_shadows(ms, village, door_cam, cook_root)
+		t.ok(caught != "", "view mutant 'a shadow is never switched off' is caught (%s)" % caught)
+		ms.queue_free()                      # lv sets every light's shadow from the node's own state on its next apply
 
 	# day and night: the night is dark away from the fires and lit near them
 	var noon_l: Dictionary = Lighting.base(0.5 * DAY)
@@ -380,6 +478,15 @@ func _initialize() -> void:
 	app.weather_toggle.quality_button.pressed.emit()
 	app._refresh(0.0)
 	t.ok(app.weather.quality == "high" and app.light.live_count() <= Lighting.QUALITY.high.live, "higher -> up to %d lights (%d on, %d shadowed)" % [Lighting.QUALITY.high.live, app.light.live_count(), app.light.shadow_count()])
+	# the app hands its speed to the fires: at x40 the hearth's light stands at its place (no sway), at x1 it moves
+	var hv_cook = app.village.homesteads[COOK].view
+	app.speed = 40.0
+	app._refresh(0.0)
+	var still_40: bool = (hv_cook.hearth as OmniLight3D).position.is_equal_approx(hv_cook._hearth_pos)
+	app.speed = 1.0
+	app._refresh(0.0)
+	var moves_1: bool = not (hv_cook.hearth as OmniLight3D).position.is_equal_approx(hv_cook._hearth_pos)
+	t.ok(hv_cook.speed == 1.0 and still_40 and moves_1, "the app's speed reaches the fires: x40 calm, x1 lively")
 	var cf := ConfigFile.new()
 	t.ok(cf.load(WeatherView.PREFS_PATH) == OK and cf.get_value("weather", "quality", "") == "high", "the choice is saved with the weather's (user://weather.cfg)")
 	# the light adds nothing to the screen's controls: the phone layout stays as it was

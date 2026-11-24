@@ -15,6 +15,7 @@ const REDUCED_MOTION := 0.3         # flicker and movement of the fires with red
 
 var entries: Array = []             # [{"light": OmniLight3D, "kind": "fire"|"door"|"hearth", "view": HomesteadView}]
 var motion := 1.0
+var speed := 1.0                    # the game speed (x1/x10/x40): the fires drop what would jitter (core/lighting.gd)
 var _live: Array[int] = []
 var _shadow: Array[int] = []
 
@@ -31,6 +32,7 @@ func build(village) -> void:
 	for id in ids:
 		var hv = village.homesteads[id].view
 		hv.motion = motion
+		hv.speed = speed
 		for l in hv.lights:
 			entries.append({"light": l.light, "kind": "fire", "view": hv})
 		entries.append({"light": hv.glow, "kind": "door", "view": hv})
@@ -46,6 +48,14 @@ func set_motion(m: float) -> void:
 	motion = m
 	for e in entries:
 		e.view.motion = m
+
+## The game speed, for the fires' flicker (Lighting.fire): set every frame by the app, cheap when unchanged.
+func set_speed(s: float) -> void:
+	if s == speed:
+		return
+	speed = s
+	for e in entries:
+		e.view.speed = s
 
 ## Apply the budget after the homestead views have set this frame's energies.
 ## camera: world position; open: the houses are cut away; quality: "low"/"high"; dark: 0..1 (1 = night).

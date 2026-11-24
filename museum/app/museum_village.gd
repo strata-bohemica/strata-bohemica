@@ -359,6 +359,7 @@ func _focus_target() -> Vector3:
 func _refresh(delta: float) -> void:
 	var clock = world.occupied[focus_ids[0]].schedule.clock
 	var daylight: float = clock.daylight(t)
+	light.set_speed(speed)                       # before the fires are set: what flickers depends on the speed
 	village.apply(t, 1.0 - daylight, cutaway)
 	var f: float = clock.fraction(t)
 	# the light of the day (core/lighting.gd, SB-017); the weather only multiplies it (view/weather_view.gd)

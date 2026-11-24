@@ -33,6 +33,7 @@ var glow: OmniLight3D               # the doorway: the hearth's light spilling o
 var hearth: OmniLight3D             # the hearth inside the house (view/light_view.gd turns it on only when its walls hold it)
 var doorway: MeshInstance3D         # the door opening, glowing with the hearth's light at night (seen from any distance)
 var motion := 1.0                   # liveliness of the fires (view/light_view.gd: calmer with reduced motion)
+var speed := 1.0                    # how fast the game runs (view/light_view.gd): fast flicker fades at x10/x40
 var home_id := 0                    # the house id: gives each fire its own flicker phase
 var day_length := 360.0
 var _hearth_pos := Vector3.ZERO
@@ -359,7 +360,7 @@ func _worker_node(node_name: String) -> Node3D:
 func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: float = 0.0) -> void:
 	house.visible = not cutaway
 	# the house hearth (SB-017): fed in the evening and before work, smouldering at night; the doorway shows it
-	var hf := Lighting.fire(time, Lighting.phase_of(home_id, 9), motion, day_length)
+	var hf := Lighting.fire(time, Lighting.phase_of(home_id, 9), motion, day_length, speed)
 	var h := Lighting.hearth(time, day_length) * float(hf.energy)
 	var hc := Lighting.fire_color(HEARTH_COLOR, float(hf.warmth))
 	glow.light_energy = DOOR_ENERGY * h
@@ -413,7 +414,7 @@ func apply(state: Dictionary, night: float = 0.0, cutaway: bool = false, time: f
 		var flicker := 1.0
 		var light: OmniLight3D = l.light
 		if l.flicker:                                 # whole cycles per day (core/lighting.gd): the fire repeats every day
-			var f := Lighting.fire(time, float(l.phase), motion, day_length)
+			var f := Lighting.fire(time, float(l.phase), motion, day_length, speed)
 			flicker = float(f.energy)
 			light.position = (l.pos as Vector3) + (f.offset as Vector3)
 			light.light_color = Lighting.fire_color(l.color, float(f.warmth))

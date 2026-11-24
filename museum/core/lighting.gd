@@ -59,6 +59,12 @@ const HEARTH_EMBERS := 0.5                            # the night's smouldering 
 const FLICKER_SLOW := [[20, 0.14, 1.0], [52, 0.08, 2.0]]
 const FLICKER_FAST := [[1201, 0.09, 3.0], [2297, 0.06, 5.0], [3613, 0.04, 7.0]]
 const SWAY := [[1499, 0.05], [1847, 0.07], [1663, 0.05]]   # m: how far the light's centre moves (x, y, z)
+## The game runs x1, x10 or x40, so a cycle of the day passes that much faster on screen. A cycle faster on screen than
+## FLICKER_KEEP_HZ fades, and from FLICKER_DROP_HZ it is gone: sampled at 60 frames a second it would be random jitter
+## from frame to frame, not a flicker. At x1 every cycle is kept (the fastest is ~10 Hz); at x10 and x40 only the slow
+## swells are left.
+const FLICKER_KEEP_HZ := 11.0
+const FLICKER_DROP_HZ := 22.0
 
 ## Quality presets: how many positional lights may be on at once and how many of them cast shadows. The renderer (GL
 ## Compatibility) draws at most 8 omni lights per object (rendering/limits/opengl/max_lights_per_object) and the terrain
@@ -117,23 +123,29 @@ static func hearth(t: float, day_length: float = 360.0) -> float:
 
 ## One fire at time t: {"energy": factor around 0.8 (0.4..1.2), "offset": Vector3 m, "warmth": 0..1}.
 ## phase: per fire (fires do not flicker in step). motion: 1 = full, smaller = calmer (reduced motion), 0 = slow swell only.
-## Every component has a whole number of cycles per day, so fire(t + day) == fire(t).
-static func fire(t: float, phase: float, motion: float = 1.0, day_length: float = 360.0) -> Dictionary:
+## speed: how fast the game runs (1, 10, 40; pause counts as its speed): cycles too fast to show at that speed fade
+## (see FLICKER_KEEP_HZ). Every component has a whole number of cycles per day, so fire(t + day) == fire(t).
+static func fire(t: float, phase: float, motion: float = 1.0, day_length: float = 360.0, speed: float = 1.0) -> Dictionary:
 	var w := TAU / day_length
 	var x := fposmod(t, day_length)          # whole cycles per day: the same value, without losing precision on long runs
 	var slow := 0.0
 	for c in FLICKER_SLOW:
-		slow += float(c[1]) * sin(x * w * float(c[0]) + float(c[2]) * phase)
+		slow += _shown(c[0], speed, day_length) * float(c[1]) * sin(x * w * float(c[0]) + float(c[2]) * phase)
 	var fast := 0.0
 	for c in FLICKER_FAST:
-		fast += float(c[1]) * sin(x * w * float(c[0]) + float(c[2]) * phase)
+		fast += _shown(c[0], speed, day_length) * float(c[1]) * sin(x * w * float(c[0]) + float(c[2]) * phase)
 	var m := clampf(motion, 0.0, 1.0)
 	var energy := 0.8 + slow + m * fast
-	var off := Vector3(
-		float(SWAY[0][1]) * sin(x * w * float(SWAY[0][0]) + phase),
-		float(SWAY[1][1]) * sin(x * w * float(SWAY[1][0]) + 2.0 * phase),
-		float(SWAY[2][1]) * sin(x * w * float(SWAY[2][0]) + 3.0 * phase)) * m
+	var off := Vector3.ZERO
+	for i in 3:
+		off[i] = _shown(SWAY[i][0], speed, day_length) * float(SWAY[i][1]) * sin(x * w * float(SWAY[i][0]) + float(i + 1) * phase)
+	off *= m
 	return {"energy": energy, "offset": off, "warmth": clampf((1.0 - energy) * 1.5 + 0.3, 0.0, 1.0)}
+
+## How much of a cycle of `cycles` per day is shown when the game runs `speed` times faster: 1 up to FLICKER_KEEP_HZ on
+## screen, smoothly down to 0 at FLICKER_DROP_HZ.
+static func _shown(cycles: float, speed: float, day_length: float) -> float:
+	return 1.0 - smoothstep(FLICKER_KEEP_HZ, FLICKER_DROP_HZ, float(cycles) * absf(speed) / day_length)
 
 ## A fire's colour: its base colour, redder as it dies down (warmth 0..1).
 static func fire_color(base_color: Color, warmth: float) -> Color:
