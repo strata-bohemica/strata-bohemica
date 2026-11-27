@@ -3,8 +3,11 @@ extends Node3D
 ## Wires data -> schedules -> views -> UI; owns the clock, light and camera. No game rules here.
 
 const Loader = preload("res://museum/app/village_loader.gd")
+const Epoch = preload("res://museum/core/epoch.gd")
+const EpochDock = preload("res://museum/ui/epoch_dock.gd")
 const VillageView = preload("res://museum/view/village_view.gd")
 const Card = preload("res://museum/core/card.gd")
+const Schema = preload("res://museum/core/schema.gd")
 const I18n = preload("res://museum/core/i18n.gd")
 const Picking = preload("res://museum/core/picking.gd")
 const CardPanel = preload("res://museum/ui/card_panel.gd")
@@ -28,6 +31,8 @@ const MIN_OVERVIEW_DIST := 30.0
 const MIN_FOCUS_DIST := 4.0
 const MAX_DIST := 300.0
 const PAN_LIMIT := 70.0             # metres from the centre; the terrain is 161 m across
+const EPOCH_PREFS_PATH := "user://epoch.cfg"
+const EPOCH_SEED := 11              # the transition scene is the same every time (a pure function of p and this seed)
 const HOUSE_DIST := 32.0           # an unstaffed house is looked at from further away (there is no person to see)
 
 var world: Dictionary
@@ -48,13 +53,15 @@ var camera: Camera3D
 var hud: Label
 var card_panel
 var time_bar
+var epoch_dock                     # ui/epoch_dock.gd: the epoch switch and the transition panel (SB-073)
+var epoch_id := ""                 # "" = the saved choice, else the registry's default; the checks preset another to see the refusal
+var transition: Dictionary = {}    # while the village changes: {from, to, world, view, p, duration_s}; {} otherwise
 var sound
 var object_stage                   # the object viewer's own little world (view/object_stage.gd)
 var object_viewer                  # its panel (ui/object_viewer.gd)
 var weather                        # view/weather_view.gd: applies core/weather.gd, owns on/off and quality
 var weather_toggle                 # ui/weather_toggle.gd
 var light                          # view/light_view.gd: which fires are on and cast shadows (SB-017)
-var epoch_id := ""                 # "" = the registry's default epoch; the checks set another to see the refusal
 var detail_state: Dictionary = ObjectView.closed()
 var orbit_yaw := deg_to_rad(20.0)
 var orbit_pitch := deg_to_rad(-38.0)
@@ -73,7 +80,18 @@ var narrow := false                # a phone-sized screen: card as a bottom shee
 var _card_shift := 0.0            # 0..1: how far the view is pushed aside for the open card
 
 func _ready() -> void:
+	var from_pref := false
+	if epoch_id == "":          # a preset (the checks) wins; otherwise the saved choice, else the registry's default
+		epoch_id = Epoch.choose(Loader.registry(), _load_epoch_pref())
+		from_pref = true
 	world = Loader.load_all(epoch_id)
+	var default_id := str(Loader.registry().get("default", ""))
+	if from_pref and not world.loaded and epoch_id != default_id:   # a saved epoch that no longer loads must not brick the scene
+		for e in world.errors:
+			push_error(e)               # why the saved epoch no longer loads
+		epoch_id = default_id
+		world = Loader.load_all(epoch_id)
+		_save_epoch_pref()              # replace the stale saved choice
 	for e in world.errors:
 		push_error(e)
 	if not world.loaded:       # an epoch that cannot be loaded leaves the empty scene and its error in the log
@@ -89,6 +107,14 @@ func _ready() -> void:
 	village = VillageView.new()
 	add_child(village)
 	village.build(world.village, world.terrain, world.occupied, world.pending)
+	_build_weather_and_light()
+	t = START_FRACTION * float(period.day_length_s)
+	_fit_ui_scale()
+	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
+	apply_layout(get_viewport().get_visible_rect().size)
+	_refresh(0.0)
+
+func _build_weather_and_light() -> void:
 	weather = WeatherView.new()
 	weather.day_length = float(period.day_length_s)
 	add_child(weather)
@@ -96,11 +122,6 @@ func _ready() -> void:
 	light = LightView.new()
 	add_child(light)
 	light.build(village)
-	t = START_FRACTION * float(period.day_length_s)
-	_fit_ui_scale()
-	get_viewport().size_changed.connect(func(): apply_layout(get_viewport().get_visible_rect().size))
-	apply_layout(get_viewport().get_visible_rect().size)
-	_refresh(0.0)
 
 func _build_world() -> void:
 	sun = DirectionalLight3D.new()
@@ -155,6 +176,15 @@ func _build_world() -> void:
 	weather_toggle.weather_toggled.connect(toggle_weather)
 	weather_toggle.quality_toggled.connect(toggle_weather_quality)
 	layer.add_child(weather_toggle)
+	epoch_dock = EpochDock.new()
+	epoch_dock.epoch_chosen.connect(switch_epoch)
+	layer.add_child(epoch_dock)
+	var epochs: Array = []
+	for id in Loader.registry().get("epochs", []):       # only the labels are read here; an epoch's world is loaded when it is chosen
+		var manifest = Schema.load_json(Loader.epoch_path(str(id)))
+		if manifest is Dictionary and manifest.has("label"):
+			epochs.append({"id": str(id), "label": manifest.label})
+	epoch_dock.set_epochs(epochs, epoch_id)
 	add_child(layer)
 
 # ---- layout ---------------------------------------------------------------------------------------------------
@@ -179,6 +209,8 @@ func apply_layout(size: Vector2) -> void:
 	if detail_state.open:
 		_show_detail()                           # the buttons take the new layout
 	time_bar.set_narrow(narrow)
+	epoch_dock.offset_bottom = -(TimeBar.BOTTOM_GAP + (TimeBar.NARROW_BAR_HEIGHT if narrow else TimeBar.WIDE_BAR_HEIGHT) + 6.0)
+	epoch_dock.fit_height()          # keeps the transition panel on screen when the window changes during a transition
 	# phone: the right column holds the speed button and, under it, the weather buttons (SB-059 D4, SB-015)
 	weather_toggle.set_narrow(narrow, TimeBar.NARROW_MARGIN + TimeBar.NARROW_TOUCH + TimeBar.NARROW_MARGIN)
 	_fit_hud()
@@ -231,6 +263,8 @@ func zoom_by(factor: float) -> void:
 
 ## Select a house (0 = overview): the camera goes there and its card opens.
 func select(id: int) -> void:
+	if id != 0 and not transition.is_empty():
+		return                                   # the village is changing: nobody is at work to look at
 	if detail_state.open:
 		close_detail()
 	selected = id
@@ -296,6 +330,72 @@ func _show_detail() -> void:
 	object_stage.apply(ObjectView.framing(detail, detail_state.view, object_stage.anchors()))
 	object_viewer.show_page(ObjectView.page(detail, detail_state, lang, world.occupied[selected].craft.card.sources))
 
+# ---- epochs (SB-073): the choice, and the transition scene between two of them ------------------------------------
+
+func _load_epoch_pref() -> Variant:
+	var cfg := ConfigFile.new()
+	return cfg.get_value("museum", "epoch", null) if cfg.load(EPOCH_PREFS_PATH) == OK else null
+
+func _save_epoch_pref() -> void:
+	var cfg := ConfigFile.new()
+	cfg.set_value("museum", "epoch", epoch_id)
+	cfg.save(EPOCH_PREFS_PATH)           # a failed save only means the next start uses the default
+
+## Go to another epoch: its data is loaded now (not before), then the old village decays and the new one is built, as a
+## function of the progress p (core/epoch.gd) over `duration_s` seconds. Returns false (and changes nothing) if the epoch is
+## the one on show, unknown, cannot be loaded, or a transition is already running.
+func switch_epoch(id: String, duration_s := Epoch.DEFAULT_DURATION_S) -> bool:
+	if not transition.is_empty() or id == epoch_id or not Loader.registry().get("epochs", []).has(id):
+		return false
+	var target := Loader.load_all(id)
+	for e in target.errors:
+		push_error(e)
+	if not target.loaded or not target.errors.is_empty():
+		return false
+	var view := VillageView.new()
+	add_child(view)
+	view.build(target.village, target.terrain, target.occupied, target.pending)
+	view.set_landscape_visible(false)    # the incoming terrain/trees wait for p = 1 (the returning cover is SB-079)
+	transition = {"from": Epoch.describe(world), "to": Epoch.describe(target), "world": target, "view": view, "p": 0.0, "duration_s": duration_s}
+	select(0)
+	_apply_transition(0.0)
+	return true
+
+## Show the transition at progress p: the old houses sink away, the new ones rise; nobody works (time stands still).
+func _apply_transition(p: float) -> void:
+	transition.p = Epoch.clamp_p(p)
+	var state := Epoch.transition_state(transition.from, transition.to, transition.p, EPOCH_SEED)
+	transition["state"] = state
+	for h in state.houses:
+		var v = village if h.epoch == "from" else transition.view
+		v.show_house(int(h.id), 1.0 - float(h.decay) if h.epoch == "from" else float(h.build))
+	if state.active == "to":
+		_finish_transition()
+
+func _finish_transition() -> void:
+	var target: Dictionary = transition.world
+	var incoming = transition.view
+	var was_enabled: bool = weather.enabled
+	var quality: String = weather.quality
+	village.set_landscape_visible(false)    # the incoming landscape is shown below; no frame draws both
+	village.queue_free()
+	weather.queue_free()
+	light.queue_free()
+	world = target
+	period = target.period
+	epoch_id = str(period.id)
+	village = incoming
+	incoming.set_landscape_visible(true)
+	focus_ids = world.occupied.keys()
+	focus_ids.sort()
+	sound.day_length = float(period.day_length_s)
+	_build_weather_and_light()
+	weather.set_enabled(was_enabled)
+	weather.set_quality(quality)
+	transition = {}
+	select(0)
+	_save_epoch_pref()
+
 ## Jump to a time of day (0..1), keeping the day number.
 func scrub(fraction: float) -> void:
 	t = world.occupied[focus_ids[0]].schedule.clock.time_at(t, fraction)
@@ -339,7 +439,9 @@ func _name_of(id: int) -> String:
 func _process(delta: float) -> void:
 	if not world.get("loaded", false):
 		return
-	if not paused:
+	if not transition.is_empty():
+		_apply_transition(Epoch.step(transition.p, delta, transition.duration_s))
+	elif not paused:
 		t += delta * speed
 	_pan_keys(delta)
 	_refresh(delta)
@@ -366,6 +468,8 @@ func _refresh(delta: float) -> void:
 	var daylight: float = clock.daylight(t)
 	light.set_speed(speed)                       # before the fires are set: what flickers depends on the speed
 	village.apply(t, 1.0 - daylight, cutaway)
+	if not transition.is_empty():
+		transition.view.apply(t, 1.0 - daylight, cutaway)    # frozen at this moment: the people stand still while the village changes
 	var f: float = clock.fraction(t)
 	# the light of the day (core/lighting.gd, SB-017); the weather only multiplies it (view/weather_view.gd)
 	var base_light := Lighting.base(t, float(period.day_length_s))
@@ -401,6 +505,7 @@ func _refresh(delta: float) -> void:
 	time_bar.sync(f, paused, speed, follow, cutaway, lang, sound.muted, sound.volume)
 	weather_toggle.visible = not detail_state.open and (narrow or not card_panel.visible)    # the wide card covers the top right
 	weather_toggle.sync(weather.enabled, weather.quality, lang)
+	epoch_dock.sync(epoch_id, transition.get("state", {}), lang)
 	_fit_hud()                                   # the weather buttons' width follows the language and the quality label
 
 ## Which homestead is under the mouse? (Only while no button is held, so orbiting does not flicker the cursor.)
