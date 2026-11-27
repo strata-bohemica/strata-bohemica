@@ -43,5 +43,7 @@
  "ui.weather_note": "Počasí je simulace (F, fikce): oblačnost, déšť, mlha a vítr podle našeho výběru, ne rekonstrukce počasí let 1150–1000 př. n. l.",
  "ui.weather_quality_high": "Kvalita: vyšší",
  "ui.weather_quality_low": "Kvalita: nižší",
- "ui.weather_quality_note": "Nižší kvalita: méně kapek deště, stromy se ve větru nehýbou, méně světel ohňů a bez jejich stínů (pro slabší zařízení)."
+ "ui.weather_quality_note": "Nižší kvalita: méně kapek deště, stromy se ve větru nehýbou, méně světel ohňů a bez jejich stínů (pro slabší zařízení).",
+ "ui.epoch": "Epocha",
+ "ui.epoch_note": "Přechod mezi epochami je naše ilustrace (F, fikce): ukazuje, že vesnice zanikla a vznikla nová, ne skutečný průběh. O době mezi epochami tu nic netvrdíme."
 }

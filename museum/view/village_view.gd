@@ -72,6 +72,23 @@ func apply(t: float, night: float, cutaway: bool) -> void:
 	for house in empty_houses:
 		house.visible = not cutaway
 
+## Show or hide this epoch's terrain and trees. During a transition the incoming epoch keeps them hidden so the two
+## landscapes do not overlap (the ground they share is already on screen); the returning/cleared cover itself is SB-079.
+func set_landscape_visible(on: bool) -> void:
+	if terrain_view != null:
+		terrain_view.visible = on
+	for tree in trees:
+		tree.visible = on
+
+## How much of a house stands, 0..1 (SB-073 transition): 1 whole, less sinks it into the ground, 0 gone. Not part of the day's function of time.
+func show_house(id: int, amount: float) -> void:
+	var root: Node3D = house_roots.get(id)
+	if root == null:
+		return
+	var a := clampf(amount, 0.0, 1.0)
+	root.visible = a > 0.0
+	root.scale = Vector3(1.0, maxf(a, 0.02), 1.0)
+
 ## World position of a homestead's work place (for the camera).
 func workplace_world(id: int) -> Vector3:
 	var info: Dictionary = homesteads[id]

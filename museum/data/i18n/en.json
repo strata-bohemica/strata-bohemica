@@ -43,5 +43,7 @@
  "ui.weather_note": "The weather is a simulation (F, fiction): cloud, rain, mist and wind of our choosing, not a reconstruction of the weather of 1150–1000 BCE.",
  "ui.weather_quality_high": "Quality: higher",
  "ui.weather_quality_low": "Quality: lower",
- "ui.weather_quality_note": "Lower quality: fewer raindrops, the trees do not move in the wind, fewer firelights and no fire shadows (for weaker devices)."
+ "ui.weather_quality_note": "Lower quality: fewer raindrops, the trees do not move in the wind, fewer firelights and no fire shadows (for weaker devices).",
+ "ui.epoch": "Epoch",
+ "ui.epoch_note": "The change between epochs is our illustration (F, fiction): it shows one village given up and another founded, not how it went. We claim nothing here about the time between the epochs."
 }

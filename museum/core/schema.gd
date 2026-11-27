@@ -51,6 +51,8 @@ static func validate_period(d: Dictionary) -> PackedStringArray:
 	for key in ["homesteads", "exhibits"]:
 		if not (d[key] is Array):
 			errors.append("period: %s must be a list" % key)
+	if d.has("transition"):
+		errors.append_array(_validate_transition(d.transition))
 	if not errors.is_empty():
 		return errors
 	var cursor := 0.0
@@ -63,6 +65,19 @@ static func validate_period(d: Dictionary) -> PackedStringArray:
 		cursor = float(s["to"])
 	if absf(cursor - 1.0) > 1e-9:
 		errors.append("period: segments end at %s, not 1.0" % cursor)
+	return errors
+
+## The optional `transition` of a manifest (SB-073): what the epoch says about arriving from another epoch.
+## {"class": "F", "from": {"<epoch id>": {"text": {"cs": ..., "en": ...}}}}; the text is data of the epoch, class F.
+static func _validate_transition(tr: Variant) -> PackedStringArray:
+	var errors := PackedStringArray()
+	if not (tr is Dictionary) or str(tr.get("class", "")) != "F" or not (tr.get("from") is Dictionary) or tr.from.is_empty():
+		errors.append("period: transition needs class \"F\" and a non-empty from {epoch id: {text}}")
+		return errors
+	for from_id in tr.from:
+		var text: Variant = tr.from[from_id].get("text") if tr.from[from_id] is Dictionary else null
+		if not (text is Dictionary) or str(text.get("cs", "")).strip_edges() == "" or str(text.get("en", "")).strip_edges() == "":
+			errors.append("period: transition from '%s' needs a text with both cs and en" % from_id)
 	return errors
 
 static func validate_craft(d: Dictionary) -> PackedStringArray:
